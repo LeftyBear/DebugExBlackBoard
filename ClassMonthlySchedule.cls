@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 '@Exposed
-'@Folder("Schdule")
+'@Folder("Schedule")
 Option Explicit
 Private BasisDate_      As Date
 Private RecordNumbers_  As Collection
