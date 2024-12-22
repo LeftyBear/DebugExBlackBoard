@@ -8,11 +8,12 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 '@Exposed
-'@Folder("Schdule")
+'@Folder("Schedule")
 Option Explicit
+Private Sheet           As ISheetWithTable
 Private BasisDate_      As Date
 Private RecordNumbers_  As Collection
-Private Headers_        As Variant
+Private HeaderBody_     As Variant
 Private ItemNames_      As Dictionary
 Private DataBody_       As Variant
 Public Property Let BasisDate(ByVal Target As Date)
@@ -27,11 +28,11 @@ End Function
 Public Sub GetReadyRecordNumbers()
     Set RecordNumbers_ = AddRecordNumbers
 End Sub
-Public Property Let Headers(ByVal Target As Variant)
-    Headers_ = Target
+Public Property Let HeaderBody(ByVal Target As Variant)
+    HeaderBody_ = Target
 End Property
-Public Property Get Headers() As Variant
-    Headers = Headers_
+Public Property Get HeaderBody() As Variant
+    HeaderBody = HeaderBody_
 End Property
 Public Property Get ItemNames() As Dictionary
     Set ItemNames = ItemNames_
@@ -55,11 +56,13 @@ Public Function RecordDataBody() As Variant()
     RecordDataBody = Target.Value
 End Function
 Public Function RecordRange() As Range
-    If Schedule.TargetTable Is Nothing Then Exit Function
-    Set RecordRange = Schedule.TargetTable.ListRows.Item(Me.RecordNumber).Range
+    If Not Schedule.Sheet.TableExists Then Exit Function
+    Set RecordRange = Schedule.Sheet.DailyRecord(Me.RecordNumber)
 End Function
 Public Function ClassWeeks() As String
-    ClassWeeks = Schedule.CountedClassWeeks(Me.BasisDate)
+    Dim RecordList As Dictionary
+    Set RecordList = Schedule.Sheet.YearlyRecordItemList("Žö‹Æ“ú")
+    ClassWeeks = Schedule.ClassWeek.Count(Me.BasisDate, RecordList)
 End Function
 Public Function ThisWeekNoticeRecordNumber() As Long
     ThisWeekNoticeRecordNumber = LIB.DateDiff4ŒŽ1“ú(ThisWeekNoticeDate)
