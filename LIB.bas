@@ -58,11 +58,11 @@ Public Property Let ApplicationâÊñ çXêV(ByVal State As Boolean)
         .Calculation = IIf(State, xlCalculationAutomatic, xlCalculationManual)
     End With
 End Property
-Public Function CellDiff(ByVal Sheet As Worksheet, ByVal OutsideRange As Range, ByVal InsideRange As Range) As String
+Public Function CellDiff(ByVal TargetSheet As Worksheet, ByVal OutsideRange As Range, ByVal InsideRange As Range) As String
     Dim RowDiff As Long, ColumnDiff As Long
     RowDiff = InsideRange.Row - OutsideRange.Item(1).Row + 1
     ColumnDiff = InsideRange.Column - OutsideRange.Item(1).Column + 1
-    CellDiff = Sheet.Cells.Item(RowDiff, ColumnDiff).Address(False, False)
+    CellDiff = TargetSheet.Cells.Item(RowDiff, ColumnDiff).Address(False, False)
 End Function
 Public Function CollectionItemsToArray(ByVal CollectionObject As Collection) As Variant()
     Dim RET() As Variant
@@ -277,7 +277,7 @@ Public Function IsHalfNumber(ByVal Text As String) As Boolean
     With New RegExp
         .Pattern = "^[0-9]+$"
         .Global = True
-        If Not .test(Text) Then Exit Function
+        If Not .Test(Text) Then Exit Function
     End With
     IsHalfNumber = True
 End Function
@@ -532,11 +532,12 @@ Optional ByVal ContainsFirstLetter As Boolean, Optional ByVal ContainsLastLetter
         Mid$(Text, BeginingPosition + Len(FirstLetter), EndPosition - BeginingPosition - Len(FirstLetter)) & _
         IIf(ContainsLastLetter, LastLetter, vbNullString)
 End Function
-Public Function NotIsArray(ByRef Target As Variant) As Boolean
-    On Error Resume Next
-    NotIsArray = Not (UBound(Target) > 0)
-    NotIsArray = CBool(Err.Number <> 0)
-    On Error GoTo 0
+Public Function IsNoneArray(ByRef Target() As Variant) As Boolean
+    If (Not Target) = -1 Then IsNoneArray = True
+'    On Error Resume Next
+'    IsNoneArray = Not (UBound(Target) > 0)
+'    IsNoneArray = CBool(Err.Number <> 0)
+'    On Error GoTo 0
 End Function
 Public Sub OpenFolderExplorer(ByVal FolderPath As String)
     If Not FSO.FolderExists(FolderPath) Then Exit Sub
@@ -589,33 +590,37 @@ End Function
 Public Function ReadOneLineAsArray1D(ByVal FilePath As String) As String()
     On Error GoTo ThrowError
     With FSO.OpenTextFile(FilePath, ForReading)
-        Dim Text As String
-        Text = .ReadLine
+        Dim TextLine As String
+        TextLine = .ReadLine
 ThrowError:
         .Close
         DoEvents
     End With
     If Err.Number <> 0 Then Err.Raise Err.Number, , Err.Description
-    ReadOneLineAsArray1D = Split(Text, CANNMA)
+    ReadOneLineAsArray1D = Split(TextLine, CANNMA)
 End Function
 Public Function ReadAllLineAsArray2D(ByVal FilePath As String) As Variant()
-    Dim Headers() As String
-    Headers = LIB.ReadOneLineAsArray1D(FilePath)
-    If LIB.NotIsArray(Headers) Then Exit Function
+    Dim BUF() As String
+    BUF = LIB.ReadOneLineAsArray1D(FilePath)
+    Dim Headers() As Variant
+    Headers = LIB.ToVarintTypeArray1D(BUF)
+    Dim HeaderBody() As Variant
+    HeaderBody = LIB.TransposeArray1DÅ®2D(Headers)
+    If LIB.IsNoneArray(HeaderBody) Then Exit Function
     On Error GoTo ThrowError
     Dim MaxR As Long, MaxC As Long
     MaxR = LIB.ReadLineCount(FilePath)
-    MaxC = UBound(Headers) - LBound(Headers) + 1
+    MaxC = UBound(HeaderBody, 2)
     Dim RET() As Variant
     ReDim RET(1 To MaxR, 1 To MaxC)
     With FSO.OpenTextFile(FilePath, ForReading)
         Do Until .AtEndOfLine
-            Dim Texts() As String
-            Texts = Split(.ReadLine, CANNMA)
+            Dim TextLineItems() As String
+            TextLineItems = Split(.ReadLine, CANNMA)
             Dim R As Long, C As Long
             R = R + 1
             For C = 1 To MaxC
-                RET(R, C) = Texts(C - 1)
+                RET(R, C) = TextLineItems(C - 1)
             Next
         Loop
 ThrowError:
@@ -631,13 +636,13 @@ Public Function ReadLineCount(ByVal FilePath As String) As Long
     Open FilePath For Binary As #1
         ReDim DataBody(1 To LOF(1))
         Get #1, , DataBody
-        Dim Text As String
-        Text = StrConv(DataBody, vbUnicode)
+        Dim AllTextLine As String
+        AllTextLine = StrConv(DataBody, vbUnicode)
 ThrowError:
     Close #1
     DoEvents
     If Err.Number <> 0 Then Err.Raise Err.Number, , Err.Description
-    ReadLineCount = UBound(Split(Text, vbLf))
+    ReadLineCount = UBound(Split(AllTextLine, vbLf))
 End Function
 Public Sub RemoveSelectedItemOfListBox(ByVal ListBoxObject As MSForms.ListBox)
     With ListBoxObject
@@ -767,7 +772,7 @@ Public Function ToColumnIndex(ByVal CellAddress As String) As Long
     Dim Place As Long
     For Place = Len(ColumnLetter) To 1 Step -1
         Dim AlphabetCode As Long
-        AlphabetCode = asc(Mid$(ColumnLetter, Place, 1)) - 64
+        AlphabetCode = Asc(Mid$(ColumnLetter, Place, 1)) - 64
         If Len(ColumnLetter) - Place <> 0 Then
             RET = RET + AlphabetCode * 26 ^ (Len(ColumnLetter) - Place)
         Else
@@ -784,8 +789,17 @@ Public Function ToRowIndex(ByVal CellAddress As String) As Long
         ToRowIndex = .Replace(CellAddress, vbNullString)
     End With
 End Function
-Public Function TransposeArray1DÅ®2D(ByRef Array1D As Variant) As Variant()
-    If NotIsArray(Array1D) Then Exit Function
+Public Function ToVarintTypeArray1D(ByRef StringTypeArray1D() As String) As Variant()
+    Dim RET() As Variant
+    ReDim RET(LBound(StringTypeArray1D) To UBound(StringTypeArray1D))
+    Dim C As Long
+    For C = LBound(StringTypeArray1D) To UBound(StringTypeArray1D)
+        RET(C) = StringTypeArray1D(C)
+    Next
+    ToVarintTypeArray1D = RET
+End Function
+Public Function TransposeArray1DÅ®2D(ByRef Array1D() As Variant) As Variant()
+    If IsNoneArray(Array1D) Then Exit Function
     Dim Array2D() As Variant
     ReDim Array2D(1 To 1, 1 To UBound(Array1D) + 1)
     Dim i As Long
@@ -795,7 +809,7 @@ Public Function TransposeArray1DÅ®2D(ByRef Array1D As Variant) As Variant()
     TransposeArray1DÅ®2D = Array2D
 End Function
 Public Function TransposeArray2DÅ®1D(ByRef Array2D() As Variant, Optional ByVal BaseOne As Boolean) As Variant()
-    If NotIsArray(Array2D) Then Exit Function
+    If IsNoneArray(Array2D) Then Exit Function
     If LIB.ReturnArrayDimension(Array2D) <> 2 Then Exit Function
     If UBound(Array2D, 1) > 1 And UBound(Array2D, 2) > 1 Then Exit Function
     Dim UpperIndex As Long
