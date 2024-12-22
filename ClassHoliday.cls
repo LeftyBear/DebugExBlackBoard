@@ -503,11 +503,11 @@ Public Function AddHolidays(ByVal ”N As Long) As Dictionary
     Set AddHolidays = LIB.SortDictionary(RET, xlAscending)
 End Function
 '@Ignore UseMeaningfulName
-Private Function U‘Ö‹x“ú(ByVal Holidays As Dictionary) As Collection
+Private Function U‘Ö‹x“ú(ByVal HolidayList As Dictionary) As Collection
     Dim RET As Collection
     Set RET = New Collection
     Dim HolidayDate As Variant
-    For Each HolidayDate In Holidays
+    For Each HolidayDate In HolidayList
         If Weekday(HolidayDate) = vbSunday Then
             If j“ú–@‰ü³_U‘Ö‹x“ú1 <= HolidayDate And HolidayDate < j“ú–@‰ü³_U‘Ö‹x“ú2 Then
                 'j“ú‚ª“ú—j“ú‚Ìê‡‚Í‚»‚Ì—‚“ú‚ÌŒ—j“ú‚ğ‹x“ú‚Æ‚·‚é
@@ -518,7 +518,7 @@ Private Function U‘Ö‹x“ú(ByVal Holidays As Dictionary) As Collection
                 Dim ‹x“ú As Date
                 ‹x“ú = DateAdd("d", 1, HolidayDate)
                 Do
-                    If Not Holidays.Exists(‹x“ú) Then Exit Do
+                    If Not HolidayList.Exists(‹x“ú) Then Exit Do
                     ‹x“ú = DateAdd("d", 1, ‹x“ú)
                 Loop
                 RET.Add ‹x“ú
@@ -528,25 +528,25 @@ Private Function U‘Ö‹x“ú(ByVal Holidays As Dictionary) As Collection
     Set U‘Ö‹x“ú = RET
 End Function
 '@Ignore UseMeaningfulName
-Private Function ‘–¯‚Ì‹x“ú(ByVal Holidays As Dictionary) As Collection
+Private Function ‘–¯‚Ì‹x“ú(ByVal HolidayList As Dictionary) As Collection
     Dim RET As Collection
     Set RET = New Collection
     Dim HolidayDate As Variant
-    For Each HolidayDate In Holidays
+    For Each HolidayDate In HolidayList
         If j“ú–@‰ü³_‘–¯‚Ì‹x“ú <= HolidayDate Then
             '‘O“ú‚Æ—‚“ú‚Ì—¼•û‚ğu‘–¯‚Ìj“úv‚É‹²‚Ü‚ê‚½•½“ú‚Í‹x“ú‚Æ‚·‚é
             '@Ignore UseMeaningfulName
             Dim ‹x“ú As Date
             ‹x“ú = DateAdd("d", 1, HolidayDate)
             Do
-                If Not Holidays.Exists(‹x“ú) Then Exit Do
+                If Not HolidayList.Exists(‹x“ú) Then Exit Do
                 ‹x“ú = DateAdd("d", 1, ‹x“ú)
             Loop
             If Weekday(‹x“ú) <> vbSunday Then
                 '@Ignore UseMeaningfulName
                 Dim ‹x“ú‚Ì—‚“ú As Date
                 ‹x“ú‚Ì—‚“ú = DateAdd("d", 1, ‹x“ú)
-                If Holidays.Exists(‹x“ú‚Ì—‚“ú) Then
+                If HolidayList.Exists(‹x“ú‚Ì—‚“ú) Then
                     RET.Add ‹x“ú
                 End If
             End If
