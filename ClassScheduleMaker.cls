@@ -7,38 +7,40 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Schdule")
+'@Folder("Schedule")
 Option Explicit
-Private Headers_                As Variant
-Private OfficialHolidayArray_   As Variant
+Private HeaderBody_()                As Variant
+Private OfficialHolidayArray_()   As Variant
 Private Const C_DATE As Long = 1
 Private Const C_NAME As Long = 2
 Private Sub Class_Initialize()
-    Headers_ = LIB.ReadAllLineAsArray2D(CSO.GetPath.data.schedules.FileHeader)
-    OfficialHolidayArray_ = LIB.ReadAllLineAsArray2D(CSO.GetPath.data.Holiday.FileHoliday)
+    Dim Directory As IDirectory
+    Set Directory = New Directory
+    HeaderBody_ = LIB.ReadAllLineAsArray2D(Directory.ScheduleHeaderFile)
+    OfficialHolidayArray_ = LIB.ReadAllLineAsArray2D(Directory.HolidayFile)
 End Sub
 Public Function AddDataBody(ByVal WesternYear As Long) As Variant()
-    Dim OfficialHolidays As Dictionary
-    Set OfficialHolidays = AddOfficialHolidays
-    Dim Holidays As Dictionary
-    Set Holidays = OfficialHolidays
+    Dim OfficialHolidayList As Dictionary
+    Set OfficialHolidayList = AddOfficialHolidayList
+    Dim HolidayList As Dictionary
+    Set HolidayList = OfficialHolidayList
     Dim Years As Long
     For Years = 0 To 1
         With New ClassHoliday
-            Dim UnOfficialHolidays As Dictionary
-            Set UnOfficialHolidays = .AddHolidays(WesternYear + Years)
+            Dim UnOfficialHolidayList As Dictionary
+            Set UnOfficialHolidayList = .AddHolidays(WesternYear + Years)
         End With
-        Set Holidays = LIB.MergeDictionary(Holidays, UnOfficialHolidays)
+        Set HolidayList = LIB.MergeDictionary(HolidayList, UnOfficialHolidayList)
     Next
     Dim Dates As Dictionary
     Set Dates = AddDates(WesternYear)
     Dim RET() As Variant
-    ReDim RET(1 To Dates.Count + 1, 1 To UBound(Headers_, 2))
+    ReDim RET(1 To Dates.Count + 1, 1 To UBound(HeaderBody_, 2))
     Dim R As Long
     Dim C As Long
     R = 1
-    For C = 1 To UBound(Headers_, 2)
-        RET(R, C) = Headers_(R, C)
+    For C = 1 To UBound(HeaderBody_, 2)
+        RET(R, C) = HeaderBody_(R, C)
     Next
     R = 2
     '@Ignore UseMeaningfulName
@@ -56,9 +58,9 @@ Public Function AddDataBody(ByVal WesternYear As Long) As Variant()
     Dim Target As Variant
     For Each Target In Dates
         RET(R, Cì˙ït) = Target
-        If Holidays.Exists(CDate(Target)) Then
+        If HolidayList.Exists(CDate(Target)) Then
             '@Ignore IIfSideEffect
-            RET(R, Cèjì˙) = IIf(Holidays.Item(CDate(Target)) Like "ãxì˙", "êUë÷ãxì˙", Holidays.Item(CDate(Target)))
+            RET(R, Cèjì˙) = IIf(HolidayList.Item(CDate(Target)) Like "ãxì˙", "êUë÷ãxì˙", HolidayList.Item(CDate(Target)))
             RET(R, Cì˙íºì˙) = False
             RET(R, Céˆã∆ì˙) = False
         ElseIf Weekday(Target) = vbSunday Or Weekday(Target) = vbSaturday Then
@@ -85,8 +87,8 @@ Private Function AddDates(ByVal WesternYear As Long) As Dictionary
     Next
     Set AddDates = RET
 End Function
-Private Function AddOfficialHolidays() As Dictionary
-    If LIB.NotIsArray(OfficialHolidayArray_) Then
+Private Function AddOfficialHolidayList() As Dictionary
+    If LIB.IsNoneArray(OfficialHolidayArray_) Then
         MsgBox "èjì˙ÉfÅ[É^Ç™å©Ç¬Ç©ÇËÇ‹ÇπÇÒÅB", vbExclamation, "ÉtÉ@ÉCÉãÉGÉâÅ["
         Exit Function
     End If
@@ -97,7 +99,7 @@ Private Function AddOfficialHolidays() As Dictionary
         If OfficialHolidayArray_(i, C_NAME) Like "ãxì˙" Then OfficialHolidayArray_(i, C_NAME) = "êUë÷ãxì˙"
         RET.Add CDate(OfficialHolidayArray_(i, C_DATE)), OfficialHolidayArray_(i, C_NAME)
     Next
-    Set AddOfficialHolidays = RET
+    Set AddOfficialHolidayList = RET
 End Function
 Private Function Columnsì˙ït() As Long
     Columnsì˙ït = ColumnIndex("ì˙ït")
@@ -112,13 +114,13 @@ Private Function Columnséˆã∆ì˙() As Long
     Columnséˆã∆ì˙ = ColumnIndex("éˆã∆ì˙")
 End Function
 Private Function ColumnIndex(ByVal ItemName As String) As Long
-    If LIB.NotIsArray(Headers_) Then Exit Function
+    If LIB.IsNoneArray(HeaderBody_) Then Exit Function
     Dim RET As Long
-    For RET = LBound(Headers_, 2) To UBound(Headers_, 2)
-        If RET = UBound(Headers_, 2) Then
-            If Not Headers_(1, RET) Like ItemName Then Exit Function
+    For RET = LBound(HeaderBody_, 2) To UBound(HeaderBody_, 2)
+        If RET = UBound(HeaderBody_, 2) Then
+            If Not HeaderBody_(1, RET) Like ItemName Then Exit Function
         Else
-            If Headers_(1, RET) Like ItemName Then Exit For
+            If HeaderBody_(1, RET) Like ItemName Then Exit For
         End If
     Next
     ColumnIndex = RET
