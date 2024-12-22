@@ -21,10 +21,10 @@ Public Property Get FileNames() As Collection
     Set FileNames = FileNames_
 End Property
 Private Sub Class_Initialize()
-    LogFolderPath = CSO.GetPath.data.FolderWriteLog
-    BackupFolderPath = CSO.GetPath.data.FolderBackup
-    LIB.CreateFolder LogFolderPath
-    LIB.CreateFolder BackupFolderPath
+    Dim Directory As IDirectory
+    Set Directory = New Directory
+    LIB.CreateFolder Directory.writelogFolder
+    LIB.CreateFolder Directory.backupFolder
 End Sub
 Public Sub WriteFileAfterBackup(ByVal FilePath As String, ByRef DataBody() As Variant)
     If FSO.FileExists(FilePath) Then
