@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 '@Exposed
-'@Folder("Schdule")
+'@Folder("Schedule")
 Option Explicit
 Private BasisDate_      As Date
 Private RecordNumbers_  As Collection
@@ -39,7 +39,7 @@ End Property
 Public Property Let DataBody(ByVal Target As Variant)
     DataBody_ = Target
 End Property
-Public Function TotalClassHoursOfMonth(ByVal MonthName As String) As Long
+Public Function TotalClassDayOfMonth(ByVal MonthName As String) As Long
     Dim FirstDate As Date
     Dim LastDate As Date
     FirstDate = DateSerial(TargetYear(CLng(MonthName) - 3), CLng(MonthName), 1)
@@ -48,16 +48,18 @@ Public Function TotalClassHoursOfMonth(ByVal MonthName As String) As Long
     Dim LastRecordNumber As Long
     FirstRecordNumber = LIB.DateDiff4ŒŽ1“ú(FirstDate)
     LastRecordNumber = LIB.DateDiff4ŒŽ1“ú(LastDate)
-    With Schedule
+    Dim Sheet As ISheetWithTable
+    Set Sheet = Schedule.Sheet
+    With Sheet
         Dim FirstRange As Range
         Dim LastRange As Range
-        Set FirstRange = .TableRecordItem(FirstRecordNumber, "Žö‹Æ“ú")
-        Set LastRange = .TableRecordItem(LastRecordNumber, "Žö‹Æ“ú")
+        Set FirstRange = .DailyRecordItem(FirstRecordNumber, "Žö‹Æ“ú")
+        Set LastRange = .DailyRecordItem(LastRecordNumber, "Žö‹Æ“ú")
         If FirstRange Is Nothing Or LastRange Is Nothing Then Exit Function
         Dim Target As Range
-        Set Target = .Range(FirstRange, LastRange)
+        Set Target = Schedule.Range(FirstRange, LastRange)
     End With
-    TotalClassHoursOfMonth = WorksheetFunction.CountIf(Target, True)
+    TotalClassDayOfMonth = WorksheetFunction.CountIf(Target, True)
 End Function
 Private Function AddRecordNumbers() As Collection
     Dim RET As Collection
