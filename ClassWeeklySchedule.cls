@@ -8,8 +8,9 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 '@Exposed
-'@Folder("Schdule")
+'@Folder("Schedule")
 Option Explicit
+Private Sheet               As ISheetWithTable
 Private BasisDate_          As Date
 Private RecordNumbers_      As Collection
 Private ItemNames_          As Dictionary
@@ -52,8 +53,9 @@ Private Function AddRecordNumbers() As Collection
     Dim Days As Long
     For Days = 1 To MAX_DAYS
         If 1 <= RecordNumber And RecordNumber <= BufMaxRecordNumber Then
+            Set Sheet = Schedule.Sheet
             Dim TargetWeekDay As Long
-            TargetWeekDay = Weekday(Schedule.TableRecordItem(RecordNumber, "“ú•t").Value)
+            TargetWeekDay = Weekday(Sheet.DailyRecordItem(RecordNumber, "“ú•t").Value)
             Select Case Containers * 10 + TargetWeekDay
                 Case 1 * 10 + vbSaturday, 1 * 10 + vbSunday
                     If IsValidRecNumAnd“ú’¼“ú(RecordNumber, BufMaxRecordNumber) Then
@@ -147,14 +149,15 @@ Public Function ThisWeekTotalClassHourOfWeek(ByVal ItemName As String) As Long
     LastRecordNumber = ThisWeekLastRecordNumber
     If FirstRecordNumer < 1 Then FirstRecordNumer = 1
     If LastRecordNumber > MaxRecordNumber Then LastRecordNumber = MaxRecordNumber
-    With Schedule
+    Set Sheet = Schedule.Sheet
+    With Sheet
         Dim FirstRange As Range
         Dim LastRange As Range
-        Set FirstRange = .TableRecordItem(FirstRecordNumer, ItemName)
-        Set LastRange = .TableRecordItem(LastRecordNumber, ItemName)
+        Set FirstRange = .DailyRecordItem(FirstRecordNumer, ItemName)
+        Set LastRange = .DailyRecordItem(LastRecordNumber, ItemName)
         If FirstRange Is Nothing Or LastRange Is Nothing Then Exit Function
         Dim Target As Range
-        Set Target = .Range(FirstRange, LastRange)
+        Set Target = Schedule.Range(FirstRange, LastRange)
     End With
     ThisWeekTotalClassHourOfWeek = WorksheetFunction.Sum(Target)
 End Function
@@ -165,14 +168,15 @@ Public Function NextWeekTotalClassHourOfWeek(ByVal ItemName As String) As Long
     LastRecordNumber = NextWeekLastRecordNumber
     If FirstRecordNumer < 1 Then FirstRecordNumer = 1
     If LastRecordNumber > MaxRecordNumber Then LastRecordNumber = MaxRecordNumber
-    With Schedule
+    Set Sheet = Schedule.Sheet
+    With Sheet
         Dim FirstRange As Range
         Dim LastRange As Range
-        Set FirstRange = .TableRecordItem(FirstRecordNumer, ItemName)
-        Set LastRange = .TableRecordItem(LastRecordNumber, ItemName)
+        Set FirstRange = .DailyRecordItem(FirstRecordNumer, ItemName)
+        Set LastRange = .DailyRecordItem(LastRecordNumber, ItemName)
         If FirstRange Is Nothing Or LastRange Is Nothing Then Exit Function
         Dim Target As Range
-        Set Target = .Range(FirstRange, LastRange)
+        Set Target = Schedule.Range(FirstRange, LastRange)
     End With
     NextWeekTotalClassHourOfWeek = WorksheetFunction.Sum(Target)
 End Function
@@ -181,14 +185,15 @@ Public Function ThisWeekTotalClassHourOfYear(ByVal ItemName As String) As Long
     Dim LastRecordNumber As Long
     LastRecordNumber = ThisWeekLastRecordNumber
     If LastRecordNumber > MaxRecordNumber Then LastRecordNumber = MaxRecordNumber
-    With Schedule
+    Set Sheet = Schedule.Sheet
+    With Sheet
         Dim FirstRange As Range
         Dim LastRange As Range
-        Set FirstRange = .TableRecordItem(FirstRecordNumer, ItemName)
-        Set LastRange = .TableRecordItem(LastRecordNumber, ItemName)
+        Set FirstRange = .DailyRecordItem(FirstRecordNumer, ItemName)
+        Set LastRange = .DailyRecordItem(LastRecordNumber, ItemName)
         If FirstRange Is Nothing Or LastRange Is Nothing Then Exit Function
         Dim Target As Range
-        Set Target = .Range(FirstRange, LastRange)
+        Set Target = Schedule.Range(FirstRange, LastRange)
     End With
     ThisWeekTotalClassHourOfYear = WorksheetFunction.Sum(Target)
 End Function
@@ -197,14 +202,15 @@ Public Function NextWeekTotalClassHourOfYear(ByVal ItemName As String) As Long
     Dim LastRecordNumber As Long
     LastRecordNumber = NextWeekLastRecordNumber
     If LastRecordNumber > MaxRecordNumber Then LastRecordNumber = MaxRecordNumber
-    With Schedule
+    Set Sheet = Schedule.Sheet
+    With Sheet
         Dim FirstRange As Range
         Dim LastRange As Range
-        Set FirstRange = .TableRecordItem(FirstRecordNumer, ItemName)
-        Set LastRange = .TableRecordItem(LastRecordNumber, ItemName)
+        Set FirstRange = .DailyRecordItem(FirstRecordNumer, ItemName)
+        Set LastRange = .DailyRecordItem(LastRecordNumber, ItemName)
         If FirstRange Is Nothing Or LastRange Is Nothing Then Exit Function
         Dim Target As Range
-        Set Target = .Range(FirstRange, LastRange)
+        Set Target = Schedule.Range(FirstRange, LastRange)
     End With
     NextWeekTotalClassHourOfYear = WorksheetFunction.Sum(Target)
 End Function
@@ -233,13 +239,17 @@ Public Function NextWeekLastRecordNumber() As Long
     NextWeekLastRecordNumber = NextWeekLastDate - LIB.Date4ŒŽ1“ú(Me.BasisDate) + 1
 End Function
 Public Function ThisWeekClassWeeks() As String
-    ThisWeekClassWeeks = Schedule.CountedClassWeeks(ThisWeekFirstDate)
+    Dim RecordList As Dictionary
+    Set RecordList = Schedule.Sheet.YearlyRecordItemList("Žö‹Æ“ú")
+    ThisWeekClassWeeks = Schedule.ClassWeek.Count(ThisWeekFirstDate, RecordList)
 End Function
 Public Function NextWeekClassWeeks() As String
-    Dim Target As Date
-    Target = NextWeekFirstDate
-    If Target > LIB.Date3ŒŽ31“ú(Me.BasisDate) Then Target = LIB.Date3ŒŽ31“ú(Me.BasisDate)
-    NextWeekClassWeeks = Schedule.CountedClassWeeks(Target)
+    Dim RecordList As Dictionary
+    Set RecordList = Schedule.Sheet.YearlyRecordItemList("Žö‹Æ“ú")
+    Dim TargetDate As Date
+    TargetDate = NextWeekFirstDate
+    If LIB.Date3ŒŽ31“ú(Me.BasisDate) < TargetDate Then TargetDate = LIB.Date3ŒŽ31“ú(Me.BasisDate)
+    NextWeekClassWeeks = Schedule.ClassWeek.Count(TargetDate, RecordList)
 End Function
 Private Function MaxRecordNumber() As Long
     MaxRecordNumber = LIB.Date3ŒŽ31“ú(Me.BasisDate) - LIB.Date4ŒŽ1“ú(Me.BasisDate) + 1
@@ -255,8 +265,9 @@ ByRef RecordNumber As Long, ByVal RecordNumbers As Collection)
     Containers = Containers + 1
 End Sub
 Private Function IsValidRecNumAnd“ú’¼“ú(ByVal RecordNumber As Long, ByVal MaxRecordNumber As Long) As Boolean
+    Set Sheet = Schedule.Sheet
     If RecordNumber < 1 Or MaxRecordNumber < RecordNumber Then Exit Function
-    If Not CBool(Schedule.TableRecordItem(RecordNumber, "“ú’¼“ú").Value) Then Exit Function
+    If Not CBool(Sheet.DailyRecordItem(RecordNumber, "“ú’¼“ú").Value) Then Exit Function
     IsValidRecNumAnd“ú’¼“ú = True
 End Function
 Private Function IsValidRecNum(ByVal RecordNumber As Long, ByVal MaxRecordNumber As Long) As Boolean
