@@ -10,7 +10,7 @@ Attribute VB_Exposed = True
 '@Exposed
 '@Folder("FormExBB")
 Option Explicit
-Private DataBody_ As Variant
+Private DataBody_() As Variant
 Private Const KEY_取得者    As String = "Person"
 Private Const KEY_種別      As String = "LeaveType"
 Private Const KEY_開始日    As String = "FirstDate"
@@ -29,31 +29,43 @@ Private Enum Header
     Columns表示
 End Enum
 Private Sub Class_Initialize()
+    Dim Directory As IDirectory
+    Set Directory = New Directory
     Dim FilePath As String
-    FilePath = CSO.GetPath.data.leave.FileLeave
+    FilePath = Directory.LeaveFile
     If Not FSO.FileExists(FilePath) Then Exit Sub
     Me.DataBody = LIB.ReadAllLineAsArray2D(FilePath)
 End Sub
-Public Property Get DataBody() As Variant
+Public Property Get DataBody() As Variant()
     DataBody = DataBody_
 End Property
-Public Property Let DataBody(ByVal Target As Variant)
+Public Property Let DataBody(ByRef Target() As Variant)
     DataBody_ = Target
 End Property
 Public Function Item取得者(ByVal R As Long) As String
-    Item取得者 = DataBody(R, Me.Index取得者)
+    Dim BUF() As Variant
+    BUF = DataBody
+    Item取得者 = BUF(R, Me.Index取得者)
 End Function
 Public Function Item種別(ByVal R As Long) As String
-    Item種別 = DataBody(R, Me.Index種別)
+    Dim BUF() As Variant
+    BUF = DataBody
+    Item種別 = BUF(R, Me.Index種別)
 End Function
 Public Function Item開始日(ByVal R As Long) As Date
-    Item開始日 = DataBody(R, Me.Index開始日)
+    Dim BUF() As Variant
+    BUF = DataBody
+    Item開始日 = BUF(R, Me.Index開始日)
 End Function
 Public Function Item終了日(ByVal R As Long) As Date
-    Item終了日 = DataBody(R, Me.Index終了日)
+    Dim BUF() As Variant
+    BUF = DataBody
+    Item終了日 = BUF(R, Me.Index終了日)
 End Function
 Public Function Item表示(ByVal R As Long) As String
-    Item表示 = DataBody(R, Me.Index表示)
+    Dim BUF() As Variant
+    BUF = DataBody
+    Item表示 = BUF(R, Me.Index表示)
 End Function
 Public Function Index取得者() As Long
     Index取得者 = Header.Columns取得者
