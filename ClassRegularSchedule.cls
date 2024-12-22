@@ -48,8 +48,10 @@ Public Property Get LastDate() As Date
     LastDate = LastDate_
 End Property
 Public Function AddRegulars() As Variant()
+    Dim Sheet As ISheetWithTable
+    Set Sheet = Schedule.Sheet
     Dim Events As Dictionary
-    Set Events = Schedule.TableColumnItemList("çséñ")
+    Set Events = Sheet.YearlyRecordItemList("çséñ")
     If Events Is Nothing Then Exit Function
     Dim RET() As Variant
     ReDim RET(1 To Me.LastDate - Me.FirstDate + 1, 1 To 1)
