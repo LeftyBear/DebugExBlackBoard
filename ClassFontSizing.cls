@@ -12,14 +12,14 @@ Option Explicit
 Private Declare PtrSafe Function GetDC Lib "user32" (ByVal Hwnd As LongPtr) As LongPtr
 Private Declare PtrSafe Function GetDeviceCaps Lib "gdi32" (ByVal hDc As LongPtr, ByVal nIndex As Long) As Long
 Private Declare PtrSafe Function ReleaseDC Lib "user32" (ByVal Hwnd As LongPtr, ByVal hDc As LongPtr) As Long
-Private Sheet_              As Worksheet
+Private TargetSheet_        As Worksheet
 Private WidthPerLen1Point_  As Double
 Private WidthPerLen2Point_  As Double
-Public Property Set Sheet(ByVal Target As Worksheet)
-    Set Sheet_ = Target
+Public Property Set TargetSheet(ByVal Target As Worksheet)
+    Set TargetSheet_ = Target
 End Property
-Public Property Get Sheet() As Worksheet
-    Set Sheet = Sheet_
+Public Property Get TargetSheet() As Worksheet
+    Set TargetSheet = TargetSheet_
 End Property
 Private Property Let WidthPerLen1Point(ByVal Point As Double)
     WidthPerLen1Point_ = Point
@@ -74,7 +74,7 @@ Private Function WhitespacePixel() As Long
 End Function
 Private Function Length1WidthPixelWithWhitespace() As Long
     If WidthPerLen1Point = 0 Then
-        With Me.Sheet.Columns.Item(100)
+        With Me.TargetSheet.Columns.Item(100)
             Dim TemporaryColumnWidth As Double
             TemporaryColumnWidth = .ColumnWidth
             .ColumnWidth = 1
@@ -86,7 +86,7 @@ Private Function Length1WidthPixelWithWhitespace() As Long
 End Function
 Private Function Length2WidthPixelWithWhitespace() As Long
     If WidthPerLen2Point = 0 Then
-        With Me.Sheet.Columns.Item(100)
+        With Me.TargetSheet.Columns.Item(100)
             Dim TemporaryColumnWidth As Double
             TemporaryColumnWidth = .ColumnWidth
             .ColumnWidth = 2
@@ -112,7 +112,7 @@ Private Function RangeHeightPixel(ByVal SingleCell As Range) As Long
     RangeHeightPixel = ToPixel(SingleCell.MergeArea.Height)
 End Function
 Private Function Length1HeightPixel() As Long
-    Length1HeightPixel = ToPixel(Me.Sheet.StandardHeight)
+    Length1HeightPixel = ToPixel(Me.TargetSheet.StandardHeight)
 End Function
 Private Function FontSizeRate(ByVal FontSizePoint As Double) As Double
     FontSizeRate = FontSizePoint / Application.StandardFontSize
