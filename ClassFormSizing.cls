@@ -79,7 +79,7 @@ Public Sub DrawFormMenuBar()
     DrawMenuBar WindowHandle
     Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 '@Ignore ProcedureNotUsed
@@ -91,7 +91,7 @@ Public Sub MinimizeForm()
     SendMessage TargetWindow, &H112&, &HF020&, 0
     Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Public Sub MaximizeForm()
@@ -102,7 +102,7 @@ Public Sub MaximizeForm()
     SendMessage TargetWindow, &H112&, &HF030&, 0
     Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Public Sub RestoreForm()
@@ -113,7 +113,7 @@ Public Sub RestoreForm()
     SendMessage TargetWindow, &H112&, &HF120&, 0
     Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Public Sub OnResizedForm()
@@ -138,7 +138,7 @@ Public Sub OnResizedForm()
     FormHeightAndWidth = CStr(Me.TargetForm.Height) & "_" & CStr(Me.TargetForm.Width)
     Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Private Sub ResizeForm()
@@ -153,7 +153,7 @@ Private Sub ResizeForm()
     TurnOffResizeEvent = False
     Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Private Function CorrectionHeight() As Single
@@ -202,7 +202,7 @@ Private Sub ResizeFormControls()
     Next
     Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Private Function StoreControlsPositionAndSize() As Dictionary
