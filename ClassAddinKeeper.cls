@@ -9,15 +9,17 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Addin")
 Option Explicit
-Private UpdateVersion_ As String
+Private Directory       As IDirectory
+Private UpdateVersion_  As String
 Private Const DEFINED_VERSION           As String = "1.2.1"
 Private Const FOLDER_PREFIX             As String = "ExBlackBoard-"
 Private Const ADDIN_NAME                As String = "system"
-'Private Const LATEST_BOOTBOOK_NAME      As String = "LatestExBlackBoard"
-'Private Const UPDATE_BOOTBOOK_NAME      As String = "ExBlackBoard"
+Private Const LATEST_BOOTBOOK_NAME      As String = "LatestExBlackBoard"
+Private Const UPDATE_BOOTBOOK_NAME      As String = "ExBlackBoard"
 Private Const GITHUB_API                As String = "https://api.github.com/repos/LeftyBear/ExBlackBoard/releases/latest"
 Private Const GITHUB_URL                As String = "https://github.com/LeftyBear/ExBlackBoard/releases/latest/"
 Private Const MODULE_NAME               As String = "ClassAddinKeeper"
+Private Const SHOULD_SWAP_BOOT_BOOK     As Boolean = False
 Private Property Let UpdateVersion(ByVal VersionName As String)
     UpdateVersion_ = VersionName
 End Property
@@ -39,10 +41,10 @@ Public Sub OnClickedUpdateButton()
         End If
         Exit Sub
     End If
-    GateWay.VerifyAddinVersion
+    FormExBB.VerifyAddinVersion
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Public Sub OnClickedDowndateButton()
@@ -54,9 +56,11 @@ Public Sub OnClickedDowndateButton()
     If DowndateVersions.Count = 0 Then
         MsgBox "ダウンデートできるプログラムはありません。", vbInformation, MsgTitle: Exit Sub
     End If
+    Dim BootSheetHoldsItem As IBootSheetHoldsItem
+    Set BootSheetHoldsItem = New BootSheetHoldsItem
     Dim KeyVersion As Variant
     For Each KeyVersion In DowndateVersions
-        If KeyVersion < CSO.AddinVersion Then
+        If KeyVersion < BootSheetHoldsItem.AddinVersion Then
             Dim DowndateVersion As String
             DowndateVersion = DowndateVersions.Item(KeyVersion): Exit For
         End If
@@ -65,20 +69,21 @@ Public Sub OnClickedDowndateButton()
         MsgBox "ダウンデートできるプログラムはありません。", vbInformation, MsgTitle: Exit Sub
     End If
     Dim RES As Long
-    RES = MsgBox("バージョン" & CSO.AddinVersion & "から" & _
+    RES = MsgBox("バージョン" & BootSheetHoldsItem.AddinVersion & "から" & _
         Replace(DowndateVersion, FOLDER_PREFIX, vbNullString) & "にダウンデートしますか？", _
         vbYesNo + vbQuestion + vbDefaultButton2, MsgTitle)
     If RES <> vbYes Then Exit Sub
     Dim FolderPath As String
     Dim FilePath As String
-    FolderPath = FSO.BuildPath(CSO.GetPath.FolderSrc, DowndateVersion)
-    FilePath = FSO.BuildPath(FolderPath, CSO.AddinName)
-    FSO.CopyFile FilePath, CSO.GetPath.FolderSrc, True
-    CSO.AddinVersion = DowndateVersion
+    Set Directory = New Directory
+    FolderPath = FSO.BuildPath(Directory.srcFolder, DowndateVersion)
+    FilePath = FSO.BuildPath(FolderPath, BootSheetHoldsItem.AddinName)
+    FSO.CopyFile FilePath, Directory.srcFolder, True
+    BootSheetHoldsItem.AddinVersion = DowndateVersion
     MsgBox "バージョン" & DowndateVersion & "にダウンデートしました。", vbInformation, MsgTitle
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 '@Ignore ProcedureCanBeWrittenAsFunction
@@ -105,32 +110,35 @@ Public Sub TryUpdate(ByRef Result As Long)
     Application.Cursor = xlDefault
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Public Sub DeleteErrorLog()
     On Error GoTo ThrowError
     Const ProcedureName As String = "DeleteErrorLog"
+    Dim Directory As IDirectory
+    Set Directory = New Directory
     Dim ErrorLogPath As String
-    ErrorLogPath = CSO.GetPath.data.errorlog.FileErrorLog
+    ErrorLogPath = Directory.ErrorlogFile
     If Not FSO.FileExists(ErrorLogPath) Then Exit Sub
     FSO.DeleteFile ErrorLogPath, True
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
-'Public Sub TrySwapBootBook()
-'    On Error GoTo ThrowError
-'    Const ProcedureName As String = "TrySwapBootBook"
-'    Dim UpdateBootBookFilePath As String
-'    UpdateBootBookFilePath = FSO.BuildPath(CSO.GetPath.FolderTop, UPDATE_BOOTBOOK_NAME & DEFINED_VERSION & ".xlsm")
-'    Application.OnTime Now + TimeValue("00:00:02"), "'OnTimeSwapBootBook " & """" & UpdateBootBookFilePath & """" & "'"
-'Exit Sub
-'ThrowError:
-'    CEO.Throw MODULE_NAME, ProcedureName
-'    Err.Raise Err.Number, , Err.Description
-'End Sub
+Public Sub TrySwapBootBook()
+    On Error GoTo ThrowError
+    Const ProcedureName As String = "TrySwapBootBook"
+    Dim UpdateBootBookFilePath As String
+    Set Directory = New Directory
+    UpdateBootBookFilePath = FSO.BuildPath(Directory.topFolder, UPDATE_BOOTBOOK_NAME & DEFINED_VERSION & ".xlsm")
+    Application.OnTime Now + TimeValue("00:00:02"), "'OnTimeSwapBootBook " & """" & UpdateBootBookFilePath & """" & "'"
+Exit Sub
+ThrowError:
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
+    Err.Raise Err.Number, , Err.Description
+End Sub
 Public Sub ShowUpdateMessage()
     On Error GoTo ThrowError
     Const ProcedureName As String = "ShowUpdateMessage"
@@ -143,7 +151,7 @@ Public Sub ShowUpdateMessage()
     MsgBox Join(Note, vbCrLf), vbInformation, "アップデート情報"
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Private Sub OpenWebPageForDownload()
@@ -154,7 +162,7 @@ Private Sub OpenWebPageForDownload()
     ShellObject.Run GITHUB_URL, 1, True
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 '@Ignore ProcedureCanBeWrittenAsFunction
@@ -170,7 +178,7 @@ Private Sub TryCopyAddinFile(ByRef Result As Long)
     If Not IsValidZipFile(ZipFilePath) Then Result = vbAbort: Exit Sub
     DeleteUnnecessaryZipFolder ZipFilePath
     Dim CurrentFolderPath As String
-    CurrentFolderPath = CSO.GetPath.FolderSrc
+    CurrentFolderPath = Directory.srcFolder
     ExpandDownloadZipFile ZipFilePath, CurrentFolderPath, Result
     If Result = vbAbort Then Exit Sub
     Dim LatestFolderPath As String
@@ -185,7 +193,7 @@ Private Sub TryCopyAddinFile(ByRef Result As Long)
     FSO.CopyFile LatestAddinFilePath, UpdateAddinFilePath, True
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Private Sub DeleteUnnecessaryZipFolder(ByVal ZipFilePath As String)
@@ -199,17 +207,17 @@ Private Sub DeleteUnnecessaryZipFolder(ByVal ZipFilePath As String)
     Next
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Public Sub TryBuildSystemFile()
     On Error GoTo ThrowError
     Const ProcedureName As String = "TryBuildSystemFile"
     Dim CurrentFolderPath As String
-    CurrentFolderPath = CSO.GetPath.FolderSrc
+    CurrentFolderPath = Directory.srcFolder
     Dim LatestFolderPath As String
     LatestFolderPath = FSO.BuildPath(CurrentFolderPath, FOLDER_PREFIX & DEFINED_VERSION) & AS_FOLDER
-'    TryCopyAndBuildBootBook LatestFolderPath
+    TryCopyAndBuildBootBook LatestFolderPath
     TryCopyOtherLatestFile LatestFolderPath
     TryRenameOldFolder
     TryRenameOldFile
@@ -217,7 +225,7 @@ Public Sub TryBuildSystemFile()
     TryDeleteOldFile
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 '@Ignore ProcedureCanBeWrittenAsFunction
@@ -244,57 +252,63 @@ ByRef Result As Long)
     FSO.DeleteFile TemporaryFilePath, True
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
-'Private Sub TryCopyAndBuildBootBook(ByVal LatestFolderPath As String)
-'    On Error GoTo ThrowError
-'    Const ProcedureName As String = "TryCopyAndBuildBootBook"
-'    Const MsgTitle As String = "アップデート"
-'    Dim LatestBootBookFilePath As String
-'    LatestBootBookFilePath = FSO.BuildPath(LatestFolderPath, LATEST_BOOTBOOK_NAME & ".xlsm")
-'    If Not FSO.FileExists(LatestBootBookFilePath) Then LIB.FileErrorRise LatestBootBookFilePath
-'    Dim UpdateBootBookFileName As String, UpdateBootBookFilePath As String
-'    UpdateBootBookFileName = UPDATE_BOOTBOOK_NAME & DEFINED_VERSION & ".xlsm"
-'    UpdateBootBookFilePath = FSO.BuildPath(CSO.GetPath.FolderTop, UpdateBootBookFileName)
-'    FSO.CopyFile LatestBootBookFilePath, UpdateBootBookFilePath, True
-'    With New Excel.Application
-'        .EnableEvents = False
-'        Dim UpdateBook As Workbook, UpdateSheet As Worksheet
-'        Set UpdateBook = .Workbooks.Open(UpdateBootBookFilePath)
-'        DoEvents
-'        Set UpdateSheet = UpdateBook.Worksheets.Item(CSO.BootSheetName)
-'        UpdateSheet.Range(CSO.AddressOfTopFolderPath).Value = CSO.GetPath.FolderTop
-'        UpdateBook.Save
-'        UpdateBook.Close False
-'        DoEvents
-'        .EnableEvents = True
-'        .Quit
-'    End With
-'    Dim Target As File
-'    For Each Target In FSO.GetFolder(CSO.GetPath.FolderTop).Files
-'        If Not Target.Name Like UpdateBootBookFileName Then Target.Delete True
-'    Next
-'Exit Sub
-'ThrowError:
-'    CEO.Throw MODULE_NAME, ProcedureName
-'    Err.Raise Err.Number, , Err.Description
-'End Sub
+Private Sub TryCopyAndBuildBootBook(ByVal LatestFolderPath As String)
+    On Error GoTo ThrowError
+    Const ProcedureName As String = "TryCopyAndBuildBootBook"
+    Dim LatestBootBookFilePath As String
+    LatestBootBookFilePath = FSO.BuildPath(LatestFolderPath, LATEST_BOOTBOOK_NAME & ".xlsm")
+    If Not FSO.FileExists(LatestBootBookFilePath) Then LIB.FileErrorRise LatestBootBookFilePath
+    Dim UpdateBootBookFileName As String
+    UpdateBootBookFileName = UPDATE_BOOTBOOK_NAME & DEFINED_VERSION & ".xlsm"
+    Dim UpdateBootBookFilePath As String
+    UpdateBootBookFilePath = FSO.BuildPath(Directory.topFolder, UpdateBootBookFileName)
+    FSO.CopyFile LatestBootBookFilePath, UpdateBootBookFilePath, True
+    With New Excel.Application
+        .EnableEvents = False
+        Dim UpdateBook As Workbook
+        Set UpdateBook = .Workbooks.Open(UpdateBootBookFilePath)
+        DoEvents
+        Dim AddinBookHoldsItem As IAddinSheetHoldsItem
+        Set AddinBookHoldsItem = New AddinSheetHoldsItem
+        Dim UpdateSheet As Worksheet
+        Set UpdateSheet = UpdateBook.Worksheets.Item(AddinBookHoldsItem.BootSheetName)
+        Dim CommonCellAddress As ICommonCellAddress
+        Set CommonCellAddress = New CommonCellAddress
+        UpdateSheet.Range(CommonCellAddress.ForTopFolderPath).Value = Directory.topFolder
+        UpdateBook.Save
+        UpdateBook.Close False
+        DoEvents
+        .EnableEvents = True
+        .Quit
+    End With
+    Dim Target As File
+    For Each Target In FSO.GetFolder(Directory.topFolder).Files
+        If Not Target.Name Like UpdateBootBookFileName Then Target.Delete True
+    Next
+Exit Sub
+ThrowError:
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
+    Err.Raise Err.Number, , Err.Description
+End Sub
 Private Sub TryCopyOtherLatestFile(ByVal LatestFolderPath As String)
     On Error GoTo ThrowError
     Const ProcedureName As String = "TryCopyOtherLatestFile"
     Dim HeaderFilePath As String
     HeaderFilePath = FSO.BuildPath(LatestFolderPath, "header.csv")
     If Not FSO.FileExists(HeaderFilePath) Then LIB.FileErrorRise HeaderFilePath
+    Set Directory = New Directory
     Dim SchedulesFolderPath As String
-    SchedulesFolderPath = CSO.GetPath.data.FolderSchedules
+    SchedulesFolderPath = Directory.schedulesFolder
     LIB.CreateFolder SchedulesFolderPath
     FSO.CopyFile HeaderFilePath, SchedulesFolderPath, True
     Dim HolidayFilePath As String
     HolidayFilePath = FSO.BuildPath(LatestFolderPath, "syukujitsu.csv")
     If Not FSO.FileExists(HolidayFilePath) Then LIB.FileErrorRise HolidayFilePath
     Dim HolidayFolderPath As String
-    HolidayFolderPath = CSO.GetPath.data.FolderHoliday
+    HolidayFolderPath = Directory.holidayFolder
     LIB.CreateFolder HolidayFolderPath
     FSO.CopyFile HolidayFilePath, HolidayFolderPath, True
     Dim DailyFilePath As String
@@ -310,7 +324,7 @@ Private Sub TryCopyOtherLatestFile(ByVal LatestFolderPath As String)
     If Not FSO.FileExists(MonthlyFilePath) Then LIB.FileErrorRise MonthlyFilePath
     If Not FSO.FileExists(YearlyFilePath) Then LIB.FileErrorRise YearlyFilePath
     Dim TemplatesFolderPath As String
-    TemplatesFolderPath = CSO.GetPath.FolderTemplates
+    TemplatesFolderPath = Directory.templatesFolder
     LIB.CreateFolder TemplatesFolderPath
     FSO.CopyFile DailyFilePath, TemplatesFolderPath, True
     FSO.CopyFile WeeklyFilePath, TemplatesFolderPath, True
@@ -318,77 +332,79 @@ Private Sub TryCopyOtherLatestFile(ByVal LatestFolderPath As String)
     FSO.CopyFile YearlyFilePath, TemplatesFolderPath, True
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Private Sub TryRenameOldFolder()
     On Error GoTo ThrowError
     Const ProcedureName As String = "TryRenameOldFolder"
     Dim ScheduleFolderPath As String
-    ScheduleFolderPath = FSO.BuildPath(CSO.GetPath.FolderData, "schedule") & AS_FOLDER
+    ScheduleFolderPath = FSO.BuildPath(Directory.dataFolder, "schedule") & AS_FOLDER
     If FSO.FolderExists(ScheduleFolderPath) Then
         FSO.GetFolder(ScheduleFolderPath).Name = "schedules"
     End If
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Private Sub TryRenameOldFile()
     On Error GoTo ThrowError
     Const ProcedureName As String = "TryRenameOldFile"
     Dim RegulardayFilePath As String
-    RegulardayFilePath = FSO.BuildPath(CSO.GetPath.data.FolderRegular, "regularday.csv")
+    Set Directory = New Directory
+    RegulardayFilePath = FSO.BuildPath(Directory.regularFolder, "regularday.csv")
     If FSO.FileExists(RegulardayFilePath) Then
         FSO.GetFile(RegulardayFilePath).Name = "RegularWeekDays.csv"
     End If
     Dim RegulardateFilePath As String
-    RegulardateFilePath = FSO.BuildPath(CSO.GetPath.data.FolderRegular, "regulardate.csv")
+    RegulardateFilePath = FSO.BuildPath(Directory.regularFolder, "regulardate.csv")
     If FSO.FileExists(RegulardateFilePath) Then
         FSO.GetFile(RegulardateFilePath).Name = "RegularDays.csv"
     End If
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Private Sub TryMoveOldFile()
     On Error GoTo ThrowError
     Const ProcedureName As String = "TryMoveOldFile"
     Dim OldDaydutyFilePath As String
-    OldDaydutyFilePath = FSO.BuildPath(CSO.GetPath.FolderData, "dayduty.csv")
+    Set Directory = New Directory
+    OldDaydutyFilePath = FSO.BuildPath(Directory.dataFolder, "dayduty.csv")
     Dim NewDaydutyFilePath As String
-    NewDaydutyFilePath = CSO.GetPath.data.dayduty.FileDayDuty
+    NewDaydutyFilePath = Directory.DayDutyFile
     If Not FSO.FileExists(NewDaydutyFilePath) Then
         If FSO.FileExists(OldDaydutyFilePath) Then
-            LIB.CreateFolder CSO.GetPath.data.FolderDayDuty
+            LIB.CreateFolder Directory.daydutyFolder
             FSO.MoveFile OldDaydutyFilePath, NewDaydutyFilePath
         End If
     End If
     Dim OldSyukujitsuFilePath As String
-    OldSyukujitsuFilePath = FSO.BuildPath(CSO.GetPath.FolderData, "syukujitsu.csv")
+    OldSyukujitsuFilePath = FSO.BuildPath(Directory.dataFolder, "syukujitsu.csv")
     Dim NewHolidayFilePath As String
-    NewHolidayFilePath = CSO.GetPath.data.Holiday.FileHoliday
+    NewHolidayFilePath = Directory.HolidayFile
     If Not FSO.FileExists(NewHolidayFilePath) Then
         If FSO.FileExists(OldSyukujitsuFilePath) Then
-            LIB.CreateFolder CSO.GetPath.data.FolderHoliday
+            LIB.CreateFolder Directory.holidayFolder
             FSO.MoveFile OldSyukujitsuFilePath, NewHolidayFilePath
         End If
     End If
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Private Sub TryDeleteOldFile()
     On Error GoTo ThrowError
     Const ProcedureName As String = "TryDeleteOldFile"
     Dim OldErrorLogPath As String
-    OldErrorLogPath = FSO.BuildPath(CSO.GetPath.FolderData, "error.log")
+    OldErrorLogPath = FSO.BuildPath(Directory.dataFolder, "error.log")
     If FSO.FileExists(OldErrorLogPath) Then FSO.DeleteFile OldErrorLogPath, True
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Public Function DefindVersion() As String
@@ -400,7 +416,13 @@ Public Function CanUpdate() As Boolean
     CanUpdate = True
 End Function
 Public Function IsLatestVersion() As Boolean
-    If CSO.AddinVersion Like DEFINED_VERSION Then IsLatestVersion = True
+    Dim BootSheetHoldsItem As IBootSheetHoldsItem
+    Set BootSheetHoldsItem = New BootSheetHoldsItem
+    If BootSheetHoldsItem.AddinVersion Like DEFINED_VERSION Then IsLatestVersion = True
+End Function
+Public Function ShouldSwapBootBook() As Boolean
+    If Not SHOULD_SWAP_BOOT_BOOK Then Exit Function
+    ShouldSwapBootBook = True
 End Function
 Private Function ResponsedFilePath(ByVal DownloadFileName As String) As String
     With Application.FileDialog(msoFileDialogFilePicker)
@@ -414,7 +436,7 @@ Private Function AddDowndateVersion() As Dictionary
     Dim RET As Dictionary
     Set RET = New Dictionary
     Dim Target As Folder
-    For Each Target In FSO.GetFolder(CSO.GetPath.FolderSrc).SubFolders
+    For Each Target In FSO.GetFolder(Directory.srcFolder).SubFolders
         RET.Add Replace(Target.Name, FOLDER_PREFIX, vbNullString), Target.Name
     Next
     If RET.Count = 0 Then Exit Function
@@ -458,7 +480,7 @@ Private Function IsValidZipFile(ByVal FilePath As String) As Boolean
 End Function
 Private Function IsValidSystemFolerPath() As Boolean
     Dim FolderNames() As String
-    FolderNames = Split(CSO.GetPath.FolderTop, AS_FOLDER)
+    FolderNames = Split(Directory.topFolder, AS_FOLDER)
     Dim HasSpace() As String
     HasSpace = Filter(FolderNames, HALF_SPACE, compare:=vbTextCompare)
     If UBound(HasSpace) > -1 Then
@@ -469,5 +491,26 @@ Private Function IsValidSystemFolerPath() As Boolean
     End If
     IsValidSystemFolerPath = True
 End Function
+'@Ignore ProcedureNotUsed
+Public Property Let IsSwappingBootBook(ByVal FilePath As String, ByVal State As Boolean)
+    On Error GoTo ThrowError
+    With FSO.OpenTextFile(FilePath, ForWriting, True)
+        .WriteLine CStr(State)
+ThrowError:
+        .Close
+        DoEvents
+    End With
+    If Err.Number <> 0 Then Err.Raise Err.Number, , Err.Description
+End Property
+Public Property Get IsSwappingBootBook(ByVal FilePath As String) As Boolean
+    On Error GoTo ThrowError
+    With FSO.OpenTextFile(FilePath, ForReading)
+        IsSwappingBootBook = CBool(.ReadLine)
+ThrowError:
+        .Close
+        DoEvents
+    End With
+    If Err.Number <> 0 Then Err.Raise Err.Number, , Err.Description
+End Property
 
 
