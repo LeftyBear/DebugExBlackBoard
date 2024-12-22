@@ -7,10 +7,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Schdule")
+'@Folder("Schedule")
 Option Explicit
 Private HeaderBody_                 As Variant
-Private DataBody_                   As Variant
+Private DataBody_()                 As Variant
 Private Const KEY_項目名            As String = "ItemName"
 Private Const KEY_印刷範囲          As String = "PrintingArea"
 Private Const KEY_印刷月            As String = "PrintingMonth"
@@ -46,7 +46,7 @@ Public Sub ReadFile(ByVal FilePath As String)
     If Not FSO.FileExists(FilePath) Then Exit Sub
     Dim TMP() As Variant
     TMP = LIB.ReadAllLineAsArray2D(FilePath)
-    If LIB.NotIsArray(TMP) Then Exit Sub
+    If LIB.IsNoneArray(TMP) Then Exit Sub
     Dim BUF() As Variant
     ReDim BUF(1 To 1, 1 To UBound(TMP, 2))
     Dim R As Long
@@ -78,39 +78,53 @@ End Property
 Public Property Get HeaderBody() As Variant
     HeaderBody = HeaderBody_
 End Property
-Public Property Let DataBody(ByVal Target As Variant)
+Public Property Let DataBody(ByRef Target() As Variant)
     DataBody_ = Target
 End Property
-Public Property Get DataBody() As Variant
+Public Property Get DataBody() As Variant()
     DataBody = DataBody_
 End Property
 Public Function Item項目名(ByVal R As Long) As String
     If Me.C項目名 > ColumnsCount Then Exit Function
-    Item項目名 = Me.DataBody(R, Me.C項目名)
+    Dim BUF() As Variant
+    BUF = Me.DataBody
+    Item項目名 = BUF(R, Me.C項目名)
 End Function
 Public Function Item印刷範囲(ByVal R As Long) As String
     If Me.C印刷範囲 > ColumnsCount Then Exit Function
-    Item印刷範囲 = Replace(Me.DataBody(R, Me.C印刷範囲), SEMICOLON, CANNMA)
+    Dim BUF() As Variant
+    BUF = Me.DataBody
+    Item印刷範囲 = Replace(BUF(R, Me.C印刷範囲), SEMICOLON, CANNMA)
 End Function
 Public Function Item印刷月(ByVal R As Long) As String
     If Me.C印刷月 > ColumnsCount Then Exit Function
-    Item印刷月 = Me.DataBody(R, Me.C印刷月)
+    Dim BUF() As Variant
+    BUF = Me.DataBody
+    Item印刷月 = BUF(R, Me.C印刷月)
 End Function
 Public Function Item印刷週(ByVal R As Long) As String
     If Me.C印刷週 > ColumnsCount Then Exit Function
-    Item印刷週 = Me.DataBody(R, Me.C印刷週)
+    Dim BUF() As Variant
+    BUF = Me.DataBody
+    Item印刷週 = BUF(R, Me.C印刷週)
 End Function
 Public Function Item集計方法(ByVal R As Long) As String
     If Me.C集計方法 > ColumnsCount Then Exit Function
-    Item集計方法 = Me.DataBody(R, Me.C集計方法)
+    Dim BUF() As Variant
+    BUF = Me.DataBody
+    Item集計方法 = BUF(R, Me.C集計方法)
 End Function
 Public Function Item文字サイズ縮小(ByVal R As Long) As String
     If Me.C文字サイズ縮小 > ColumnsCount Then Exit Function
-    Item文字サイズ縮小 = Me.DataBody(R, Me.C文字サイズ縮小)
+    Dim BUF() As Variant
+    BUF = Me.DataBody
+    Item文字サイズ縮小 = BUF(R, Me.C文字サイズ縮小)
 End Function
 Public Function Item項目名追加(ByVal R As Long) As String
     If Me.C項目名追加 > ColumnsCount Then Exit Function
-    Item項目名追加 = Me.DataBody(R, Me.C項目名追加)
+    Dim BUF() As Variant
+    BUF = Me.DataBody
+    Item項目名追加 = BUF(R, Me.C項目名追加)
 End Function
 Public Function Key項目名() As String
     Key項目名 = KEY_項目名
