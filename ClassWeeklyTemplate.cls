@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Template")
 Option Explicit
 Private Book_               As Workbook
-Private Sheet_              As Worksheet
+Private TargetSheet_        As Worksheet
 Private UsedPrintingRange_  As Range
 Private PrintingItem_       As ClassPrintingItem
 Private WeeklySchedule_     As ClassWeeklySchedule
@@ -26,11 +26,11 @@ End Property
 Public Property Set Book(ByVal Target As Workbook)
     Set Book_ = Target
 End Property
-Public Property Get Sheet() As Worksheet
-    Set Sheet = Sheet_
+Public Property Get TargetSheet() As Worksheet
+    Set TargetSheet = TargetSheet_
 End Property
-Public Property Set Sheet(ByVal Target As Worksheet)
-    Set Sheet_ = Target
+Public Property Set TargetSheet(ByVal Target As Worksheet)
+    Set TargetSheet_ = Target
 End Property
 Public Property Get UsedPrintingRange() As Range
     Set UsedPrintingRange = UsedPrintingRange_
@@ -64,17 +64,19 @@ Public Property Let HasSheet(ByVal State As Boolean)
 End Property
 Private Sub Class_Initialize()
     On Error Resume Next
-    Set Me.Book = Workbooks.Open(FileName:=CSO.GetPath.templates.FileWeekly, ReadOnly:=True)
-    Set Me.Sheet = Me.Book.Worksheets.Item(1)
+    Dim Directory As IDirectory
+    Set Directory = New Directory
+    Set Me.Book = Workbooks.Open(FileName:=Directory.WeeklyTemplateFile, ReadOnly:=True)
+    Set Me.TargetSheet = Me.Book.Worksheets.Item(1)
     Set Me.PrintingItem = New ClassPrintingItem
-    Me.PrintingItem.ReadFile CSO.GetPath.templates.FileWeeklyTemplateSetting
+    Me.PrintingItem.ReadFile Directory.WeeklyTemplateSettingFile
     On Error GoTo 0
     With New ClassTemplateLinkLibrary
-        Me.HasSheet = .HasSheet(Me.Sheet, MSG_TITLE)
+        Me.HasSheet = .HasSheet(Me.TargetSheet, MSG_TITLE)
         Me.HasPrintingItem = .HasPrintingItem(Me.PrintingItem, MSG_TITLE)
         If Not Me.HasSheet Then Exit Sub
         If Not Me.HasPrintingItem Then Exit Sub
-        Set .Sheet = Me.Sheet
+        Set .TargetSheet = Me.TargetSheet
         Set .PrintingItem = Me.PrintingItem
         Set Me.UsedPrintingRange = .AddUsedPrintingRange
     End With
@@ -83,7 +85,7 @@ Public Sub SetUpTemplate(ByVal WeeklySchedule As ClassWeeklySchedule, ByVal Link
     Set Me.WeeklySchedule = WeeklySchedule
     With LinkLibrary
         Set .WeeklySchedule = Me.WeeklySchedule
-        Set .Sheet = Me.Sheet
+        Set .TargetSheet = Me.TargetSheet
         Set .PrintingItem = Me.PrintingItem
         Set .UsedPrintingRange = Me.UsedPrintingRange
     End With
