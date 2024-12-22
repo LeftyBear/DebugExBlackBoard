@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Template")
 Option Explicit
-Private Sheet_                  As Worksheet
+Private TargetSheet_            As Worksheet
 Private UsedPrintingRange_      As Range
 Private RecordNumbers_          As Dictionary
 Private PrintingItemIndexes_    As Dictionary
@@ -54,11 +54,11 @@ Public Enum SCHEDULE_TYPE
     Yearly
 End Enum
 Private Const MODULE_NAME As String = "ClassTemplateLinkLibrary"
-Public Property Get Sheet() As Worksheet
-    Set Sheet = Sheet_
+Public Property Get TargetSheet() As Worksheet
+    Set TargetSheet = TargetSheet_
 End Property
-Public Property Set Sheet(ByVal Target As Worksheet)
-    Set Sheet_ = Target
+Public Property Set TargetSheet(ByVal Target As Worksheet)
+    Set TargetSheet_ = Target
 End Property
 Public Property Get UsedPrintingRange() As Range
     Set UsedPrintingRange = UsedPrintingRange_
@@ -141,7 +141,7 @@ End Property
 Public Function AddUsedPrintingRange() As Range
     Dim RET As Range
     Dim BufSheet As Worksheet
-    Set BufSheet = Me.Sheet
+    Set BufSheet = Me.TargetSheet
     Dim BufDataBody() As Variant
     '@Ignore UseMeaningfulName
     Dim C印刷範囲 As Long
@@ -165,7 +165,7 @@ Public Function AddRecordNumbers(ByVal RecordNumbers As Collection) As Dictionar
     Dim RET As Dictionary
     Set RET = New Dictionary
     Dim BufSheet As Worksheet
-    Set BufSheet = Me.Sheet
+    Set BufSheet = Me.TargetSheet
     Dim BufDataBody() As Variant
     '@Ignore UseMeaningfulName
     Dim C印刷範囲 As Long
@@ -225,7 +225,7 @@ Public Function AddPrintingItemIndexes() As Dictionary
     Dim RET As Dictionary
     Set RET = New Dictionary
     Dim BufSheet As Worksheet
-    Set BufSheet = Me.Sheet
+    Set BufSheet = Me.TargetSheet
     Dim BufDataBody() As Variant
     '@Ignore UseMeaningfulName
     Dim C印刷範囲 As Long
@@ -279,7 +279,7 @@ Public Function AddArrayPositions() As Dictionary
     Dim BufSheet As Worksheet
     Dim BufUsedPrintingRange As Range
     Dim BufPrintingItemIndexes As Dictionary
-    Set BufSheet = Me.Sheet
+    Set BufSheet = Me.TargetSheet
     Set BufUsedPrintingRange = Me.UsedPrintingRange
     Set BufPrintingItemIndexes = Me.PrintingItemIndexes
     Dim PrintingAddress As Variant
@@ -354,7 +354,7 @@ Public Function AddDataBody() As Variant()
     Dim BufSheet As Worksheet
     Dim BufArrayPositions As Dictionary
     Dim BufScheduleValues As Dictionary
-    Set BufSheet = Me.Sheet
+    Set BufSheet = Me.TargetSheet
     Set BufArrayPositions = Me.ArrayPositions
     Set BufScheduleValues = Me.ScheduleValues
     Dim PrintingAddress As Variant
@@ -378,7 +378,7 @@ Public Sub Size文字サイズ縮小()
     Dim DownSizes As Dictionary
     Set DownSizes = LIB.TransposeCommonItem→Key(Addresses)
     Dim BufSheet As Worksheet
-    Set BufSheet = Me.Sheet
+    Set BufSheet = Me.TargetSheet
     Dim DownSize As Variant
     For Each DownSize In DownSizes
         Dim TargetAddress As Variant
@@ -395,7 +395,7 @@ Public Sub Size文字サイズ縮小()
     Next
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Public Sub To縦書きの日付()
@@ -405,7 +405,7 @@ Public Sub To縦書きの日付()
         Dim i As Long
         For i = 1 To UBound(.DataBody)
             Dim PrintingRange As Range
-            Set PrintingRange = Me.Sheet.Range(.Item印刷範囲(i))
+            Set PrintingRange = Me.TargetSheet.Range(.Item印刷範囲(i))
             If IsDateContinuousCell(PrintingRange, .Item項目名(i)) Then
                 Dim Target As Range
                 Dim UpperLeft As Range
@@ -424,20 +424,22 @@ Public Sub To縦書きの日付()
     End With
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Public Sub Color日付単一セルby日直日()
     On Error GoTo ThrowError
     Const ProcedureName As String = "Color日付単一セルby日直日"
+    Dim Sheet As ISheetWithTable
+    Set Sheet = Schedule.Sheet
     Dim DayDutyDays As Dictionary
-    Set DayDutyDays = Schedule.TableColumnItemList("日直日")
+    Set DayDutyDays = Sheet.YearlyRecordItemList("日直日")
     With Me.PrintingItem
         Dim i As Long
         For i = 1 To UBound(.DataBody)
             If .Item項目名(i) Like "日付" Then
                 Dim Target As Range
-                Set Target = Me.Sheet.Range(.Item印刷範囲(i))
+                Set Target = Me.TargetSheet.Range(.Item印刷範囲(i))
                 If IsValidDate(Target.Value) Then
                     If CBool(DayDutyDays.Item(CDate(Target.Value))) Then
                         Target.Font.Color = RGB_COLOR.Black
@@ -450,7 +452,7 @@ Public Sub Color日付単一セルby日直日()
     End With
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Public Sub Pattern網掛けby日直日(ByVal UsedPrintingRange As Range)
@@ -459,9 +461,11 @@ Public Sub Pattern網掛けby日直日(ByVal UsedPrintingRange As Range)
     Dim C As Long
     C = UsedPrintingRange.Columns.Count
     Dim BufSheet As Worksheet
-    Set BufSheet = Me.Sheet
+    Set BufSheet = Me.TargetSheet
+    Dim Sheet As ISheetWithTable
+    Set Sheet = Schedule.Sheet
     Dim DayDutyDays As Dictionary
-    Set DayDutyDays = Schedule.TableColumnItemList("日直日")
+    Set DayDutyDays = Sheet.YearlyRecordItemList("日直日")
     With Me.PrintingItem
         Dim i As Long
         For i = 1 To UBound(.DataBody)
@@ -489,16 +493,18 @@ Public Sub Pattern網掛けby日直日(ByVal UsedPrintingRange As Range)
     If Not UnionTarget Is Nothing Then UnionTarget.Interior.Pattern = HATCHING
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Public Sub Pattern網掛けby授業日()
     On Error GoTo ThrowError
     Const ProcedureName As String = "Pattern網掛けby授業日"
     Dim BufSheet As Worksheet
-    Set BufSheet = Me.Sheet
+    Set BufSheet = Me.TargetSheet
+    Dim Sheet As ISheetWithTable
+    Set Sheet = Schedule.Sheet
     Dim ClassDays As Dictionary
-    Set ClassDays = Schedule.TableColumnItemList("授業日")
+    Set ClassDays = Sheet.YearlyRecordItemList("授業日")
     If ClassDays Is Nothing Then Exit Sub
     With Me.PrintingItem
         Dim i As Long
@@ -543,7 +549,7 @@ Public Sub Pattern網掛けby授業日()
     If Not UnionTarget Is Nothing Then UnionTarget.Interior.Pattern = HATCHING
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Public Sub Fix行高by日直日()
@@ -551,11 +557,13 @@ Public Sub Fix行高by日直日()
     Const ProcedureName As String = "Fix行高by日直日"
     Const BasisRowHeightAddress As String = "A5"
     Dim BufSheet As Worksheet
-    Set BufSheet = Me.Sheet
+    Set BufSheet = Me.TargetSheet
     Dim BasisRowHeight As Double
     BasisRowHeight = BufSheet.Range(BasisRowHeightAddress).RowHeight
+    Dim Sheet As ISheetWithTable
+    Set Sheet = Schedule.Sheet
     Dim DayDutyDays As Dictionary
-    Set DayDutyDays = Schedule.TableColumnItemList("日直日")
+    Set DayDutyDays = Sheet.YearlyRecordItemList("日直日")
     If DayDutyDays Is Nothing Then Exit Sub
     With Me.PrintingItem
         Dim i As Long
@@ -587,17 +595,17 @@ Public Sub Fix行高by日直日()
     If Not UnionTarget Is Nothing Then UnionTarget.RowHeight = BasisRowHeight / DIVISOR_ROW_HEIGHT
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
-Public Function HasSheet(ByVal Sheet As Worksheet, ByVal MsgTitle As String) As Boolean
-    If Sheet Is Nothing Then
+Public Function HasSheet(ByVal TargetSheet As Worksheet, ByVal MsgTitle As String) As Boolean
+    If TargetSheet Is Nothing Then
         MsgBox "印刷様式ファイルが見つかりませんでした。", vbExclamation, MsgTitle: Exit Function
     End If
     HasSheet = True
 End Function
 Public Function HasPrintingItem(ByVal PrintingItem As ClassPrintingItem, ByVal MsgTitle As String) As Boolean
-    If LIB.NotIsArray(PrintingItem.DataBody) Then
+    If LIB.IsNoneArray(PrintingItem.DataBody) Then
         MsgBox "印刷様式設定ファイルが見つかりませんでした。", vbExclamation, MsgTitle: Exit Function
     End If
     HasPrintingItem = True
@@ -736,7 +744,7 @@ ByVal MonthName As String) As Variant
     Dim RET As Variant
     With Me.YearlySchedule
         If ItemName Like "授業日" Then
-            RET = .TotalClassHoursOfMonth(MonthName)
+            RET = .TotalClassDayOfMonth(MonthName)
         Else
             RET = .DataBody(RecordNumber, .ItemNames.Item(ItemName))
         End If
@@ -751,12 +759,12 @@ Private Function AddFontSizeDownAddresses() As Dictionary
     Dim BufSheet As Worksheet
     Dim BufMaxFontSize As Long
     Dim BufMinFontSize As Long
-    Set BufSheet = Me.Sheet
+    Set BufSheet = Me.TargetSheet
     BufMaxFontSize = Me.MaxFontSize
     BufMinFontSize = Me.MinFontSize
     Dim FontSizing As ClassFontSizing
     Set FontSizing = New ClassFontSizing
-    Set FontSizing.Sheet = Me.Sheet
+    Set FontSizing.TargetSheet = Me.TargetSheet
     With Me.PrintingItem
         Dim i As Long
         For i = 1 To UBound(.DataBody)
@@ -793,7 +801,7 @@ Private Sub ReplaceVbLf(ByVal Addresses As Dictionary)
     DataBody = Me.UsedPrintingRange.Value
     Dim BufSheet As Worksheet
     Dim BufPositions As Dictionary
-    Set BufSheet = Me.Sheet
+    Set BufSheet = Me.TargetSheet
     Set BufPositions = Me.ArrayPositions
     Dim Target As Variant
     For Each Target In Addresses
@@ -806,7 +814,7 @@ Private Sub ReplaceVbLf(ByVal Addresses As Dictionary)
     Me.UsedPrintingRange.Value = DataBody
 Exit Sub
 ThrowError:
-    CEO.Throw MODULE_NAME, ProcedureName
+    ErrorHandler.Throw MODULE_NAME, ProcedureName
     Err.Raise Err.Number, , Err.Description
 End Sub
 Private Function ToVerticalWritingDate(ByVal Target As Date) As String
