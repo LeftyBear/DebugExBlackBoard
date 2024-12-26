@@ -41,9 +41,8 @@ Private Sub IAdministrator_SetPassword()
     Loop
     Set Authorization = New Authorization
     With Authorization
-        Set Directory = New Directory
-        .Administrator(Directory.AdministorFile) = Environ$("USERNAME")
-        .AdministrationPassword(Directory.PasswordFile) = IAdministrator_EncryptedPassword(NewPassword)
+        .Administrator(System.Directory.AdministorFile) = Environ$("USERNAME")
+        .AdministrationPassword(System.Directory.PasswordFile) = IAdministrator_EncryptedPassword(NewPassword)
     End With
     MsgBox "パスワードを変更しました。", vbInformation, MsgTitle
 End Sub
@@ -81,8 +80,7 @@ Private Function IAdministrator_IsValid() As Boolean
     RES = InputBox("パスワードを入力してください。", MsgTitle)
     If RES Like vbNullString Then Exit Function
     Set Authorization = New Authorization
-    Set Directory = New Directory
-    If Not RES Like IAdministrator_DecryptedPassword(Authorization.AdministrationPassword(Directory.PasswordFile)) Then
+    If Not RES Like IAdministrator_DecryptedPassword(Authorization.AdministrationPassword(System.Directory.PasswordFile)) Then
         MsgBox "パスワードが一致しません。", vbExclamation, MsgTitle: Exit Function
     End If
     IAdministrator_IsValid = True
