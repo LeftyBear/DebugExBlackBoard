@@ -12,7 +12,7 @@ Option Explicit
 Implements ICalculator
 Private Enum ClassHourItemNameParts
     TypeTotal = 0
-    Class
+    ClassName
     Grade
 End Enum
 Private Enum TimeTableItemNameParts
@@ -26,27 +26,27 @@ Private Function ICalculator_Totaled(ByVal RecordList As Scripting.IDictionary) 
     If RecordList Is Nothing Then Exit Function
     Dim ItemName As Variant
     For Each ItemName In RecordList
-        If ItemName Like "*“úŒv*" Then
+        If ItemName Like "*æ—¥è¨ˆ*" Then
             Dim TypeTotal As String
             TypeTotal = Split(ItemName, DELIMITER)(ClassHourItemNameParts.TypeTotal)
-            Dim Class As String
-            Class = Split(ItemName, DELIMITER)(ClassHourItemNameParts.Class)
+            Dim ClassName As String
+		            ClassName = Split(ItemName, DELIMITER)(ClassHourItemNameParts.ClassName)
             Dim Grade As String
             Grade = Split(ItemName, DELIMITER)(ClassHourItemNameParts.Grade)
-            RecordList.Item(ItemName) = TotalToday(RecordList, TypeTotal, Class, Grade)
+            RecordList.Item(ItemName) = TotalToday(RecordList, TypeTotal, ClassName, Grade)
         End If
     Next
     Dim ListItems() As Variant
     ListItems = RecordList.Items
-    ICalculator_Totaled = LIB.TransposeArray1D¨2D(ListItems)
+    ICalculator_Totaled = LIB.TransposeArray1Dâ†’2D(ListItems)
 End Function
-Private Function TotalToday(ByVal RecordList As Dictionary, ByVal TypeTotal As String, ByVal Class As String, ByVal Grade As String) As Long
+Private Function TotalToday(ByVal RecordList As Dictionary, ByVal TypeTotal As String, ByVal ClassName As String, ByVal Grade As String) As Long
     Dim RET As Long
     Dim ItemName As Variant
     For Each ItemName In RecordList
         If ItemName Like TypeTotal Then
-            If Not Class Like "*Z*" Then
-                If Not Class Like "“úŒv" Then
+            If Not ClassName Like "*æ ¡æ™‚*" Then
+                If Not ClassName Like "æ—¥è¨ˆ" Then
                     If ItemName Like Grade Then
                         RET = RET + RecordList.Item(ItemName)
                     End If
@@ -58,21 +58,21 @@ Private Function TotalToday(ByVal RecordList As Dictionary, ByVal TypeTotal As S
 End Function
 Public Function TotalWeek(ByVal TargetDate As Date, ByVal TypeTotal As String, ByVal Class As String, ByVal Grade As String) As Long
     Dim FirstR As Long
-    FirstR = LIB.DateDiff4Œ1“ú(LIB.Date¡T‰“ú(TargetDate))
+    FirstR = LIB.DateDiff4æœˆ1æ—¥(LIB.Dateä»Šé€±åˆæ—¥(TargetDate))
     Dim RowsCount As Long
-    RowsCount = LIB.Date¡T––“ú(TargetDate) - LIB.Date¡T‰“ú(TargetDate) + 1
+    RowsCount = LIB.Dateä»Šé€±æœ«æ—¥(TargetDate) - LIB.Dateä»Šé€±åˆæ—¥(TargetDate) + 1
     Dim TargetRange As Range
-    Set TargetRange = Me.Sheet.DailyRecordItem(FirstR, TypeTotal & "_“úŒv_" & Grade & "”N")
+    Set TargetRange = Me.Sheet.DailyRecordItem(FirstR, TypeTotal & "_æ—¥è¨ˆ_" & Grade & "å¹´")
     If TargetRange Is Nothing Then Exit Function
     TotalWeek = WorksheetFunction.Sum(TargetRange)
 End Function
 Public Function TotalMonth(ByVal TargetDate As Date, ByVal TypeTotal As String, ByVal Class As String, ByVal Grade As String) As Long
     Dim FirstR As Long
-    FirstR = LIB.DateDiff4Œ1“ú(LIB.Date¡Œ1“ú(TargetDate))
+    FirstR = LIB.DateDiff4æœˆ1æ—¥(LIB.Dateä»Šæœˆ1æ—¥(TargetDate))
     Dim RowsCount As Long
-    RowsCount = LIB.Date¡Œ––“ú(TargetDate) - LIB.Date¡Œ1“ú(TargetDate) + 1
+    RowsCount = LIB.Dateä»Šæœˆæœ«æ—¥(TargetDate) - LIB.Dateä»Šæœˆ1æ—¥(TargetDate) + 1
     Dim TargetRange As Range
-    Set TargetRange = Me.Sheet.DailyRecordItem(FirstR, TypeTotal & "_“úŒv_" & Grade & "”N")
+    Set TargetRange = Me.Sheet.DailyRecordItem(FirstR, TypeTotal & "_æ—¥è¨ˆ_" & Grade & "å¹´")
     If TargetRange Is Nothing Then Exit Function
     TotalMonth = WorksheetFunction.Sum(TargetRange)
 End Function
@@ -80,9 +80,9 @@ Public Function TotalYear(ByVal TargetDate As Date, ByVal TypeTotal As String, B
     Dim FirstR As Long
     FirstR = 1
     Dim RowsCount As Long
-    RowsCount = LIB.Date3Œ31“ú(TargetDate) - LIB.Date4Œ1“ú(TargetDate) + 1
+    RowsCount = LIB.Date3æœˆ31æ—¥(TargetDate) - LIB.Date4æœˆ1æ—¥(TargetDate) + 1
     Dim TargetRange As Range
-    Set TargetRange = Me.Sheet.DailyRecordItem(FirstR, TypeTotal & "_“úŒv_" & Grade & "”N")
+    Set TargetRange = Me.Sheet.DailyRecordItem(FirstR, TypeTotal & "_æ—¥è¨ˆ_" & Grade & "å¹´")
     If TargetRange Is Nothing Then Exit Function
     TotalYear = WorksheetFunction.Sum(TargetRange)
 End Function
@@ -93,7 +93,7 @@ Private Function IFinder_Find(ByVal RecordList As Scripting.IDictionary) As Stri
     For Grade = 1 To 6
         Dim BUF As Collection
         Set BUF = MismatchedClassList(RecordList, Grade)
-        If BUF.Count > 0 Then RET.Add Grade & "”N‚Ì " & Join(LIB.CollectionItemsToArray(BUF), "A")
+        If BUF.Count > 0 Then RET.Add Grade & "å¹´ã® " & Join(LIB.CollectionItemsToArray(BUF), "ã€")
     Next
     If RET.Count = 0 Then Exit Function
     IFinder_Find = Join(LIB.CollectionItemsToArray(RET), vbCrLf)
@@ -101,20 +101,20 @@ End Function
 Private Function MismatchedClassList(ByVal RecordList As Dictionary, ByVal Grade As Long) As Collection
     Dim RET As Collection
     Set RET = New Collection
-    If Not Equals(RecordList, Grade, "ö‹Æ", "›") Then RET.Add "ö‹Æ"
-    If Not Equals(RecordList, Grade, "s–", "s") Then RET.Add "s–"
-    If Not Equals(RecordList, Grade, "™“¶‰ï", "™") Then RET.Add "™“¶‰ï"
+    If Not Equals(RecordList, Grade, "æˆæ¥­", "â—‹") Then RET.Add "æˆæ¥­"
+    If Not Equals(RecordList, Grade, "è¡Œäº‹", "è¡Œ") Then RET.Add "è¡Œäº‹"
+    If Not Equals(RecordList, Grade, "å…ç«¥ä¼š", "å…") Then RET.Add "å…ç«¥ä¼š"
     If 4 <= Grade Then
-        If Not Equals(RecordList, Grade, "ƒNƒ‰ƒu", "ƒN") Then RET.Add "ƒNƒ‰ƒu"
+        If Not Equals(RecordList, Grade, "ã‚¯ãƒ©ãƒ–", "ã‚¯") Then RET.Add "ã‚¯ãƒ©ãƒ–"
         If 5 <= Grade Then
-            If Not Equals(RecordList, Grade, "ˆÏˆõ‰ï", "ˆÏ") Then RET.Add "ˆÏˆõ‰ï"
+            If Not Equals(RecordList, Grade, "å§”å“¡ä¼š", "å§”") Then RET.Add "å§”å“¡ä¼š"
         End If
     End If
     Set MismatchedClassList = RET
 End Function
 Private Function Equals(ByVal RecordList As Dictionary, ByVal Grade As Long, ByVal ItemName As String, ByVal TimeTableName As String) As Boolean
     Dim FindItemName As String
-    FindItemName = ItemName & DELIMITER & Grade & "”N"
+    FindItemName = ItemName & DELIMITER & Grade & "å¹´"
     Dim TargetClassHour As Long
     TargetClassHour = RecordList.Item(FindItemName)
     Dim TotalTimeTable As Long
@@ -126,8 +126,8 @@ Private Function CountedTimeTableName(ByVal RecordList As Dictionary, ByVal Grad
     Dim Period As Long
     For Period = 1 To 6
         Dim FindItemNameParts(TimeTableItemNameParts.Grade) As String
-        FindItemNameParts(TimeTableItemNameParts.Period) = Period & "Z"
-        FindItemNameParts(TimeTableItemNameParts.Grade) = Grade & "”N"
+        FindItemNameParts(TimeTableItemNameParts.Period) = Period & "æ ¡æ™‚"
+        FindItemNameParts(TimeTableItemNameParts.Grade) = Grade & "å¹´"
         Dim FindItemName As String
         FindItemName = Join(FindItemNameParts, DELIMITER)
         If RecordList.Item(FindItemName) Like TimeTableName Then RET = RET + 1
