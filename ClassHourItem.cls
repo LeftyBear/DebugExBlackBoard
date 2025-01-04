@@ -26,48 +26,58 @@ Private Function ICalculator_Totaled(ByVal RecordList As Scripting.IDictionary) 
     If RecordList Is Nothing Then Exit Function
     Dim ItemName As Variant
     For Each ItemName In RecordList
-        If ItemName Like "*日計*" Then
+        
             Dim TypeTotal As String
             TypeTotal = Split(ItemName, DELIMITER)(ClassHourItemNameParts.TypeTotal)
-            Dim ClassName As String
+						
+            Dim ClasrsName As String
 		            ClassName = Split(ItemName, DELIMITER)(ClassHourItemNameParts.ClassName)
-            Dim Grade As String
+            If ClasrsName Like "日計" Then
+						Dim Grade As String
             Grade = Split(ItemName, DELIMITER)(ClassHourItemNameParts.Grade)
-            RecordList.Item(ItemName) = TotalToday(RecordList, TypeTotal, ClassName, Grade)
+            RecordList.Item(ItemName) = TotalToday(RecordList,TypeTotal, Grade)
         End If
     Next
     Dim ListItems() As Variant
     ListItems = RecordList.Items
     ICalculator_Totaled = LIB.TransposeArray1D→2D(ListItems)
 End Function
-Private Function TotalToday(ByVal RecordList As Dictionary, ByVal TypeTotal As String, ByVal ClassName As String, ByVal Grade As String) As Long
+Private Function TotalToday(ByVal RecordList As Dictionary, ByVal TypeTotal As String, ByVal Grade As String) As Long
     Dim RET As Long
     Dim ItemName As Variant
     For Each ItemName In RecordList
-        If ItemName Like TypeTotal Then
-            If Not ClassName Like "*校時*" Then
-                If Not ClassName Like "日計" Then
-                    If ItemName Like Grade Then
+        
+            If ItemName Like  TypeTotal & "*" Then
+               
+                    If ItemName Like "*" & Grade & "*" Then
                         RET = RET + RecordList.Item(ItemName)
                     End If
-                End If
+                
             End If
-        End If
+        
     Next
     TotalToday = RET
 End Function
-Public Function TotalWeek(ByVal TargetDate As Date, ByVal TypeTotal As String, ByVal Class As String, ByVal Grade As String) As Long
-    Dim FirstR As Long
-    FirstR = LIB.DateDiff4月1日(LIB.Date今週初日(TargetDate))
+Public Function TotalWeek(ByVal TargetDate As Date, ByVal TypeTotal As String, ByVal Grade As String) As Long
+    dim FirstDate as date
+		firstdate=iif(今週初日<4月1日,4月1日,今週初日)
+		dim LastDate as date
+		lastdate=iif(3月31日<今週末日,3月31日,今週末日)
+		Dim FirstR As Long
+    FirstR = LIB.DateDiff4月1日(firstdate)
+		dim LastR as long
+		lastr= LIB.DateDiff4月1日(lastdate)
     Dim RowsCount As Long
-    RowsCount = LIB.Date今週末日(TargetDate) - LIB.Date今週初日(TargetDate) + 1
+    RowsCount = Lastr - firstr+ 1
     Dim TargetRange As Range
-    Set TargetRange = Me.Sheet.DailyRecordItem(FirstR, TypeTotal & "_日計_" & Grade & "年")
+    Set TargetRange = Me.Sheet.DailyRecordItem(FirstR, TypeTotal & "_日計_" & Grade )
     If TargetRange Is Nothing Then Exit Function
-    TotalWeek = WorksheetFunction.Sum(TargetRange)
+    TotalWeek = WorksheetFunction.Sum(TargetRange.resize(rowscount))
 End Function
-Public Function TotalMonth(ByVal TargetDate As Date, ByVal TypeTotal As String, ByVal Class As String, ByVal Grade As String) As Long
-    Dim FirstR As Long
+Public Function TotalMonth(ByVal TargetDate As Date, ByVal TypeTotal As String, ByVal Grade As String) As Long
+    dim FirstDate as date
+		firstdate=iif(今週初日<4月1日,4月1日,今週初日)
+		Dim FirstR As Long
     FirstR = LIB.DateDiff4月1日(LIB.Date今月1日(TargetDate))
     Dim RowsCount As Long
     RowsCount = LIB.Date今月末日(TargetDate) - LIB.Date今月1日(TargetDate) + 1
@@ -82,7 +92,7 @@ Public Function TotalYear(ByVal TargetDate As Date, ByVal TypeTotal As String, B
     Dim RowsCount As Long
     RowsCount = LIB.Date3月31日(TargetDate) - LIB.Date4月1日(TargetDate) + 1
     Dim TargetRange As Range
-    Set TargetRange = Me.Sheet.DailyRecordItem(FirstR, TypeTotal & "_日計_" & Grade & "年")
+    Set TargetRange = Me.Sheet.DailyRecordItem(First i'm R, TypeTotal & "_日計_" & Grade & "年")
     If TargetRange Is Nothing Then Exit Function
     TotalYear = WorksheetFunction.Sum(TargetRange)
 End Function
