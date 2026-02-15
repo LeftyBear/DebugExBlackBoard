@@ -10,30 +10,14 @@ Attribute VB_Exposed = False
 '@Folder "Domain.VO"
 Option Explicit
 
-Private Type ExeClassHourMember
-    HourTotal()     As Long
-End Type
-
-Private Type PlanClassHourMember
-    HourTotal()     As Long
-End Type
-
-Private Type ExeTimeTableMember
-    HourTotal()     As Long
-End Type
-
-Private Type PlanTimeTableMember
-    HourTotal()     As Long
-End Type
-
 Private Type ExecutionMember
-    ClassHour       As ExeClassHourMember
-    TimeTable       As ExeTimeTableMember
+    ClassHourTotal()    As Long
+    TimeTableTotal()    As Long
 End Type
 
 Private Type PlanMember
-    ClassHour       As PlanClassHourMember
-    TimeTable       As PlanTimeTableMember
+    ClassHourTotal()    As Long
+    TimeTableTotal()    As Long
 End Type
 
 Private Type Member
@@ -66,10 +50,10 @@ Friend Sub Inject(ByVal Entities As VBA.Collection)
     This.UpperSubject = First.UpperSubject
     This.LowerPeriod = First.LowerPeriod
     This.UpperPeriod = First.UpperPeriod
-    ReDim This.Exe.ClassHour.HourTotal(First.LowerGrade To First.UpperGrade)
-    ReDim This.Plan.ClassHour.HourTotal(First.LowerGrade To First.UpperGrade)
-    ReDim This.Exe.TimeTable.HourTotal(First.LowerGrade To First.UpperGrade)
-    ReDim This.Plan.TimeTable.HourTotal(First.LowerGrade To First.UpperGrade)
+    ReDim This.Exe.ClassHourTotal(First.LowerGrade To First.UpperGrade)
+    ReDim This.Plan.ClassHourTotal(First.LowerGrade To First.UpperGrade)
+    ReDim This.Exe.TimeTableTotal(First.LowerGrade To First.UpperGrade)
+    ReDim This.Plan.TimeTableTotal(First.LowerGrade To First.UpperGrade)
     AggregateEntities
 End Sub
 
@@ -98,35 +82,35 @@ Public Function UpperPeriod() As Long
 End Function
 
 Public Function ExeClassHourTotal(ByVal Grade As Long) As Long
-    ExeClassHourTotal = This.Exe.ClassHour.HourTotal(Grade)
+    ExeClassHourTotal = This.Exe.ClassHourTotal(Grade)
 End Function
 
 Public Function PlanClassHourTotal(ByVal Grade As Long) As Long
-    PlanClassHourTotal = This.Plan.ClassHour.HourTotal(Grade)
+    PlanClassHourTotal = This.Plan.ClassHourTotal(Grade)
 End Function
 
 Public Function ExeTimeTableTotal(ByVal Grade As Long) As Long
-    ExeTimeTableTotal = This.Exe.TimeTable.HourTotal(Grade)
+    ExeTimeTableTotal = This.Exe.TimeTableTotal(Grade)
 End Function
 
 Public Function PlanTimeTableTotal(ByVal Grade As Long) As Long
-    PlanTimeTableTotal = This.Plan.TimeTable.HourTotal(Grade)
+    PlanTimeTableTotal = This.Plan.TimeTableTotal(Grade)
 End Function
 
 Public Function ExeClassHourTotalOfSubject(ByVal SubjectName As String, ByVal Grade As Long) As Long
-    ExeClassHourTotalOfSubject = TotalFrom(This.Exe.ClassHour.HourTotal, SubjectName, Grade)
+    ExeClassHourTotalOfSubject = TotalFrom(This.Exe.ClassHourTotal, SubjectName, Grade)
 End Function
 
 Public Function PlanClassHourTotalOfSubject(ByVal SubjectName As String, ByVal Grade As Long) As Long
-    PlanClassHourTotalOfSubject = TotalFrom(This.Plan.ClassHour.HourTotal, SubjectName, Grade)
+    PlanClassHourTotalOfSubject = TotalFrom(This.Plan.ClassHourTotal, SubjectName, Grade)
 End Function
 
 Public Function ExeTimeTableTotalOfSubject(ByVal SubjectName As String, ByVal Grade As Long) As Long
-    ExeTimeTableTotalOfSubject = TotalFrom(This.Exe.TimeTable.HourTotal, SubjectName, Grade)
+    ExeTimeTableTotalOfSubject = TotalFrom(This.Exe.TimeTableTotal, SubjectName, Grade)
 End Function
 
 Public Function PlanTimeTableTotalOfSubject(ByVal SubjectName As String, ByVal Grade As Long) As Long
-    PlanTimeTableTotalOfSubject = TotalFrom(This.Plan.TimeTable.HourTotal, SubjectName, Grade)
+    PlanTimeTableTotalOfSubject = TotalFrom(This.Plan.TimeTableTotal, SubjectName, Grade)
 End Function
 
 Private Function TotalFrom(ByRef Values() As Long, ByVal SubjectName As String, ByVal Grade As Long) As Long
@@ -150,8 +134,8 @@ Private Sub AggregateClassHour(ByVal Entity As Dom_ClassHour)
     With This
         Dim Grade As Long
         For Grade = .LowerGrade To .UpperGrade
-            .Exe.ClassHour.HourTotal(Grade) = Entity.SumExeClassHourSubject(Grade)
-            .Plan.ClassHour.HourTotal(Grade) = Entity.SumPlanClassHourSubject(Grade)
+            .Exe.ClassHourTotal(Grade) = Entity.SumExeClassHourSubject(Grade)
+            .Plan.ClassHourTotal(Grade) = Entity.SumPlanClassHourSubject(Grade)
         Next
     End With
 End Sub
@@ -160,8 +144,8 @@ Private Sub AggregateTimeTable(ByVal Entity As Dom_ClassHour)
     With This
         Dim Grade As Long
         For Grade = .LowerGrade To .UpperGrade
-            .Exe.TimeTable.HourTotal(Grade) = Entity.SumExeTimeTablePeriod(Grade)
-            .Plan.TimeTable.HourTotal(Grade) = Entity.SumPlanTimeTablePeriod(Grade)
+            .Exe.TimeTableTotal(Grade) = Entity.SumExeTimeTablePeriod(Grade)
+            .Plan.TimeTableTotal(Grade) = Entity.SumPlanTimeTablePeriod(Grade)
         Next
     End With
 End Sub

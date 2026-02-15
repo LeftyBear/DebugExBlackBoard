@@ -7,65 +7,52 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Domain.EntityList"
+'@Folder("Domain.Model")
 Option Explicit
 
 Private Type Member
-    Items As VBA.Collection
+    Entities As VBA.Collection
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Items As VBA.Collection)
-    Set This.Items = Items
+Public Sub Initialize(ByVal Entities As VBA.Collection)
+    If Entities Is Nothing Then Err.Raise Dom_ErrNum.NothingEntities, , "Entities is nothing"
+    Set This.Entities = Entities
+    Dim Copy As VBA.Collection
+    Set Copy = New VBA.Collection
+    Dim Item As Variant
+    For Each Item In Entities
+        If Item Is Nothing Then Err.Raise Dom_ErrNum.NothingItem, , "Item is nothing"
+        If Not TypeOf Item Is Dom_Enrollment Then Err.Raise Dom_ErrNum.NotEntityType, , "Item is not entity"
+        Copy.Add Item
+    Next
+    Set This.Entities = Copy
 End Sub
 
-Public Property Get Items() As VBA.Collection
-    Set Items = This.Items
-End Property
-
 Public Property Get Count() As Long
-    Count = This.Items.Count
+    Count = This.Entities.Count
 End Property
 
-Public Function FilterTransfer() As Dom_EnrollmentList
-    Dim Result As VBA.Collection
-    Set Result = New VBA.Collection
-    Dim Item As Dom_Enrollment
-    For Each Item In This.Items
-        If Item.Transfer Then Result.Add Item
+Public Function ExtractTransfer() As Dom_EnrollmentList
+    Dim Filtered As VBA.Collection
+    Set Filtered = New VBA.Collection
+    Dim Enrollment As Dom_Enrollment
+    For Each Enrollment In This.Entities
+        If Enrollment.Transfer Then Filtered.Add Enrollment
     Next
-    Dim List As Dom_EnrollmentList
-    Set List = New Dom_EnrollmentList
-    List.Initialize Result
-    Set FilterTransfer = List
+    Dim EnrollmentList As Dom_EnrollmentList
+    Set EnrollmentList = New Dom_EnrollmentList
+    EnrollmentList.Initialize Filtered
+    Set ExtractTransfer = EnrollmentList
 End Function
 
-Public Function SearchRemarksByKeywords(ByVal Keywords As VBA.Collection) As Dom_EnrollmentList
-    Dim Result As VBA.Collection
-    Set Result = New VBA.Collection
-    Dim Item As Dom_Enrollment
-    For Each Item In This.Items
-        If RemarksMatchAll(Item.Remarks, Keywords) Then Result.Add Item
+Public Function ToCollection() As VBA.Collection
+    Dim Copy As VBA.Collection
+    Set Copy = New VBA.Collection
+    Dim Entity As Variant
+    For Each Entity In This.Entities
+        Copy.Add Entity
     Next
-    Dim List As Dom_EnrollmentList
-    Set List = New Dom_EnrollmentList
-    List.Initialize Result
-    Set SearchRemarksByKeywords = List
+    Set ToCollection = Copy
 End Function
-
-Private Function RemarksMatchAll(ByVal Remarks As String, ByVal Keywords As VBA.Collection) As Boolean
-    Dim Keyword As Variant
-    For Each Keyword In Keywords
-        Dim Word As String
-        Word = VBA.Trim$(VBA.CStr(Keyword))
-        If 0 < VBA.Len(Word) Then
-            If VBA.InStr(1, Remarks, Word, VBA.vbTextCompare) = 0 Then
-                RemarksMatchAll = False
-                Exit Function
-            End If
-        End If
-    Next
-    RemarksMatchAll = True
-End Function
-

@@ -23,36 +23,36 @@ Public Sub Initialize(ByVal Reader As Inf_IReadRepository, ByVal Config As App_E
 End Sub
 
 Public Function ReadAll(ByVal FilePath As String) As VBA.Collection
-    Dim Raw As VBA.Collection
-    Set Raw = This.Reader.ReadAll(FilePath)
-    Dim Result As VBA.Collection
-    Set Result = New VBA.Collection
-    Dim Row As Scripting.Dictionary
-    For Each Row In Raw
-        Dim Member As Dom_Enrollment
-        Set Member = MapRow(Row)
-        Result.Add Member
+    Dim Entities As VBA.Collection
+    Set Entities = New VBA.Collection
+    Dim RawRows As VBA.Collection
+    Set RawRows = This.Reader.ReadAll(FilePath)
+    Dim RawRow As Scripting.Dictionary
+    For Each RawRow In RawRows
+        Dim Entity As Dom_Enrollment
+        Set Entity = Map(RawRow)
+        Entities.Add Entity
     Next
-    Set ReadAll = Result
+    Set ReadAll = Entities
 End Function
 
-Private Function MapRow(ByVal Row As Scripting.Dictionary) As Dom_Enrollment
-    Dim Member As Dom_Enrollment
-    Set Member = New Dom_Enrollment
+Private Function Map(ByVal Row As Scripting.Dictionary) As Dom_Enrollment
+    Dim TargetDate As Date
+    TargetDate = Util_Function.NormalizeToDate(Row.Item(This.Config.DateColumnName))
     Dim MainStreamMale() As Long
     Dim MainStreamFemale() As Long
     MapMainStream Row, MainStreamMale, MainStreamFemale
     Dim SpecialMale() As Long
     Dim SpecialFemale() As Long
     MapSpecial Row, SpecialMale, SpecialFemale
-    Dim TargetDate As Date
-    TargetDate = Util_Function.NormalizeToDate(Row.Item(This.Config.DateColumnName))
     Dim Transfer As Boolean
     Transfer = Util_Function.NormalizeToBoolean(Row.Item(This.Config.TransferColumnName))
     Dim Remarks As String
     Remarks = Row.Item(This.Config.RemarksColumnName)
-    Member.Inject TargetDate, MainStreamMale, MainStreamFemale, SpecialMale, SpecialFemale, Transfer, Remarks
-    Set MapRow = Member
+    Dim Entity As Dom_Enrollment
+    Set Entity = New Dom_Enrollment
+    Entity.Inject TargetDate, MainStreamMale, MainStreamFemale, SpecialMale, SpecialFemale, Transfer, Remarks
+    Set Map = Entity
 End Function
 
 Private Sub MapMainStream(ByVal Row As Scripting.Dictionary, ByRef MainStreamMale() As Long, ByRef MainStreamFemale() As Long)
@@ -86,4 +86,3 @@ Private Sub MapSpecial(ByVal Row As Scripting.Dictionary, ByRef SpecialMale() As
         Next
     Next
 End Sub
-

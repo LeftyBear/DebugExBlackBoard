@@ -9,6 +9,8 @@ End Enum
 
 Public Enum Dom_ErrNum
     EmptyEntities = vbObjectError + DomErr
+    NotEntityType
+    NothingItem
     NothingEntities
     OutOfRange
 End Enum

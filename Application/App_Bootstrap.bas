@@ -1,5 +1,6 @@
 Attribute VB_Name = "App_Bootstrap"
 '@Folder "Application.CompositionRoot"
+'ƒŒƒrƒ…[ŠÏ“_: ³“T + ‘wÓ–±
 Option Explicit
 
 Public Sub Run()
