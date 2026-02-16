@@ -51,7 +51,7 @@ Private Function Map(ByVal Row As Scripting.Dictionary) As Dom_Enrollment
     Remarks = Row.Item(This.Config.RemarksColumnName)
     Dim Entity As Dom_Enrollment
     Set Entity = New Dom_Enrollment
-    Entity.Inject TargetDate, MainStreamMale, MainStreamFemale, SpecialMale, SpecialFemale, Transfer, Remarks
+    Entity.Initialize TargetDate, MainStreamMale, MainStreamFemale, SpecialMale, SpecialFemale, Transfer, Remarks
     Set Map = Entity
 End Function
 

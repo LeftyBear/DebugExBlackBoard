@@ -30,7 +30,7 @@ End Type
 
 Private This As Member
 
-Friend Sub Inject(ByVal TargetDate As Date, ByRef MainStreamMale() As Long, ByRef MainStreamFemale() As Long, ByRef SpecialMale() As Long, ByRef SpecialFemale() As Long, ByVal Transfer As Boolean, ByVal Remarks As String)
+Friend Sub Initialize(ByVal TargetDate As Date, ByRef MainStreamMale() As Long, ByRef MainStreamFemale() As Long, ByRef SpecialMale() As Long, ByRef SpecialFemale() As Long, ByVal Transfer As Boolean, ByVal Remarks As String)
     This.TargetDate = TargetDate
     ReDim This.MainStream.Male(LBound(MainStreamMale, D1) To UBound(MainStreamMale, D1), LBound(MainStreamMale, D2) To UBound(MainStreamMale, D2))
     ReDim This.MainStream.Female(LBound(MainStreamFemale, D1) To UBound(MainStreamFemale, D1), LBound(MainStreamFemale, D2) To UBound(MainStreamFemale, D2))
@@ -199,4 +199,3 @@ Private Function CopyLongArray(ByRef Values() As Long) As Long()
     Next
     CopyLongArray = Result
 End Function
-

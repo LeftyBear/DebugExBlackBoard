@@ -44,7 +44,7 @@ End Type
 
 Private This As Member
 
-Friend Sub Inject(ByVal TargetDate As Date, ByRef ExeClassHourSubject() As Long, ByRef ExeTimeTablePeriod() As String, ByRef PlanClassHourSubject() As Long, ByRef PlanTimeTablePeriod() As String)
+Friend Sub Initialize(ByVal TargetDate As Date, ByRef ExeClassHourSubject() As Long, ByRef ExeTimeTablePeriod() As String, ByRef PlanClassHourSubject() As Long, ByRef PlanTimeTablePeriod() As String)
     This.TargetDate = TargetDate
     ReDim This.Exe.ClassHour.Subject(LBound(ExeClassHourSubject, D1) To UBound(ExeClassHourSubject, D1), LBound(ExeClassHourSubject, D2) To UBound(ExeClassHourSubject, D2))
     ReDim This.Exe.TimeTable.Period(LBound(ExeTimeTablePeriod, D1) To UBound(ExeTimeTablePeriod, D1), LBound(ExeTimeTablePeriod, D2) To UBound(ExeTimeTablePeriod, D2))

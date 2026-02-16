@@ -34,21 +34,17 @@ Private Type SpecialMember
 End Type
 
 Private Type Member
-    Entities    As VBA.Collection
     MainStream  As MainStreamMember
     Special     As SpecialMember
+    IsBuilt     As Boolean
 End Type
 
 Private This As Member
 
-Friend Sub Inject(ByVal Entities As VBA.Collection)
-    If Entities Is Nothing Then
-        Err.Raise Dom_ErrNum.NothingEntities, , "Entities is Nothing"
-    End If
-    If Entities.Count = 0 Then
-        Err.Raise Dom_ErrNum.EmptyEntities, , "Entities is empty"
-    End If
-    Set This.Entities = Entities
+Friend Sub BuildFromAggregate(ByVal Aggregate As Dom_EnrollmentAggregate)
+    If This.IsBuilt Then Err.Raise Dom_ErrNum.EmptyEntities, , "Class is built"
+    Dim Entities As VBA.Collection
+    Set Entities = Aggregate.GetEntitiesInternal
     Dim First As Dom_Enrollment
     Set First = Entities.Item(1)
     This.MainStream.LowerGrade = First.MainStreamLowerGrade
@@ -62,10 +58,15 @@ Friend Sub Inject(ByVal Entities As VBA.Collection)
     ReDim This.MainStream.MaleGradeTotal(First.MainStreamLowerGrade To First.MainStreamUpperGrade)
     ReDim This.MainStream.FemaleGradeTotal(First.MainStreamLowerGrade To First.MainStreamUpperGrade)
     ReDim This.MainStream.ClassTotal(First.MainStreamLowerGrade To First.MainStreamUpperGrade, First.MainStreamLowerClass To First.MainStreamUpperClass)
-    ReDim This.Special.MaleGradeTotal(First.MainStreamLowerGrade To First.SpecialUpperGrade)
-    ReDim This.Special.FemaleGradeTotal(First.MainStreamLowerGrade To First.SpecialUpperGrade)
-    ReDim This.Special.ClassTotal(First.MainStreamLowerGrade To First.SpecialUpperGrade, First.SpecialLowerClass To First.SpecialUpperClass)
-    AggregateEntities
+    ReDim This.Special.MaleGradeTotal(First.SpecialLowerGrade To First.SpecialUpperGrade)
+    ReDim This.Special.FemaleGradeTotal(First.SpecialLowerGrade To First.SpecialUpperGrade)
+    ReDim This.Special.ClassTotal(First.SpecialLowerGrade To First.SpecialUpperGrade, First.SpecialLowerClass To First.SpecialUpperClass)
+    Dim Entity As Dom_Enrollment
+    For Each Entity In Entities
+        AggregateMainStream Entity
+        AggregateSpecial Entity
+    Next
+    This.IsBuilt = True
 End Sub
 
 Public Function MainStreamLowerGrade() As Long
@@ -117,7 +118,7 @@ Public Function SpecialLowerClass() As Long
 End Function
 
 Public Function SpecialUpperClass() As Long
-    SpecialUpperClass = This.MainStream.UpperClass
+    SpecialUpperClass = This.Special.UpperClass
 End Function
 
 Public Function SpecialMaleGradeTotal(ByVal Grade As Long) As Long
@@ -139,14 +140,6 @@ End Function
 Public Function SpecialFemaleGrandTotal() As Long
     SpecialFemaleGrandTotal = This.Special.FemaleGrandTotal
 End Function
-
-Private Sub AggregateEntities()
-    Dim Entity As Dom_Enrollment
-    For Each Entity In This.Entities
-        AggregateMainStream Entity
-        AggregateSpecial Entity
-    Next
-End Sub
 
 Private Sub AggregateMainStream(ByVal Entity As Dom_Enrollment)
     With This.MainStream
@@ -191,4 +184,3 @@ Private Sub AggregateSpecial(ByVal Entity As Dom_Enrollment)
         Next
     End With
 End Sub
-

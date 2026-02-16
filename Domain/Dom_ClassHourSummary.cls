@@ -34,7 +34,7 @@ End Type
 
 Private This As Member
 
-Friend Sub Inject(ByVal Entities As VBA.Collection)
+Friend Sub Initialize(ByVal Entities As VBA.Collection)
     If Entities Is Nothing Then
         Err.Raise Dom_ErrNum.NothingEntities, , "Entities is Nothing"
     End If

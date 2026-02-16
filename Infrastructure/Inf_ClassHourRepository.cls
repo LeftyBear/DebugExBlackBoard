@@ -47,7 +47,7 @@ Private Function MapRow(ByVal Row As Scripting.Dictionary) As Dom_ClassHour
     Dim ExeTimeTablePeriod() As String
     Dim PlanTimeTablePeriod() As String
     MapTimeTablePeriod Row, ExeTimeTablePeriod, PlanTimeTablePeriod
-    Member.Inject TargetDate, ExeClassHourSubject, ExeTimeTablePeriod, PlanClassHourSubject, PlanTimeTablePeriod
+    Member.Initialize TargetDate, ExeClassHourSubject, ExeTimeTablePeriod, PlanClassHourSubject, PlanTimeTablePeriod
     Set MapRow = Member
 End Function
 

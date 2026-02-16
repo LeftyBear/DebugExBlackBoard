@@ -11,18 +11,18 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Members As Dom_EnrollmentList
+    Members As Dom_EnrollmentAggregate
     Summary As Dom_EnrollmentSummary
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Members As Dom_EnrollmentList, ByVal Summary As Dom_EnrollmentSummary)
+Public Sub Initialize(ByVal Members As Dom_EnrollmentAggregate, ByVal Summary As Dom_EnrollmentSummary)
     Set This.Members = Members
     Set This.Summary = Summary
 End Sub
 
-Public Property Get Members() As Dom_EnrollmentList
+Public Property Get Members() As Dom_EnrollmentAggregate
     Set Members = This.Members
 End Property
 

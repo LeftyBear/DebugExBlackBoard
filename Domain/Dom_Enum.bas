@@ -8,10 +8,13 @@ Public Enum Dom_LayerErrNum
 End Enum
 
 Public Enum Dom_ErrNum
-    EmptyEntities = vbObjectError + DomErr
+    BuiltClass = vbObjectError + DomErr
+    EmptyEntities
+    InitializedClass
     NotEntityType
     NothingItem
     NothingEntities
+    NotInitializedClass
     OutOfRange
 End Enum
 

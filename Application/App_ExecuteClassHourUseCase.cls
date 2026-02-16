@@ -32,7 +32,7 @@ Public Function Execute(ByVal TargetDate As Date, Optional ByVal KeywordText As 
     List.Initialize Raw
     Dim Summary As Dom_ClassHourSummary
     Set Summary = New Dom_ClassHourSummary
-    Summary.Inject List.Items
+    Summary.Initialize List.Items
     Dim Result As App_ExecuteClassHourResult
     Set Result = New App_ExecuteClassHourResult
     Result.Initialize List, Summary

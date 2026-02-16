@@ -27,21 +27,21 @@ Public Function Execute(ByVal TargetDate As Date, Optional ByVal Keyword As Stri
     FilePath = This.Resolver.EnrollmentFileByYear(TargetDate)
     Dim RawRows As VBA.Collection
     Set RawRows = This.Repository.ReadAll(FilePath)
-    Dim EntityList As Dom_EnrollmentList
-    Set EntityList = New Dom_EnrollmentList
-    EntityList.Initialize RawRows
+    Dim Aggregate As Dom_EnrollmentAggregate
+    Set Aggregate = New Dom_EnrollmentAggregate
+    Aggregate.Initialize RawRows
     If 0 < VBA.Len(Keyword) Then
         Dim Keywords As VBA.Collection
         Set Keywords = Util_Function.ParseSearchKeywords(Keyword)
         Dim UseCase As App_ExecuteSearchEnrollment
         Set UseCase = New App_ExecuteSearchEnrollment
-        Set EntityList = UseCase.Execute(EntityList, Keywords, New App_RemarksKeywordMatcher)
+        Set Aggregate = UseCase.Execute(Aggregate, Keywords, New App_RemarksKeywordMatcher)
     End If
     Dim Summary As Dom_EnrollmentSummary
     Set Summary = New Dom_EnrollmentSummary
-    Summary.Inject EntityList.ToCollection
+    Summary.BuildFromAggregate Aggregate
     Dim Result As App_ExecuteEnrollmentResult
     Set Result = New App_ExecuteEnrollmentResult
-    Result.Initialize EntityList, Summary
+    Result.Initialize Aggregate, Summary
     Set Execute = Result
 End Function
