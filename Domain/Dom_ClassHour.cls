@@ -189,4 +189,3 @@ Private Function CopyStringArray(ByRef Values() As String) As String()
     Next
     CopyStringArray = Result
 End Function
-

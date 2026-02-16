@@ -87,7 +87,7 @@ Private Function BuildTimeTableKey(ByVal Prefix As String, ByVal Grade As Long, 
 End Function
 
 Private Function FindValue(ByVal KeyName As String) As Variant
-    Dim KeyValue As Dom_KeyValue
+    Dim KeyValue As App_KeyValue
     For Each KeyValue In This.Keys
         If KeyValue.Name = KeyName Then
             FindValue = KeyValue.Value

@@ -77,7 +77,7 @@ Private Function BuildKeyName(ByVal ClassType As String, ByVal Gender As String,
 End Function
 
 Private Function FindValue(ByVal KeyName As String) As Variant
-    Dim KeyValue As Dom_KeyValue
+    Dim KeyValue As App_KeyValue
     For Each KeyValue In This.Keys
         If KeyValue.Name = KeyName Then
             FindValue = KeyValue.Value

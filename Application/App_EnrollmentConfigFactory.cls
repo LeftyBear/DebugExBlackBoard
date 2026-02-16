@@ -13,8 +13,8 @@ Option Explicit
 Public Function Create(ByVal INISettings As Scripting.Dictionary) As App_EnrollmentConfig
     Dim KeyValues As VBA.Collection
     Set KeyValues = New VBA.Collection
-    Dim Factory As Dom_KeyFactory
-    Set Factory = New Dom_KeyFactory
+    Dim Factory As App_KeyFactory
+    Set Factory = New App_KeyFactory
     Dim SectionKey As Variant
     For Each SectionKey In INISettings.Keys
         If SectionKey Like "Common" Or SectionKey Like "Enrollment*" Then
@@ -22,7 +22,7 @@ Public Function Create(ByVal INISettings As Scripting.Dictionary) As App_Enrollm
             Set SectionItems = INISettings.Item(SectionKey)
             Dim RawKey As Variant
             For Each RawKey In SectionItems.Keys
-                Dim KeyValue As Dom_KeyValue
+                Dim KeyValue As App_KeyValue
                 Set KeyValue = Factory.Create(RawKey, SectionItems.Item(RawKey))
                 KeyValues.Add KeyValue
             Next

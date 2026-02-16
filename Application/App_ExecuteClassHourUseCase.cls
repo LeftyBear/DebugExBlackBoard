@@ -27,15 +27,15 @@ Public Function Execute(ByVal TargetDate As Date, Optional ByVal KeywordText As 
     FilePath = This.Resolver.ClassHourFileByYear(TargetDate)
     Dim Raw As VBA.Collection
     Set Raw = This.Repository.ReadAll(FilePath)
-    Dim List As Dom_ClassHourList
-    Set List = New Dom_ClassHourList
-    List.Initialize Raw
+    Dim Aggregate As Dom_ClassHourAggregate
+    Set Aggregate = New Dom_ClassHourAggregate
+    Aggregate.Initialize Raw
     Dim Summary As Dom_ClassHourSummary
     Set Summary = New Dom_ClassHourSummary
-    Summary.Initialize List.Items
+    Summary.BuildFromAggregate Aggregate
     Dim Result As App_ExecuteClassHourResult
     Set Result = New App_ExecuteClassHourResult
-    Result.Initialize List, Summary
+    Result.Initialize Aggregate, Summary
     Set Execute = Result
 End Function
 

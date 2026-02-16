@@ -21,7 +21,6 @@ Private Type PlanMember
 End Type
 
 Private Type Member
-    Entities        As VBA.Collection
     LowerGrade      As Long
     UpperGrade      As Long
     LowerSubject    As Long
@@ -30,18 +29,15 @@ Private Type Member
     UpperPeriod     As Long
     Exe             As ExecutionMember
     Plan            As PlanMember
+    IsBuilt         As Boolean
 End Type
 
 Private This As Member
 
-Friend Sub Initialize(ByVal Entities As VBA.Collection)
-    If Entities Is Nothing Then
-        Err.Raise Dom_ErrNum.NothingEntities, , "Entities is Nothing"
-    End If
-    If Entities.Count = 0 Then
-        Err.Raise Dom_ErrNum.EmptyEntities, , "Entities is empty"
-    End If
-    Set This.Entities = Entities
+Friend Sub BuildFromAggregate(ByVal Aggregate As Dom_ClassHourAggregate)
+    If This.IsBuilt Then Err.Raise Dom_ErrNum.EmptyEntities, , "Class is built"
+    Dim Entities As VBA.Collection
+    Set Entities = Aggregate.GetEntitiesInternal
     Dim First As Dom_ClassHour
     Set First = Entities.Item(1)
     This.LowerGrade = First.LowerGrade
@@ -54,7 +50,12 @@ Friend Sub Initialize(ByVal Entities As VBA.Collection)
     ReDim This.Plan.ClassHourTotal(First.LowerGrade To First.UpperGrade)
     ReDim This.Exe.TimeTableTotal(First.LowerGrade To First.UpperGrade)
     ReDim This.Plan.TimeTableTotal(First.LowerGrade To First.UpperGrade)
-    AggregateEntities
+    Dim Entity As Dom_ClassHour
+    For Each Entity In Entities
+        AggregateClassHour Entity
+        AggregateTimeTable Entity
+    Next
+    This.IsBuilt = True
 End Sub
 
 Public Function LowerGrade() As Long
@@ -122,14 +123,6 @@ Private Function TotalFrom(ByRef Values() As Long, ByVal SubjectName As String, 
     TotalFrom = Result
 End Function
 
-Private Sub AggregateEntities()
-    Dim Entity As Dom_ClassHour
-    For Each Entity In This.Entities
-        AggregateClassHour Entity
-        AggregateTimeTable Entity
-    Next
-End Sub
-
 Private Sub AggregateClassHour(ByVal Entity As Dom_ClassHour)
     With This
         Dim Grade As Long
@@ -149,4 +142,3 @@ Private Sub AggregateTimeTable(ByVal Entity As Dom_ClassHour)
         Next
     End With
 End Sub
-

@@ -11,18 +11,18 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Members As Dom_ClassHourList
+    Members As Dom_ClassHourAggregate
     Summary As Dom_ClassHourSummary
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Members As Dom_ClassHourList, ByVal Summary As Dom_ClassHourSummary)
+Public Sub Initialize(ByVal Members As Dom_ClassHourAggregate, ByVal Summary As Dom_ClassHourSummary)
     Set This.Members = Members
     Set This.Summary = Summary
 End Sub
 
-Public Property Get Members() As Dom_ClassHourList
+Public Property Get Members() As Dom_ClassHourAggregate
     Set Members = This.Members
 End Property
 
