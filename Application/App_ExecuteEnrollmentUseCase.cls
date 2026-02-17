@@ -37,11 +37,8 @@ Public Function Execute(ByVal TargetDate As Date, Optional ByVal Keyword As Stri
         Set UseCase = New App_ExecuteSearchEnrollment
         Set Aggregate = UseCase.Execute(Aggregate, Keywords, New App_RemarksKeywordMatcher)
     End If
-    Dim Summary As Dom_EnrollmentSummary
-    Set Summary = New Dom_EnrollmentSummary
-    Summary.BuildFromAggregate Aggregate
     Dim Result As App_ExecuteEnrollmentResult
     Set Result = New App_ExecuteEnrollmentResult
-    Result.Initialize Aggregate, Summary
+    Result.Initialize Aggregate
     Set Execute = Result
 End Function

@@ -30,12 +30,9 @@ Public Function Execute(ByVal TargetDate As Date, Optional ByVal KeywordText As 
     Dim Aggregate As Dom_ClassHourAggregate
     Set Aggregate = New Dom_ClassHourAggregate
     Aggregate.Initialize Raw
-    Dim Summary As Dom_ClassHourSummary
-    Set Summary = New Dom_ClassHourSummary
-    Summary.BuildFromAggregate Aggregate
     Dim Result As App_ExecuteClassHourResult
     Set Result = New App_ExecuteClassHourResult
-    Result.Initialize Aggregate, Summary
+    Result.Initialize Aggregate
     Set Execute = Result
 End Function
 

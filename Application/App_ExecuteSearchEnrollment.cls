@@ -13,10 +13,10 @@ Option Explicit
 Public Function Execute(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Keywords As VBA.Collection, ByVal Matcher As App_RemarksKeywordMatcher) As Dom_EnrollmentAggregate
     Dim Filtered As VBA.Collection
     Set Filtered = New VBA.Collection
-    Dim Enrollments As VBA.Collection
-    Set Enrollments = Aggregate.GetEntitiesInternal
+    Dim Entities As VBA.Collection
+    Set Entities = Aggregate
     Dim Enrollment As Dom_Enrollment
-    For Each Enrollment In Enrollments
+    For Each Enrollment In Entities
         If Matcher.MatchAll(Enrollment.Remarks, Keywords) Then Filtered.Add Enrollment
     Next
     Dim Result As Dom_EnrollmentAggregate

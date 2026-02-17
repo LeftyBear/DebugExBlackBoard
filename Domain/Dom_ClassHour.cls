@@ -96,14 +96,14 @@ Public Function ExeTimeTablePeriod(ByVal PeriodCount As Long, ByVal Grade As Lon
     ExeTimeTablePeriod = This.Exe.TimeTable.Period(PeriodCount, Grade)
 End Function
 
-Public Function SumExeClassHourSubject(ByVal Grade As Long) As Long
+Public Function SumExeClassHourSubjectAll(ByVal Grade As Long) As Long
     ValidateSubjectCount Grade
-    SumExeClassHourSubject = SumClassHour(This.Exe.ClassHour.Subject, Grade)
+    SumExeClassHourSubjectAll = SumClassHour(This.Exe.ClassHour.Subject, Grade)
 End Function
 
-Public Function SumExeTimeTablePeriod(ByVal Grade As Long) As Long
+Public Function SumExeTimeTablePeriodAll(ByVal Grade As Long) As Long
     ValidateSubjectCount Grade
-    SumExeTimeTablePeriod = ConutSubject(This.Exe.TimeTable.Period, Grade)
+    SumExeTimeTablePeriodAll = ConutSubject(This.Exe.TimeTable.Period, Grade)
 End Function
 
 Public Function PlanClassHourSubject(ByVal SubjectCount As Long, ByVal Grade As Long) As Long

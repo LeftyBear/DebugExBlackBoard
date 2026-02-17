@@ -17,16 +17,6 @@ End Type
 
 Private This As Member
 
-Friend Function GetEntitiesInternal() As VBA.Collection
-    Dim Copy As VBA.Collection
-    Set Copy = New VBA.Collection
-    Dim Entity As Dom_Enrollment
-    For Each Entity In This.Entities
-        Copy.Add Entity
-    Next
-    Set GetEntitiesInternal = Copy
-End Function
-
 Public Sub Initialize(ByVal Entities As VBA.Collection)
     If This.IsInitialized Then Err.Raise Dom_ErrNum.InitializedClass, , "Class is initialized"
     If Entities Is Nothing Then Err.Raise Dom_ErrNum.NothingEntities, , "Entities is nothing"
@@ -46,10 +36,15 @@ Public Function Count() As Long
 End Function
 
 Public Function CreateSummary() As Dom_EnrollmentSummary
-    If Not This.IsInitialized Then Err.Raise Dom_ErrNum.NotInitializedClass, , "Class is initialized"
+    Dim Main As Dom_MainStreamSummary
+    Set Main = New Dom_MainStreamSummary
+    Main.Build This.Entities
+    Dim Special As Dom_SpecialSummary
+    Set Special = New Dom_SpecialSummary
+    Special.Build This.Entities
     Dim Summary As Dom_EnrollmentSummary
     Set Summary = New Dom_EnrollmentSummary
-    Summary.BuildFromAggregate Me
+    Summary.Initialize Main, Special
     Set CreateSummary = Summary
 End Function
 
@@ -60,8 +55,8 @@ Public Function ExtractTransfer() As Dom_EnrollmentAggregate
     For Each Enrollment In This.Entities
         If Enrollment.Transfer Then Filtered.Add Enrollment
     Next
-    Dim EnrollmentList As Dom_EnrollmentAggregate
-    Set EnrollmentList = New Dom_EnrollmentAggregate
-    EnrollmentList.Initialize Filtered
-    Set ExtractTransfer = EnrollmentList
+    Dim Aggregate As Dom_EnrollmentAggregate
+    Set Aggregate = New Dom_EnrollmentAggregate
+    Aggregate.Initialize Filtered
+    Set ExtractTransfer = Aggregate
 End Function

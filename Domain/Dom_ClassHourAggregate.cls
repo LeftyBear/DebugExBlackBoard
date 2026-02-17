@@ -11,21 +11,11 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type TMember
-    Entities        As VBA.Collection
-    IsInitialized   As Boolean
+    Entities As VBA.Collection
+    IsInitialized As Boolean
 End Type
 
 Private This As TMember
-
-Friend Function GetEntitiesInternal() As VBA.Collection
-    Dim Copy As VBA.Collection
-    Set Copy = New VBA.Collection
-    Dim Entity As Dom_ClassHour
-    For Each Entity In This.Entities
-        Copy.Add Entity
-    Next
-    Set GetEntitiesInternal = Copy
-End Function
 
 Public Sub Initialize(ByVal Entities As VBA.Collection)
     If This.IsInitialized Then Err.Raise Dom_ErrNum.InitializedClass, , "Class is initialized"
@@ -46,9 +36,16 @@ Public Function Count() As Long
 End Function
 
 Public Function CreateSummary() As Dom_ClassHourSummary
-    If Not This.IsInitialized Then Err.Raise Dom_ErrNum.NotInitializedClass, , "Class is initialized"
+    If Not This.IsInitialized Then Err.Raise 5
+    Dim Execution As Dom_ExecutionHourSummary
+    Set Execution = New Dom_ExecutionHourSummary
+    Execution.Build This.Entities
+    Dim Plan As Dom_PlanHourSummary
+    Set Plan = New Dom_PlanHourSummary
+    Plan.Build This.Entities
     Dim Summary As Dom_ClassHourSummary
     Set Summary = New Dom_ClassHourSummary
-    Summary.BuildFromAggregate Me
+    Summary.Initialize Execution, Plan
     Set CreateSummary = Summary
 End Function
+
