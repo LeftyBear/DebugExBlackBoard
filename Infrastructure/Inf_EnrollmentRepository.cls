@@ -7,82 +7,87 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Infrastructure.Repository"
+'@Folder("Infrastructure.Repository")
 Option Explicit
 
+Implements Dom_IEnrollmentRepository
+
 Private Type Member
-    Reader As Inf_IReadRepository
-    Config As App_EnrollmentConfig
+    SourceData As Variant
+    LastRow As Long
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Reader As Inf_IReadRepository, ByVal Config As App_EnrollmentConfig)
-    Set This.Reader = Reader
-    Set This.Config = Config
+Public Sub Initialize(ByVal SourceData As Variant)
+    This.SourceData = SourceData
+    This.LastRow = UBound(SourceData, 1)
 End Sub
 
-Public Function ReadAll(ByVal FilePath As String) As VBA.Collection
-    Dim Entities As VBA.Collection
-    Set Entities = New VBA.Collection
-    Dim RawRows As VBA.Collection
-    Set RawRows = This.Reader.ReadAll(FilePath)
-    Dim RawRow As Scripting.Dictionary
-    For Each RawRow In RawRows
-        Dim Entity As Dom_Enrollment
-        Set Entity = Map(RawRow)
-        Entities.Add Entity
+Private Function Dom_IEnrollmentRepository_LoadAggregate(ByVal TargetDate As Date) As Dom_EnrollmentAggregate
+    Dim Aggregate As Dom_EnrollmentAggregate
+    Set Aggregate = New Dom_EnrollmentAggregate
+    Aggregate.Initialize
+    Dim RowIndex As Long
+    For RowIndex = 1 To This.LastRow
+        If IsTargetRow(RowIndex, TargetDate) Then
+            Dim StreamType As Dom_StreamType
+            Dim Grade As Long
+            Dim ClassNo As Long
+            Dim Gender As Dom_Gender
+            Dim Count As Long
+            StreamType = ParseStreamType(RowIndex)
+            Grade = ParseGrade(RowIndex)
+            ClassNo = ParseClassNo(RowIndex)
+            Gender = ParseGender(RowIndex)
+            Count = ParseCount(RowIndex)
+            If 0 < Count Then
+                Dim Rec As Dom_EnrollmentRecord
+                Set Rec = New Dom_EnrollmentRecord
+                Rec.Initialize StreamType, Grade, ClassNo, Gender, Count
+                Aggregate.Add Rec
+            End If
+        End If
     Next
-    Set ReadAll = Entities
+    Set Dom_IEnrollmentRepository_LoadAggregate = Aggregate
 End Function
 
-Private Function Map(ByVal Row As Scripting.Dictionary) As Dom_Enrollment
-    Dim TargetDate As Date
-    TargetDate = Util_Function.NormalizeToDate(Row.Item(This.Config.DateColumnName))
-    Dim MainStreamMale() As Long
-    Dim MainStreamFemale() As Long
-    MapMainStream Row, MainStreamMale, MainStreamFemale
-    Dim SpecialMale() As Long
-    Dim SpecialFemale() As Long
-    MapSpecial Row, SpecialMale, SpecialFemale
-    Dim Transfer As Boolean
-    Transfer = Util_Function.NormalizeToBoolean(Row.Item(This.Config.TransferColumnName))
-    Dim Remarks As String
-    Remarks = Row.Item(This.Config.RemarksColumnName)
-    Dim Entity As Dom_Enrollment
-    Set Entity = New Dom_Enrollment
-    Entity.Initialize TargetDate, MainStreamMale, MainStreamFemale, SpecialMale, SpecialFemale, Transfer, Remarks
-    Set Map = Entity
+Private Function IsTargetRow(ByVal RowIndex As Long, ByVal TargetDate As Date) As Boolean
+    Dim RowDate As Date
+    RowDate = This.SourceData(RowIndex, 1)
+    If RowDate = TargetDate Then
+        IsTargetRow = True
+    End If
 End Function
 
-Private Sub MapMainStream(ByVal Row As Scripting.Dictionary, ByRef MainStreamMale() As Long, ByRef MainStreamFemale() As Long)
-    ReDim MainStreamMale(1 To This.Config.MainStreamMaxGrade, 1 To This.Config.MainStreamMaxClass)
-    ReDim MainStreamFemale(1 To This.Config.MainStreamMaxGrade, 1 To This.Config.MainStreamMaxClass)
-    Dim Grade As Long
-    For Grade = 1 To This.Config.MainStreamMaxGrade
-        Dim ClassNo As Long
-        For ClassNo = 1 To This.Config.MainStreamMaxClass
-            Dim Buffer As Long
-            Buffer = Util_Function.NormalizeToLong(Row.Item(This.Config.MainStreamMaleColumnName(Grade, ClassNo)))
-            MainStreamMale(Grade, ClassNo) = CLng(Buffer)
-            Buffer = Util_Function.NormalizeToLong(Row.Item(This.Config.MainStreamFemaleColumnName(Grade, ClassNo)))
-            MainStreamFemale(Grade, ClassNo) = CLng(Buffer)
-        Next
-    Next
-End Sub
+Private Function ParseStreamType(ByVal RowIndex As Long) As Dom_StreamType
+    Dim Value As String
+    Value = CStr(This.SourceData(RowIndex, 2))
+    If Value = "Main" Then
+        ParseStreamType = Dom_StreamType.Main
+    Else
+        ParseStreamType = Dom_StreamType.Special
+    End If
+End Function
 
-Private Sub MapSpecial(ByVal Row As Scripting.Dictionary, ByRef SpecialMale() As Long, ByRef SpecialFemale() As Long)
-    ReDim SpecialMale(1 To This.Config.SpecialMaxGrade, 1 To This.Config.SpecialMaxClass)
-    ReDim SpecialFemale(1 To This.Config.SpecialMaxGrade, 1 To This.Config.SpecialMaxClass)
-    Dim Grade As Long
-    For Grade = 1 To This.Config.SpecialMaxGrade
-        Dim ClassNo As Long
-        For ClassNo = 1 To This.Config.SpecialMaxClass
-            Dim Buffer As Long
-            Buffer = Util_Function.NormalizeToLong(Row.Item(This.Config.SpecialMaleColumnName(Grade, ClassNo)))
-            SpecialMale(Grade, ClassNo) = CLng(Buffer)
-            Buffer = Util_Function.NormalizeToLong(Row.Item(This.Config.SpecialFemaleColumnName(Grade, ClassNo)))
-            SpecialFemale(Grade, ClassNo) = CLng(Buffer)
-        Next
-    Next
-End Sub
+Private Function ParseGrade(ByVal RowIndex As Long) As Long
+    ParseGrade = CLng(This.SourceData(RowIndex, 3))
+End Function
+
+Private Function ParseClassNo(ByVal RowIndex As Long) As Long
+    ParseClassNo = CLng(This.SourceData(RowIndex, 4))
+End Function
+
+Private Function ParseGender(ByVal RowIndex As Long) As Dom_Gender
+    Dim Value As String
+    Value = CStr(This.SourceData(RowIndex, 5))
+    If Value = "Male" Then
+        ParseGender = Dom_Gender.Male
+    Else
+        ParseGender = Dom_Gender.Female
+    End If
+End Function
+
+Private Function ParseCount(ByVal RowIndex As Long) As Long
+    ParseCount = CLng(This.SourceData(RowIndex, 6))
+End Function

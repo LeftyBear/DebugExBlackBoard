@@ -98,4 +98,3 @@ Public Function NormalizeToDate(ByVal RawText As String) As Date
 InvalidDate:
     Err.Raise Util_ErrNum.InvalidDateValue, "Util_Function", "ì˙ïtílïsê≥: " & RawText
 End Function
-

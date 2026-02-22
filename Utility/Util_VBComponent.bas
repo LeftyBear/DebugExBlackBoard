@@ -13,19 +13,8 @@ Public Sub ExportAllModules()
     For Each Component In ThisWorkbook.VBProject.VBComponents
         If IsExportTarget(Component) Then ExportComponent RootPath, Component
     Next
+    CleanupUnusedFiles RootPath
 End Sub
-
-Private Function IsExportTarget(ByVal Component As Object) As Boolean
-    If Component.Type <> CtStdModule And Component.Type <> CtClassModule And Component.Type <> CtMsForm Then Exit Function
-    If HasLayerPrefix(Component.Name) Then IsExportTarget = True
-End Function
-
-Private Function HasLayerPrefix(ByVal ModuleName As String) As Boolean
-    If VBA.Left(ModuleName, 4) = "Dom_" Then HasLayerPrefix = True
-    If VBA.Left(ModuleName, 4) = "App_" Then HasLayerPrefix = True
-    If VBA.Left(ModuleName, 4) = "Inf_" Then HasLayerPrefix = True
-    If VBA.Left(ModuleName, 5) = "Util_" Then HasLayerPrefix = True
-End Function
 
 Private Sub ExportComponent(ByVal RootPath As String, ByVal Component As Object)
     Dim FilePath As String
@@ -33,6 +22,53 @@ Private Sub ExportComponent(ByVal RootPath As String, ByVal Component As Object)
     If 0 < VBA.Len(VBA.Dir(FilePath)) Then VBA.Kill FilePath
     Component.Export FilePath
 End Sub
+
+Private Sub CleanupFolder(ByVal FolderPath As String)
+    If VBA.Len(VBA.Dir(FolderPath, vbDirectory)) = 0 Then Exit Sub
+    Dim FileName As String
+    FileName = VBA.Dir(FolderPath & "*.*")
+    Do While VBA.Len(FileName) > 0
+        If FileName <> ".gitkeep" Then
+            If Not IsModuleStillExists(RemoveExtension(FileName)) Then VBA.Kill FolderPath & FileName
+        End If
+        FileName = VBA.Dir
+    Loop
+End Sub
+
+Private Sub CleanupUnusedFiles(ByVal RootPath As String)
+    CleanupFolder RootPath & "\Domain\"
+    CleanupFolder RootPath & "\Application\"
+    CleanupFolder RootPath & "\Infrastructure\"
+    CleanupFolder RootPath & "\Utility\"
+End Sub
+
+Private Function HasLayerPrefix(ByVal ModuleName As String) As Boolean
+    If VBA.Left$(ModuleName, 4) = "Dom_" Then HasLayerPrefix = True
+    If VBA.Left$(ModuleName, 4) = "App_" Then HasLayerPrefix = True
+    If VBA.Left$(ModuleName, 4) = "Inf_" Then HasLayerPrefix = True
+    If VBA.Left$(ModuleName, 5) = "Util_" Then HasLayerPrefix = True
+End Function
+
+Private Function IsExportTarget(ByVal Component As Object) As Boolean
+    If Component.Type <> CtStdModule And Component.Type <> CtClassModule And Component.Type <> CtMsForm Then Exit Function
+    If HasLayerPrefix(Component.Name) Then IsExportTarget = True
+End Function
+
+Private Function IsModuleStillExists(ByVal ModuleName As String) As Boolean
+    Dim Component As Object
+    For Each Component In ThisWorkbook.VBProject.VBComponents
+        If Component.Name = ModuleName Then
+            If IsExportTarget(Component) Then
+                IsModuleStillExists = True
+                Exit Function
+            End If
+        End If
+    Next
+End Function
+
+Private Function RemoveExtension(ByVal FileName As String) As String
+    RemoveExtension = VBA.Left(FileName, VBA.InStrRev(FileName, ".") - 1)
+End Function
 
 Private Function ResolveExportPath(ByVal RootPath As String, ByVal Component As Object) As String
     Dim LayerFolder As String
@@ -45,21 +81,20 @@ Private Function ResolveExportPath(ByVal RootPath As String, ByVal Component As 
     Case CtMsForm
         ResolveExportPath = LayerFolder & Component.Name & ".frm"
     Case Else
-        Err.Raise vbObjectError + 1000, "Util_ExportAllModules", "Unsupported component type."
+        Err.Raise Util_ErrNum.UnsupportedComponentType, , "Unsupported component type"
     End Select
 End Function
 
 Private Function ResolveLayerFolder(ByVal RootPath As String, ByVal ModuleName As String) As String
-    Select Case True
-    Case VBA.Left$(ModuleName, 4) = "Dom_"
+    If ModuleName Like "Dom_*" Then
         ResolveLayerFolder = RootPath & "\Domain\"
-    Case VBA.Left$(ModuleName, 4) = "App_"
+    ElseIf ModuleName Like "App_*" Then
         ResolveLayerFolder = RootPath & "\Application\"
-    Case VBA.Left$(ModuleName, 4) = "Inf_"
+    ElseIf ModuleName Like "Inf_*" Then
         ResolveLayerFolder = RootPath & "\Infrastructure\"
-    Case VBA.Left$(ModuleName, 5) = "Util_"
+    ElseIf ModuleName Like "Util_*" Then
         ResolveLayerFolder = RootPath & "\Utility\"
-    Case Else
-        Err.Raise vbObjectError + 1001, "ResolveLayerFolder", "Layer prefix not found: " & ModuleName
-    End Select
+    Else
+        Err.Raise Util_ErrNum.NotFoundLayerPrefix, , "Layer prefix not found: " & ModuleName
+    End If
 End Function

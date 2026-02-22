@@ -10,182 +10,108 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Model")
 Option Explicit
 
-Private Type ExeClassHourMember
-    Subject()   As Long
-End Type
-
-Private Type PlanClassHourMember
-    Subject()   As Long
-End Type
-
-Private Type ExeTimeTableMember
-    Period()    As String
-End Type
-
-Private Type PlanTimeTableMember
-    Period()    As String
-End Type
-
 Private Type ExecutionMember
-    ClassHour   As ExeClassHourMember
-    TimeTable   As ExeTimeTableMember
+    ClassHourSubject()  As Long
+    TimeTablePeriod()   As String
 End Type
 
 Private Type PlanMember
-    ClassHour   As PlanClassHourMember
-    TimeTable   As PlanTimeTableMember
+    ClassHourSubject()  As Long
+    TimeTablePeriod()   As String
 End Type
 
 Private Type Member
+    Structure   As Dom_SchoolStructure
     TargetDate  As Date
-    Exe         As ExecutionMember
+    Execution   As ExecutionMember
     Plan        As PlanMember
 End Type
 
 Private This As Member
 
-Friend Sub Initialize(ByVal TargetDate As Date, ByRef ExeClassHourSubject() As Long, ByRef ExeTimeTablePeriod() As String, ByRef PlanClassHourSubject() As Long, ByRef PlanTimeTablePeriod() As String)
+Friend Sub InitializeInternal(ByVal Structure As Dom_SchoolStructure, ByVal TargetDate As Date)
+    Set This.Structure = Structure
     This.TargetDate = TargetDate
-    ReDim This.Exe.ClassHour.Subject(LBound(ExeClassHourSubject, D1) To UBound(ExeClassHourSubject, D1), LBound(ExeClassHourSubject, D2) To UBound(ExeClassHourSubject, D2))
-    ReDim This.Exe.TimeTable.Period(LBound(ExeTimeTablePeriod, D1) To UBound(ExeTimeTablePeriod, D1), LBound(ExeTimeTablePeriod, D2) To UBound(ExeTimeTablePeriod, D2))
-    ReDim This.Plan.ClassHour.Subject(LBound(PlanClassHourSubject, D1) To UBound(PlanClassHourSubject, D1), LBound(PlanClassHourSubject, D2) To UBound(PlanClassHourSubject, D2))
-    ReDim This.Plan.TimeTable.Period(LBound(PlanTimeTablePeriod, D1) To UBound(PlanTimeTablePeriod, D1), LBound(PlanTimeTablePeriod, D2) To UBound(PlanTimeTablePeriod, D2))
-    This.Exe.ClassHour.Subject = CopyLongArray(ExeClassHourSubject)
-    This.Exe.TimeTable.Period = CopyStringArray(ExeTimeTablePeriod)
-    This.Plan.ClassHour.Subject = CopyLongArray(PlanClassHourSubject)
-    This.Plan.TimeTable.Period = CopyStringArray(PlanTimeTablePeriod)
+    Dim SubjectCount As Long
+    SubjectCount = Structure.SubjectCount
+    Dim PeriodCount As Long
+    PeriodCount = Structure.PeriodCount
+    Dim GradeCount As Long
+    GradeCount = Structure.MainStreamGradeCount
+    ReDim This.Execution.ClassHourSubject(1 To SubjectCount, 1 To GradeCount)
+    ReDim This.Execution.TimeTablePeriod(1 To PeriodCount, 1 To GradeCount)
+    ReDim This.Plan.ClassHourSubject(1 To SubjectCount, 1 To GradeCount)
+    ReDim This.Plan.TimeTablePeriod(1 To PeriodCount, 1 To GradeCount)
 End Sub
+
+Public Property Get Structure() As Dom_SchoolStructure
+    Set Structure = This.Structure
+End Property
 
 Public Property Get TargetDate() As Date
     TargetDate = This.TargetDate
 End Property
 
-Public Property Get UpperGrade() As Long
-    UpperGrade = UBound(This.Exe.ClassHour.Subject, D2)
-End Property
-
-Public Property Get LowerGrade() As Long
-    LowerGrade = LBound(This.Exe.ClassHour.Subject, D2)
-End Property
-
-Public Property Get UpperSubject() As Long
-    UpperSubject = UBound(This.Exe.ClassHour.Subject, D1)
-End Property
-
-Public Property Get LowerSubject() As Long
-    LowerSubject = LBound(This.Exe.ClassHour.Subject, D1)
-End Property
-
-Public Property Get UpperPeriod() As Long
-    UpperPeriod = UBound(This.Exe.TimeTable.Period, D1)
-End Property
-
-Public Property Get LowerPeriod() As Long
-    LowerPeriod = LBound(This.Exe.TimeTable.Period, D1)
-End Property
-
-Public Function ExeClassHourSubject(ByVal SubjectCount As Long, ByVal Grade As Long) As Long
-    ValidateSubjectCount SubjectCount
-    ValidateGrade Grade
-    ExeClassHourSubject = This.Exe.ClassHour.Subject(SubjectCount, Grade)
-End Function
-
-Public Function ExeTimeTablePeriod(ByVal PeriodCount As Long, ByVal Grade As Long) As String
-    ValidatePeriodCount PeriodCount
-    ValidateGrade Grade
-    ExeTimeTablePeriod = This.Exe.TimeTable.Period(PeriodCount, Grade)
-End Function
-
-Public Function SumExeClassHourSubjectAll(ByVal Grade As Long) As Long
-    ValidateSubjectCount Grade
-    SumExeClassHourSubjectAll = SumClassHour(This.Exe.ClassHour.Subject, Grade)
-End Function
-
-Public Function SumExeTimeTablePeriodAll(ByVal Grade As Long) As Long
-    ValidateSubjectCount Grade
-    SumExeTimeTablePeriodAll = ConutSubject(This.Exe.TimeTable.Period, Grade)
-End Function
-
-Public Function PlanClassHourSubject(ByVal SubjectCount As Long, ByVal Grade As Long) As Long
-    ValidateGrade Grade
-    ValidateSubjectCount SubjectCount
-    PlanClassHourSubject = This.Plan.ClassHour.Subject(SubjectCount, Grade)
-End Function
-
-Public Function PlanTimeTablePeriod(ByVal PeriodCount As Long, ByVal Grade As Long) As String
-    ValidateGrade Grade
-    ValidatePeriodCount PeriodCount
-    PlanTimeTablePeriod = This.Plan.TimeTable.Period(PeriodCount, Grade)
-End Function
-
-Public Function SumPlanClassHourSubject(ByVal Grade As Long) As Long
-    ValidateGrade Grade
-    SumPlanClassHourSubject = SumClassHour(This.Plan.ClassHour.Subject, Grade)
-End Function
-
-Public Function SumPlanTimeTablePeriod(ByVal Grade As Long) As Long
-    ValidateGrade Grade
-    SumPlanTimeTablePeriod = ConutSubject(This.Plan.TimeTable.Period, Grade)
-End Function
-
-Private Function SumClassHour(ByRef Values() As Long, ByVal Grade As Long) As Long
-    Dim R As Long
-    For R = LBound(Values, D1) To UBound(Values, D1)
-        Dim Result As Long
-        Result = Result + Values(R, Grade)
-    Next
-    SumClassHour = Result
-End Function
-
-Private Function ConutSubject(ByRef Values() As String, ByVal Grade As Long) As Long
-    Dim R As Long
-    For R = LBound(Values, D1) To UBound(Values, D1)
-        Dim Result As Long
-        If VBA.Trim$(Values(R, Grade)) <> vbNullString Then Result = Result + 1
-    Next
-    ConutSubject = Result
-End Function
-
-Private Sub ValidateGrade(ByVal Grade As Long)
-    If Grade < LBound(This.Exe.ClassHour.Subject, D2) Or UBound(This.Exe.ClassHour.Subject, D2) < Grade Then
-        Err.Raise Dom_ErrNum.OutOfRange, , "Grade is out of range"
-    End If
+Public Sub AddExecutionClassHourSubject(ByVal Subject As Long, ByVal Grade As Long, ByVal Value As Long)
+    Dim SubjectIndex As Long
+    SubjectIndex = This.Structure.ToSubjectIndex(Subject)
+    Dim GradeIndex As Long
+    GradeIndex = This.Structure.ToSpecialGradeIndex(Grade)
+    This.Execution.ClassHourSubject(SubjectIndex, GradeIndex) = This.Execution.ClassHourSubject(SubjectIndex, GradeIndex) + Value
 End Sub
 
-Private Sub ValidateSubjectCount(ByVal SubjectCount As Long)
-    If SubjectCount < LBound(This.Exe.ClassHour.Subject, D1) Or UBound(This.Exe.ClassHour.Subject, D1) < SubjectCount Then
-        Err.Raise Dom_ErrNum.OutOfRange, , "SubjectCount is out of range"
-    End If
+Public Sub AddPlanClassHourSubject(ByVal Subject As Long, ByVal Grade As Long, ByVal Value As Long)
+    Dim SubjectIndex As Long
+    SubjectIndex = This.Structure.ToSubjectIndex(Subject)
+    Dim GradeIndex As Long
+    GradeIndex = This.Structure.ToSpecialGradeIndex(Grade)
+    This.Plan.ClassHourSubject(SubjectIndex, GradeIndex) = This.Plan.ClassHourSubject(SubjectIndex, GradeIndex) + Value
 End Sub
 
-Private Sub ValidatePeriodCount(ByVal PeriodCount As Long)
-    If PeriodCount < LBound(This.Exe.TimeTable.Period, D1) Or UBound(This.Exe.TimeTable.Period, D1) < PeriodCount Then
-        Err.Raise Dom_ErrNum.OutOfRange, , "PeriodCount is out of range"
-    End If
+Public Sub AddExecutionTimeTablePeriod(ByVal Period As Long, ByVal Grade As Long, ByVal Value As Long)
+    Dim PeriodIndex As Long
+    PeriodIndex = This.Structure.ToPeriodIndex(Period)
+    Dim GradeIndex As Long
+    GradeIndex = This.Structure.ToSpecialGradeIndex(Grade)
+    This.Execution.TimeTablePeriod(PeriodIndex, GradeIndex) = This.Execution.TimeTablePeriod(PeriodIndex, GradeIndex) + Value
 End Sub
 
-Private Function CopyLongArray(ByRef Values() As Long) As Long()
-    Dim Result() As Long
-    ReDim Result(LBound(Values, D1) To UBound(Values, D1), LBound(Values, D2) To UBound(Values, D2))
-    Dim R As Long
-    For R = LBound(Values, D1) To UBound(Values, D1)
-        Dim C As Long
-        For C = LBound(Values, D2) To UBound(Values, D2)
-            Result(R, C) = Values(R, C)
-        Next
-    Next
-    CopyLongArray = Result
+Public Sub AddPlanTimeTablePeriod(ByVal Period As Long, ByVal Grade As Long, ByVal Value As Long)
+    Dim PeriodIndex As Long
+    PeriodIndex = This.Structure.ToPeriodIndex(Period)
+    Dim GradeIndex As Long
+    GradeIndex = This.Structure.ToSpecialGradeIndex(Grade)
+    This.Plan.TimeTablePeriod(PeriodIndex, GradeIndex) = This.Plan.TimeTablePeriod(PeriodIndex, GradeIndex) + Value
+End Sub
+
+Public Function GetExecutionClassHourOf(ByVal Subject As Long, ByVal Grade As Long) As Long
+    Dim SubjectIndex As Long
+    SubjectIndex = This.Structure.ToSubjectIndex(Subject)
+    Dim GradeIndex As Long
+    GradeIndex = This.Structure.ToSpecialGradeIndex(Grade)
+    GetExecutionClassHourOf = This.Execution.ClassHourSubject(SubjectIndex, GradeIndex)
 End Function
 
-Private Function CopyStringArray(ByRef Values() As String) As String()
-    Dim Result() As String
-    ReDim Result(LBound(Values, D1) To UBound(Values, D1), LBound(Values, D2) To UBound(Values, D2))
-    Dim R As Long
-    For R = LBound(Values, D1) To UBound(Values, D1)
-        Dim C As Long
-        For C = LBound(Values, D2) To UBound(Values, D2)
-            Result(R, C) = Values(R, C)
-        Next
-    Next
-    CopyStringArray = Result
+Public Function GetPlanClassHourOf(ByVal Subject As Long, ByVal Grade As Long) As Long
+    Dim SubjectIndex As Long
+    SubjectIndex = This.Structure.ToSubjectIndex(Subject)
+    Dim GradeIndex As Long
+    GradeIndex = This.Structure.ToSpecialGradeIndex(Grade)
+    GetPlanClassHourOf = This.Plan.ClassHourSubject(SubjectIndex, GradeIndex)
+End Function
+
+Public Function GetExecutionTimeTableOf(ByVal Period As Long, ByVal Grade As Long) As Long
+    Dim PeriodIndex As Long
+    PeriodIndex = This.Structure.ToPeriodIndex(Period)
+    Dim GradeIndex As Long
+    GradeIndex = This.Structure.ToSpecialGradeIndex(Grade)
+    GetExecutionTimeTableOf = This.Execution.TimeTablePeriod(PeriodIndex, GradeIndex)
+End Function
+
+Public Function GetPlanTimeTableOf(ByVal Period As Long, ByVal Grade As Long) As Long
+    Dim PeriodIndex As Long
+    PeriodIndex = This.Structure.ToPeriodIndex(Period)
+    Dim GradeIndex As Long
+    GradeIndex = This.Structure.ToSpecialGradeIndex(Grade)
+    GetPlanTimeTableOf = This.Plan.TimeTablePeriod(PeriodIndex, GradeIndex)
 End Function

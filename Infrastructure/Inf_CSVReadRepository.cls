@@ -68,28 +68,16 @@ Private Function SplitCSV(ByVal Line As String) As String()
     SplitCSV = Result
 End Function
 
-Private Function Inf_IReadRepository_ReadAll(ByVal FilePath As String) As VBA.Collection
-    Dim Result As VBA.Collection
-    Set Result = New VBA.Collection
+Private Sub Inf_IReadRepository_Fetch(ByVal FilePath As String, ByRef Header() As String, ByRef Values() As String)
     Dim Lines() As String
     Lines = ReadAllLines(FilePath)
-    Dim Headers() As String
-    Headers = SplitCSV(Lines(LBound(Lines)))
+    Header = SplitCSV(Lines(LBound(Lines)))
+    Dim Buffer() As String
     Dim R As Long
     For R = LBound(Lines) + 1 To UBound(Lines)
-        Dim Values() As String
-        Values = SplitCSV(Lines(R))
-        If UBound(Headers) <> UBound(Values) Then
-            Err.Raise Inf_ErrNum.MismatchColumnCount, , "Mismatch column count of header and value"
-        End If
-        Dim RawRow As Scripting.Dictionary
-        Set RawRow = New Scripting.Dictionary
-        Dim C As Long
-        For C = LBound(Headers) To UBound(Headers)
-            RawRow.Add Headers(C), Values(C)
-        Next
-        Result.Add RawRow
+        ReDim Preserve Buffer(R)
+        Buffer = SplitCSV(Lines(R))
     Next
-    Set Inf_IReadRepository_ReadAll = Result
-End Function
-
+    If UBound(Header) <> UBound(Buffer) Then Err.Raise Inf_ErrNum.MismatchColumnCount, , "Mismatch column count of row: " & R
+    Values = Buffer
+End Sub

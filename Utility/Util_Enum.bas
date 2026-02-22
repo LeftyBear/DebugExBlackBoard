@@ -13,11 +13,13 @@ Public Enum Util_LayerErrNum
 End Enum
 
 Public Enum Util_ErrNum
-    NotNumeric = vbObjectError + UtilErr
+    NotBoolean = vbObjectError + UtilErr
+    NotFoundLayerPrefix
     NotInteger
-    NotBoolean
+    NotNumeric
     EmptyDate
     InvalidDateFormat
     InvalidDateValue
+    UnsupportedComponentType
 End Enum
 

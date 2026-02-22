@@ -10,6 +10,5 @@ Attribute VB_Exposed = False
 '@Folder "Infrastructure.Repository"
 Option Explicit
 
-Public Function ReadAll(ByVal FilePath As String) As VBA.Collection
-End Function
-
+Public Sub Fetch(ByVal FilePath As String, ByRef Header() As String, ByRef Values() As String)
+End Sub

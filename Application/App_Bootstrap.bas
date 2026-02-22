@@ -22,34 +22,9 @@ Public Sub Run()
     Dim INISettings As Scripting.Dictionary
     Set INISettings = INILoader.ReadAll
     ' 4. Config
-    Dim EnrollmentConfigFactory As App_EnrollmentConfigFactory
-    Set EnrollmentConfigFactory = New App_EnrollmentConfigFactory
-    Dim EnrollmentConfig As App_EnrollmentConfig
-    Set EnrollmentConfig = EnrollmentConfigFactory.Create(INISettings)
-    Dim ClassHourConfigFactory As App_ClassHourConfigFactory
-    Set ClassHourConfigFactory = New App_ClassHourConfigFactory
-    Dim ClassHourConfig As App_ClassHourConfig
-    Set ClassHourConfig = ClassHourConfigFactory.Create(INISettings)
     ' 5. Repository
-    Dim EnrollmentReader As Inf_CSVReadRepository
-    Set EnrollmentReader = New Inf_CSVReadRepository
-    EnrollmentReader.Initialize FilePathResolver.EnrollmentFileByYear(Date)
-    Dim EnrollmentRepository As Inf_EnrollmentRepository
-    Set EnrollmentRepository = New Inf_EnrollmentRepository
-    EnrollmentRepository.Initialize EnrollmentReader, EnrollmentConfig
-    Dim ClassHourReader As Inf_CSVReadRepository
-    Set ClassHourReader = New Inf_CSVReadRepository
-    ClassHourReader.Initialize FilePathResolver.ClassHourFileByYear(Date)
-    Dim ClassHourRepository As Inf_ClassHourRepository
-    Set ClassHourRepository = New Inf_ClassHourRepository
-    ClassHourRepository.Initialize ClassHourReader, ClassHourConfig
     ' 6. UseCase
-    Dim EnrollmentUseCase As App_ExecuteEnrollmentUseCase
-    Set EnrollmentUseCase = New App_ExecuteEnrollmentUseCase
-    EnrollmentUseCase.Initialize FilePathResolver, EnrollmentRepository
-    Dim ClassHourUseCase As App_ExecuteClassHourUseCase
-    Set ClassHourUseCase = New App_ExecuteClassHourUseCase
-    ClassHourUseCase.Initialize FilePathResolver, ClassHourRepository
+    
     ' 7. Presenter
     Dim Presenter As App_Presenter
     Set Presenter = New App_Presenter

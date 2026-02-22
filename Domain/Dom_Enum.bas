@@ -11,10 +11,12 @@ Public Enum Dom_ErrNum
     BuiltClass = vbObjectError + DomErr
     EmptyEntities
     InitializedClass
+    InvalidGradeOrClass
     NotEntityType
     NothingItem
     NothingEntities
     NotInitializedClass
     OutOfRange
+    StructureIsNothing
 End Enum
 

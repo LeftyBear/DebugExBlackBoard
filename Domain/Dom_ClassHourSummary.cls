@@ -11,25 +11,29 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Execution As Dom_ExecutionHourSummary
-    Plan As Dom_PlanHourSummary
-    IsInitialized As Boolean
+    TotalList As Scripting.Dictionary
 End Type
 
 Private This As Member
 
-Friend Sub Initialize(ByVal Execution As Dom_ExecutionHourSummary, ByVal Plan As Dom_PlanHourSummary)
-    If This.IsInitialized Then Err.Raise Dom_ErrNum.InitializedClass, , "Class is Initialized"
-    Set This.Execution = Execution
-    Set This.Plan = Plan
-    This.IsInitialized = True
+Public Sub Initialize()
+    Set This.TotalList = New Scripting.Dictionary
 End Sub
 
-Public Property Get Execution() As Dom_ExecutionHourSummary
-    Set Execution = This.Execution
-End Property
+Public Sub Add(ByVal Grade As Long, ByVal ClassNo As Long, ByVal Gender As Long, ByVal Count As Long)
+    Dim Key As String
+    Key = CStr(Grade) & "_" & CStr(ClassNo) & "_" & CStr(Gender)
+    If Not This.TotalList.Exists(Key) Then
+        This.TotalList.Add Key, 0
+    End If
+    This.TotalList(Key) = This.TotalList(Key) + Count
+End Sub
 
-Public Property Get Plan() As Dom_PlanHourSummary
-    Set Plan = This.Plan
-End Property
+Public Function GetTotal(ByVal Grade As Long, ByVal ClassNo As Long, ByVal Gender As Long) As Long
+    Dim Key As String
+    Key = CStr(Grade) & "_" & CStr(ClassNo) & "_" & CStr(Gender)
+    If This.TotalList.Exists(Key) Then
+        GetTotal = This.TotalList(Key)
+    End If
+End Function
 

@@ -8,7 +8,13 @@ Public Enum App_LayerErrNum
 End Enum
 
 Public Enum App_ErrNum
-    NotFoundConfigKey = vbObjectError + AppErr
+    InvalidRange = vbObjectError + AppErr
+    InvalidHeaderName
+    NotDefinedStructure
+    NotFoundKey
+    NotFoundSection
+    NotPositiveNumber
+    UnKnownHeaderName
 End Enum
 
 Public Enum App_ViewResult

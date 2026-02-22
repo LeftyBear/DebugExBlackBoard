@@ -10,26 +10,29 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Model")
 Option Explicit
 
-Private Type TMember
-    MainStream As Dom_MainStreamSummary
-    Special As Dom_SpecialSummary
-    IsInitialized As Boolean
+Private Type Member
+    TotalList As Scripting.Dictionary
 End Type
 
-Private This As TMember
+Private This As Member
 
-Friend Sub Initialize(ByVal Main As Dom_MainStreamSummary, ByVal Special As Dom_SpecialSummary)
-    If This.IsInitialized Then Err.Raise Dom_ErrNum.InitializedClass, , "Class is Initialized"
-    Set This.MainStream = Main
-    Set This.Special = Special
-    This.IsInitialized = True
+Public Sub Initialize()
+    Set This.TotalList = New Scripting.Dictionary
 End Sub
 
-Public Property Get MainStream() As Dom_MainStreamSummary
-    Set MainStream = This.MainStream
-End Property
+Public Sub Add(ByVal StreamType As Dom_StreamType, ByVal Grade As Long, ByVal ClassNo As Long, ByVal Gender As Dom_Gender, ByVal Count As Long)
+    Dim Key As String
+    Key = CStr(StreamType) & "_" & CStr(Grade) & "_" & CStr(ClassNo) & "_" & CStr(Gender)
+    If Not This.TotalList.Exists(Key) Then
+        This.TotalList.Add Key, 0
+    End If
+    This.TotalList(Key) = This.TotalList(Key) + Count
+End Sub
 
-Public Property Get Special() As Dom_SpecialSummary
-    Set Special = This.Special
-End Property
-
+Public Function GetTotal(ByVal StreamType As Dom_StreamType, ByVal Grade As Long, ByVal ClassNo As Long, ByVal Gender As Dom_Gender) As Long
+    Dim Key As String
+    Key = CStr(StreamType) & "_" & CStr(Grade) & "_" & CStr(ClassNo) & "_" & CStr(Gender)
+    If This.TotalList.Exists(Key) Then
+        GetTotal = This.TotalList(Key)
+    End If
+End Function
