@@ -8,13 +8,16 @@ Public Enum App_LayerErrNum
 End Enum
 
 Public Enum App_ErrNum
-    InvalidRange = vbObjectError + AppErr
-    InvalidHeaderName
-    NotDefinedStructure
-    NotFoundKey
-    NotFoundSection
-    NotPositiveNumber
-    UnKnownHeaderName
+    errEmptyFilePath
+    errInvalidRange = vbObjectError + AppErr
+    errMismatchColumnCount
+    errNoLines
+    errNotDefinedStructure
+    errNotFoundKey
+    errNotFoundSection
+    errNotPositiveNumber
+    errUnclosedQuotedField
+    errUnmatchedQuote
 End Enum
 
 Public Enum App_ViewResult

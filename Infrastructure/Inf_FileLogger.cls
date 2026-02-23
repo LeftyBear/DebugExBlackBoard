@@ -16,7 +16,7 @@ End Type
 
 Private This As Member
 
-Public Sub Init(ByVal FilePath As String)
+Public Sub Initialize(ByVal FilePath As String)
     This.FilePath = FilePath
 End Sub
 
@@ -25,7 +25,7 @@ Private Sub Inf_ILogger_WriteLog(ByVal Message As String)
     Dim FileNo As Integer
     FileNo = VBA.FreeFile
     Open This.FilePath For Append As #FileNo
-    Print #FileNo, Now & Util_Character.HalfSpace & Message
+    Print #FileNo, Now & charHalfSpace & Message
     Close #FileNo
 End Sub
 

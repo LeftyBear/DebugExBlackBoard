@@ -10,5 +10,5 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Interface")
 Option Explicit
 
-Public Function LoadAggregate(ByVal TargetDate As Date) As Dom_EnrollmentAggregate
+Public Function LoadLines(ByVal TargetDate As Date) As String()
 End Function

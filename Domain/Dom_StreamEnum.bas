@@ -3,6 +3,6 @@ Attribute VB_Name = "Dom_StreamEnum"
 Option Explicit
 
 Public Enum Dom_StreamType
-    Main = 0
+    Main = 1
     Special
 End Enum

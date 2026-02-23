@@ -9,85 +9,46 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Infrastructure.Repository")
 Option Explicit
-
 Implements Dom_IEnrollmentRepository
-
 Private Type Member
-    SourceData As Variant
-    LastRow As Long
+    Calculator  As Dom_SchoolYearCalculator
+    Resolver    As Inf_FilePathResolver
 End Type
-
 Private This As Member
 
-Public Sub Initialize(ByVal SourceData As Variant)
-    This.SourceData = SourceData
-    This.LastRow = UBound(SourceData, 1)
+Public Sub Initialize(ByVal Calculator As Dom_SchoolYearCalculator, ByVal Resolver As Inf_FilePathResolver)
+    Set This.Calculator = Calculator
+    Set This.Resolver = Resolver
 End Sub
 
-Private Function Dom_IEnrollmentRepository_LoadAggregate(ByVal TargetDate As Date) As Dom_EnrollmentAggregate
-    Dim Aggregate As Dom_EnrollmentAggregate
-    Set Aggregate = New Dom_EnrollmentAggregate
-    Aggregate.Initialize
-    Dim RowIndex As Long
-    For RowIndex = 1 To This.LastRow
-        If IsTargetRow(RowIndex, TargetDate) Then
-            Dim StreamType As Dom_StreamType
-            Dim Grade As Long
-            Dim ClassNo As Long
-            Dim Gender As Dom_Gender
-            Dim Count As Long
-            StreamType = ParseStreamType(RowIndex)
-            Grade = ParseGrade(RowIndex)
-            ClassNo = ParseClassNo(RowIndex)
-            Gender = ParseGender(RowIndex)
-            Count = ParseCount(RowIndex)
-            If 0 < Count Then
-                Dim Rec As Dom_EnrollmentRecord
-                Set Rec = New Dom_EnrollmentRecord
-                Rec.Initialize StreamType, Grade, ClassNo, Gender, Count
-                Aggregate.Add Rec
-            End If
-        End If
-    Next
-    Set Dom_IEnrollmentRepository_LoadAggregate = Aggregate
-End Function
-
-Private Function IsTargetRow(ByVal RowIndex As Long, ByVal TargetDate As Date) As Boolean
-    Dim RowDate As Date
-    RowDate = This.SourceData(RowIndex, 1)
-    If RowDate = TargetDate Then
-        IsTargetRow = True
+Private Function Dom_IEnrollmentRepository_LoadLines(ByVal TargetDate As Date) As String()
+    Dim SchoolYear As Long
+    SchoolYear = This.Calculator.Calculate(TargetDate)
+    Dim FilePath As String
+    This.Resolver.Initialize New Inf_WorkbookPathProvider
+    FilePath = This.Resolver.Resolve(EnrollmentFile, SchoolYear)
+    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise Inf_ErrNum.NotFoundFile, , "File not found: " & FilePath
+    Dim Stream As ADODB.Stream
+    Set Stream = New ADODB.Stream
+    Stream.Type = adTypeText
+    Stream.Charset = "Shift_JIS"
+    Stream.Open
+    Stream.LoadFromFile FilePath
+    Dim TextData As String
+    TextData = Stream.ReadText(ADODB.StreamReadEnum.adReadAll)
+    Stream.Close
+    Set Stream = Nothing
+    Dim Lines() As String
+    If VBA.Len(TextData) = 0 Then
+        ReDim Lines(0): Lines(0) = vbNullString
+        Dom_IEnrollmentRepository_LoadLines = Lines
+        Exit Function
     End If
-End Function
-
-Private Function ParseStreamType(ByVal RowIndex As Long) As Dom_StreamType
-    Dim Value As String
-    Value = CStr(This.SourceData(RowIndex, 2))
-    If Value = "Main" Then
-        ParseStreamType = Dom_StreamType.Main
-    Else
-        ParseStreamType = Dom_StreamType.Special
+    TextData = VBA.Replace(TextData, vbCrLf, vbLf)
+    TextData = VBA.Replace(TextData, vbCr, vbLf)
+    Lines = VBA.Split(TextData, vbLf)
+    If 0 <= UBound(Lines) Then
+        If VBA.Len(Lines(UBound(Lines))) = 0 Then ReDim Preserve Lines(UBound(Lines) - 1)
     End If
-End Function
-
-Private Function ParseGrade(ByVal RowIndex As Long) As Long
-    ParseGrade = CLng(This.SourceData(RowIndex, 3))
-End Function
-
-Private Function ParseClassNo(ByVal RowIndex As Long) As Long
-    ParseClassNo = CLng(This.SourceData(RowIndex, 4))
-End Function
-
-Private Function ParseGender(ByVal RowIndex As Long) As Dom_Gender
-    Dim Value As String
-    Value = CStr(This.SourceData(RowIndex, 5))
-    If Value = "Male" Then
-        ParseGender = Dom_Gender.Male
-    Else
-        ParseGender = Dom_Gender.Female
-    End If
-End Function
-
-Private Function ParseCount(ByVal RowIndex As Long) As Long
-    ParseCount = CLng(This.SourceData(RowIndex, 6))
+    Dom_IEnrollmentRepository_LoadLines = Lines
 End Function

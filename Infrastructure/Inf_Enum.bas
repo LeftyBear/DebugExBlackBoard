@@ -10,5 +10,6 @@ End Enum
 Public Enum Inf_ErrNum
     BeforeSectionDefined = vbObjectError + InfErr
     MismatchColumnCount
+    NotFoundFile
 End Enum
 

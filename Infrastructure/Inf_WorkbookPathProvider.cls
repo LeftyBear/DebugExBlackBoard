@@ -10,14 +10,14 @@ Attribute VB_Exposed = False
 '@Folder Infrastructure.Environment
 Option Explicit
 
-Public Function GetGrandParentFolderPath() As String
+Public Function GetBaseFolderPath() As String
     Dim CurrentPath As String
     CurrentPath = ThisWorkbook.Path
     Dim ParentPath As String
     ParentPath = GetParentPath(CurrentPath)
     Dim GrandParentPath As String
     GrandParentPath = GetParentPath(ParentPath)
-    GetGrandParentFolderPath = GrandParentPath
+    GetBaseFolderPath = GrandParentPath
 End Function
 
 Private Function GetParentPath(ByVal TargetPath As String) As String

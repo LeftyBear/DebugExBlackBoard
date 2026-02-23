@@ -11,23 +11,32 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Records As VBA.Collection
+    Rows As VBA.Collection
 End Type
 
 Private This As Member
 
-Public Sub Initialize()
-    Set This.Records = New VBA.Collection
+Public Sub Initialize(ByVal Rows As VBA.Collection)
+    If Rows Is Nothing Then Err.Raise errNothingRows, , "Rows is Nothing"
+    If Rows.Count = 0 Then Err.Raise errEmptyRows, , "Rows is empty"
+    ValidateRows Rows
+    Set This.Rows = Rows
 End Sub
 
-Public Sub Add(ByVal Record As Dom_EnrollmentRecord)
-    This.Records.Add Record
-End Sub
-
-Public Property Get Records() As VBA.Collection
-    Set Records = This.Records
+Public Property Get Rows() As VBA.Collection
+    Set Rows = This.Rows
 End Property
 
 Public Property Get Count() As Long
-    Count = This.Records.Count
+    Count = This.Rows.Count
 End Property
+
+Private Sub ValidateRows(ByVal Rows As VBA.Collection)
+    Dim i As Long
+    For i = 1 To Rows.Count
+        If Not TypeOf Rows.Item(i) Is Dom_EnrollmentRow Then
+            Err.Raise errInvalidRowType, , "Invalid row type"
+        End If
+    Next
+End Sub
+

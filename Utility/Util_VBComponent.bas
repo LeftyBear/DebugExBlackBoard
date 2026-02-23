@@ -67,7 +67,7 @@ Private Function IsModuleStillExists(ByVal ModuleName As String) As Boolean
 End Function
 
 Private Function RemoveExtension(ByVal FileName As String) As String
-    RemoveExtension = VBA.Left(FileName, VBA.InStrRev(FileName, ".") - 1)
+    RemoveExtension = VBA.Left$(FileName, VBA.InStrRev(FileName, ".") - 1)
 End Function
 
 Private Function ResolveExportPath(ByVal RootPath As String, ByVal Component As Object) As String

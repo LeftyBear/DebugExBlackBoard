@@ -26,13 +26,13 @@ Public Sub Add(ByVal StreamType As Dom_StreamType, ByVal Grade As Long, ByVal Cl
     If Not This.TotalList.Exists(Key) Then
         This.TotalList.Add Key, 0
     End If
-    This.TotalList(Key) = This.TotalList(Key) + Count
+    This.TotalList.Item(Key) = This.TotalList.Item(Key) + Count
 End Sub
 
 Public Function GetTotal(ByVal StreamType As Dom_StreamType, ByVal Grade As Long, ByVal ClassNo As Long, ByVal Gender As Dom_Gender) As Long
     Dim Key As String
     Key = CStr(StreamType) & "_" & CStr(Grade) & "_" & CStr(ClassNo) & "_" & CStr(Gender)
     If This.TotalList.Exists(Key) Then
-        GetTotal = This.TotalList(Key)
+        GetTotal = This.TotalList.Item(Key)
     End If
 End Function

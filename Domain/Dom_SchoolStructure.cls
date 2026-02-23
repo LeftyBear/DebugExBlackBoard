@@ -79,31 +79,31 @@ Public Function PeriodContains(ByVal Period As Long) As Boolean
 End Function
 
 Public Function ToMainStreamGradeIndex(ByVal Grade As Long) As Long
-    If Not MainStreamGradeContains(Grade) Then Err.Raise App_ErrNum.InvalidRange, , "Grade out of range."
+    If Not MainStreamGradeContains(Grade) Then Err.Raise errInvalidRange, , "Grade out of range."
     ToMainStreamGradeIndex = Grade
 End Function
 
 Public Function ToMainStreamClassIndex(ByVal ClassNo As Long) As Long
-    If Not MainStreamClassContains(ClassNo) Then Err.Raise App_ErrNum.InvalidRange, , "Class out of range."
+    If Not MainStreamClassContains(ClassNo) Then Err.Raise errInvalidRange, , "Class out of range."
     ToMainStreamClassIndex = ClassNo
 End Function
 
 Public Function ToSpecialGradeIndex(ByVal Grade As Long) As Long
-    If Not SpecialGradeContains(Grade) Then Err.Raise App_ErrNum.InvalidRange, , "Grade out of range."
+    If Not SpecialGradeContains(Grade) Then Err.Raise errInvalidRange, , "Grade out of range."
     ToSpecialGradeIndex = Grade
 End Function
 
 Public Function ToSpecialClassIndex(ByVal ClassNo As Long) As Long
-    If Not SpecialClassContains(ClassNo) Then Err.Raise App_ErrNum.InvalidRange, , "Class out of range."
+    If Not SpecialClassContains(ClassNo) Then Err.Raise errInvalidRange, , "Class out of range."
     ToSpecialClassIndex = ClassNo
 End Function
 
 Public Function ToSubjectIndex(ByVal Subject As Long) As Long
-    If Not SubjectContains(Subject) Then Err.Raise App_ErrNum.InvalidRange, , "Subject out of range."
+    If Not SubjectContains(Subject) Then Err.Raise errInvalidRange, , "Subject out of range."
     ToSubjectIndex = Subject
 End Function
 
 Public Function ToPeriodIndex(ByVal Period As Long) As Long
-    If Not PeriodContains(Period) Then Err.Raise App_ErrNum.InvalidRange, , "Period out of range."
+    If Not PeriodContains(Period) Then Err.Raise errInvalidRange, , "Period out of range."
     ToPeriodIndex = Period
 End Function

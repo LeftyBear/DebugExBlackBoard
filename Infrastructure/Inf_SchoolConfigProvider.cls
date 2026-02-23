@@ -36,14 +36,14 @@ Public Function GetUpperClass(ByVal SchoolYear As Long) As Long
 End Function
 
 Private Function GetValue(ByVal SchoolYear As Long, ByVal KeyName As String) As Long
-    If Not (0 < SchoolYear) Then Err.Raise App_ErrNum.NotPositiveNumber, , "SchoolYear must be positive."
+    If Not (0 < SchoolYear) Then Err.Raise errNotPositiveNumber, , "SchoolYear must be positive."
     Dim AllData As Scripting.Dictionary
     Set AllData = This.INILoader.ReadAll
     Dim SectionName As String
     SectionName = CStr(SchoolYear)
-    If Not AllData.Exists(SectionName) Then Err.Raise App_ErrNum.NotFoundSection, , "Section not found."
+    If Not AllData.Exists(SectionName) Then Err.Raise errNotFoundSection, , "Section not found."
     Dim SectionDictionary As Scripting.Dictionary
     Set SectionDictionary = AllData.Item(SectionName)
-    If Not SectionDictionary.Exists(KeyName) Then Err.Raise App_ErrNum.NotFoundKey, , "Key not found."
+    If Not SectionDictionary.Exists(KeyName) Then Err.Raise errNotFoundKey, , "Key not found."
     GetValue = CLng(SectionDictionary.Item(KeyName))
 End Function

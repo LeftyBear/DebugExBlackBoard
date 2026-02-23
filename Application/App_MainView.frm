@@ -66,6 +66,6 @@ End Function
 Private Function BuildGridControlName(ByVal Kind As String, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long) As String
     Dim Cells() As Variant
     Cells = Array(Kind, CStr(Grade), CStr(ClassNo))
-    BuildGridControlName = VBA.Join(Cells, Util_Character.UnderScore)
+    BuildGridControlName = VBA.Join(Cells, charUnderScore)
 End Function
 

@@ -15,8 +15,8 @@ Public Function Build(ByVal Aggregate As Dom_EnrollmentAggregate) As Dom_ClassHo
     Set Summary = New Dom_ClassHourSummary
     Summary.Initialize
     Dim Rec As Dom_ClassHourRecord
-    For Each Rec In Aggregate.Records
-        Summary.Add Rec.GradeNo, Rec.ClassNo, Rec.GenderCode, Rec.Count
+    For Each Rec In Aggregate.Rows
+'        Summary.Add Rec.GradeNo, Rec.ClassNo, Rec.GenderCode, Rec.Count
     Next
     Set Build = Summary
 End Function

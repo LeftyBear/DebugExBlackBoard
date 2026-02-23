@@ -55,23 +55,23 @@ Private Function BuildCSVLine(ByVal Row As Scripting.Dictionary) As String
     For i = 0 To Row.Count - 1
         Parts(i) = EscapeCSV(Row.Item(i))
     Next
-    BuildCSVLine = VBA.Join(Parts, Util_Character.Comma)
+    BuildCSVLine = VBA.Join(Parts, charComma)
 End Function
 
-Private Function EscapeCSV(ByVal Text As String) As String
+Private Function EscapeCSV(ByVal Line As String) As String
     Dim Result As String
-    If 0 < VBA.InStr(1, Text, Util_Character.DoubleQuotation) Then
-        Result = VBA.Replace(Text, Util_Character.DoubleQuotation, """""")
+    If 0 < VBA.InStr(1, Line, charDoubleQuotation) Then
+        Result = VBA.Replace(Line, charDoubleQuotation, charEscapeDoubleQuotation)
     End If
-    If 0 < VBA.InStr(1, Text, Util_Character.Comma) Or 0 < VBA.InStr(1, Text, Util_Character.DoubleQuotation) Or 0 < VBA.InStr(1, Text, vbCrLf) Then
-        Result = Util_Character.DoubleQuotation & Text & Util_Character.DoubleQuotation
+    If 0 < VBA.InStr(1, Line, charComma) Or 0 < VBA.InStr(1, Line, charDoubleQuotation) Or 0 < VBA.InStr(1, Line, vbCrLf) Then
+        Result = charDoubleQuotation & Line & charDoubleQuotation
     End If
     EscapeCSV = Result
 End Function
 
 Private Function ExtractKey(ByVal Line As String) As Variant
     Dim Values As Variant
-    Values = Split(Line, ",")
+    Values = Split(Line, charComma)
     ExtractKey = Values(0)
 End Function
 

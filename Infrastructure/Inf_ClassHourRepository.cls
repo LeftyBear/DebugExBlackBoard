@@ -7,68 +7,27 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Infrastructure.Repository"
+'@Folder("Infrastructure.Repository")
 Option Explicit
 
-Private Type Member
-    Reader As Inf_IReadRepository
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Reader As Inf_IReadRepository)
-    Set This.Reader = Reader
-End Sub
-
-Public Function ReadAll(ByVal FilePath As String) As VBA.Collection
-'    Dim Raw As VBA.Collection
-'    Set Raw = This.Reader.ReadAll(FilePath)
-'    Dim Result As VBA.Collection
-'    Set Result = New VBA.Collection
-'    Dim Row As Scripting.Dictionary
-'    For Each Row In Raw
-'        Dim Member As Dom_ClassHour
-'        Set Member = MapRow(Row)
-'        Result.Add Member
-'    Next
-'    Set ReadAll = Result
+Public Function LoadLines(ByVal FilePath As String) As String()
+    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise Inf_ErrNum.NotFoundFile, , "File not found: " & FilePath
+    Dim Stream As ADODB.Stream
+    Set Stream = New ADODB.Stream
+    Stream.Type = adTypeText
+    Stream.Charset = "Shift_JIS"
+    Stream.Open
+    Stream.LoadFromFile FilePath
+    Dim TextData As String
+    TextData = Stream.ReadText
+    Stream.Close
+    Set Stream = Nothing
+    Dim Lines() As String
+    If VBA.Len(TextData) = 0 Then ReDim Lines(0): Lines(0) = vbNullString: LoadLines = Lines: Exit Function
+    TextData = VBA.Replace(TextData, vbCrLf, vbLf)
+    TextData = VBA.Replace(TextData, vbCr, vbLf)
+    Lines = VBA.Split(TextData, vbLf)
+    If 0 <= UBound(Lines) Then If VBA.Len(Lines(UBound(Lines))) = 0 Then ReDim Preserve Lines(UBound(Lines) - 1)
+    LoadLines = Lines
 End Function
-
-Private Function MapRow(ByVal Row As Scripting.Dictionary) As Dom_ClassHour
-    Dim Member As Dom_ClassHour
-    Set Member = New Dom_ClassHour
-    Dim TargetDate As Date
-    Dim ExeClassHourSubject() As Long
-    Dim PlanClassHourSubject() As Long
-    MapClassHourSubject Row, ExeClassHourSubject, PlanClassHourSubject
-    Dim ExeTimeTablePeriod() As String
-    Dim PlanTimeTablePeriod() As String
-    MapTimeTablePeriod Row, ExeTimeTablePeriod, PlanTimeTablePeriod
-'    Member.Initialize TargetDate, ExeClassHourSubject, ExeTimeTablePeriod, PlanClassHourSubject, PlanTimeTablePeriod
-    Set MapRow = Member
-End Function
-
-Private Sub MapClassHourSubject(ByVal Row As Scripting.Dictionary, ByRef ExeClassHourSubject() As Long, ByRef PlanClassHourSubject() As Long)
-    Dim Index As Long
-    For Index = 1 To 1
-        Dim Grade As Long
-        For Grade = 1 To 1
-            Dim Buffer As Long
-            ExeClassHourSubject(Index, Grade) = Buffer
-            PlanClassHourSubject(Index, Grade) = Buffer
-        Next
-    Next
-End Sub
-
-Private Sub MapTimeTablePeriod(ByVal Row As Scripting.Dictionary, ByRef ExeTimeTablePeriod() As String, ByRef PlanTimeTablePeriod() As String)
-    Dim Index As Long
-    For Index = 1 To 1
-        Dim Grade As Long
-        For Grade = 1 To 1
-            Dim Buffer As String
-            ExeTimeTablePeriod(Index, Grade) = Buffer
-            PlanTimeTablePeriod(Index, Grade) = CLng(Buffer)
-        Next
-    Next
-End Sub
 

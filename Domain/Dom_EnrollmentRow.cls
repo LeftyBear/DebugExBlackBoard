@@ -7,22 +7,38 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Model")
+'@Folder("Domain.Entity")
 Option Explicit
 
 Private Type Member
-    Columns()   As Dom_EnrollmentColumn
-    Count       As Long
+    CompositeColumns As VBA.Collection
 End Type
 
 Private This As Member
 
-Public Sub Add(ByVal Column As Dom_EnrollmentColumn)
-    This.Count = This.Count + 1
-    ReDim Preserve This.Columns(1 To This.Count)
-    Set This.Columns(This.Count) = Column
+Public Sub Initialize(ByVal CompositeColumns As VBA.Collection)
+    If CompositeColumns Is Nothing Then Err.Raise errNothingColumns, , "CompositeColumns is Nothing"
+    If CompositeColumns.Count = 0 Then Err.Raise errEmptyColumns, , "CompositeColumns is empty"
+    ValidateColumns CompositeColumns
+    Set This.CompositeColumns = CompositeColumns
 End Sub
 
-Public Property Get Columns(ByRef Result() As Dom_EnrollmentColumn)
-    Result = This.Columns
+Public Property Get CompositeColumns() As VBA.Collection
+    Set CompositeColumns = This.CompositeColumns
 End Property
+
+Public Property Get Count() As Long
+    Count = This.CompositeColumns.Count
+End Property
+
+Public Function CompositeColumn(ByVal Index As Long) As Dom_IEnrollmentColumn
+    Set CompositeColumn = This.CompositeColumns.Item(Index)
+End Function
+
+Private Sub ValidateColumns(ByVal Source As VBA.Collection)
+    Dim i As Long
+    For i = 1 To Source.Count
+        If Not TypeOf Source.Item(i) Is Dom_IEnrollmentColumn Then Err.Raise errInvalidColumnType, , "Invalid column type"
+    Next
+End Sub
+

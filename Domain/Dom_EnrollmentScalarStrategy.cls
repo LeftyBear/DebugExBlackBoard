@@ -7,19 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Service")
+'@Folder("Domain.Strategy")
 Option Explicit
-Implements Dom_IEnrollmentStrategy
-Private Type Member
-    Scalar As Dom_ScalarColumn
-End Type
 
-Private This As Member
-
-Public Sub Initialize(ByVal Scalar As Dom_ScalarColumn)
-    Set This.Scalar = Scalar
-End Sub
-
-Private Function Dom_IEnrollmentStrategy_Apply(ByVal Summary As Dom_EnrollmentSummary, ByVal Value As Long) As Dom_EnrollmentSummary
-
+Public Function Create(ByVal ColumnDTO As App_EnrollmentColumnDTO) As Dom_IEnrollmentColumn
+    Dim Column As Dom_EnrollmentScalarColumn
+    Set Column = New Dom_EnrollmentScalarColumn
+    Column.Initialize ColumnDTO.HeaderName, ColumnDTO.RawValue
+    Set Create = Column
 End Function

@@ -10,5 +10,9 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Interface")
 Option Explicit
 
-Public Function ApplyTo(ByVal Summary As Dom_EnrollmentSummary, ByVal Value As Long) As Dom_EnrollmentSummary
-End Function
+Private Property Get HeaderName() As String
+End Property
+
+Private Property Get Value() As String
+End Property
+

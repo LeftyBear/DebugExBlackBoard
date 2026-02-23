@@ -15,7 +15,7 @@ Public Function Resolve(ByVal Environment As Util_EnvironmentType, ByVal LogPath
     Case Util_EnvironmentType.ReleaseMode
         Dim Logger As Inf_FileLogger
         Set Logger = New Inf_FileLogger
-        Logger.Init LogPath
+        Logger.Initialize LogPath
         Set Resolve = Logger
     Case Else
         Set Resolve = New Inf_DebugLogger

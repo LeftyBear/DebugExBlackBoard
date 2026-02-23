@@ -41,10 +41,10 @@ Private Sub Parse()
                 End If
             Else
                 Dim Position As Long
-                Position = VBA.InStr(1, Line, Util_Character.EqualSign)
+                Position = VBA.InStr(1, Line, charEqualSign)
                 If 0 < Position Then
                     If CurrentSection = vbNullString Then
-                        Err.Raise Inf_ErrNum.BeforeSectionDefined, "Inf_INILoader.Parse", "A Key appeared before a Section was defined"
+                        Err.Raise Inf_ErrNum.BeforeSectionDefined, , "A Key appeared before a Section was defined"
                     End If
                     Dim Key As String
                     Key = VBA.Trim$(VBA.Left$(Line, Position - 1))
@@ -61,7 +61,7 @@ End Sub
 Private Function IsSection(ByVal Line As String) As Boolean
     Dim Text As String
     Text = VBA.Trim$(Line)
-    If VBA.Left$(Text, 1) = Util_Character.LeftSquareBracket And VBA.Right$(Text, 1) = Util_Character.RightSquareBracket Then
+    If VBA.Left$(Text, 1) = charLeftSquareBracket And VBA.Right$(Text, 1) = charRightSquareBracket Then
         IsSection = True
         Exit Function
     End If
@@ -81,7 +81,7 @@ Private Function IsIgnorable(ByVal Line As String) As Boolean
         IsIgnorable = True
         Exit Function
     End If
-    If VBA.Left$(Text, 1) = Util_Character.Semicolon Then
+    If VBA.Left$(Text, 1) = charSemicolon Then
         IsIgnorable = True
         Exit Function
     End If
