@@ -10,27 +10,39 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service")
 Option Explicit
 
-Public Function Load(ByVal FilePath As String) As Dom_EnrollmentAggregate
-    If VBA.Len(FilePath) = 0 Then Err.Raise errEmptyFilePath, , "FilePath is empty."
-    Dim Repository As Dom_IEnrollmentRepository
-    Set Repository = CreateEnrollmentRepository
-    Dim Lines() As String
-    Lines = Repository.LoadLines(FilePath)
-    Dim Loader As App_CSVLoader
-    Set Loader = New App_CSVLoader
-    Dim RowsOfColumnDtos As VBA.Collection
-    Set RowsOfColumnDtos = Loader.Parse(Lines)
-    Dim Builder As App_EnrollmentAggregateBuilder
-    Set Builder = New App_EnrollmentAggregateBuilder
-    Set Load = Builder.Build(RowsOfColumnDtos)
-End Function
+Private Type Member
+    Calculator As Dom_SchoolYearCalculator
+    Repository As Dom_IEnrollmentRepository
+End Type
 
-Private Function CreateEnrollmentRepository() As Inf_EnrollmentRepository
-    Set CreateEnrollmentRepository = New Inf_EnrollmentRepository
-    CreateEnrollmentRepository.Initialize New Dom_SchoolYearCalculator, CreateFilePathResolver
-End Function
+Private This As Member
 
-Private Function CreateFilePathResolver() As Inf_FilePathResolver
-    Set CreateFilePathResolver = New Inf_FilePathResolver
-    CreateFilePathResolver.Initialize New Inf_WorkbookPathProvider
-End Function
+Public Sub Initialize(ByVal Calculator As Dom_SchoolYearCalculator, ByVal Repository As Dom_IEnrollmentRepository)
+    Set This.Calculator = Calculator
+    Set This.Repository = Repository
+End Sub
+
+Public Sub Excute(ByVal TargetDate As Date)
+    Dim SchoolYear As Long
+    SchoolYear = This.Calculator.Calculate(TargetDate)
+    Dim CSVDTO As App_CSVDTO
+    Set CSVDTO = New App_CSVDTO
+    CSVDTO.Initialize This.Repository.Load(SchoolYear)
+    Dim HeaderParser As App_HeaderParser
+    Set HeaderParser = New App_HeaderParser
+    Dim RowOfColumnDTOs As VBA.Collection
+    Set RowOfColumnDTOs = HeaderParser.Parse(CSVDTO)
+    Dim AggregateBuilder As App_EntityAggregateBuilder
+    Set AggregateBuilder = New App_EntityAggregateBuilder
+    AggregateBuilder.Initialize New Dom_EnrollmentColumnFactory
+    Dim Aggregate As Dom_EntityAggregate
+    Set Aggregate = AggregateBuilder.Build(RowOfColumnDTOs)
+'    Dim SummaryService As Dom_EnrollmentSummaryService
+'    Set SummaryService = New Dom_EnrollmentSummaryService
+'    Dim Summary As Dom_EnrollmentSummary
+'    Set Summary = SummaryService.Excute(Aggregate)
+'    Dim Records As VBA.Collection
+'    Set Records = Summary.ToRecordCollection
+'    Dim Formatter As App_EnrollmentSummaryFormatter
+'    Set Formatter = New App_EnrollmentSummaryFormatter
+End Sub

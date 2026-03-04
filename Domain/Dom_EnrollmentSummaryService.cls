@@ -10,13 +10,13 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Service")
 Option Explicit
 
-Public Function Build(ByVal Aggregate As Dom_EnrollmentAggregate) As Dom_EnrollmentSummary
+Public Function Excute(ByVal Aggregate As Dom_EntityAggregate) As Dom_EnrollmentSummary
     Dim Summary As Dom_EnrollmentSummary
     Set Summary = New Dom_EnrollmentSummary
     Summary.Initialize
-    Dim Rec As Dom_EnrollmentRow
-    For Each Rec In Aggregate.Rows
-'        Summary.Add Rec.StreamType, Rec.GradeNo, Rec.ClassNo, Rec.GenderCode, Rec.Count
+    Dim Record As Dom_EnrollmentRecord
+    For Each Record In Aggregate.EntityRows
+        Summary.Add Record.StreamType, Record.GradeNo, Record.ClassNo, Record.GenderCode, Record.Count
     Next
-    Set Build = Summary
+    Set Excute = Summary
 End Function

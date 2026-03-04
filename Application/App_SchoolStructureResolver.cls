@@ -10,45 +10,25 @@ Attribute VB_Exposed = False
 '@Folder Application.Resolver
 Option Explicit
 
-Private Type Member
-    INILoader As Inf_INILoader
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Loader As Inf_INILoader)
-    Set This.INILoader = Loader
-End Sub
-
-Public Function Resolve(ByVal SchoolYear As Long) As Dom_SchoolStructure
-    If Not (0 < SchoolYear) Then Err.Raise errNotPositiveNumber, , "SchoolYear must be positive"
-    Dim AllData As Scripting.Dictionary
-    Set AllData = This.INILoader.ReadAll
-    Dim SectionName As String
-    SectionName = CStr(SchoolYear)
-    If Not AllData.Exists(SectionName) Then Err.Raise errNotFoundSection, , "Section not found"
-    Dim SectionList As Scripting.Dictionary
-    Set SectionList = AllData.Item(SectionName)
-    If Not SectionList.Exists("MainStreamGradeCount") Then Err.Raise errNotDefinedStructure, , "MainStreamGradeCount not defined"
-    If Not SectionList.Exists("MainStreamClassCount") Then Err.Raise errNotDefinedStructure, , "MainStreamClassCount not defined"
-    If Not SectionList.Exists("SpecialGradeCount") Then Err.Raise errNotDefinedStructure, , "SpecialGradeCount not defined"
-    If Not SectionList.Exists("SpecialClassCount") Then Err.Raise errNotDefinedStructure, , "SpecialClassCount not defined"
-    If Not SectionList.Exists("SubjectCount") Then Err.Raise errNotDefinedStructure, , "SubjectCount not defined"
-    If Not SectionList.Exists("PeriodCount") Then Err.Raise errNotDefinedStructure, , "PeriodCount not defined"
-    Dim MainStreamGradeCount As Long
-    MainStreamGradeCount = CLng(SectionList.Item("MainStreamGradeCount"))
-    Dim MainStreamClassCount As Long
-    MainStreamClassCount = CLng(SectionList.Item("MainStreamClassCount"))
-    Dim SpecialGradeCount As Long
-    SpecialGradeCount = CLng(SectionList.Item("SpecialGradeCount"))
-    Dim SpecialClassCount As Long
-    SpecialClassCount = CLng(SectionList.Item("SpecialClassCount"))
-    Dim SubjectCount As Long
-    SubjectCount = CLng(SectionList.Item("SubjectCount"))
-    Dim PeriodCount As Long
-    PeriodCount = CLng(SectionList.Item("PeriodCount"))
-    Dim Structure As Dom_SchoolStructure
-    Set Structure = New Dom_SchoolStructure
-    Structure.Initialize MainStreamGradeCount, MainStreamClassCount, SpecialGradeCount, SpecialClassCount, SubjectCount, PeriodCount
+Public Function Resolve(ByRef Source() As String) As Dom_LimitValue
+    Dim Structure As Dom_LimitValue
+    Set Structure = New Dom_LimitValue
+'    Structure.Initialize MainStreamGradeCount, MainStreamClassCount, SpecialGradeCount, SpecialClassCount, PeriodCount
     Set Resolve = Structure
 End Function
+
+Private Sub AddCommonStatus(ByVal SectionList As Scripting.Dictionary, ByRef MainStreamGradeCount As Long, ByRef MainStreamClassCount As Long, ByRef SpecialGradeCount As Long, ByRef SpecialClassCount As Long)
+    If Not SectionList.Exists("MainStreamGradeCount") Then Err.Raise AppErrNotDefinedStructure, , "MainStreamGradeCount not defined"
+    If Not SectionList.Exists("MainStreamClassCount") Then Err.Raise AppErrNotDefinedStructure, , "MainStreamClassCount not defined"
+    If Not SectionList.Exists("SpecialGradeCount") Then Err.Raise AppErrNotDefinedStructure, , "SpecialGradeCount not defined"
+    If Not SectionList.Exists("SpecialClassCount") Then Err.Raise AppErrNotDefinedStructure, , "SpecialClassCount not defined"
+    MainStreamGradeCount = CLng(SectionList.Item("MainStreamGradeCount"))
+    MainStreamClassCount = CLng(SectionList.Item("MainStreamClassCount"))
+    SpecialGradeCount = CLng(SectionList.Item("SpecialGradeCount"))
+    SpecialClassCount = CLng(SectionList.Item("SpecialClassCount"))
+End Sub
+
+Private Sub AddClassHourStatus(ByVal SectionList As Scripting.Dictionary, ByRef SubjectCount As Long, ByRef PeriodCount As Long)
+    If Not SectionList.Exists("PeriodCount") Then Err.Raise AppErrNotDefinedStructure, , "PeriodCount not defined"
+    PeriodCount = CLng(SectionList.Item("PeriodCount"))
+End Sub

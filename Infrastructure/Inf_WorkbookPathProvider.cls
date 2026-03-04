@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder Infrastructure.Environment
+'@Folder Infrastructure.Provider
 Option Explicit
 
 Public Function GetBaseFolderPath() As String
@@ -17,7 +17,7 @@ Public Function GetBaseFolderPath() As String
     ParentPath = GetParentPath(CurrentPath)
     Dim GrandParentPath As String
     GrandParentPath = GetParentPath(ParentPath)
-    GetBaseFolderPath = GrandParentPath
+    GetBaseFolderPath = GrandParentPath & charBackSlash
 End Function
 
 Private Function GetParentPath(ByVal TargetPath As String) As String

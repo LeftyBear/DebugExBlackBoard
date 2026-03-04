@@ -8,17 +8,11 @@ Public Enum Dom_LayerErrNum
 End Enum
 
 Public Enum Dom_ErrNum
-    errEmptyColumns = vbObjectError + DomErr
-    errEmptyHeaderName
-    errEmptyRows
-    errInvalidColumnType
-    errInvalidGradeValue
-    errInvalidHeaderFormat
-    errInvalidRowType
-    errNothingClassColumn
-    errNothingColumns
-    errNothingGenderColumn
-    errNothingGradeColumn
-    errNothingRows
+    DomErrEmptyObject = vbObjectError + DomErr
+    DomErrInvalidNaming
+    DomErrInvalidTypeOfObject
+    DomErrInvalidValue
+    DomErrNothingObject
+    DomErrNullString
 End Enum
 

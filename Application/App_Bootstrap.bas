@@ -1,15 +1,16 @@
 Attribute VB_Name = "App_Bootstrap"
 '@Folder "Application.CompositionRoot"
-'ÉåÉrÉÖÅ[äœì_: ê≥ìT + ëwê”ñ±
 Option Explicit
 
 Public Sub Run()
-    ' 1. Resolve Path
-    ' 2. Logger
-    ' 3. INI
-    ' 4. Config
-    ' 5. Repository
-    ' 6. UseCase
-    ' 7. Presenter
-    ' 8. View
+    Dim TotalizationService As App_TotalizationService
+    Set TotalizationService = App_ServiceFactory.CreateTotalizationService
+    TotalizationService.Excute
+    Dim LimitValueService As App_LimitValueService
+    Set LimitValueService = App_ServiceFactory.CreateLimitValueService
+    LimitValueService.Excute
+    
+    Dim EnrollmentService As App_EnrollmentService
+    Set EnrollmentService = App_ServiceFactory.CreateEnrollmentService
+    EnrollmentService.Excute Date
 End Sub

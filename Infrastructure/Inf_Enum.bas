@@ -8,8 +8,6 @@ Public Enum Inf_LayerErrNum
 End Enum
 
 Public Enum Inf_ErrNum
-    BeforeSectionDefined = vbObjectError + InfErr
-    MismatchColumnCount
-    NotFoundFile
+    InfErrNullSection = vbObjectError + InfErr
+    InfErrNotFoundFile
 End Enum
-

@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Domain.Entity")
 Option Explicit
-Implements Dom_IEnrollmentColumn
+Implements Dom_IEntityColumn
 Private Type Member
     StreamType      As Dom_StreamType
     GradeColumn     As Dom_GradeColumn
@@ -21,9 +21,9 @@ End Type
 Private This As Member
 
 Public Sub Initialize(ByVal StreamType As Dom_StreamType, ByVal GradeColumn As Dom_GradeColumn, ByVal ClassColumn As Dom_ClassColumn, ByVal GenderColumn As Dom_GenderColumn, ByVal Value As String)
-    If GradeColumn Is Nothing Then Err.Raise errNothingGradeColumn, , "GradeColumn is Nothing"
-    If ClassColumn Is Nothing Then Err.Raise errNothingClassColumn, , "ClassColumn is Nothing"
-    If GenderColumn Is Nothing Then Err.Raise errNothingGenderColumn, , "GenderColumn is Nothing"
+    If GradeColumn Is Nothing Then Err.Raise DomErrNothingObject, , "GradeColumn is Nothing"
+    If ClassColumn Is Nothing Then Err.Raise DomErrNothingObject, , "ClassColumn is Nothing"
+    If GenderColumn Is Nothing Then Err.Raise DomErrNothingObject, , "GenderColumn is Nothing"
     This.StreamType = StreamType
     Set This.GradeColumn = GradeColumn
     Set This.ClassColumn = ClassColumn
@@ -51,11 +51,11 @@ Public Property Get Value() As String
     Value = This.Value
 End Property
 
-Private Property Get Dom_IEnrollmentColumn_HeaderName() As String
-    Dom_IEnrollmentColumn_HeaderName = This.GradeColumn.Number & charUnderScore & This.ClassColumn.Number & charUnderScore & This.GenderColumn.Code
+Private Property Get Dom_IEntityColumn_HeaderName() As String
+    Dom_IEntityColumn_HeaderName = This.GradeColumn.Number & charUnderScore & This.ClassColumn.Number & charUnderScore & This.GenderColumn.Code
 End Property
 
-Private Property Get Dom_IEnrollmentColumn_Value() As String
-    Dom_IEnrollmentColumn_Value = This.Value
+Private Property Get Dom_IEntityColumn_Value() As String
+    Dom_IEntityColumn_Value = This.Value
 End Property
 

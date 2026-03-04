@@ -10,13 +10,13 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Service")
 Option Explicit
 
-Public Function Build(ByVal Aggregate As Dom_EnrollmentAggregate) As Dom_ClassHourSummary
+Public Function Excute(ByVal Aggregate As Dom_EntityAggregate) As Dom_ClassHourSummary
     Dim Summary As Dom_ClassHourSummary
     Set Summary = New Dom_ClassHourSummary
     Summary.Initialize
     Dim Rec As Dom_ClassHourRecord
-    For Each Rec In Aggregate.Rows
-'        Summary.Add Rec.GradeNo, Rec.ClassNo, Rec.GenderCode, Rec.Count
+    For Each Rec In Aggregate.EntityRows
+        Summary.Add Rec.GradeNo, Rec.ClassNo, Rec.GenderCode, Rec.Count
     Next
-    Set Build = Summary
+    Set Excute = Summary
 End Function

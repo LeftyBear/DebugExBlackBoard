@@ -7,27 +7,31 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Dto")
+'@Folder("Application.DTO")
 Option Explicit
 
 Private Type Member
-    Fields() As String
+    Source() As String
 End Type
 
 Private This As Member
 
 Public Sub Initialize(ByRef Values() As String)
-    This.Fields = Values
+    This.Source = Values
 End Sub
 
-Public Property Get Field(ByVal Index As Long) As String
-    Field = This.Fields(Index)
-End Property
+Public Function RowCount() As Long
+    RowCount = UBound(This.Source) - LBound(This.Source) + 1
+End Function
 
-Public Property Get FieldCount() As Long
-    FieldCount = UBound(This.Fields) - LBound(This.Fields) + 1
-End Property
+Public Function ColumnCount() As Long
+    ColumnCount = UBound(This.Source, 2) - LBound(This.Source, 2) + 1
+End Function
 
-Public Function ToArray() As String()
-    ToArray = This.Fields
+Public Function HeaderName(ByVal Index As Long) As String
+    HeaderName = This.Source(LBound(This.Source), Index)
+End Function
+
+Public Function Value(ByVal RowIndex As Long, ByVal ColumnIndex As Long) As String
+    Value = This.Source(RowIndex, ColumnIndex)
 End Function

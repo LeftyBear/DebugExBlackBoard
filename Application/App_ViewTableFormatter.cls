@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Application.Formatter")
 Option Explicit
 
-Public Sub FormatCombined(ByVal Summary As Dom_EnrollmentSummary, ByVal SchoolStructure As Dom_SchoolStructure, ByRef OutputArray() As Variant)
+Public Sub FormatCombined(ByVal Summary As Dom_EnrollmentSummary, ByVal LimitValue As Dom_LimitValue, ByRef OutputArray() As Variant)
     Dim MainArray() As Variant
     Dim SpecialArray() As Variant
     Dim MainRows As Long
@@ -18,8 +18,8 @@ Public Sub FormatCombined(ByVal Summary As Dom_EnrollmentSummary, ByVal SchoolSt
     Dim TotalRows As Long
     Dim RowIndex As Long
     Dim ColIndex As Long
-    Format Summary, SchoolStructure, Dom_StreamType.Main, MainArray
-    Format Summary, SchoolStructure, Dom_StreamType.Special, SpecialArray
+    Format Summary, LimitValue, Dom_StreamType.Main, MainArray
+    Format Summary, LimitValue, Dom_StreamType.Special, SpecialArray
     MainRows = UBound(MainArray, 1)
     SpecialRows = UBound(SpecialArray, 1)
     TotalRows = MainRows + 1 + SpecialRows
@@ -39,7 +39,7 @@ Public Sub FormatCombined(ByVal Summary As Dom_EnrollmentSummary, ByVal SchoolSt
     Next
 End Sub
 
-Private Sub Format(ByVal Summary As Dom_EnrollmentSummary, ByVal SchoolStructure As Dom_SchoolStructure, ByVal StreamType As Dom_StreamType, ByRef OutputArray() As Variant)
+Private Sub Format(ByVal Summary As Dom_EnrollmentSummary, ByVal LimitValue As Dom_LimitValue, ByVal StreamType As Dom_StreamType, ByRef OutputArray() As Variant)
     Dim Grade As Long
     Dim ClassNo As Long
     Dim GradeCount As Long
@@ -54,11 +54,11 @@ Private Sub Format(ByVal Summary As Dom_EnrollmentSummary, ByVal SchoolStructure
     Dim GrandFemaleTotal As Long
     Select Case StreamType
     Case Main
-        GradeCount = SchoolStructure.MainStreamGradeCount
-        ClassCount = SchoolStructure.MainStreamClassCount
+        GradeCount = LimitValue.MainStreamGradeCount
+        ClassCount = LimitValue.MainStreamClassCount
     Case Special
-        GradeCount = SchoolStructure.SpecialGradeCount
-        ClassCount = SchoolStructure.SpecialClassCount
+        GradeCount = LimitValue.SpecialGradeCount
+        ClassCount = LimitValue.SpecialClassCount
     End Select
     RowCount = 1
     For Grade = 1 To GradeCount

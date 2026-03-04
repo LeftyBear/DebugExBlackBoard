@@ -10,20 +10,27 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Strategy")
 Option Explicit
 
-Public Function Create(ByVal ColumnDTO As App_EnrollmentColumnDTO) As Dom_IEnrollmentColumn
+Public Function Create(ByVal ColumnDTO As App_ColumnDTO) As Dom_IEntityColumn
     Dim Parts() As String
     Parts = ParseHeader(ColumnDTO.HeaderName)
-    Dim StreamType As Dom_StreamType
+    If UBound(Parts) <> 2 Then Exit Function
+'    If UBound(Parts) <> 2 Then Err.Raise DomErrInvalidNaming, , "Invalid naming of header"
+    Dim StreamType As Long
     StreamType = ResolveStreamType(Parts(0))
+    If StreamType = 0 Then Exit Function
     Dim GradeColumn As Dom_GradeColumn
     Set GradeColumn = New Dom_GradeColumn
     GradeColumn.Initialize Parts(0)
+    If Not VBA.IsNumeric(Parts(1)) Then Exit Function
     Dim ClassColumn As Dom_ClassColumn
     Set ClassColumn = New Dom_ClassColumn
     ClassColumn.Initialize Parts(1)
+    Dim Gender As Long
+    Gender = ParseGender(Parts(2))
+    If Gender = 0 Then Exit Function
     Dim GenderColumn As Dom_GenderColumn
     Set GenderColumn = New Dom_GenderColumn
-    GenderColumn.Initialize ParseGender(Parts(2))
+    GenderColumn.Initialize Gender
     Dim CompositeColumn As Dom_EnrollmentCompositeColumn
     Set CompositeColumn = New Dom_EnrollmentCompositeColumn
     CompositeColumn.Initialize StreamType, GradeColumn, ClassColumn, GenderColumn, ColumnDTO.RawValue
@@ -31,23 +38,24 @@ Public Function Create(ByVal ColumnDTO As App_EnrollmentColumnDTO) As Dom_IEnrol
 End Function
 
 Private Function ParseHeader(ByVal HeaderName As String) As String()
+    Dim Buffer As String
+    Buffer = VBA.Replace(VBA.Replace(HeaderName, "îN", vbNullString), "ëg", vbNullString)
     Dim Parts() As String
-    Parts = VBA.Split(HeaderName, charUnderScore)
-    If UBound(Parts) <> 2 Then Err.Raise errInvalidHeaderFormat, , "Invalid composite header format"
+    Parts = VBA.Split(Buffer, charUnderScore)
     ParseHeader = Parts
 End Function
 
-Private Function ResolveStreamType(ByVal Part As String) As Dom_StreamType
+Private Function ResolveStreamType(ByVal Part As String) As Long
     If Part Like "ì¡éx" Then
         ResolveStreamType = Dom_StreamType.Special
-    ElseIf IsNumeric(Part) Then
+    ElseIf VBA.IsNumeric(Part) Then
         ResolveStreamType = Dom_StreamType.Main
-    Else
-        Err.Raise errInvalidGradeValue, , "Invalid grade value"
+'    Else
+'        Err.Raise DomErrInvalidValue, , "Invalid grade value"
     End If
 End Function
 
-Private Function ParseGender(ByVal Part As String) As Dom_Gender
+Private Function ParseGender(ByVal Part As String) As Long
     Select Case Part
     Case "íj": ParseGender = Dom_Gender.Male
     Case "èó": ParseGender = Dom_Gender.Female

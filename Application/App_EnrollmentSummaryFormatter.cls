@@ -10,13 +10,13 @@ Attribute VB_Exposed = False
 '@Folder("Application.Formatter")
 Option Explicit
 
-Public Sub FormatMainStream(ByVal Summary As Dom_EnrollmentSummary, ByVal SchoolStructure As Dom_SchoolStructure, ByRef OutputArray() As Long)
+Public Sub FormatMainStream(ByVal Summary As Dom_EnrollmentSummary, ByVal LimitValue As Dom_LimitValue, ByRef OutputArray() As Long)
+    ReDim OutputArray(0 To Dom_StreamType.Special, 1 To LimitValue.MainStreamGradeCount, 1 To LimitValue.MainStreamClassCount, 0 To 1)
     Dim Grade As Long
-    Dim ClassNo As Long
-    Dim Gender As Long
-    ReDim OutputArray(0 To Dom_StreamType.Special, 1 To SchoolStructure.MainStreamGradeCount, 1 To SchoolStructure.MainStreamClassCount, 0 To 1)
-    For Grade = 1 To SchoolStructure.MainStreamGradeCount
-        For ClassNo = 1 To SchoolStructure.MainStreamClassCount
+    For Grade = 1 To LimitValue.MainStreamGradeCount
+        Dim ClassNo As Long
+        For ClassNo = 1 To LimitValue.MainStreamClassCount
+            Dim Gender As Long
             For Gender = Dom_Gender.Male To Dom_Gender.Female
                 OutputArray(Dom_StreamType.Main, Grade, ClassNo, Gender) = Summary.GetTotal(Dom_StreamType.Main, Grade, ClassNo, Gender)
             Next
@@ -24,11 +24,11 @@ Public Sub FormatMainStream(ByVal Summary As Dom_EnrollmentSummary, ByVal School
     Next
 End Sub
 
-Public Sub FormatSpecial(ByVal Summary As Dom_EnrollmentSummary, ByVal SchoolStructure As Dom_SchoolStructure, ByRef OutputArray() As Long)
+Public Sub FormatSpecial(ByVal Summary As Dom_EnrollmentSummary, ByVal LimitValue As Dom_LimitValue, ByRef OutputArray() As Long)
+    ReDim OutputArray(0 To Dom_StreamType.Special, 1 To LimitValue.MainStreamGradeCount, 1 To LimitValue.MainStreamClassCount, 0 To 1)
     Dim ClassNo As Long
-    Dim Gender As Long
-    ReDim OutputArray(0 To Dom_StreamType.Special, 1 To SchoolStructure.MainStreamGradeCount, 1 To SchoolStructure.MainStreamClassCount, 0 To 1)
-    For ClassNo = 1 To SchoolStructure.MainStreamClassCount
+    For ClassNo = 1 To LimitValue.MainStreamClassCount
+        Dim Gender As Long
         For Gender = Dom_Gender.Male To Dom_Gender.Female
             OutputArray(Dom_StreamType.Special, 1, ClassNo, Gender) = Summary.GetTotal(Dom_StreamType.Special, 1, ClassNo, Gender)
         Next

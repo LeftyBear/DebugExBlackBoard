@@ -10,5 +10,5 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Interface")
 Option Explicit
 
-Public Function LoadLines(ByVal TargetDate As Date) As String()
+Public Function Load(ByVal SchoolYear As Long) As String()
 End Function

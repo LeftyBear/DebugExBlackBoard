@@ -9,15 +9,17 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Domain.Factory")
 Option Explicit
+Implements Dom_IEntityColumnFactory
 
-Public Function Create(ByVal ColumnDTO As App_EnrollmentColumnDTO) As Dom_IEnrollmentColumn
+Private Function Dom_IEntityColumnFactory_Create(ByVal ColumnDTO As App_ColumnDTO) As Dom_IEntityColumn
     If 0 < VBA.InStr(1, ColumnDTO.HeaderName, charUnderScore) Then
         Dim Composite As Dom_EnrollmentCompositeStrategy
         Set Composite = New Dom_EnrollmentCompositeStrategy
-        Set Create = Composite.Create(ColumnDTO)
+        Set Dom_IEntityColumnFactory_Create = Composite.Create(ColumnDTO)
     Else
-        Dim Scalar As Dom_EnrollmentScalarStrategy
-        Set Scalar = New Dom_EnrollmentScalarStrategy
-        Set Create = Scalar.Create(ColumnDTO)
+        Dim Scalar As Dom_ScalarColumn
+        Set Scalar = New Dom_ScalarColumn
+        Scalar.Initialize ColumnDTO.HeaderName, ColumnDTO.RawValue
+        Set Dom_IEntityColumnFactory_Create = Scalar
     End If
 End Function

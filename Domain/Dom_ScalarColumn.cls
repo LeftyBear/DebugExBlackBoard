@@ -9,17 +9,32 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Domain.ValueObject")
 Option Explicit
-
+Implements Dom_IEntityColumn
 Private Type Member
-    Code As Long
+    HeaderName  As String
+    Value       As String
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Code As Long)
-    This.Code = Code
+Public Sub Initialize(ByVal HeaderName As String, ByVal Value As String)
+    If HeaderName Like vbNullString Then Err.Raise DomErrNullString, , "HeaderName is null"
+    This.HeaderName = HeaderName
+    This.Value = Value
 End Sub
 
-Public Property Get Code() As Long
-    Code = This.Code
+Public Property Get HeaderName() As String
+    HeaderName = This.HeaderName
+End Property
+
+Public Property Get Value() As String
+    Value = This.Value
+End Property
+
+Private Property Get Dom_IEntityColumn_HeaderName() As String
+    Dom_IEntityColumn_HeaderName = This.HeaderName
+End Property
+
+Private Property Get Dom_IEntityColumn_Value() As String
+    Dom_IEntityColumn_Value = This.Value
 End Property
