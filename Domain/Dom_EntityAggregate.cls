@@ -23,10 +23,6 @@ Public Sub Initialize(ByVal EntityRows As VBA.Collection)
     Set This.EntityRows = EntityRows
 End Sub
 
-Public Property Get EntityRows() As VBA.Collection
-    Set EntityRows = This.EntityRows
-End Property
-
 Public Property Get Count() As Long
     Count = This.EntityRows.Count
 End Property
@@ -34,7 +30,7 @@ End Property
 Private Sub ValidateRows(ByVal EntityRows As VBA.Collection)
     Dim i As Long
     For i = 1 To EntityRows.Count
-        If Not TypeOf EntityRows.Item(i) Is Dom_EntityRow Then
+        If Not TypeOf EntityRows.Item(i) Is Dom_ColumnContext Then
             Err.Raise DomErrInvalidTypeOfObject, , "Invalid row type"
         End If
     Next

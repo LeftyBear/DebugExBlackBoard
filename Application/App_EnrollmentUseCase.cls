@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "App_EnrollmentService"
+Attribute VB_Name = "App_EnrollmentUseCase"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -22,7 +22,7 @@ Public Sub Initialize(ByVal Calculator As Dom_SchoolYearCalculator, ByVal Reposi
     Set This.Repository = Repository
 End Sub
 
-Public Sub Excute(ByVal TargetDate As Date)
+Public Function Excute(ByVal TargetDate As Date) As Dom_EnrollmentSummary
     Dim SchoolYear As Long
     SchoolYear = This.Calculator.Calculate(TargetDate)
     Dim CSVDTO As App_CSVDTO
@@ -37,12 +37,11 @@ Public Sub Excute(ByVal TargetDate As Date)
     AggregateBuilder.Initialize New Dom_EnrollmentColumnFactory
     Dim Aggregate As Dom_EntityAggregate
     Set Aggregate = AggregateBuilder.Build(RowOfColumnDTOs)
-'    Dim SummaryService As Dom_EnrollmentSummaryService
-'    Set SummaryService = New Dom_EnrollmentSummaryService
-'    Dim Summary As Dom_EnrollmentSummary
-'    Set Summary = SummaryService.Excute(Aggregate)
+    Dim SummaryService As Dom_EnrollmentSummaryService
+    Set SummaryService = New Dom_EnrollmentSummaryService
+    Set Excute = SummaryService.Excute(Aggregate)
 '    Dim Records As VBA.Collection
 '    Set Records = Summary.ToRecordCollection
 '    Dim Formatter As App_EnrollmentSummaryFormatter
 '    Set Formatter = New App_EnrollmentSummaryFormatter
-End Sub
+End Function

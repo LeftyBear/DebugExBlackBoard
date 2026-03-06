@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Dom_EntityRow"
+Attribute VB_Name = "Dom_ColumnContext"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -23,10 +23,6 @@ Public Sub Initialize(ByVal EntityColumns As VBA.Collection)
     Set This.EntityColumns = EntityColumns
 End Sub
 
-Public Property Get EntityColumns() As VBA.Collection
-    Set EntityColumns = This.EntityColumns
-End Property
-
 Public Property Get Count() As Long
     Count = This.EntityColumns.Count
 End Property
@@ -38,6 +34,8 @@ End Function
 Private Sub ValidateColumns(ByVal Source As VBA.Collection)
     Dim i As Long
     For i = 1 To Source.Count
-        If Not TypeOf Source.Item(i) Is Dom_IEntityColumn Then Err.Raise DomErrInvalidTypeOfObject, , "Invalid column type"
+        If Not TypeOf Source.Item(i) Is Dom_IEntityColumn Then
+            Err.Raise DomErrInvalidTypeOfObject, , "Invalid column type"
+        End If
     Next
 End Sub

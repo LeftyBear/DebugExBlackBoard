@@ -15,8 +15,8 @@ Public Function Excute(ByVal Aggregate As Dom_EntityAggregate) As Dom_ClassHourS
     Set Summary = New Dom_ClassHourSummary
     Summary.Initialize
     Dim Rec As Dom_ClassHourRecord
-    For Each Rec In Aggregate.EntityRows
-        Summary.Add Rec.GradeNo, Rec.ClassNo, Rec.GenderCode, Rec.Count
-    Next
+'    For Each Rec In Aggregate.EntityRows
+'        Summary.Add Rec.GradeNo, Rec.ClassNo, Rec.GenderCode, Rec.Count
+'    Next
     Set Excute = Summary
 End Function

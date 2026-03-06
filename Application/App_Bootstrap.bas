@@ -3,14 +3,14 @@ Attribute VB_Name = "App_Bootstrap"
 Option Explicit
 
 Public Sub Run()
-    Dim TotalizationService As App_TotalizationService
-    Set TotalizationService = App_ServiceFactory.CreateTotalizationService
-    TotalizationService.Excute
-    Dim LimitValueService As App_LimitValueService
-    Set LimitValueService = App_ServiceFactory.CreateLimitValueService
-    LimitValueService.Excute
+    Dim TotalizationUseCase As App_TotalizationUseCase
+    Set TotalizationUseCase = App_UseCaseFactory.CreateTotalizationUseCase
+    TotalizationUseCase.Excute
+    Dim LimitValueUseCase As App_LimitValueUseCase
+    Set LimitValueUseCase = App_UseCaseFactory.CreateLimitValueUseCase
+    LimitValueUseCase.Excute
     
-    Dim EnrollmentService As App_EnrollmentService
-    Set EnrollmentService = App_ServiceFactory.CreateEnrollmentService
-    EnrollmentService.Excute Date
+    Dim EnrollmentUseCase As App_EnrollmentUseCase
+    Set EnrollmentUseCase = App_UseCaseFactory.CreateEnrollmentUseCase
+    EnrollmentUseCase.Excute Date
 End Sub

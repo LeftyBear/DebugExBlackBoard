@@ -29,25 +29,25 @@ Public Function Build(ByVal RowOfColumnDTOs As VBA.Collection) As Dom_EntityAggr
     For i = 1 To RowOfColumnDTOs.Count
         Dim ColumnDTOs As VBA.Collection
         Set ColumnDTOs = RowOfColumnDTOs.Item(i)
-        EntityRows.Add BuildRow(ColumnDTOs)
+        EntityRows.Add ColumnContext(ColumnDTOs)
     Next
-    Dim Aggregate As Dom_EntityAggregate
-    Set Aggregate = New Dom_EntityAggregate
-    Aggregate.Initialize EntityRows
-    Set Build = Aggregate
+    Dim Result As Dom_EntityAggregate
+    Set Result = New Dom_EntityAggregate
+    Result.Initialize EntityRows
+    Set Build = Result
 End Function
 
-Private Function BuildRow(ByVal ColumnDTOs As VBA.Collection) As Dom_EntityRow
+Private Function ColumnContext(ByVal ColumnDTOs As VBA.Collection) As Dom_ColumnContext
     Dim EntityColumns As VBA.Collection
     Set EntityColumns = New VBA.Collection
     Dim i As Long
     For i = 1 To ColumnDTOs.Count
-        Dim ColumnDTO As App_ColumnDTO
-        Set ColumnDTO = ColumnDTOs.Item(i)
-        EntityColumns.Add This.Factory.Create(ColumnDTO)
+        Dim DTO As App_ColumnDTO
+        Set DTO = ColumnDTOs.Item(i)
+        EntityColumns.Add This.Factory.Create(DTO)
     Next
-    Dim EntityRow As Dom_EntityRow
-    Set EntityRow = New Dom_EntityRow
-    EntityRow.Initialize EntityColumns
-    Set BuildRow = EntityRow
+    Dim Result As Dom_ColumnContext
+    Set Result = New Dom_ColumnContext
+    Result.Initialize EntityColumns
+    Set ColumnContext = Result
 End Function

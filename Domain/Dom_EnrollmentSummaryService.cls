@@ -15,8 +15,8 @@ Public Function Excute(ByVal Aggregate As Dom_EntityAggregate) As Dom_Enrollment
     Set Summary = New Dom_EnrollmentSummary
     Summary.Initialize
     Dim Record As Dom_EnrollmentRecord
-    For Each Record In Aggregate.EntityRows
-        Summary.Add Record.StreamType, Record.GradeNo, Record.ClassNo, Record.GenderCode, Record.Count
-    Next
+'    For Each Record In Aggregate.EntityRows
+'        Summary.Add Record.StreamType, Record.GradeNo, Record.ClassNo, Record.GenderCode, Record.Count
+'    Next
     Set Excute = Summary
 End Function

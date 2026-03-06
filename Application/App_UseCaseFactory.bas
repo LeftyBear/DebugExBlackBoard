@@ -1,8 +1,8 @@
-Attribute VB_Name = "App_ServiceFactory"
+Attribute VB_Name = "App_UseCaseFactory"
 '@Folder "Application.CompositionRoot"
 Option Explicit
 
-Public Function CreateTotalizationService() As App_TotalizationService
+Public Function CreateTotalizationUseCase() As App_TotalizationUseCase
     Dim PathBuilder As Inf_ConfigFilePathBuilder
     Set PathBuilder = New Inf_ConfigFilePathBuilder
     PathBuilder.Initialize New Inf_ConfigFileNameResolver, New Inf_WorkbookPathProvider
@@ -12,13 +12,13 @@ Public Function CreateTotalizationService() As App_TotalizationService
     Dim BaseRepository As Inf_TotalizationRepository
     Set BaseRepository = New Inf_TotalizationRepository
     BaseRepository.Initialize ReadRepository
-    Dim Service As App_TotalizationService
-    Set Service = New App_TotalizationService
-    Service.Initialize BaseRepository
-    Set CreateTotalizationService = Service
+    Dim UseCase As App_TotalizationUseCase
+    Set UseCase = New App_TotalizationUseCase
+    UseCase.Initialize BaseRepository
+    Set CreateTotalizationUseCase = UseCase
 End Function
 
-Public Function CreateLimitValueService() As App_LimitValueService
+Public Function CreateLimitValueUseCase() As App_LimitValueUseCase
     Dim PathBuilder As Inf_ConfigFilePathBuilder
     Set PathBuilder = New Inf_ConfigFilePathBuilder
     PathBuilder.Initialize New Inf_ConfigFileNameResolver, New Inf_WorkbookPathProvider
@@ -28,13 +28,13 @@ Public Function CreateLimitValueService() As App_LimitValueService
     Dim BaseRepository As Inf_TotalizationRepository
     Set BaseRepository = New Inf_TotalizationRepository
     BaseRepository.Initialize ReadRepository
-    Dim Service As App_LimitValueService
-    Set Service = New App_LimitValueService
-    Service.Initialize BaseRepository
-    Set CreateLimitValueService = Service
+    Dim UseCase As App_LimitValueUseCase
+    Set UseCase = New App_LimitValueUseCase
+    UseCase.Initialize BaseRepository
+    Set CreateLimitValueUseCase = UseCase
 End Function
 
-Public Function CreateEnrollmentService() As App_EnrollmentService
+Public Function CreateEnrollmentUseCase() As App_EnrollmentUseCase
     Dim PathBuilder As Inf_EntityFilePathBuilder
     Set PathBuilder = New Inf_EntityFilePathBuilder
     PathBuilder.Initialize New Inf_EntityFileNameResolver, New Inf_WorkbookPathProvider
@@ -44,13 +44,13 @@ Public Function CreateEnrollmentService() As App_EnrollmentService
     Dim BaseRepository As Inf_EnrollmentRepository
     Set BaseRepository = New Inf_EnrollmentRepository
     BaseRepository.Initialize ReadRepository
-    Dim Service As App_EnrollmentService
-    Set Service = New App_EnrollmentService
-    Service.Initialize New Dom_SchoolYearCalculator, BaseRepository
-    Set CreateEnrollmentService = Service
+    Dim UseCase As App_EnrollmentUseCase
+    Set UseCase = New App_EnrollmentUseCase
+    UseCase.Initialize New Dom_SchoolYearCalculator, BaseRepository
+    Set CreateEnrollmentUseCase = UseCase
 End Function
 
-Public Function CreateClassHourService() As App_ClassHourService
+Public Function CreateClassHourUseCase() As App_ClassHourUseCase
     Dim PathBuilder As Inf_EntityFilePathBuilder
     Set PathBuilder = New Inf_EntityFilePathBuilder
     PathBuilder.Initialize New Inf_EntityFileNameResolver, New Inf_WorkbookPathProvider
@@ -60,8 +60,8 @@ Public Function CreateClassHourService() As App_ClassHourService
     Dim BaseRepository As Inf_ClassHourRepository
     Set BaseRepository = New Inf_ClassHourRepository
     BaseRepository.Initialize ReadRepository
-    Dim Service As App_ClassHourService
-    Set Service = New App_ClassHourService
-    Service.Initialize New Dom_SchoolYearCalculator, BaseRepository
-    Set CreateClassHourService = Service
+    Dim UseCase As App_ClassHourUseCase
+    Set UseCase = New App_ClassHourUseCase
+    UseCase.Initialize New Dom_SchoolYearCalculator, BaseRepository
+    Set CreateClassHourUseCase = UseCase
 End Function

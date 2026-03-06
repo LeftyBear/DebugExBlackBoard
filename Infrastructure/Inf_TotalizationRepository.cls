@@ -16,7 +16,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Repository As Inf_CSVReadRepository)
+Public Sub Initialize(ByVal Repository As Inf_ConfigReadRepository)
     Set This.Repository = Repository
 End Sub
 
