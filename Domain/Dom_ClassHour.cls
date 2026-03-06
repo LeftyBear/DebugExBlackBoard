@@ -22,7 +22,7 @@ End Type
 
 Private Type Member
     LimitValue      As Dom_LimitValue
-    Totalization    As Dom_Totalization
+    Subject    As Dom_Subject
     TargetDate      As Date
     Execution       As ExecutionMember
     Plan            As PlanMember
@@ -30,12 +30,12 @@ End Type
 
 Private This As Member
 
-Friend Sub InitializeInternal(ByVal LimitValue As Dom_LimitValue, ByVal Totalization As Dom_Totalization, ByVal TargetDate As Date)
+Friend Sub InitializeInternal(ByVal LimitValue As Dom_LimitValue, ByVal Subject As Dom_Subject, ByVal TargetDate As Date)
     Set This.LimitValue = LimitValue
-    Set This.Totalization = Totalization
+    Set This.Subject = Subject
     This.TargetDate = TargetDate
     Dim SubjectCount As Long
-    SubjectCount = Totalization.SubjectCount
+    SubjectCount = Subject.SubjectCount
     Dim PeriodCount As Long
     PeriodCount = LimitValue.PeriodCount
     Dim GradeCount As Long
@@ -56,7 +56,7 @@ End Property
 
 Public Sub AddExecutionClassHourSubject(ByVal Index As Long, ByVal Grade As Long, ByVal Value As Long)
     Dim SubjectIndex As Long
-    SubjectIndex = This.Totalization.ToSubjectIndex(Index)
+    SubjectIndex = This.Subject.ToSubjectIndex(Index)
     Dim GradeIndex As Long
     GradeIndex = This.LimitValue.ToSpecialGradeIndex(Grade)
     This.Execution.ClassHourSubject(SubjectIndex, GradeIndex) = This.Execution.ClassHourSubject(SubjectIndex, GradeIndex) + Value
@@ -64,7 +64,7 @@ End Sub
 
 Public Sub AddPlanClassHourSubject(ByVal Index As Long, ByVal Grade As Long, ByVal Value As Long)
     Dim SubjectIndex As Long
-    SubjectIndex = This.Totalization.ToSubjectIndex(Index)
+    SubjectIndex = This.Subject.ToSubjectIndex(Index)
     Dim GradeIndex As Long
     GradeIndex = This.LimitValue.ToSpecialGradeIndex(Grade)
     This.Plan.ClassHourSubject(SubjectIndex, GradeIndex) = This.Plan.ClassHourSubject(SubjectIndex, GradeIndex) + Value
@@ -88,7 +88,7 @@ End Sub
 
 Public Function GetExecutionClassHourOf(ByVal Index As Long, ByVal Grade As Long) As Long
     Dim SubjectIndex As Long
-    SubjectIndex = This.Totalization.ToSubjectIndex(Index)
+    SubjectIndex = This.Subject.ToSubjectIndex(Index)
     Dim GradeIndex As Long
     GradeIndex = This.LimitValue.ToSpecialGradeIndex(Grade)
     GetExecutionClassHourOf = This.Execution.ClassHourSubject(SubjectIndex, GradeIndex)
@@ -96,7 +96,7 @@ End Function
 
 Public Function GetPlanClassHourOf(ByVal Index As Long, ByVal Grade As Long) As Long
     Dim SubjectIndex As Long
-    SubjectIndex = This.Totalization.ToSubjectIndex(Index)
+    SubjectIndex = This.Subject.ToSubjectIndex(Index)
     Dim GradeIndex As Long
     GradeIndex = This.LimitValue.ToSpecialGradeIndex(Grade)
     GetPlanClassHourOf = This.Plan.ClassHourSubject(SubjectIndex, GradeIndex)

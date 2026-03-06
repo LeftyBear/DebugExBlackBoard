@@ -14,8 +14,8 @@ Public Function Resolve(ByVal ConfigName As Dom_Config) As String
     Select Case ConfigName
     Case Dom_Config.LimitValue
         Resolve = "LimitValue.csv"
-    Case Dom_Config.Totalization
-        Resolve = "Totalization.csv"
+    Case Dom_Config.Subject
+        Resolve = "Subject.csv"
     End Select
 End Function
 

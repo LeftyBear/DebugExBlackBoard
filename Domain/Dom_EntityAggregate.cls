@@ -11,26 +11,26 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    EntityRows As VBA.Collection
+    ColumnContextContainer As VBA.Collection
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal EntityRows As VBA.Collection)
-    If EntityRows Is Nothing Then Err.Raise DomErrNothingObject, , "EntityRows is Nothing"
-    If EntityRows.Count = 0 Then Err.Raise DomErrEmptyObject, , "EntityRows is empty"
-    ValidateRows EntityRows
-    Set This.EntityRows = EntityRows
+Public Sub Initialize(ByVal ColumnContextContainer As VBA.Collection)
+    If ColumnContextContainer Is Nothing Then Err.Raise DomErrNothingObject, , "ColumnContextContainer is Nothing"
+    If ColumnContextContainer.Count = 0 Then Err.Raise DomErrEmptyObject, , "ColumnContextContainer is empty"
+    ValidateContainer ColumnContextContainer
+    Set This.ColumnContextContainer = ColumnContextContainer
 End Sub
 
 Public Property Get Count() As Long
-    Count = This.EntityRows.Count
+    Count = This.ColumnContextContainer.Count
 End Property
 
-Private Sub ValidateRows(ByVal EntityRows As VBA.Collection)
+Private Sub ValidateContainer(ByVal ColumnContextContainer As VBA.Collection)
     Dim i As Long
-    For i = 1 To EntityRows.Count
-        If Not TypeOf EntityRows.Item(i) Is Dom_ColumnContext Then
+    For i = 1 To ColumnContextContainer.Count
+        If Not TypeOf ColumnContextContainer.Item(i) Is Dom_ColumnContext Then
             Err.Raise DomErrInvalidTypeOfObject, , "Invalid row type"
         End If
     Next

@@ -13,21 +13,20 @@ Option Explicit
 Public Function Create(ByVal ColumnDTO As App_ColumnDTO) As Dom_IEntityColumn
     Dim Parts() As String
     Parts = ParseHeader(ColumnDTO.HeaderName)
-    If UBound(Parts) <> 2 Then Exit Function
-'    If UBound(Parts) <> 2 Then Err.Raise DomErrInvalidNaming, , "Invalid naming of header"
     Dim StreamType As Long
     StreamType = ResolveStreamType(Parts(0))
-    If StreamType = 0 Then Exit Function
-    Dim GradeColumn As Dom_GradeColumn
-    Set GradeColumn = New Dom_GradeColumn
-    GradeColumn.Initialize Parts(0)
-    If Not VBA.IsNumeric(Parts(1)) Then Exit Function
-    Dim ClassColumn As Dom_ClassColumn
-    Set ClassColumn = New Dom_ClassColumn
-    ClassColumn.Initialize Parts(1)
+    Dim Grade As Long
+    Grade = ParseGrade(Parts(0))
+    Dim ClassNo As Long
+    ClassNo = ParseClass(Parts(1))
     Dim Gender As Long
     Gender = ParseGender(Parts(2))
-    If Gender = 0 Then Exit Function
+    Dim GradeColumn As Dom_GradeColumn
+    Set GradeColumn = New Dom_GradeColumn
+    GradeColumn.Initialize Grade
+    Dim ClassColumn As Dom_ClassColumn
+    Set ClassColumn = New Dom_ClassColumn
+    ClassColumn.Initialize ClassNo
     Dim GenderColumn As Dom_GenderColumn
     Set GenderColumn = New Dom_GenderColumn
     GenderColumn.Initialize Gender
@@ -50,9 +49,15 @@ Private Function ResolveStreamType(ByVal Part As String) As Long
         ResolveStreamType = Dom_StreamType.Special
     ElseIf VBA.IsNumeric(Part) Then
         ResolveStreamType = Dom_StreamType.Main
-'    Else
-'        Err.Raise DomErrInvalidValue, , "Invalid grade value"
     End If
+End Function
+
+Private Function ParseGrade(ByVal Part As String) As Long
+    If VBA.IsNumeric(Part) Then ParseGrade = CLng(Part)
+End Function
+
+Private Function ParseClass(ByVal Part As String) As Long
+    If VBA.IsNumeric(Part) Then ParseClass = CLng(Part)
 End Function
 
 Private Function ParseGender(ByVal Part As String) As Long

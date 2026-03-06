@@ -2,39 +2,39 @@ Attribute VB_Name = "App_UseCaseFactory"
 '@Folder "Application.CompositionRoot"
 Option Explicit
 
-Public Function CreateTotalizationUseCase() As App_TotalizationUseCase
+Public Function CreateAggregateSubjectUseCase() As App_AggregateSubjectUseCase
     Dim PathBuilder As Inf_ConfigFilePathBuilder
     Set PathBuilder = New Inf_ConfigFilePathBuilder
     PathBuilder.Initialize New Inf_ConfigFileNameResolver, New Inf_WorkbookPathProvider
     Dim ReadRepository As Inf_ConfigReadRepository
     Set ReadRepository = New Inf_ConfigReadRepository
     ReadRepository.Initialize PathBuilder, New Inf_TextStreamReader, New Inf_CSVRFCParser
-    Dim BaseRepository As Inf_TotalizationRepository
-    Set BaseRepository = New Inf_TotalizationRepository
+    Dim BaseRepository As Inf_SubjectRepository
+    Set BaseRepository = New Inf_SubjectRepository
     BaseRepository.Initialize ReadRepository
-    Dim UseCase As App_TotalizationUseCase
-    Set UseCase = New App_TotalizationUseCase
+    Dim UseCase As App_AggregateSubjectUseCase
+    Set UseCase = New App_AggregateSubjectUseCase
     UseCase.Initialize BaseRepository
-    Set CreateTotalizationUseCase = UseCase
+    Set CreateAggregateSubjectUseCase = UseCase
 End Function
 
-Public Function CreateLimitValueUseCase() As App_LimitValueUseCase
+Public Function CreateAggregateLimitValueUseCase() As App_AggregateLimitValueUseCase
     Dim PathBuilder As Inf_ConfigFilePathBuilder
     Set PathBuilder = New Inf_ConfigFilePathBuilder
     PathBuilder.Initialize New Inf_ConfigFileNameResolver, New Inf_WorkbookPathProvider
     Dim ReadRepository As Inf_ConfigReadRepository
     Set ReadRepository = New Inf_ConfigReadRepository
     ReadRepository.Initialize PathBuilder, New Inf_TextStreamReader, New Inf_CSVRFCParser
-    Dim BaseRepository As Inf_TotalizationRepository
-    Set BaseRepository = New Inf_TotalizationRepository
+    Dim BaseRepository As Inf_LimitValueRepository
+    Set BaseRepository = New Inf_LimitValueRepository
     BaseRepository.Initialize ReadRepository
-    Dim UseCase As App_LimitValueUseCase
-    Set UseCase = New App_LimitValueUseCase
+    Dim UseCase As App_AggregateLimitValueUseCase
+    Set UseCase = New App_AggregateLimitValueUseCase
     UseCase.Initialize BaseRepository
-    Set CreateLimitValueUseCase = UseCase
+    Set CreateAggregateLimitValueUseCase = UseCase
 End Function
 
-Public Function CreateEnrollmentUseCase() As App_EnrollmentUseCase
+Public Function CreateAggregateEnrollmentUseCase() As App_AggregateEnrollmentUseCase
     Dim PathBuilder As Inf_EntityFilePathBuilder
     Set PathBuilder = New Inf_EntityFilePathBuilder
     PathBuilder.Initialize New Inf_EntityFileNameResolver, New Inf_WorkbookPathProvider
@@ -44,13 +44,13 @@ Public Function CreateEnrollmentUseCase() As App_EnrollmentUseCase
     Dim BaseRepository As Inf_EnrollmentRepository
     Set BaseRepository = New Inf_EnrollmentRepository
     BaseRepository.Initialize ReadRepository
-    Dim UseCase As App_EnrollmentUseCase
-    Set UseCase = New App_EnrollmentUseCase
+    Dim UseCase As App_AggregateEnrollmentUseCase
+    Set UseCase = New App_AggregateEnrollmentUseCase
     UseCase.Initialize New Dom_SchoolYearCalculator, BaseRepository
-    Set CreateEnrollmentUseCase = UseCase
+    Set CreateAggregateEnrollmentUseCase = UseCase
 End Function
 
-Public Function CreateClassHourUseCase() As App_ClassHourUseCase
+Public Function CreateAggregateClassHourUseCase() As App_AggregateClassHourUseCase
     Dim PathBuilder As Inf_EntityFilePathBuilder
     Set PathBuilder = New Inf_EntityFilePathBuilder
     PathBuilder.Initialize New Inf_EntityFileNameResolver, New Inf_WorkbookPathProvider
@@ -60,8 +60,8 @@ Public Function CreateClassHourUseCase() As App_ClassHourUseCase
     Dim BaseRepository As Inf_ClassHourRepository
     Set BaseRepository = New Inf_ClassHourRepository
     BaseRepository.Initialize ReadRepository
-    Dim UseCase As App_ClassHourUseCase
-    Set UseCase = New App_ClassHourUseCase
+    Dim UseCase As App_AggregateClassHourUseCase
+    Set UseCase = New App_AggregateClassHourUseCase
     UseCase.Initialize New Dom_SchoolYearCalculator, BaseRepository
-    Set CreateClassHourUseCase = UseCase
+    Set CreateAggregateClassHourUseCase = UseCase
 End Function

@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "App_EntityAggregateBuilder"
+Attribute VB_Name = "App_GenerateEntityAggUseCase"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -20,21 +20,21 @@ Public Sub Initialize(ByVal Factory As Dom_IEntityColumnFactory)
     Set This.Factory = Factory
 End Sub
 
-Public Function Build(ByVal RowOfColumnDTOs As VBA.Collection) As Dom_EntityAggregate
-    If RowOfColumnDTOs Is Nothing Then Err.Raise AppErrNotingObject, , "RowOfColumnDTOs is nothing"
-    If RowOfColumnDTOs.Count = 0 Then Err.Raise AppErrEmptyObject, , "RowOfColumnDTOs is empty"
-    Dim EntityRows As VBA.Collection
-    Set EntityRows = New VBA.Collection
+Public Function Execute(ByVal ColumnDTOContainer As VBA.Collection) As Dom_EntityAggregate
+    If ColumnDTOContainer Is Nothing Then Err.Raise AppErrNotingObject, , "ColumnDTOContainer is nothing"
+    If ColumnDTOContainer.Count = 0 Then Err.Raise AppErrEmptyObject, , "ColumnDTOContainer is empty"
+    Dim ColumnContextContainer As VBA.Collection
+    Set ColumnContextContainer = New VBA.Collection
     Dim i As Long
-    For i = 1 To RowOfColumnDTOs.Count
+    For i = 1 To ColumnDTOContainer.Count
         Dim ColumnDTOs As VBA.Collection
-        Set ColumnDTOs = RowOfColumnDTOs.Item(i)
-        EntityRows.Add ColumnContext(ColumnDTOs)
+        Set ColumnDTOs = ColumnDTOContainer.Item(i)
+        ColumnContextContainer.Add ColumnContext(ColumnDTOs)
     Next
     Dim Result As Dom_EntityAggregate
     Set Result = New Dom_EntityAggregate
-    Result.Initialize EntityRows
-    Set Build = Result
+    Result.Initialize ColumnContextContainer
+    Set Execute = Result
 End Function
 
 Private Function ColumnContext(ByVal ColumnDTOs As VBA.Collection) As Dom_ColumnContext

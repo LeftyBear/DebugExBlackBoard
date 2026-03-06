@@ -52,10 +52,14 @@ Public Property Get Value() As String
 End Property
 
 Private Property Get Dom_IEntityColumn_HeaderName() As String
-    Dom_IEntityColumn_HeaderName = This.GradeColumn.Number & charUnderScore & This.ClassColumn.Number & charUnderScore & This.GenderColumn.Code
+    Select Case This.StreamType
+    Case Dom_StreamType.Main
+        Dom_IEntityColumn_HeaderName = This.GradeColumn.Number & "”N" & charUnderScore & This.ClassColumn.Number & "‘g" & charUnderScore & This.GenderColumn.Code
+    Case Dom_StreamType.Special
+        Dom_IEntityColumn_HeaderName = "“ÁŽx" & charUnderScore & This.ClassColumn.Number & "‘g" & charUnderScore & This.GenderColumn.Code
+    End Select
 End Property
 
 Private Property Get Dom_IEntityColumn_Value() As String
     Dom_IEntityColumn_Value = This.Value
 End Property
-

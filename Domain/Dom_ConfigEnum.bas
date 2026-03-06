@@ -4,6 +4,6 @@ Option Explicit
 
 Public Enum Dom_Config
     LimitValue = 1
-    Totalization
+    Subject
 End Enum
 

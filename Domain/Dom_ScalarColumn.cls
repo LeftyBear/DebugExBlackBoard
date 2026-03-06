@@ -23,14 +23,6 @@ Public Sub Initialize(ByVal HeaderName As String, ByVal Value As String)
     This.Value = Value
 End Sub
 
-Public Property Get HeaderName() As String
-    HeaderName = This.HeaderName
-End Property
-
-Public Property Get Value() As String
-    Value = This.Value
-End Property
-
 Private Property Get Dom_IEntityColumn_HeaderName() As String
     Dom_IEntityColumn_HeaderName = This.HeaderName
 End Property
