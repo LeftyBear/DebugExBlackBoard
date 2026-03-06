@@ -1,218 +1,251 @@
 DebugExBlackBoard
-Overview
 
-This project follows a Domain-Centered Architecture.
+DebugExBlackBoard is a reference architecture for building structured analytical systems using VBA.
 
-The design prioritizes:
+The project demonstrates how Domain-Driven Design, clean architecture principles, and object-oriented modeling can be applied even in environments traditionally dominated by procedural scripting.
 
-Strict layer responsibility separation
+Instead of treating spreadsheet columns as raw data fields, this architecture models columns as domain concepts, allowing analytical rules to be implemented as polymorphic domain objects.
 
-Dependency Inversion
+Architecture Overview
 
-Structural clarity over convenience
+The system follows a layered architecture inspired by Clean Architecture and Hexagonal Architecture.
 
-Reduction of unnecessary classes
+Infrastructure
+   CSV / IO / Repository
+        │
+        ▼
+Application
+   UseCase / Orchestration
+        │
+        ▼
+Domain
+   Record → Column → Aggregate → Summary
 
-Deterministic review standards
+Key principle:
 
-This repository is intentionally structured for architectural review.
-
-Architecture Principle
-Core Philosophy
-
-The Domain layer is the center of the system.
-
+Domain is the center of the system.
 All other layers exist to support the Domain.
 
-Dependency direction must always be:
+Dependency rules:
 
 Application → Domain
 Infrastructure → Domain
-Application → Infrastructure (only via Domain interface)
+Application → Infrastructure (via Domain interfaces only)
 
-Reverse dependencies are strictly forbidden.
+Reverse dependencies are not allowed.
+Domain Model
 
-Layer Definitions
-Domain Layer
+The domain is designed for analytical processing.
 
-Responsibility: Meaning and Business Rules
+Core concepts:
 
-Holds business concepts and invariants
+Record
+   Raw domain data
 
-Defines repository interfaces
+Column
+   Domain evaluation rule
 
-Contains no IO logic
+ColumnContext
+   Evaluation context passed to columns
 
-Contains no file paths
+Aggregate
+   Aggregates records and column evaluations
 
-Contains no external system knowledge
+Summary
+   Final result produced by aggregates
 
-Must not reference Infrastructure
+Processing flow:
 
-Naming:
-Prefix: Dom_
+Record
+   ↓
+ColumnContext
+   ↓
+Column.Evaluate(context)
+   ↓
+Aggregate
+   ↓
+Summary
+Column Domain Model
 
-Application Layer
+A key design decision is treating columns as domain objects rather than simple data fields.
 
-Responsibility: Use Case Orchestration
+Traditional analytical code often relies on conditional logic such as:
 
-Coordinates Domain objects
+If Grade = 1 And Gender = Male Then
 
-Controls execution flow
+In this architecture, analytical rules are encapsulated inside column objects:
 
-Owns no business rule logic
+column.Evaluate(context)
 
-Owns no mapping/dictionary
+This eliminates complex branching and allows the system to evolve through polymorphism.
 
-Owns no file path
+Column Structure
 
-Rules:
+All columns implement a common interface:
 
-All arguments must be explicitly ByVal
+Dom_IEntityColumn
+      ▲
+  ScalarColumn
+  GenderColumn
+  GradeColumn
+  ClassColumn
+  CompositeColumn
 
-Selector and Resolver must be separated
+Each column represents a domain rule capable of evaluating values from the context.
 
-No mapping logic inside Application
+Composite Columns
 
-Must not implement Infrastructure interfaces
+Some analytical rules combine multiple columns.
 
-Naming:
-Prefix: App_
+Example:
 
-Infrastructure Layer
+Grade × Gender
+Subject × Grade
 
-Responsibility: External Interaction
+This is implemented using the Composite Pattern.
 
-File IO
+CompositeColumn
+   ├ Column
+   └ Column
 
-CSV reading
+Composite columns allow complex evaluation logic to be built from smaller domain components.
 
-Database access
+Column Evaluation Context
 
-External APIs
+Column evaluation uses a dedicated context object.
 
-Rules:
+Dom_ColumnContext
 
-Implements Domain-defined interfaces
+Structure:
 
-Must not depend on Application layer
+ColumnContext
+   └ Collection<Column>
 
-Must not contain business rules
+The context provides the evaluation environment required by column objects.
 
-Purely technical implementation
+Design Patterns Used
 
-Naming:
-Prefix: Inf_
+The architecture intentionally combines several design patterns.
 
-Utility Layer
+Composite Pattern
+Dom_EnrollmentCompositeColumn
 
-Responsibility: Stateless Pure Functions
+Used to compose multiple columns.
 
-No state retention
+Strategy Pattern
+Dom_EnrollmentCompositeStrategy
 
-No side effects
+Defines how composite columns combine evaluation results.
 
-No layer dependency
+Factory Pattern
+Dom_EnrollmentColumnFactory
+Dom_ClassHourColumnFactory
 
-Pure transformation only
+Responsible for creating column objects.
 
-Naming:
-Prefix: Util_
+Dependency Inversion
 
-Coding Canon
+Repository interfaces are defined in the Domain layer.
 
-This project follows strict coding conventions.
+Dom_IEnrollmentRepository
+Dom_IClassHourRepository
 
-Naming Rules
-
-PascalCase required
-
-Explicit prefix per layer
-
-No ambiguous naming
-
-VBA Structural Rules
-
-Use Private Type Member
-
-Use Private This As Member
-
-Access fields via This.FieldName
-
-No line continuation character "_"
-
-No implicit ByRef
-
-Always declare ByVal explicitly
+Infrastructure implements these interfaces.
 
 Dependency Rules
 
-Domain must not reference Infrastructure
+The architecture enforces strict dependency direction.
 
-Infrastructure must not reference Application
+Allowed dependencies:
 
-No circular dependencies
+Application → Domain
+Infrastructure → Domain
+Application → Infrastructure (via Domain interfaces)
 
-Dependency Inversion required
+Forbidden dependencies:
 
-Forbidden Patterns
+Domain → Infrastructure
+Domain → IO
+Domain → CSV
+Domain → FilePath
 
-The following are strictly prohibited:
+This ensures the Domain layer remains independent from technical concerns.
 
-Domain referencing Infrastructure
+Adding a New Column
 
-Application owning file paths
+Adding new analytical rules is straightforward.
 
-Application containing mapping dictionaries
+Steps:
 
-Infrastructure containing business logic
+Create a class implementing Dom_IEntityColumn.
 
-Selector and Resolver combined
+Implement the Evaluate(context) method.
 
-Hidden state in Utility
+Register the column in the appropriate ColumnFactory.
 
-Layer mixing inside single class
+Example:
 
-Any violation must be flagged during review.
+Class Dom_SubjectColumn
+Implements Dom_IEntityColumn
 
-Review Mode Specification
+This approach follows the Open-Closed Principle.
 
-When reviewing this repository:
+Existing code remains unchanged when new columns are added.
 
-Prioritize architecture violations
+Analytical Domain Modeling
 
-Detect dependency direction errors
+This project models analytical dimensions as domain objects.
 
-Identify responsibility leakage
+Examples:
 
-Suggest class reduction opportunities
+Grade
+Gender
+Subject
+Class
 
-Reject convenience-driven shortcuts
+These behave similarly to dimensions in OLAP systems.
 
-Prefer structural correctness over brevity
+Instead of embedding analytical rules inside procedural logic, they are expressed as domain objects that interact through well-defined interfaces.
 
-Architecture integrity must be evaluated before implementation detail.
+Benefits:
 
-Design Intent
+• Eliminates complex conditional branching
+• Improves extensibility
+• Keeps analytical rules inside the Domain layer
+• Separates domain logic from infrastructure
+Future Extensions
 
-This repository exists to:
+The architecture can be extended to support more advanced analytical scenarios.
 
-Validate Domain-centered design in VBA
+Potential extensions:
 
-Establish a reusable canonical structure
+ColumnDefinition
+Column DSL
+Expression trees
 
-Maintain deterministic architectural integrity
+These would allow dynamic column definitions and expression-based analytical rules.
 
-Enable consistent long-term evolution
+For the current scope, the existing Column + Composite model provides sufficient flexibility.
 
-Usage for Review
+Summary
 
-To review this repository, state:
+DebugExBlackBoard demonstrates how to implement:
 
-Review this repository based on its README architecture canon.
+Domain-Driven Design
+Hexagonal Architecture
+Column Domain Modeling
 
-The README must be treated as the authoritative architectural source.
+within a VBA environment.
 
-Final Principle
+The project highlights how analytical systems can be structured using:
 
-Structural integrity is more important than implementation speed.
+Domain purity
+Polymorphic domain objects
+Clear dependency rules
+Extensible evaluation models
+
+This repository serves as a reference implementation for building structured analytical systems using VBA.
+
+It demonstrates how analytical logic can be modeled using domain objects, allowing complex evaluation rules to remain extensible, testable, and independent from infrastructure concerns.
+
+The architecture highlights how Domain-Driven Design and clean dependency structures can be applied effectively even in traditional VBA environments.
