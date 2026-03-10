@@ -22,7 +22,7 @@ Public Sub Initialize(ByVal Resolver As Inf_ConfigFileNameResolver, ByVal Provid
     Set This.Provider = Provider
 End Sub
 
-Public Function Builed(ByVal ConfigName As Dom_SchoolStructure) As String
+Public Function Builed(ByVal ConfigName As Dom_Config) As String
     Dim FileName As String
     FileName = This.Resolver.Resolve(ConfigName)
     Builed = This.Provider.GetBaseFolderPath & "root\config\" & FileName

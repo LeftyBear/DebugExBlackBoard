@@ -24,7 +24,7 @@ Public Sub Initialize(ByVal Builder As Inf_ConfigFilePathBuilder, ByVal Reader A
     Set This.Parser = Parser
 End Sub
 
-Public Function Load(ByVal ConfigName As Dom_SchoolStructure) As String()
+Public Function Load(ByVal ConfigName As Dom_Config) As String()
     Dim FilePath As String
     FilePath = This.Builder.Builed(ConfigName)
     If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise InfErrNotFoundFile, "", "Not found file"

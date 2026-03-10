@@ -21,7 +21,7 @@ Public Sub Parse(ByVal ColumnDTO As App_ColumnDTO, ByRef Values() As Long)
     ClassNo = ParseClass(Parts(1))
     Dim Gender As Long
     Gender = ParseGender(Parts(2))
-    Values(StreamType, Grade, ClassNo, Gender) = CLng(ColumnDTO.RawValue)
+    Values(StreamType, Grade, ClassNo, Gender) = NormalizeToLong(ColumnDTO.RawValue)
 End Sub
 
 Private Function ParseHeader(ByVal HeaderName As String) As String()
@@ -41,7 +41,11 @@ Private Function ResolveStreamType(ByVal Part As String) As Long
 End Function
 
 Private Function ParseGrade(ByVal Part As String) As Long
-    If VBA.IsNumeric(Part) Then ParseGrade = CLng(Part)
+    If VBA.IsNumeric(Part) Then
+        ParseGrade = CLng(Part)
+    ElseIf Part Like "ì¡éx" Then
+        ParseGrade = 1
+    End If
 End Function
 
 Private Function ParseClass(ByVal Part As String) As Long
@@ -53,4 +57,16 @@ Private Function ParseGender(ByVal Part As String) As Long
     Case "íj": ParseGender = Dom_Gender.Male
     Case "èó": ParseGender = Dom_Gender.Female
     End Select
+End Function
+
+Private Function NormalizeToLong(ByVal RawText As String) As Long
+    Dim TextValue As String
+    TextValue = VBA.Trim$(RawText)
+    If TextValue = vbNullString Then TextValue = "0"
+    TextValue = VBA.Replace(TextValue, charComma, vbNullString)
+    '@Ignore AssignmentNotUsed
+    TextValue = VBA.StrConv(TextValue, vbNarrow)
+    If Not VBA.IsNumeric(TextValue) Then Err.Raise Util_ErrNum.NotNumeric, "", "Not numeric: " & RawText
+    If 0 < VBA.InStr(1, TextValue, ".") Then Err.Raise Util_ErrNum.NotInteger, "", "Not integer: " & RawText
+    NormalizeToLong = CLng(TextValue)
 End Function

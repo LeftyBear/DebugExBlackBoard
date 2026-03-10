@@ -5,6 +5,7 @@ Option Explicit
 Option Private Module
 
 Public Const charHyphen                 As String = "-"
+Public Const charSlash                  As String = "/"
 Public Const charBackSlash              As String = "\"
 Public Const charComma                  As String = ","
 Public Const charSemicolon              As String = ";"

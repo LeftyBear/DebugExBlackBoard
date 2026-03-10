@@ -72,25 +72,24 @@ Public Function Format(ByVal Record As Dom_EnrollmentRecord, ByVal SchoolConfig 
         GrandFemaleTotal = GrandFemaleTotal + SpecialStream(R - UBound(MainStream) - 1, C.FemaleColumn)
         R = R + 1
     Next
-    OutputTable(R + 1, C.GradeColumn) = "全体"
-    OutputTable(R + 1, C.ClassColumn) = "合計"
-    OutputTable(R + 1, C.MaleColumn) = GrandMaleTotal
-    OutputTable(R + 1, C.FemaleColumn) = GrandFemaleTotal
-    OutputTable(R + 1, C.TotalColumn) = GrandMaleTotal + GrandFemaleTotal
+    OutputTable(R, C.GradeColumn) = "全体"
+    OutputTable(R, C.ClassColumn) = "合計"
+    OutputTable(R, C.MaleColumn) = GrandMaleTotal
+    OutputTable(R, C.FemaleColumn) = GrandFemaleTotal
+    OutputTable(R, C.TotalColumn) = GrandMaleTotal + GrandFemaleTotal
     Format = OutputTable
 End Function
 
 Private Function ToTable(ByVal Record As Dom_EnrollmentRecord, ByVal StreamType As Dom_StreamType, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
     Dim Table() As Long, MaleTotal() As Long, FemaleTotal() As Long, ClassTotal() As Long
     ReDim Table(1 To GradeCount * ClassCount + GradeCount, 1 To C.TotalColumn)
-    ReDim MaleTotal(1 To GradeCount)
-    ReDim FemaleTotal(1 To GradeCount)
-    ReDim ClassTotal(1 To GradeCount, 1 To ClassCount)
+    ReDim MaleTotal(0 To GradeCount)
+    ReDim FemaleTotal(0 To GradeCount)
+    ReDim ClassTotal(0 To GradeCount, 1 To ClassCount)
     Dim R As Long
     R = 1
     Dim Grade As Long
     For Grade = 1 To GradeCount
-        If StreamType = Special Then Grade = 0
         Dim ClassNo As Long
         For ClassNo = 1 To ClassCount
             Dim Gender As Long

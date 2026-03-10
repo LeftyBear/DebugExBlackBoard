@@ -5,19 +5,10 @@ Option Private Module
 
 Public Sub Run()
     'SchoolConfig--------------------------------------------------------------------------------
-    Dim LimitValueUseCase As App_AggregateLimitValueUseCase
-    Set LimitValueUseCase = App_UseCaseFactory.CreateAggregateLimitValueUseCase
-    Dim LimitValue As Dom_EntityAggregate
-    Set LimitValue = LimitValueUseCase.Execute
-    Dim SubjectUseCase As App_AggregateSubjectUseCase
-    Set SubjectUseCase = App_UseCaseFactory.CreateAggregateSubjectUseCase
-    Dim Subject As Dom_EntityAggregate
-    Set Subject = SubjectUseCase.Execute
-    Dim ConfigUseCase As App_GenerateConfigUseCase
-    Set ConfigUseCase = New App_GenerateConfigUseCase
-    ConfigUseCase.Initialize LimitValue, Subject
+    Dim SchoolConfigGenerater As App_GenerateSchoolConfigUseCase
+    Set SchoolConfigGenerater = App_UseCaseFactory.CreateSchoolConfigGenerater
     Dim SchoolConfig As Dom_SchoolConfig
-    Set SchoolConfig = ConfigUseCase.Execute
+    Set SchoolConfig = SchoolConfigGenerater.Execute
     'Enrollment----------------------------------------------------------------------------------
     Dim EnrollmentUseCase As App_AggregateEnrollmentUseCase
     Set EnrollmentUseCase = App_UseCaseFactory.CreateAggregateEnrollmentUseCase(SchoolConfig)

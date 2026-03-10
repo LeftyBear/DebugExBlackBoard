@@ -17,11 +17,11 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal HeaderName As String, ByVal Value As Long)
+Public Function Create(ByVal HeaderName As String, ByVal Value As Long) As Dom_IValueObject
     If HeaderName Like vbNullString Then Err.Raise DomErrNullString, , "HeaderName is null"
     This.HeaderName = HeaderName
     This.Value = Value
-End Sub
+End Function
 
 Public Property Get Value() As Long
     Value = This.Value

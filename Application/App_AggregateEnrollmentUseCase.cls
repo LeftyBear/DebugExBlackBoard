@@ -53,7 +53,7 @@ Private Function BuildRecord(ByVal ColumnDTOContainer As VBA.Collection) As VBA.
     Dim ClassCount As Long
     ClassCount = Bigger(This.Config.MainStreamClassCount, This.Config.SpecialClassCount)
     Dim Values() As Long
-    ReDim Values(1 To 1, 1 To GradeCount, 1 To ClassCount, 1 To 1)
+    ReDim Values(0 To Dom_StreamType.Special, 0 To GradeCount, 0 To ClassCount, 0 To Dom_Gender.Female)
     Dim R As Long
     For R = 1 To ColumnDTOContainer.Count
         Dim Record As Dom_EnrollmentRecord
@@ -68,10 +68,10 @@ Private Function BuildRecord(ByVal ColumnDTOContainer As VBA.Collection) As VBA.
                 This.Parser.Parse DTO, Values
             ElseIf DTO.HeaderName Like "ì˙ït" Then
                 Dim FixDate As Date
-                FixDate = CDate(DTO.RawValue)
+                FixDate = NormalizeToDate(DTO.RawValue)
             ElseIf DTO.HeaderName Like "ç›ê–àŸìÆ" Then
                 Dim Transfer As Boolean
-                Transfer = CBool(DTO.RawValue)
+                Transfer = NormalizeToBoolean(DTO.RawValue)
             ElseIf DTO.HeaderName Like "ç›ê–îıçl" Then
                 Dim Remarks As String
                 Remarks = DTO.RawValue
@@ -80,6 +80,7 @@ Private Function BuildRecord(ByVal ColumnDTOContainer As VBA.Collection) As VBA.
         Record.Initialize FixDate, Transfer, Remarks, Values
         Result.Add Record
     Next
+    Set BuildRecord = Result
 End Function
 
 Private Function Bigger(ByVal Value As Long, ByVal Another As Long) As Long
@@ -89,3 +90,54 @@ Private Function Bigger(ByVal Value As Long, ByVal Another As Long) As Long
         Bigger = Value
     End If
 End Function
+
+Private Function NormalizeToBoolean(ByVal RawText As String) As Boolean
+    Dim TextValue As String
+    TextValue = VBA.Trim$(RawText)
+    If TextValue = vbNullString Then TextValue = "FALSE"
+    '@Ignore AssignmentNotUsed
+    TextValue = VBA.StrConv(TextValue, vbNarrow)
+    Select Case VBA.UCase$(TextValue)
+    Case "TRUE"
+        NormalizeToBoolean = True
+    Case "FALSE"
+        NormalizeToBoolean = False
+    Case "1"
+        NormalizeToBoolean = True
+    Case "0"
+        NormalizeToBoolean = False
+    Case Else
+        Err.Raise Util_ErrNum.NotBoolean, "", "Not boolean: " & RawText
+    End Select
+End Function
+
+Private Function NormalizeToDate(ByVal RawText As String) As Date
+    Dim TextValue As String
+    TextValue = VBA.Trim$(RawText)
+    If TextValue = vbNullString Then Err.Raise Util_ErrNum.EmptyDate, "", "Date is empty"
+    TextValue = VBA.StrConv(TextValue, vbNarrow)
+    '@Ignore AssignmentNotUsed
+    TextValue = VBA.Replace(TextValue, charHyphen, charBackSlash)
+    If 0 < VBA.InStr(1, TextValue, charSlash) Then
+        If UBound(VBA.Split(TextValue, charSlash)) <> 2 Then Err.Raise Util_ErrNum.InvalidDateFormat, "", "Invalid date format: " & RawText
+        Dim YearPart As Long
+        YearPart = CLng(VBA.Split(TextValue, charSlash)(0))
+        Dim MonthPart As Long
+        MonthPart = CLng(VBA.Split(TextValue, charSlash)(1))
+        Dim DayPart As Long
+        DayPart = CLng(VBA.Split(TextValue, charSlash)(2))
+    ElseIf VBA.Len(TextValue) = 8 And VBA.IsNumeric(TextValue) Then
+        YearPart = CLng(VBA.Left$(TextValue, 4))
+        MonthPart = CLng(VBA.Mid$(TextValue, 5, 2))
+        DayPart = CLng(VBA.Right$(TextValue, 2))
+    Else
+        Err.Raise Util_ErrNum.InvalidDateFormat, "", "Invalid date format: " & RawText
+    End If
+    On Error GoTo InvalidDate
+    NormalizeToDate = CDate(VBA.DateSerial(YearPart, MonthPart, DayPart))
+    On Error GoTo 0
+    Exit Function
+InvalidDate:
+    Err.Raise Util_ErrNum.InvalidDateValue, "", "Invalid date value: " & RawText
+End Function
+

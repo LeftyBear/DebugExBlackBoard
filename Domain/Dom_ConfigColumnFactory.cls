@@ -16,12 +16,10 @@ Private Function Dom_IEntityColumnFactory_Create(ByVal ColumnDTO As App_ColumnDT
     Case "普通学年数", "普通学級数", "特支学年数", "特支学級数", "時間割数"
         Dim LongValueColumn As Dom_LongValueColumn
         Set LongValueColumn = New Dom_LongValueColumn
-        LongValueColumn.Initialize ColumnDTO.HeaderName, CLng(ColumnDTO.RawValue)
-        Set Dom_IEntityColumnFactory_Create = LongValueColumn
+        Set Dom_IEntityColumnFactory_Create = LongValueColumn.Create(ColumnDTO.HeaderName, CLng(ColumnDTO.RawValue))
     Case "集計名", "対象学年"
         Dim ScalarColumn As Dom_StringValueColumn
         Set ScalarColumn = New Dom_StringValueColumn
-        ScalarColumn.Initialize ColumnDTO.HeaderName, ColumnDTO.RawValue
-        Set Dom_IEntityColumnFactory_Create = ScalarColumn
+        Set Dom_IEntityColumnFactory_Create = ScalarColumn.Create(ColumnDTO.HeaderName, CLng(ColumnDTO.RawValue))
     End Select
 End Function

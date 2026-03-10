@@ -3,36 +3,20 @@ Attribute VB_Name = "App_UseCaseFactory"
 Option Explicit
 Option Private Module
 
-Public Function CreateAggregateSubjectUseCase() As App_AggregateSubjectUseCase
+Public Function CreateSchoolConfigGenerater() As App_GenerateSchoolConfigUseCase
     Dim PathBuilder As Inf_ConfigFilePathBuilder
     Set PathBuilder = New Inf_ConfigFilePathBuilder
     PathBuilder.Initialize New Inf_ConfigFileNameResolver, New Inf_WorkbookPathProvider
     Dim ReadRepository As Inf_ConfigReadRepository
     Set ReadRepository = New Inf_ConfigReadRepository
     ReadRepository.Initialize PathBuilder, New Inf_TextStreamReader, New Inf_CSVRFCParser
-    Dim BaseRepository As Inf_SubjectRepository
-    Set BaseRepository = New Inf_SubjectRepository
+    Dim BaseRepository As Inf_ConfigRepository
+    Set BaseRepository = New Inf_ConfigRepository
     BaseRepository.Initialize ReadRepository
-    Dim UseCase As App_AggregateSubjectUseCase
-    Set UseCase = New App_AggregateSubjectUseCase
+    Dim UseCase As App_GenerateSchoolConfigUseCase
+    Set UseCase = New App_GenerateSchoolConfigUseCase
     UseCase.Initialize BaseRepository
-    Set CreateAggregateSubjectUseCase = UseCase
-End Function
-
-Public Function CreateAggregateLimitValueUseCase() As App_AggregateLimitValueUseCase
-    Dim PathBuilder As Inf_ConfigFilePathBuilder
-    Set PathBuilder = New Inf_ConfigFilePathBuilder
-    PathBuilder.Initialize New Inf_ConfigFileNameResolver, New Inf_WorkbookPathProvider
-    Dim ReadRepository As Inf_ConfigReadRepository
-    Set ReadRepository = New Inf_ConfigReadRepository
-    ReadRepository.Initialize PathBuilder, New Inf_TextStreamReader, New Inf_CSVRFCParser
-    Dim BaseRepository As Inf_LimitValueRepository
-    Set BaseRepository = New Inf_LimitValueRepository
-    BaseRepository.Initialize ReadRepository
-    Dim UseCase As App_AggregateLimitValueUseCase
-    Set UseCase = New App_AggregateLimitValueUseCase
-    UseCase.Initialize BaseRepository
-    Set CreateAggregateLimitValueUseCase = UseCase
+    Set CreateSchoolConfigGenerater = UseCase
 End Function
 
 Public Function CreateAggregateEnrollmentUseCase(ByVal SchoolConfig As Dom_SchoolConfig) As App_AggregateEnrollmentUseCase

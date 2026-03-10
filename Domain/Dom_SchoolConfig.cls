@@ -18,8 +18,8 @@ End Type
 Private This As Member
 
 Public Sub Initialize(ByVal LimitValue As Dom_LimitValue, ByVal Subject As Dom_Subject)
-    This.LimitValue = LimitValue
-    This.Subject = Subject
+    Set This.LimitValue = LimitValue
+    Set This.Subject = Subject
 End Sub
 
 Public Property Get MainStreamGradeCount() As Long
