@@ -21,17 +21,25 @@ Public Sub Initialize(ByRef Values() As String)
 End Sub
 
 Public Function RowCount() As Long
-    RowCount = UBound(This.Source) - LBound(This.Source) + 1
+    If Not Not This.Source Then
+        RowCount = UBound(This.Source) - LBound(This.Source) + 1
+    End If
 End Function
 
 Public Function ColumnCount() As Long
-    ColumnCount = UBound(This.Source, 2) - LBound(This.Source, 2) + 1
+    If Not Not This.Source Then
+        ColumnCount = UBound(This.Source, 2) - LBound(This.Source, 2) + 1
+    End If
 End Function
 
 Public Function HeaderName(ByVal Index As Long) As String
-    HeaderName = This.Source(LBound(This.Source), Index)
+    If Not Not This.Source Then
+        HeaderName = This.Source(LBound(This.Source), Index)
+    End If
 End Function
 
 Public Function Value(ByVal RowIndex As Long, ByVal ColumnIndex As Long) As String
-    Value = This.Source(RowIndex, ColumnIndex)
+    If Not Not This.Source Then
+        Value = This.Source(RowIndex, ColumnIndex)
+    End If
 End Function

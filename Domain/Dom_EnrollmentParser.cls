@@ -2,15 +2,15 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Dom_EnrollmentCompositeStrategy"
+Attribute VB_Name = "Dom_EnrollmentParser"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Strategy")
+'@Folder("Domain.Parser")
 Option Explicit
 
-Public Function Create(ByVal ColumnDTO As App_ColumnDTO) As Dom_IEntityColumn
+Public Sub Parse(ByVal ColumnDTO As App_ColumnDTO, ByRef Values() As Long)
     Dim Parts() As String
     Parts = ParseHeader(ColumnDTO.HeaderName)
     Dim StreamType As Long
@@ -21,20 +21,8 @@ Public Function Create(ByVal ColumnDTO As App_ColumnDTO) As Dom_IEntityColumn
     ClassNo = ParseClass(Parts(1))
     Dim Gender As Long
     Gender = ParseGender(Parts(2))
-    Dim GradeColumn As Dom_GradeColumn
-    Set GradeColumn = New Dom_GradeColumn
-    GradeColumn.Initialize Grade
-    Dim ClassColumn As Dom_ClassColumn
-    Set ClassColumn = New Dom_ClassColumn
-    ClassColumn.Initialize ClassNo
-    Dim GenderColumn As Dom_GenderColumn
-    Set GenderColumn = New Dom_GenderColumn
-    GenderColumn.Initialize Gender
-    Dim CompositeColumn As Dom_EnrollmentCompositeColumn
-    Set CompositeColumn = New Dom_EnrollmentCompositeColumn
-    CompositeColumn.Initialize StreamType, GradeColumn, ClassColumn, GenderColumn, ColumnDTO.RawValue
-    Set Create = CompositeColumn
-End Function
+    Values(StreamType, Grade, ClassNo, Gender) = CLng(ColumnDTO.RawValue)
+End Sub
 
 Private Function ParseHeader(ByVal HeaderName As String) As String()
     Dim Buffer As String

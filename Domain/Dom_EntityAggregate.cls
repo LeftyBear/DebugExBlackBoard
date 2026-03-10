@@ -11,7 +11,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    ColumnContextContainer As VBA.Collection
+    Container As VBA.Collection
 End Type
 
 Private This As Member
@@ -20,18 +20,23 @@ Public Sub Initialize(ByVal ColumnContextContainer As VBA.Collection)
     If ColumnContextContainer Is Nothing Then Err.Raise DomErrNothingObject, , "ColumnContextContainer is Nothing"
     If ColumnContextContainer.Count = 0 Then Err.Raise DomErrEmptyObject, , "ColumnContextContainer is empty"
     ValidateContainer ColumnContextContainer
-    Set This.ColumnContextContainer = ColumnContextContainer
+    Set This.Container = ColumnContextContainer
 End Sub
 
 Public Property Get Count() As Long
-    Count = This.ColumnContextContainer.Count
+    Count = This.Container.Count
 End Property
+
+Public Function GetColumnContext(ByVal Index As Long) As Dom_ColumnContext
+    Dim ColumnContext As Dom_ColumnContext
+    Set ColumnContext = This.Container.Item(Index)
+End Function
 
 Private Sub ValidateContainer(ByVal ColumnContextContainer As VBA.Collection)
     Dim i As Long
     For i = 1 To ColumnContextContainer.Count
         If Not TypeOf ColumnContextContainer.Item(i) Is Dom_ColumnContext Then
-            Err.Raise DomErrInvalidTypeOfObject, , "Invalid row type"
+            Err.Raise DomErrInvalidTypeOfObject, , "Invalid ColumnContext type"
         End If
     Next
 End Sub

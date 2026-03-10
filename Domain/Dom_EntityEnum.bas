@@ -1,6 +1,7 @@
 Attribute VB_Name = "Dom_EntityEnum"
 '@Folder "Domain.Enum"
 Option Explicit
+Option Private Module
 
 Public Enum Dom_Entity
     ClassHour = 1

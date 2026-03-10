@@ -10,5 +10,5 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Interface")
 Option Explicit
 
-Public Function Create(ByVal ColumnDTO As App_ColumnDTO) As Dom_IEntityColumn
+Public Function Create(ByVal ColumnDTO As App_ColumnDTO) As Dom_IValueObject
 End Function

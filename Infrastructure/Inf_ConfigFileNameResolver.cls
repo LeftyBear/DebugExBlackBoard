@@ -10,11 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Application.Resolver")
 Option Explicit
 
-Public Function Resolve(ByVal ConfigName As Dom_Config) As String
+Public Function Resolve(ByVal ConfigName As Dom_SchoolStructure) As String
     Select Case ConfigName
-    Case Dom_Config.LimitValue
+    Case Dom_SchoolStructure.LimitValue
         Resolve = "LimitValue.csv"
-    Case Dom_Config.Subject
+    Case Dom_SchoolStructure.Subject
         Resolve = "Subject.csv"
     End Select
 End Function

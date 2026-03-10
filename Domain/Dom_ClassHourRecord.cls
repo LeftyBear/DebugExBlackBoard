@@ -41,4 +41,3 @@ End Property
 Public Property Get Count() As Long
     Count = This.Count
 End Property
-

@@ -2,14 +2,14 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Dom_ScalarColumn"
+Attribute VB_Name = "Dom_StringValueColumn"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Domain.ValueObject")
 Option Explicit
-Implements Dom_IEntityColumn
+Implements Dom_IValueObject
 Private Type Member
     HeaderName  As String
     Value       As String
@@ -23,10 +23,17 @@ Public Sub Initialize(ByVal HeaderName As String, ByVal Value As String)
     This.Value = Value
 End Sub
 
-Private Property Get Dom_IEntityColumn_HeaderName() As String
-    Dom_IEntityColumn_HeaderName = This.HeaderName
+Public Property Get Value() As String
+    Value = This.Value
 End Property
 
-Private Property Get Dom_IEntityColumn_Value() As String
-    Dom_IEntityColumn_Value = This.Value
+Public Property Get HeaderName() As String
+    HeaderName = This.HeaderName
 End Property
+
+Private Function Dom_IValueObject_IsEqual(ByVal Other As Dom_IValueObject) As Boolean
+    If Not TypeOf Other Is Dom_StringValueColumn Then Exit Function
+    Dim Target As Dom_StringValueColumn
+    Set Target = Other
+    Dom_IValueObject_IsEqual = (This.HeaderName = Target.HeaderName)
+End Function

@@ -1,6 +1,7 @@
 Attribute VB_Name = "Util_Function"
 '@Folder "Utility.Function"
 Option Explicit
+Option Private Module
 
 Public Function ParseSearchKeywords(ByVal InputText As String) As VBA.Collection
     Dim Result As VBA.Collection

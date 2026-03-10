@@ -22,7 +22,7 @@ End Type
 
 Private Type Member
     LimitValue      As Dom_LimitValue
-    Subject    As Dom_Subject
+    Subject         As Dom_Subject
     TargetDate      As Date
     Execution       As ExecutionMember
     Plan            As PlanMember
@@ -35,7 +35,7 @@ Friend Sub InitializeInternal(ByVal LimitValue As Dom_LimitValue, ByVal Subject 
     Set This.Subject = Subject
     This.TargetDate = TargetDate
     Dim SubjectCount As Long
-    SubjectCount = Subject.SubjectCount
+    SubjectCount = Subject.Count
     Dim PeriodCount As Long
     PeriodCount = LimitValue.PeriodCount
     Dim GradeCount As Long
@@ -55,65 +55,33 @@ Public Property Get TargetDate() As Date
 End Property
 
 Public Sub AddExecutionClassHourSubject(ByVal Index As Long, ByVal Grade As Long, ByVal Value As Long)
-    Dim SubjectIndex As Long
-    SubjectIndex = This.Subject.ToSubjectIndex(Index)
-    Dim GradeIndex As Long
-    GradeIndex = This.LimitValue.ToSpecialGradeIndex(Grade)
-    This.Execution.ClassHourSubject(SubjectIndex, GradeIndex) = This.Execution.ClassHourSubject(SubjectIndex, GradeIndex) + Value
+    This.Execution.ClassHourSubject(Index, Grade) = This.Execution.ClassHourSubject(Index, Grade) + Value
 End Sub
 
 Public Sub AddPlanClassHourSubject(ByVal Index As Long, ByVal Grade As Long, ByVal Value As Long)
-    Dim SubjectIndex As Long
-    SubjectIndex = This.Subject.ToSubjectIndex(Index)
-    Dim GradeIndex As Long
-    GradeIndex = This.LimitValue.ToSpecialGradeIndex(Grade)
-    This.Plan.ClassHourSubject(SubjectIndex, GradeIndex) = This.Plan.ClassHourSubject(SubjectIndex, GradeIndex) + Value
+    This.Plan.ClassHourSubject(Index, Grade) = This.Plan.ClassHourSubject(Index, Grade) + Value
 End Sub
 
 Public Sub AddExecutionTimeTablePeriod(ByVal Period As Long, ByVal Grade As Long, ByVal Value As Long)
-    Dim PeriodIndex As Long
-    PeriodIndex = This.LimitValue.ToPeriodIndex(Period)
-    Dim GradeIndex As Long
-    GradeIndex = This.LimitValue.ToSpecialGradeIndex(Grade)
-    This.Execution.TimeTablePeriod(PeriodIndex, GradeIndex) = This.Execution.TimeTablePeriod(PeriodIndex, GradeIndex) + Value
+    This.Execution.TimeTablePeriod(Period, Grade) = This.Execution.TimeTablePeriod(Period, Grade) + Value
 End Sub
 
 Public Sub AddPlanTimeTablePeriod(ByVal Period As Long, ByVal Grade As Long, ByVal Value As Long)
-    Dim PeriodIndex As Long
-    PeriodIndex = This.LimitValue.ToPeriodIndex(Period)
-    Dim GradeIndex As Long
-    GradeIndex = This.LimitValue.ToSpecialGradeIndex(Grade)
-    This.Plan.TimeTablePeriod(PeriodIndex, GradeIndex) = This.Plan.TimeTablePeriod(PeriodIndex, GradeIndex) + Value
+    This.Plan.TimeTablePeriod(Period, Grade) = This.Plan.TimeTablePeriod(Period, Grade) + Value
 End Sub
 
 Public Function GetExecutionClassHourOf(ByVal Index As Long, ByVal Grade As Long) As Long
-    Dim SubjectIndex As Long
-    SubjectIndex = This.Subject.ToSubjectIndex(Index)
-    Dim GradeIndex As Long
-    GradeIndex = This.LimitValue.ToSpecialGradeIndex(Grade)
-    GetExecutionClassHourOf = This.Execution.ClassHourSubject(SubjectIndex, GradeIndex)
+    GetExecutionClassHourOf = This.Execution.ClassHourSubject(Index, Grade)
 End Function
 
 Public Function GetPlanClassHourOf(ByVal Index As Long, ByVal Grade As Long) As Long
-    Dim SubjectIndex As Long
-    SubjectIndex = This.Subject.ToSubjectIndex(Index)
-    Dim GradeIndex As Long
-    GradeIndex = This.LimitValue.ToSpecialGradeIndex(Grade)
-    GetPlanClassHourOf = This.Plan.ClassHourSubject(SubjectIndex, GradeIndex)
+    GetPlanClassHourOf = This.Plan.ClassHourSubject(Index, Grade)
 End Function
 
 Public Function GetExecutionTimeTableOf(ByVal Period As Long, ByVal Grade As Long) As Long
-    Dim PeriodIndex As Long
-    PeriodIndex = This.LimitValue.ToPeriodIndex(Period)
-    Dim GradeIndex As Long
-    GradeIndex = This.LimitValue.ToSpecialGradeIndex(Grade)
-    GetExecutionTimeTableOf = This.Execution.TimeTablePeriod(PeriodIndex, GradeIndex)
+    GetExecutionTimeTableOf = This.Execution.TimeTablePeriod(Period, Grade)
 End Function
 
 Public Function GetPlanTimeTableOf(ByVal Period As Long, ByVal Grade As Long) As Long
-    Dim PeriodIndex As Long
-    PeriodIndex = This.LimitValue.ToPeriodIndex(Period)
-    Dim GradeIndex As Long
-    GradeIndex = This.LimitValue.ToSpecialGradeIndex(Grade)
-    GetPlanTimeTableOf = This.Plan.TimeTablePeriod(PeriodIndex, GradeIndex)
+    GetPlanTimeTableOf = This.Plan.TimeTablePeriod(Period, Grade)
 End Function

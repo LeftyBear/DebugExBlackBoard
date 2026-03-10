@@ -24,10 +24,10 @@ Public Function Execute() As Dom_EntityAggregate
     Dim CSVDTO As App_CSVDTO
     Set CSVDTO = New App_CSVDTO
     CSVDTO.Initialize This.Repository.Load(LimitValue)
-    Dim PackColumnDTO As App_PackColumnDTOUseCase
-    Set PackColumnDTO = New App_PackColumnDTOUseCase
+    Dim AddColumnDTO As App_AddColumnDTOatRowUseCase
+    Set AddColumnDTO = New App_AddColumnDTOatRowUseCase
     Dim ColumnDTOContainer As VBA.Collection
-    Set ColumnDTOContainer = PackColumnDTO.Execute(CSVDTO)
+    Set ColumnDTOContainer = AddColumnDTO.Execute(CSVDTO)
     Dim GenerateAggregate As App_GenerateEntityAggUseCase
     Set GenerateAggregate = New App_GenerateEntityAggUseCase
     GenerateAggregate.Initialize New Dom_ConfigColumnFactory

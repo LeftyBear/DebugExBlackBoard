@@ -21,6 +21,11 @@ End Type
 Private This As Member
 
 Public Sub Initialize(ByVal MainStreamGradeCount As Long, ByVal MainStreamClassCount As Long, ByVal SpecialGradeCount As Long, ByVal SpecialClassCount As Long, ByVal PeriodCount As Long)
+    If MainStreamGradeCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "", "MainStreamGradeCount must be positive number"
+    If MainStreamClassCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "", "MainStreamClassCount must be positive number"
+    If SpecialGradeCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "", "SpecialGradeCount must be positive number"
+    If SpecialClassCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "", "SpecialClassCount must be positive number"
+    If PeriodCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "", "PeriodCount must be positive number"
     This.MainStreamGradeCount = MainStreamGradeCount
     This.MainStreamClassCount = MainStreamClassCount
     This.SpecialGradeCount = SpecialGradeCount
@@ -47,48 +52,3 @@ End Property
 Public Property Get PeriodCount() As Long
     PeriodCount = This.PeriodCount
 End Property
-
-Public Function ToMainStreamGradeIndex(ByVal Grade As Long) As Long
-    If Not MainStreamGradeContains(Grade) Then Err.Raise AppErrInvalidRange, , "Grade out of range."
-    ToMainStreamGradeIndex = Grade
-End Function
-
-Public Function ToMainStreamClassIndex(ByVal ClassNo As Long) As Long
-    If Not MainStreamClassContains(ClassNo) Then Err.Raise AppErrInvalidRange, , "Class out of range."
-    ToMainStreamClassIndex = ClassNo
-End Function
-
-Public Function ToSpecialGradeIndex(ByVal Grade As Long) As Long
-    If Not SpecialGradeContains(Grade) Then Err.Raise AppErrInvalidRange, , "Grade out of range."
-    ToSpecialGradeIndex = Grade
-End Function
-
-Public Function ToSpecialClassIndex(ByVal ClassNo As Long) As Long
-    If Not SpecialClassContains(ClassNo) Then Err.Raise AppErrInvalidRange, , "Class out of range."
-    ToSpecialClassIndex = ClassNo
-End Function
-
-Public Function ToPeriodIndex(ByVal Period As Long) As Long
-    If Not PeriodContains(Period) Then Err.Raise AppErrInvalidRange, , "Period out of range."
-    ToPeriodIndex = Period
-End Function
-
-Private Function MainStreamGradeContains(ByVal Grade As Long) As Boolean
-    MainStreamGradeContains = (0 < Grade) And (Grade <= This.MainStreamGradeCount)
-End Function
-
-Private Function MainStreamClassContains(ByVal ClassNo As Long) As Boolean
-    MainStreamClassContains = (0 < ClassNo) And (ClassNo <= This.MainStreamClassCount)
-End Function
-
-Private Function SpecialGradeContains(ByVal Grade As Long) As Boolean
-    SpecialGradeContains = (0 < Grade) And (Grade <= This.SpecialGradeCount)
-End Function
-
-Private Function SpecialClassContains(ByVal ClassNo As Long) As Boolean
-    SpecialClassContains = (0 < ClassNo) And (ClassNo <= This.SpecialClassCount)
-End Function
-
-Private Function PeriodContains(ByVal Period As Long) As Boolean
-    PeriodContains = (0 < Period) And (Period <= This.PeriodCount)
-End Function

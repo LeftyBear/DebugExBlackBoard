@@ -1,6 +1,7 @@
 Attribute VB_Name = "App_UseCaseFactory"
 '@Folder "Application.CompositionRoot"
 Option Explicit
+Option Private Module
 
 Public Function CreateAggregateSubjectUseCase() As App_AggregateSubjectUseCase
     Dim PathBuilder As Inf_ConfigFilePathBuilder
@@ -34,7 +35,7 @@ Public Function CreateAggregateLimitValueUseCase() As App_AggregateLimitValueUse
     Set CreateAggregateLimitValueUseCase = UseCase
 End Function
 
-Public Function CreateAggregateEnrollmentUseCase() As App_AggregateEnrollmentUseCase
+Public Function CreateAggregateEnrollmentUseCase(ByVal SchoolConfig As Dom_SchoolConfig) As App_AggregateEnrollmentUseCase
     Dim PathBuilder As Inf_EntityFilePathBuilder
     Set PathBuilder = New Inf_EntityFilePathBuilder
     PathBuilder.Initialize New Inf_EntityFileNameResolver, New Inf_WorkbookPathProvider
@@ -46,7 +47,7 @@ Public Function CreateAggregateEnrollmentUseCase() As App_AggregateEnrollmentUse
     BaseRepository.Initialize ReadRepository
     Dim UseCase As App_AggregateEnrollmentUseCase
     Set UseCase = New App_AggregateEnrollmentUseCase
-    UseCase.Initialize New Dom_SchoolYearCalculator, BaseRepository
+    UseCase.Initialize New Dom_SchoolYearCalculator, BaseRepository, SchoolConfig
     Set CreateAggregateEnrollmentUseCase = UseCase
 End Function
 

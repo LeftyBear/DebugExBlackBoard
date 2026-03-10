@@ -20,6 +20,6 @@ Public Sub Initialize(ByVal Repository As Inf_ConfigReadRepository)
     Set This.Repository = Repository
 End Sub
 
-Private Function Dom_ISubjectRepository_Load(ByVal ConfigName As Dom_Config) As String()
+Private Function Dom_ISubjectRepository_Load(ByVal ConfigName As Dom_SchoolStructure) As String()
     Dom_ISubjectRepository_Load = This.Repository.Load(ConfigName)
 End Function

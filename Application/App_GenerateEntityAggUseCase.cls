@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Builder")
+'@Folder("Application.UseCase")
 Option Explicit
 
 Private Type Member
@@ -44,7 +44,9 @@ Private Function ColumnContext(ByVal ColumnDTOs As VBA.Collection) As Dom_Column
     For i = 1 To ColumnDTOs.Count
         Dim DTO As App_ColumnDTO
         Set DTO = ColumnDTOs.Item(i)
-        EntityColumns.Add This.Factory.Create(DTO)
+        Dim EntityColumn As Dom_IValueObject
+        Set EntityColumn = This.Factory.Create(DTO)
+        EntityColumns.Add EntityColumn
     Next
     Dim Result As Dom_ColumnContext
     Set Result = New Dom_ColumnContext

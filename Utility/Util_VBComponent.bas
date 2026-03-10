@@ -1,6 +1,7 @@
 Attribute VB_Name = "Util_VBComponent"
 '@Folder "Utility.VBComponent"
 Option Explicit
+Option Private Module
 
 Private Const CtStdModule As Long = 1
 Private Const CtClassModule As Long = 2

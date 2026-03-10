@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "App_PackColumnDTOUseCase"
+Attribute VB_Name = "App_AddColumnDTOatRowUseCase"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -11,10 +11,10 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public Function Execute(ByVal Source As App_CSVDTO) As VBA.Collection
-    Dim ColumnDTOContainer As VBA.Collection
-    Set ColumnDTOContainer = New VBA.Collection
+    Dim Container As VBA.Collection
+    Set Container = New VBA.Collection
     Dim R As Long
-    For R = 1 To Source.RowCount
+    For R = 2 To Source.RowCount
         Dim ColumnDTOs As VBA.Collection
         Set ColumnDTOs = New VBA.Collection
         Dim C As Long
@@ -24,7 +24,7 @@ Public Function Execute(ByVal Source As App_CSVDTO) As VBA.Collection
             DTO.Initialize Source.HeaderName(C), Source.Value(R, C)
             ColumnDTOs.Add DTO
         Next
-        ColumnDTOContainer.Add ColumnDTOs
+        Container.Add ColumnDTOs
     Next
-    Set Execute = ColumnDTOContainer
+    Set Execute = Container
 End Function

@@ -27,14 +27,14 @@ Public Property Get Count() As Long
     Count = This.EntityColumns.Count
 End Property
 
-Public Function EntityColumn(ByVal Index As Long) As Dom_IEntityColumn
-    Set EntityColumn = This.EntityColumns.Item(Index)
+Public Function GetColumn(ByVal Index As Long) As Dom_IValueObject
+    Set GetColumn = This.EntityColumns.Item(Index)
 End Function
 
 Private Sub ValidateColumns(ByVal Source As VBA.Collection)
     Dim i As Long
     For i = 1 To Source.Count
-        If Not TypeOf Source.Item(i) Is Dom_IEntityColumn Then
+        If Not TypeOf Source.Item(i) Is Dom_IValueObject Then
             Err.Raise DomErrInvalidTypeOfObject, , "Invalid column type"
         End If
     Next

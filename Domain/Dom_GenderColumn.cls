@@ -11,15 +11,15 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Code As Long
+    Value As Long
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Code As Long)
-    This.Code = Code
+Public Sub Initialize(ByVal Value As Long)
+    This.Value = Value
 End Sub
 
-Public Property Get Code() As Long
-    Code = This.Code
+Public Property Get Value() As Long
+    Value = This.Value
 End Property
