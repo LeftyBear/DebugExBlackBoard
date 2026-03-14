@@ -51,11 +51,12 @@ Private Function GenerateMainStream() As Dom_MainStream
         For C = 1 To ColumnDTOs.Count
             Dim DTO As App_ColumnDTO
             Set DTO = ColumnDTOs.Item(C)
-            Dim GradeCount As Long, ClassCount As Long
             Select Case DTO.HeaderName
             Case jpnFutsuGakunenSu
+                Dim GradeCount As Long
                 GradeCount = CLng(DTO.RawValue)
             Case jpnFutsuGakkyuSu
+                Dim ClassCount As Long
                 ClassCount = CLng(DTO.RawValue)
             End Select
         Next
@@ -139,10 +140,6 @@ Private Function GenerateTimeTable() As Dom_TimeTable
     Set AddColumnDTO = New App_AddColumnDTOatRowUseCase
     Dim ColumnDTOContainer As VBA.Collection
     Set ColumnDTOContainer = AddColumnDTO.Execute(CSVDTO)
-    Dim Names As VBA.Collection
-    Set Names = New VBA.Collection
-    Dim TargetGrades As VBA.Collection
-    Set TargetGrades = New VBA.Collection
     Dim R As Long
     For R = 1 To ColumnDTOContainer.Count
         Dim ColumnDTOs As VBA.Collection

@@ -81,6 +81,7 @@ Public Function Format(ByVal Record As Dom_EnrollmentRecord, ByVal Config As Dom
 End Function
 
 Private Function ToTable(ByVal Record As Dom_EnrollmentRecord, ByVal StreamType As Dom_StreamType, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
+    '@Ignore MultipleDeclarations
     Dim Table() As Long, MaleTotal() As Long, FemaleTotal() As Long, ClassTotal() As Long
     ReDim Table(1 To GradeCount * ClassCount + GradeCount, 1 To C.TotalColumn)
     ReDim MaleTotal(0 To GradeCount)

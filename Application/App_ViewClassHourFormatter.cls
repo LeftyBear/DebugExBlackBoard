@@ -12,7 +12,7 @@ Option Explicit
 
 Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal Record As Dom_ClassHourRecord, ByVal Config As Dom_SchoolConfig) As Variant()
     Dim ClassHourTable() As Long
-    ClassHourTable = ToClassHourTable(Plan, Record, Config)
+    ClassHourTable = ToClassHourTable(ClassHourType, Record, Config)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(ClassHourTable, 1) + 1, 1 To UBound(ClassHourTable, 2) + 1)
     Dim C As Long

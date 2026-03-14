@@ -64,7 +64,7 @@ Private Function BuildRecord(ByVal ColumnDTOContainer As VBA.Collection) As VBA.
             Set DTO = ColumnDTOs.Item(C)
             If 0 < VBA.InStr(1, DTO.HeaderName, charUnderScore) Then
                 If 0 < VBA.InStr(1, DTO.HeaderName, jpnKouji) Then
-                    This.TimeTable.Parse This.Config, DTO, TimeTables
+                    This.TimeTable.Parse DTO, TimeTables
                 Else
                     This.ClassHour.Parse This.Config, DTO, Values
                 End If

@@ -16,6 +16,7 @@ Private Enum Index
     Grade
 End Enum
 
+'@Ignore ProcedureCanBeWrittenAsFunction
 Public Sub Parse(ByVal Config As Dom_SchoolConfig, ByVal ColumnDTO As App_ColumnDTO, ByRef Values() As Long)
     Dim Parts() As String
     Parts = ParseHeader(ColumnDTO.HeaderName)

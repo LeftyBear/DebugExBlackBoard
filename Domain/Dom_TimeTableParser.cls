@@ -16,7 +16,8 @@ Private Enum Index
     Grade
 End Enum
 
-Public Sub Parse(ByVal Config As Dom_SchoolConfig, ByVal ColumnDTO As App_ColumnDTO, ByRef TimeTables() As String)
+'@Ignore ProcedureCanBeWrittenAsFunction
+Public Sub Parse(ByVal ColumnDTO As App_ColumnDTO, ByRef TimeTables() As String)
     Dim Parts() As String
     Parts = ParseHeader(ColumnDTO.HeaderName)
     Dim ClassHourType As Long

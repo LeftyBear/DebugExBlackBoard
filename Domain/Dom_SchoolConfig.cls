@@ -76,7 +76,3 @@ End Function
 Private Function SpecialClassIndexContains(ByVal Index As Long) As Boolean
     SpecialClassIndexContains = (0 < Index) And (Index <= Me.SpecialStreamClassCount)
 End Function
-
-Private Function SubjectNameContains(ByVal Index As Long) As Boolean
-    SubjectNameContains = (0 < Index) And (Index <= Me.SubjectCount)
-End Function

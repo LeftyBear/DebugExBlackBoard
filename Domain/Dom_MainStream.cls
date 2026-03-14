@@ -18,8 +18,8 @@ End Type
 Private This As Member
 
 Public Sub Initialize(ByVal GradeCount As Long, ByVal ClassCount As Long)
-    If GradeCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "", "学年は正の数である必要があります。"
-    If ClassCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "", "学級は正の数である必要があります。"
+    If GradeCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_MainStream", "学年は正の数である必要があります。"
+    If ClassCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_MainStream", "学級は正の数である必要があります。"
     This.GradeCount = GradeCount
     This.ClassCount = ClassCount
 End Sub
