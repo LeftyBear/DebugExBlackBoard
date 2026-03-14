@@ -27,7 +27,7 @@ End Sub
 Public Function Load(ByVal EntityName As Dom_Entity, ByVal SchoolYear As Long) As String()
     Dim FilePath As String
     FilePath = This.Builder.Builed(EntityName, SchoolYear)
-    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise InfErrNotFoundFile, "", "Not found file"
+    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise InfErrNotFoundFile, "Inf_CSVReadRepository", "Not found file."
     Dim TextData As String
     TextData = This.Reader.ReadAll(FilePath)
     Load = This.Parser.Parse(TextData)

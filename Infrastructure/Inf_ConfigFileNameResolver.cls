@@ -7,15 +7,19 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Resolver")
+'@Folder("Infrastructure.Resolver")
 Option Explicit
 
 Public Function Resolve(ByVal ConfigName As Dom_Config) As String
     Select Case ConfigName
-    Case Dom_Config.LimitValue
-        Resolve = "LimitValue.csv"
+    Case Dom_Config.MainStream
+        Resolve = "MainStream.csv"
+    Case Dom_Config.SpecialStream
+        Resolve = "SpecialStream.csv"
     Case Dom_Config.Subject
         Resolve = "Subject.csv"
+    Case Dom_Config.TimeTable
+        Resolve = "TimeTable.csv"
     End Select
 End Function
 

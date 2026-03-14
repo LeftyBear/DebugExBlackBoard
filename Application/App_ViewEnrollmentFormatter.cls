@@ -18,24 +18,24 @@ Private Enum C
     TotalColumn
 End Enum
 
-Public Function Format(ByVal Record As Dom_EnrollmentRecord, ByVal SchoolConfig As Dom_SchoolConfig) As Variant()
+Public Function Format(ByVal Record As Dom_EnrollmentRecord, ByVal Config As Dom_SchoolConfig) As Variant()
     Dim MainStream() As Long
-    MainStream = ToTable(Record, Main, SchoolConfig.MainStreamGradeCount, SchoolConfig.MainStreamClassCount)
+    MainStream = ToTable(Record, Main, Config.MainStreamGradeCount, Config.MainStreamClassCount)
     Dim SpecialStream() As Long
-    SpecialStream = ToTable(Record, Special, SchoolConfig.SpecialGradeCount, SchoolConfig.SpecialClassCount)
+    SpecialStream = ToTable(Record, Special, Config.SpecialStreamGradeCount, Config.SpecialStreamClassCount)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(MainStream) + UBound(SpecialStream) + 2, 1 To C.TotalColumn)
-    OutputTable(1, C.GradeColumn) = "年"
-    OutputTable(1, C.ClassColumn) = "組"
-    OutputTable(1, C.MaleColumn) = "男"
-    OutputTable(1, C.FemaleColumn) = "女"
-    OutputTable(1, C.TotalColumn) = "合計"
+    OutputTable(1, C.GradeColumn) = jpnNen
+    OutputTable(1, C.ClassColumn) = jpnKumi
+    OutputTable(1, C.MaleColumn) = jpnOtoko
+    OutputTable(1, C.FemaleColumn) = jpnOnna
+    OutputTable(1, C.TotalColumn) = jpnGoukei
     Dim R As Long
     R = 2
     Dim Grade As Long
-    For Grade = 1 To SchoolConfig.MainStreamGradeCount
+    For Grade = 1 To Config.MainStreamGradeCount
         Dim ClassNo As Long
-        For ClassNo = 1 To SchoolConfig.MainStreamClassCount
+        For ClassNo = 1 To Config.MainStreamClassCount
             OutputTable(R, C.GradeColumn) = Grade
             OutputTable(R, C.ClassColumn) = ClassNo
             OutputTable(R, C.MaleColumn) = MainStream(R - 1, C.MaleColumn)
@@ -43,8 +43,8 @@ Public Function Format(ByVal Record As Dom_EnrollmentRecord, ByVal SchoolConfig 
             OutputTable(R, C.TotalColumn) = MainStream(R - 1, C.TotalColumn)
             R = R + 1
         Next
-        OutputTable(R, C.GradeColumn) = Grade & "年"
-        OutputTable(R, C.ClassColumn) = "合計"
+        OutputTable(R, C.GradeColumn) = Grade & jpnNen
+        OutputTable(R, C.ClassColumn) = jpnGoukei
         OutputTable(R, C.MaleColumn) = MainStream(R - 1, C.MaleColumn)
         OutputTable(R, C.FemaleColumn) = MainStream(R - 1, C.FemaleColumn)
         OutputTable(R, C.TotalColumn) = MainStream(R - 1, C.TotalColumn)
@@ -54,17 +54,17 @@ Public Function Format(ByVal Record As Dom_EnrollmentRecord, ByVal SchoolConfig 
         GrandFemaleTotal = GrandFemaleTotal + MainStream(R - 1, C.FemaleColumn)
         R = R + 1
     Next
-    For Grade = 1 To SchoolConfig.SpecialGradeCount
-        For ClassNo = 1 To SchoolConfig.SpecialClassCount
-            OutputTable(R, C.GradeColumn) = "特支"
-            OutputTable(R, C.ClassColumn) = ClassNo
+    For Grade = 1 To Config.SpecialStreamGradeCount
+        For ClassNo = 1 To Config.SpecialStreamClassCount
+            OutputTable(R, C.GradeColumn) = jpnTokushi
+            OutputTable(R, C.ClassColumn) = Config.SpecialClassName(ClassNo)
             OutputTable(R, C.MaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.MaleColumn)
             OutputTable(R, C.FemaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.FemaleColumn)
             OutputTable(R, C.TotalColumn) = SpecialStream(R - UBound(MainStream) - 1, C.TotalColumn)
             R = R + 1
         Next
-        OutputTable(R, C.GradeColumn) = "特支"
-        OutputTable(R, C.ClassColumn) = "合計"
+        OutputTable(R, C.GradeColumn) = jpnTokushi
+        OutputTable(R, C.ClassColumn) = jpnGoukei
         OutputTable(R, C.MaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.MaleColumn)
         OutputTable(R, C.FemaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.FemaleColumn)
         OutputTable(R, C.TotalColumn) = SpecialStream(R - UBound(MainStream) - 1, C.TotalColumn)
@@ -72,8 +72,8 @@ Public Function Format(ByVal Record As Dom_EnrollmentRecord, ByVal SchoolConfig 
         GrandFemaleTotal = GrandFemaleTotal + SpecialStream(R - UBound(MainStream) - 1, C.FemaleColumn)
         R = R + 1
     Next
-    OutputTable(R, C.GradeColumn) = "全体"
-    OutputTable(R, C.ClassColumn) = "合計"
+    OutputTable(R, C.GradeColumn) = jpnZentai
+    OutputTable(R, C.ClassColumn) = jpnGoukei
     OutputTable(R, C.MaleColumn) = GrandMaleTotal
     OutputTable(R, C.FemaleColumn) = GrandFemaleTotal
     OutputTable(R, C.TotalColumn) = GrandMaleTotal + GrandFemaleTotal

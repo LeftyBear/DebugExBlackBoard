@@ -4,6 +4,8 @@ Option Explicit
 Option Private Module
 
 Public Enum Dom_Config
-    LimitValue = 1
+    MainStream = 1
+    SpecialStream
     Subject
+    TimeTable
 End Enum

@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Resolver")
+'@Folder("Infrastructure.Resolver")
 Option Explicit
 
 Public Function Resolve(ByVal EntityName As Dom_Entity, ByVal SchoolYear As Long) As String

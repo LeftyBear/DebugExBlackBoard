@@ -7,37 +7,31 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Model")
+'@Folder("Domain.Entity")
 Option Explicit
 
 Private Type Member
-    GradeNo     As Long
-    ClassNo     As Long
-    GenderCode  As Long
-    Count       As Long
+    FixDate         As Date
+    Values()        As Long
+    TimeTables()    As String
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal GradeNo As Long, ByVal ClassNo As Long, ByVal GenderCode As Long, ByVal Count As Long)
-    This.GradeNo = GradeNo
-    This.ClassNo = ClassNo
-    This.GenderCode = GenderCode
-    This.Count = Count
+Public Sub Initialize(ByVal FixDate As Date, ByRef Values() As Long, ByRef TimeTables() As String)
+    This.FixDate = FixDate
+    This.Values = Values
+    This.TimeTables = TimeTables
 End Sub
 
-Public Property Get GradeNo() As Long
-    GradeNo = This.GradeNo
+Public Property Get FixDate() As Date
+    FixDate = This.FixDate
 End Property
 
-Public Property Get ClassNo() As Long
-    ClassNo = This.ClassNo
+Public Property Get Value(ByVal ClassHourType As Long, ByVal SubjectIndex As Long, ByVal Grade As Long) As Long
+    Value = This.Values(ClassHourType, SubjectIndex, Grade)
 End Property
 
-Public Property Get GenderCode() As Long
-    GenderCode = This.GenderCode
-End Property
-
-Public Property Get Count() As Long
-    Count = This.Count
+Public Property Get TimeTable(ByVal ClassHourType As Long, ByVal Period As Long, ByVal Grade As Long) As String
+    TimeTable = This.TimeTables(ClassHourType, Period, Grade)
 End Property

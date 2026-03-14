@@ -8,14 +8,7 @@ Public Enum App_LayerErrNum
 End Enum
 
 Public Enum App_ErrNum
-    AppErrEmptyObject = vbObjectError + AppErr
-    AppErrInvalidRange
-    AppErrNotDefinedStructure
-    AppErrNotFoundItem
-    AppErrNotFoundKey
-    AppErrNotFoundSection
-    AppErrNotingObject
-    AppErrNotPositiveNumber
+    AppErrSomething = vbObjectError + AppErr
 End Enum
 
 Public Enum App_ViewResult

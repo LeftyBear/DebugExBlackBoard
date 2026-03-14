@@ -7,55 +7,63 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Model")
+'@Folder("Domain.ValueObject")
 Option Explicit
 
 Private Type Member
-    Names           As VBA.Collection
-    TargetGrades    As VBA.Collection
+    Names()         As String
+    TargetGrades()  As String
+    Marks()         As String
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Names As VBA.Collection, ByVal TargetGrades As VBA.Collection)
-    Set This.Names = Names
-    Set This.TargetGrades = TargetGrades
+Public Sub Initialize(ByRef Names() As String, ByRef TargetGrades() As String, ByRef Marks() As String)
+    This.Names = Names
+    This.TargetGrades = TargetGrades
+    This.Marks = Marks
 End Sub
 
-Public Property Get Count() As Long
-    Count = This.Names.Count
+Public Property Get Names() As String()
+    Names = This.Names
 End Property
 
-Public Property Get Name(ByVal Index As Long) As String
-    If Not IndexContains(Index) Then Err.Raise AppErrInvalidRange, , "Index out of range"
-    Name = This.Names.Item(Index)
+Public Property Get TargetGrades() As String()
+    TargetGrades = This.TargetGrades
 End Property
 
-Public Property Get TargetGrade(ByVal Index As Long) As String
-    If Not IndexContains(Index) Then Err.Raise AppErrInvalidRange, , "Index out of range"
-    TargetGrade = This.TargetGrades.Item(Index)
+Public Property Get Marks() As String()
+    Marks = This.Marks
 End Property
 
-Public Function Names(ByVal Index As Long) As String()
-    Dim Result() As String
-    ReDim Result(This.Names.Count - 1)
-    Dim i As Long
-    For i = 0 To This.Names.Count - 1
-        Result(i) = This.Names.Item(i + 1)
-    Next
-    Names = Result
+Public Function Count() As Long
+    Count = UBound(This.Names)
 End Function
 
-Public Function TargetGrades(ByVal Index As Long) As String()
-    Dim Result() As String
-    ReDim Result(This.TargetGrades.Count - 1)
+Public Function Index(ByVal Name As String) As Long
     Dim i As Long
-    For i = 0 To This.TargetGrades.Count - 1
-        Result(i) = This.TargetGrades.Item(i + 1)
+    For i = 1 To Me.Count
+        If This.Names(i) Like Name Then
+            Index = i: Exit Function
+        End If
     Next
-    TargetGrades = Result
+End Function
+
+Public Function Name(ByVal Index As Long) As String
+    If Not IndexContains(Index) Then Err.Raise DomErrInvalidRange, "Dom_Subject", "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.Count
+    Name = This.Names(Index)
+End Function
+
+Public Function TargetGrade(ByVal Index As Long) As String
+    If Not IndexContains(Index) Then Err.Raise DomErrInvalidRange, "Dom_Subject", "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.Count
+    TargetGrade = This.TargetGrades(Index)
+End Function
+
+Public Function Mark(ByVal Index As Long) As String
+    If Not IndexContains(Index) Then Err.Raise DomErrInvalidRange, "Dom_Subject", "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.Count
+    Mark = This.Marks(Index)
 End Function
 
 Private Function IndexContains(ByVal Index As Long) As Boolean
-    IndexContains = (0 < Index) And (Index <= This.Names.Count)
+    IndexContains = (0 < Index) And (Index <= Me.Count)
 End Function

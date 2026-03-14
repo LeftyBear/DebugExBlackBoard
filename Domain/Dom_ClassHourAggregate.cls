@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Dom_LimitValueAggregate"
+Attribute VB_Name = "Dom_ClassHourAggregate"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -17,8 +17,8 @@ End Type
 Private This As Member
 
 Public Sub Initialize(ByVal Records As VBA.Collection)
-    If Records Is Nothing Then Err.Raise DomErrNothingObject, , "Records is Nothing"
-    If Records.Count = 0 Then Err.Raise DomErrEmptyObject, , "Records is empty"
+    If Records Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ClassHourAggregate", "コレクションが生成されている必要があります。"
+    If Records.Count = 0 Then Err.Raise DomErrEmptyObject, "Dom_ClassHourAggregate", "コレクションのアイテムは１件以上ある必要があります。"
     ValidateRecord Records
     Set This.Records = Records
 End Sub
@@ -27,15 +27,15 @@ Public Property Get Count() As Long
     Count = This.Records.Count
 End Property
 
-Public Function GetRecord(ByVal Index As Long) As Dom_LimitValue
+Public Function GetRecord(ByVal Index As Long) As Dom_ClassHourRecord
     Set GetRecord = This.Records.Item(Index)
 End Function
 
 Private Sub ValidateRecord(ByVal Records As VBA.Collection)
     Dim i As Long
     For i = 1 To Records.Count
-        If Not TypeOf Records.Item(i) Is Dom_LimitValue Then
-            Err.Raise DomErrInvalidTypeOfObject, , "Invalid Dom_LimitValue type"
+        If Not TypeOf Records.Item(i) Is Dom_ClassHourRecord Then
+            Err.Raise DomErrInvalidTypeOfObject, "Dom_EnrollmentAggregate", "レコードオブジェクトは ClassHourRecord である必要があります。"
         End If
     Next
 End Sub

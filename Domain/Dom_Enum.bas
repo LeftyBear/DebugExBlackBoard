@@ -9,10 +9,17 @@ End Enum
 
 Public Enum Dom_ErrNum
     DomErrEmptyObject = vbObjectError + DomErr
+    DomErrInvalidRange
     DomErrInvalidNaming
     DomErrInvalidTypeOfObject
     DomErrInvalidValue
     DomErrNothingObject
     DomErrNullString
+    DomErrNotBoolean
+    DomErrEmptyDate
+    DomErrInvalidDateFormat
+    DomErrInvalidDateValue
+    DomErrNotNumeric
+    DomErrNotInteger
 End Enum
 

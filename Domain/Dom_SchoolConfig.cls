@@ -7,55 +7,76 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Model")
+'@Folder("Domain.ValueObject")
 Option Explicit
 
 Private Type Member
-    LimitValue  As Dom_LimitValue
-    Subject     As Dom_Subject
+    MainStream      As Dom_MainStream
+    SpecialStream   As Dom_SpecialStream
+    Subject         As Dom_Subject
+    TimeTable       As Dom_TimeTable
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal LimitValue As Dom_LimitValue, ByVal Subject As Dom_Subject)
-    Set This.LimitValue = LimitValue
+Public Sub Initialize(ByVal MainStream As Dom_MainStream, ByVal SpecialStream As Dom_SpecialStream, ByVal Subject As Dom_Subject, ByVal TimeTable As Dom_TimeTable)
+    Set This.MainStream = MainStream
+    Set This.SpecialStream = SpecialStream
     Set This.Subject = Subject
+    Set This.TimeTable = TimeTable
 End Sub
 
 Public Property Get MainStreamGradeCount() As Long
-    MainStreamGradeCount = This.LimitValue.MainStreamGradeCount
+    MainStreamGradeCount = This.MainStream.GradeCount
 End Property
 
 Public Property Get MainStreamClassCount() As Long
-    MainStreamClassCount = This.LimitValue.MainStreamClassCount
+    MainStreamClassCount = This.MainStream.ClassCount
 End Property
 
-Public Property Get SpecialGradeCount() As Long
-    SpecialGradeCount = This.LimitValue.SpecialGradeCount
+Public Property Get SpecialStreamGradeCount() As Long
+    SpecialStreamGradeCount = 1
 End Property
 
-Public Property Get SpecialClassCount() As Long
-    SpecialClassCount = This.LimitValue.SpecialClassCount
-End Property
-
-Public Property Get PeriodCount() As Long
-    PeriodCount = This.LimitValue.PeriodCount
+Public Property Get SpecialStreamClassCount() As Long
+    SpecialStreamClassCount = This.SpecialStream.Count
 End Property
 
 Public Property Get SubjectCount() As Long
     SubjectCount = This.Subject.Count
 End Property
 
-Public Property Get SubjectName(ByVal Index As Long) As String
-    If Not SubjectIndexContains(Index) Then Err.Raise AppErrInvalidRange, , "Index out of range"
-    SubjectName = This.Subject.Name(Index)
+Public Property Get PeriodCount() As Long
+    PeriodCount = This.TimeTable.PeriodCount
 End Property
 
-Public Property Get SubjectTargetGrade(ByVal Index As Long) As String
-    If Not SubjectIndexContains(Index) Then Err.Raise AppErrInvalidRange, , "Index out of range"
+Public Function SubjectName(ByVal Index As Long) As String
+    If Not SubjectIndexContains(Index) Then Err.Raise DomErrInvalidRange, , "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.SubjectCount
+    SubjectName = This.Subject.Name(Index)
+End Function
+
+Public Function SubjectIndex(ByVal SubjectName As String) As Long
+    SubjectIndex = This.Subject.Index(SubjectName)
+End Function
+
+Public Function SubjectTargetGrade(ByVal Index As Long) As String
+    If Not SubjectIndexContains(Index) Then Err.Raise DomErrInvalidRange, , "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.SubjectCount
     SubjectTargetGrade = This.Subject.TargetGrade(Index)
-End Property
+End Function
+
+Public Function SpecialClassName(ByVal Index As Long) As String
+    If Not SpecialClassIndexContains(Index) Then Err.Raise DomErrInvalidRange, , "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.SpecialStreamClassCount
+    SpecialClassName = This.SpecialStream.Name(Index)
+End Function
 
 Private Function SubjectIndexContains(ByVal Index As Long) As Boolean
-    SubjectIndexContains = (0 < Index) And (Index <= This.Subject.Count)
+    SubjectIndexContains = (0 < Index) And (Index <= Me.SubjectCount)
+End Function
+
+Private Function SpecialClassIndexContains(ByVal Index As Long) As Boolean
+    SpecialClassIndexContains = (0 < Index) And (Index <= Me.SpecialStreamClassCount)
+End Function
+
+Private Function SubjectNameContains(ByVal Index As Long) As Boolean
+    SubjectNameContains = (0 < Index) And (Index <= Me.SubjectCount)
 End Function

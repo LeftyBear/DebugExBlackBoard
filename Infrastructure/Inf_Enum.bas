@@ -8,6 +8,5 @@ Public Enum Inf_LayerErrNum
 End Enum
 
 Public Enum Inf_ErrNum
-    InfErrNullSection = vbObjectError + InfErr
-    InfErrNotFoundFile
+    InfErrNotFoundFile = vbObjectError + InfErr
 End Enum

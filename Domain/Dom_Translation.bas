@@ -1,0 +1,23 @@
+Attribute VB_Name = "Dom_Translation"
+'@Folder("Domain.StringConstant")
+Option Explicit
+Option Private Module
+
+Public Const jpnHizuke As String = "日付"
+Public Const jpnNen As String = "年"
+Public Const jpnKumi As String = "組"
+Public Const jpnOtoko As String = "男"
+Public Const jpnOnna As String = "女"
+Public Const jpnGoukei As String = "合計"
+Public Const jpnZentai As String = "全体"
+Public Const jpnKeikaku As String = "計画"
+Public Const jpnJisshi As String = "実施"
+Public Const jpnKouji As String = "校時"
+Public Const jpnTokushi As String = "特支"
+Public Const jpnFutsuGakunenSu As String = "普通学年数"
+Public Const jpnFutsuGakkyuSu As String = "普通学級数"
+Public Const jpnIdou As String = "在籍異動"
+Public Const jpnBikou As String = "在籍備考"
+Public Const jpnSyukeimei As String = "集計名"
+Public Const jpnTaisyoGakunen As String = "対象学年"
+Public Const jpnKigou As String = "記号"

@@ -17,8 +17,8 @@ End Type
 Private This As Member
 
 Public Sub Initialize(ByVal Records As VBA.Collection)
-    If Records Is Nothing Then Err.Raise DomErrNothingObject, , "Records is Nothing"
-    If Records.Count = 0 Then Err.Raise DomErrEmptyObject, , "Records is empty"
+    If Records Is Nothing Then Err.Raise DomErrNothingObject, "Dom_EnrollmentAggregate", "コレクションが生成されている必要があります。"
+    If Records.Count = 0 Then Err.Raise DomErrEmptyObject, "Dom_EnrollmentAggregate", "コレクションのアイテムは１件以上ある必要があります。"
     ValidateRecord Records
     Set This.Records = Records
 End Sub
@@ -35,7 +35,7 @@ Private Sub ValidateRecord(ByVal Records As VBA.Collection)
     Dim i As Long
     For i = 1 To Records.Count
         If Not TypeOf Records.Item(i) Is Dom_EnrollmentRecord Then
-            Err.Raise DomErrInvalidTypeOfObject, , "Invalid Dom_EnrollmentRecord type"
+            Err.Raise DomErrInvalidTypeOfObject, "Dom_EnrollmentAggregate", "レコードオブジェクトは EnrollmentRecord である必要があります。"
         End If
     Next
 End Sub

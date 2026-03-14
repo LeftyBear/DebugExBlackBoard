@@ -82,7 +82,7 @@ Private Function ResolveExportPath(ByVal RootPath As String, ByVal Component As 
     Case CtMsForm
         ResolveExportPath = LayerFolder & Component.Name & ".frm"
     Case Else
-        Err.Raise Util_ErrNum.UnsupportedComponentType, , "Unsupported component type"
+        Err.Raise UtilErrUnsupportedComponentType, "Util_VBComponent", "Unsupported component type."
     End Select
 End Function
 
@@ -96,6 +96,6 @@ Private Function ResolveLayerFolder(ByVal RootPath As String, ByVal ModuleName A
     ElseIf ModuleName Like "Util_*" Then
         ResolveLayerFolder = RootPath & "\Utility\"
     Else
-        Err.Raise Util_ErrNum.NotFoundLayerPrefix, , "Layer prefix not found: " & ModuleName
+        Err.Raise UtilErrNotFoundLayerPrefix, "Util_VBComponent", "Layer prefix not found: " & ModuleName
     End If
 End Function
