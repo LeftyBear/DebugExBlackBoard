@@ -11,24 +11,21 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Names() As String
+    Index   As Long
+    Name    As String
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByRef Names() As String)
-    This.Names = Names
+Public Sub Initialize(ByVal Index As Long, ByVal Name As String)
+    This.Index = Index
+    This.Name = Name
 End Sub
 
-Public Property Get Count() As Long
-    Count = UBound(This.Names)
+Public Property Get Index() As Long
+    Index = This.Index
 End Property
 
-Public Property Get Name(ByVal Index As Long) As String
-    If Not IndexContains(Index) Then Err.Raise DomErrInvalidRange, "Dom_SpecialStream", "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.Count
-    Name = This.Names(Index)
+Public Property Get Name() As String
+    Name = This.Name
 End Property
-
-Private Function IndexContains(ByVal Index As Long) As Boolean
-    IndexContains = (0 < Index) And (Index <= Me.Count)
-End Function

@@ -7,63 +7,38 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.ValueObject")
+'@Folder("Domain.Model")
 Option Explicit
 
 Private Type Member
-    Names()         As String
-    TargetGrades()  As String
-    Marks()         As String
+    Index           As Long
+    Name            As String
+    TargetGrade     As String
+    Mark            As String
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByRef Names() As String, ByRef TargetGrades() As String, ByRef Marks() As String)
-    This.Names = Names
-    This.TargetGrades = TargetGrades
-    This.Marks = Marks
+Public Sub Initialize(ByVal Index As Long, Name As String, ByVal TargetGrade As String, ByVal Mark As String)
+    If Index < 1 Then Err.Raise DomErrInvalidValue, "Dom_Subject", "インデックスは正の数である必要があります。"
+    This.Index = Index
+    This.Name = Name
+    This.TargetGrade = TargetGrade
+    This.Mark = Mark
 End Sub
 
-Public Property Get Names() As String()
-    Names = This.Names
+Public Property Get Index() As Long
+    Index = This.Index
 End Property
 
-Public Property Get TargetGrades() As String()
-    TargetGrades = This.TargetGrades
+Public Property Get Name() As String
+    Name = This.Name
 End Property
 
-Public Property Get Marks() As String()
-    Marks = This.Marks
+Public Property Get TargetGrade() As String
+    TargetGrade = This.TargetGrade
 End Property
 
-Public Function Count() As Long
-    Count = UBound(This.Names)
-End Function
-
-Public Function Index(ByVal Name As String) As Long
-    Dim i As Long
-    For i = 1 To Me.Count
-        If This.Names(i) Like Name Then
-            Index = i: Exit Function
-        End If
-    Next
-End Function
-
-Public Function Name(ByVal Index As Long) As String
-    If Not IndexContains(Index) Then Err.Raise DomErrInvalidRange, "Dom_Subject", "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.Count
-    Name = This.Names(Index)
-End Function
-
-Public Function TargetGrade(ByVal Index As Long) As String
-    If Not IndexContains(Index) Then Err.Raise DomErrInvalidRange, "Dom_Subject", "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.Count
-    TargetGrade = This.TargetGrades(Index)
-End Function
-
-Public Function Mark(ByVal Index As Long) As String
-    If Not IndexContains(Index) Then Err.Raise DomErrInvalidRange, "Dom_Subject", "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.Count
-    Mark = This.Marks(Index)
-End Function
-
-Private Function IndexContains(ByVal Index As Long) As Boolean
-    IndexContains = (0 < Index) And (Index <= Me.Count)
-End Function
+Public Property Get Mark() As String
+    Mark = This.Mark
+End Property

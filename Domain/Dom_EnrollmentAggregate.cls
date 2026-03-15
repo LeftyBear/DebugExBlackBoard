@@ -11,31 +11,31 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Records As VBA.Collection
+    Entities As VBA.Collection
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Records As VBA.Collection)
-    If Records Is Nothing Then Err.Raise DomErrNothingObject, "Dom_EnrollmentAggregate", "コレクションが生成されている必要があります。"
-    If Records.Count = 0 Then Err.Raise DomErrEmptyObject, "Dom_EnrollmentAggregate", "コレクションのアイテムは１件以上ある必要があります。"
-    ValidateRecord Records
-    Set This.Records = Records
+Public Sub Initialize(ByVal Entities As VBA.Collection)
+    If Entities Is Nothing Then Err.Raise DomErrNothingObject, "Dom_EnrollmentAggregate", "コレクションが生成されている必要があります。"
+    If Entities.Count = 0 Then Err.Raise DomErrEmptyObject, "Dom_EnrollmentAggregate", "コレクションのアイテムは１件以上ある必要があります。"
+    ValidateRecord Entities
+    Set This.Entities = Entities
 End Sub
 
 Public Property Get Count() As Long
-    Count = This.Records.Count
+    Count = This.Entities.Count
 End Property
 
-Public Function GetRecord(ByVal Index As Long) As Dom_EnrollmentRecord
-    Set GetRecord = This.Records.Item(Index)
+Public Function GetRecord(ByVal Index As Long) As Dom_Enrollment
+    Set GetRecord = This.Entities.Item(Index)
 End Function
 
-Private Sub ValidateRecord(ByVal Records As VBA.Collection)
+Private Sub ValidateRecord(ByVal Entities As VBA.Collection)
     Dim i As Long
-    For i = 1 To Records.Count
-        If Not TypeOf Records.Item(i) Is Dom_EnrollmentRecord Then
-            Err.Raise DomErrInvalidTypeOfObject, "Dom_EnrollmentAggregate", "レコードオブジェクトは EnrollmentRecord である必要があります。"
+    For i = 1 To Entities.Count
+        If Not TypeOf Entities.Item(i) Is Dom_Enrollment Then
+            Err.Raise DomErrInvalidTypeOfObject, "Dom_EnrollmentAggregate", "エンティティは EnrollmentRecord である必要があります。"
         End If
     Next
 End Sub

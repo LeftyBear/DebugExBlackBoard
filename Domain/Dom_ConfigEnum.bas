@@ -1,11 +1,10 @@
 Attribute VB_Name = "Dom_ConfigEnum"
-'@Folder "Domain.Enum"
+'@Folder "Domain.ValueObject"
 Option Explicit
 Option Private Module
 
 Public Enum Dom_Config
-    MainStream = 1
-    SpecialStream
-    Subject
-    TimeTable
+    UpperValue = 1
+    SpecialStreamCatalog
+    SubjectCatalog
 End Enum

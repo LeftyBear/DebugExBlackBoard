@@ -18,11 +18,11 @@ Private Enum C
     TotalColumn
 End Enum
 
-Public Function Format(ByVal Record As Dom_EnrollmentRecord, ByVal Config As Dom_SchoolConfig) As Variant()
+Public Function Format(ByVal Enrollment As Dom_Enrollment, ByVal Config As Dom_SchoolConfig) As Variant()
     Dim MainStream() As Long
-    MainStream = ToTable(Record, Main, Config.MainStreamGradeCount, Config.MainStreamClassCount)
+    MainStream = ToTable(Enrollment, Main, Config.MainStreamGradeCount, Config.MainStreamClassCount)
     Dim SpecialStream() As Long
-    SpecialStream = ToTable(Record, Special, Config.SpecialStreamGradeCount, Config.SpecialStreamClassCount)
+    SpecialStream = ToTable(Enrollment, Special, Config.SpecialStreamGradeCount, Config.SpecialStreamClassCount)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(MainStream) + UBound(SpecialStream) + 2, 1 To C.TotalColumn)
     OutputTable(1, C.GradeColumn) = jpnNen
@@ -57,7 +57,7 @@ Public Function Format(ByVal Record As Dom_EnrollmentRecord, ByVal Config As Dom
     For Grade = 1 To Config.SpecialStreamGradeCount
         For ClassNo = 1 To Config.SpecialStreamClassCount
             OutputTable(R, C.GradeColumn) = jpnTokushi
-            OutputTable(R, C.ClassColumn) = Config.SpecialClassName(ClassNo)
+            OutputTable(R, C.ClassColumn) = Config.SpecialStreamClassNameOf(ClassNo)
             OutputTable(R, C.MaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.MaleColumn)
             OutputTable(R, C.FemaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.FemaleColumn)
             OutputTable(R, C.TotalColumn) = SpecialStream(R - UBound(MainStream) - 1, C.TotalColumn)
@@ -80,7 +80,7 @@ Public Function Format(ByVal Record As Dom_EnrollmentRecord, ByVal Config As Dom
     Format = OutputTable
 End Function
 
-Private Function ToTable(ByVal Record As Dom_EnrollmentRecord, ByVal StreamType As Dom_StreamType, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
+Private Function ToTable(ByVal Enrollment As Dom_Enrollment, ByVal StreamType As Dom_StreamType, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
     '@Ignore MultipleDeclarations
     Dim Table() As Long, MaleTotal() As Long, FemaleTotal() As Long, ClassTotal() As Long
     ReDim Table(1 To GradeCount * ClassCount + GradeCount, 1 To C.TotalColumn)
@@ -96,7 +96,7 @@ Private Function ToTable(ByVal Record As Dom_EnrollmentRecord, ByVal StreamType 
             Dim Gender As Long
             For Gender = Dom_Gender.Male To Dom_Gender.Female
                 Dim Value As Long
-                Value = Record.Value(StreamType, Grade, ClassNo, Gender)
+                Value = Enrollment.Value(StreamType, Grade, ClassNo, Gender)
                 If Gender = Dom_Gender.Male Then
                     MaleTotal(Grade) = MaleTotal(Grade) + Value
                     Table(R, C.MaleColumn) = Value

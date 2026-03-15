@@ -10,9 +10,9 @@ Attribute VB_Exposed = False
 '@Folder("Application.Formatter")
 Option Explicit
 
-Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal Record As Dom_ClassHourRecord, ByVal Config As Dom_SchoolConfig) As Variant()
+Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal Entity As Dom_ClassHour, ByVal Config As Dom_SchoolConfig) As Variant()
     Dim TimeTable() As String
-    TimeTable = ToTimeTable(ClassHourType, Record, Config)
+    TimeTable = ToTimeTable(ClassHourType, Entity, Config)
     Dim Total() As Long
     ReDim Total(Config.MainStreamGradeCount)
     Dim OutputTable() As Variant
@@ -29,7 +29,7 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal Record As
     For R = 2 To UBound(TimeTable, 1) + 1
         For C = 1 To UBound(TimeTable, 2) + 1
             If R < UBound(TimeTable, 1) + 1 And C = 1 Then
-                OutputTable(R, C) = Config.SubjectName(R - 1)
+                OutputTable(R, C) = Config.SubjectNameOf(R - 1)
             ElseIf R < UBound(TimeTable, 1) + 1 Then
                 OutputTable(R, C) = TimeTable(R - 1, C - 1)
                 If Not OutputTable(R, C) Like vbNullString Then Total(C - 1) = Total(C - 1) + 1
@@ -43,14 +43,14 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal Record As
     Format = OutputTable
 End Function
 
-Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourType, ByVal Record As Dom_ClassHourRecord, ByVal Config As Dom_SchoolConfig) As String()
+Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourType, ByVal Entity As Dom_ClassHour, ByVal Config As Dom_SchoolConfig) As String()
     Dim Table() As String
     ReDim Table(1 To Config.PeriodCount, 1 To Config.MainStreamGradeCount)
     Dim Grade As Long
     For Grade = 1 To Config.MainStreamGradeCount
         Dim Period As Long
         For Period = 1 To Config.PeriodCount
-            Table(Period, Grade) = Record.TimeTable(ClassHourType, Period, Grade)
+            Table(Period, Grade) = Entity.TimeTable(ClassHourType, Period, Grade)
         Next
     Next
     ToTimeTable = Table

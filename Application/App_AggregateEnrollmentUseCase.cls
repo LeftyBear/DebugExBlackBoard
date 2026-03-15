@@ -13,7 +13,7 @@ Option Explicit
 Private Type Member
     Repository  As Dom_IEnrollmentRepository
     Config      As Dom_SchoolConfig
-    Parser      As Dom_EnrollmentParser
+    Interpreter As Dom_EnrollmentHeaderInterpreter
 End Type
 
 Private This As Member
@@ -21,7 +21,7 @@ Private This As Member
 Public Sub Initialize(ByVal Repository As Dom_IEnrollmentRepository, ByVal Config As Dom_SchoolConfig)
     Set This.Repository = Repository
     Set This.Config = Config
-    Set This.Parser = New Dom_EnrollmentParser
+    Set This.Interpreter = New Dom_EnrollmentHeaderInterpreter
 End Sub
 
 Public Function Execute(ByVal TargetDate As Date) As Dom_EnrollmentAggregate
@@ -35,15 +35,15 @@ Public Function Execute(ByVal TargetDate As Date) As Dom_EnrollmentAggregate
     Set AddColumnDTO = New App_AddColumnDTOatRowUseCase
     Dim ColumnDTOContainer As VBA.Collection
     Set ColumnDTOContainer = AddColumnDTO.Execute(CSVDTO)
-    Dim Records As VBA.Collection
-    Set Records = BuildRecord(ColumnDTOContainer)
+    Dim Entities As VBA.Collection
+    Set Entities = BuildEntity(ColumnDTOContainer)
     Dim Result As Dom_EnrollmentAggregate
     Set Result = New Dom_EnrollmentAggregate
-    Result.Initialize Records
+    Result.Initialize Entities
     Set Execute = Result
 End Function
 
-Private Function BuildRecord(ByVal ColumnDTOContainer As VBA.Collection) As VBA.Collection
+Private Function BuildEntity(ByVal ColumnDTOContainer As VBA.Collection) As VBA.Collection
     Dim Result As VBA.Collection
     Set Result = New VBA.Collection
     Dim GradeCount As Long
@@ -54,8 +54,8 @@ Private Function BuildRecord(ByVal ColumnDTOContainer As VBA.Collection) As VBA.
     ReDim Values(0 To Dom_StreamType.Special, 0 To GradeCount, 0 To ClassCount, 0 To Dom_Gender.Female)
     Dim R As Long
     For R = 1 To ColumnDTOContainer.Count
-        Dim Record As Dom_EnrollmentRecord
-        Set Record = New Dom_EnrollmentRecord
+        Dim Entity As Dom_Enrollment
+        Set Entity = New Dom_Enrollment
         Dim ColumnDTOs As VBA.Collection
         Set ColumnDTOs = ColumnDTOContainer.Item(R)
         Dim C As Long
@@ -63,7 +63,7 @@ Private Function BuildRecord(ByVal ColumnDTOContainer As VBA.Collection) As VBA.
             Dim DTO As App_ColumnDTO
             Set DTO = ColumnDTOs.Item(C)
             If 0 < VBA.InStr(1, DTO.HeaderName, charUnderScore) Then
-                This.Parser.Parse DTO, Values
+                This.Interpreter.Interprete DTO, Values
             ElseIf DTO.HeaderName Like jpnHizuke Then
                 Dim FixDate As Date
                 FixDate = Dom_Function.NormalizeToDate(DTO.RawValue)
@@ -75,10 +75,10 @@ Private Function BuildRecord(ByVal ColumnDTOContainer As VBA.Collection) As VBA.
                 Remarks = DTO.RawValue
             End If
         Next
-        Record.Initialize FixDate, Transfer, Remarks, Values
-        Result.Add Record
+        Entity.Initialize FixDate, Transfer, Remarks, Values
+        Result.Add Entity
     Next
-    Set BuildRecord = Result
+    Set BuildEntity = Result
 End Function
 
 Private Function Bigger(ByVal Value As Long, ByVal Another As Long) As Long

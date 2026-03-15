@@ -7,72 +7,63 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.ValueObject")
+'@Folder("Domain.Facade")
 Option Explicit
 
 Private Type Member
-    MainStream      As Dom_MainStream
-    SpecialStream   As Dom_SpecialStream
-    Subject         As Dom_Subject
-    TimeTable       As Dom_TimeTable
+    UpperValue              As Dom_UpperValue
+    SpecialStreamCatalog    As Dom_SpecialStreamCatalog
+    SubjectCatalog          As Dom_SubjectCatalog
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal MainStream As Dom_MainStream, ByVal SpecialStream As Dom_SpecialStream, ByVal Subject As Dom_Subject, ByVal TimeTable As Dom_TimeTable)
-    Set This.MainStream = MainStream
-    Set This.SpecialStream = SpecialStream
-    Set This.Subject = Subject
-    Set This.TimeTable = TimeTable
+Public Sub Initialize(ByVal UpperValue As Dom_UpperValue, ByVal SpecialStreamCatalog As Dom_SpecialStreamCatalog, ByVal SubjectCatalog As Dom_SubjectCatalog)
+    Set This.UpperValue = UpperValue
+    Set This.SpecialStreamCatalog = SpecialStreamCatalog
+    Set This.SubjectCatalog = SubjectCatalog
 End Sub
 
 Public Property Get MainStreamGradeCount() As Long
-    MainStreamGradeCount = This.MainStream.GradeCount
+    MainStreamGradeCount = This.UpperValue.MainStreamGradeCount
 End Property
 
 Public Property Get MainStreamClassCount() As Long
-    MainStreamClassCount = This.MainStream.ClassCount
+    MainStreamClassCount = This.UpperValue.MainStreamClassCount
 End Property
+
+Public Function ResolveSpecialStream(ByVal Name As String) As Dom_SpecialStream
+    Set ResolveSpecialStream = This.SpecialStreamCatalog.Resolve(Name)
+End Function
+
+Public Function SpecialStreamClassNameOf(ByVal Index As Long) As String
+    SpecialStreamClassNameOf = This.SubjectCatalog.NameOf(Index)
+End Function
 
 Public Property Get SpecialStreamGradeCount() As Long
     SpecialStreamGradeCount = 1
 End Property
 
 Public Property Get SpecialStreamClassCount() As Long
-    SpecialStreamClassCount = This.SpecialStream.Count
+    SpecialStreamClassCount = This.SpecialStreamCatalog.Count
 End Property
 
-Public Property Get SubjectCount() As Long
-    SubjectCount = This.Subject.Count
-End Property
+Public Function ResolveSubject(ByVal Name As String) As Dom_Subject
+    Set ResolveSubject = This.SubjectCatalog.Resolve(Name)
+End Function
+
+Public Function SubjectNameOf(ByVal Index As Long) As String
+    SubjectNameOf = This.SubjectCatalog.NameOf(Index)
+End Function
+
+Public Function SubjectCount() As Long
+    SubjectCount = This.SubjectCatalog.Count
+End Function
+
+Public Function SubjectNames() As String()
+    SubjectNames = This.SubjectCatalog.Names
+End Function
 
 Public Property Get PeriodCount() As Long
-    PeriodCount = This.TimeTable.PeriodCount
+    PeriodCount = This.UpperValue.PeriodCount
 End Property
-
-Public Function SubjectName(ByVal Index As Long) As String
-    If Not SubjectIndexContains(Index) Then Err.Raise DomErrInvalidRange, , "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.SubjectCount
-    SubjectName = This.Subject.Name(Index)
-End Function
-
-Public Function SubjectIndex(ByVal SubjectName As String) As Long
-    SubjectIndex = This.Subject.Index(SubjectName)
-End Function
-
-Public Function SubjectTargetGrade(ByVal Index As Long) As String
-    If Not SubjectIndexContains(Index) Then Err.Raise DomErrInvalidRange, , "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.SubjectCount
-    SubjectTargetGrade = This.Subject.TargetGrade(Index)
-End Function
-
-Public Function SpecialClassName(ByVal Index As Long) As String
-    If Not SpecialClassIndexContains(Index) Then Err.Raise DomErrInvalidRange, , "インデックスは次の範囲である必要があります。 " & "範囲: 1 ～ " & Me.SpecialStreamClassCount
-    SpecialClassName = This.SpecialStream.Name(Index)
-End Function
-
-Private Function SubjectIndexContains(ByVal Index As Long) As Boolean
-    SubjectIndexContains = (0 < Index) And (Index <= Me.SubjectCount)
-End Function
-
-Private Function SpecialClassIndexContains(ByVal Index As Long) As Boolean
-    SpecialClassIndexContains = (0 < Index) And (Index <= Me.SpecialStreamClassCount)
-End Function

@@ -10,9 +10,9 @@ Attribute VB_Exposed = False
 '@Folder("Application.Formatter")
 Option Explicit
 
-Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal Record As Dom_ClassHourRecord, ByVal Config As Dom_SchoolConfig) As Variant()
+Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHour, ByVal Config As Dom_SchoolConfig) As Variant()
     Dim ClassHourTable() As Long
-    ClassHourTable = ToClassHourTable(ClassHourType, Record, Config)
+    ClassHourTable = ToClassHourTable(ClassHourType, ClassHour, Config)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(ClassHourTable, 1) + 1, 1 To UBound(ClassHourTable, 2) + 1)
     Dim C As Long
@@ -27,7 +27,7 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal Record As
     For R = 2 To UBound(ClassHourTable, 1) + 1
         For C = 1 To UBound(ClassHourTable, 2) + 1
             If R < UBound(ClassHourTable, 1) + 1 And C = 1 Then
-                OutputTable(R, C) = Config.SubjectName(R - 1)
+                OutputTable(R, C) = Config.SubjectNameOf(R - 1)
             ElseIf R = UBound(ClassHourTable, 1) + 1 And C = 1 Then
                 OutputTable(R, C) = jpnGoukei
             Else
@@ -38,7 +38,7 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal Record As
     Format = OutputTable
 End Function
 
-Private Function ToClassHourTable(ByVal ClassHourType As Dom_ClassHourType, ByVal Record As Dom_ClassHourRecord, ByVal Config As Dom_SchoolConfig) As Long()
+Private Function ToClassHourTable(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHour, ByVal Config As Dom_SchoolConfig) As Long()
     Dim Table() As Long
     ReDim Table(1 To Config.SubjectCount + 1, 1 To Config.MainStreamGradeCount)
     Dim Total() As Long
@@ -48,7 +48,7 @@ Private Function ToClassHourTable(ByVal ClassHourType As Dom_ClassHourType, ByVa
         Dim SubjectIndex As Long
         For SubjectIndex = 1 To Config.SubjectCount
             Dim Value As Long
-            Value = Record.Value(ClassHourType, SubjectIndex, Grade)
+            Value = ClassHour.Value(ClassHourType, SubjectIndex, Grade)
             Table(SubjectIndex, Grade) = Value
             Total(Grade) = Total(Grade) + Value
         Next

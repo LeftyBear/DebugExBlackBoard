@@ -1,5 +1,5 @@
 Attribute VB_Name = "Dom_GenderEnum"
-'@Folder("Domain.Enum")
+'@Folder("Domain.ValueObject")
 Option Explicit
 Option Private Module
 

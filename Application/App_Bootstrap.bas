@@ -29,13 +29,13 @@ Public Sub Run()
     Dim ClassHourFormatter As App_ViewClassHourFormatter
     Set ClassHourFormatter = New App_ViewClassHourFormatter
     Dim ClassHourPlanTable() As Variant
-    ClassHourPlanTable = ClassHourFormatter.Format(Plan, ClassHour.GetRecord(DateIndex), SchoolConfig)
+    ClassHourPlanTable = ClassHourFormatter.Format(Plan, ClassHour.GetClassHour(DateIndex), SchoolConfig)
     Dim ClassHourExecutionTable() As Variant
-    ClassHourExecutionTable = ClassHourFormatter.Format(Execution, ClassHour.GetRecord(DateIndex), SchoolConfig)
+    ClassHourExecutionTable = ClassHourFormatter.Format(Execution, ClassHour.GetClassHour(DateIndex), SchoolConfig)
     Dim TimeTableFormatter As App_ViewTimeTableFormatter
     Set TimeTableFormatter = New App_ViewTimeTableFormatter
     Dim TimeTablePlanTable() As Variant
-    TimeTablePlanTable = TimeTableFormatter.Format(Plan, ClassHour.GetRecord(DateIndex), SchoolConfig)
+    TimeTablePlanTable = TimeTableFormatter.Format(Plan, ClassHour.GetClassHour(DateIndex), SchoolConfig)
     Dim TimeTableExecutionTable() As Variant
-    TimeTableExecutionTable = TimeTableFormatter.Format(Execution, ClassHour.GetRecord(DateIndex), SchoolConfig)
+    TimeTableExecutionTable = TimeTableFormatter.Format(Execution, ClassHour.GetClassHour(DateIndex), SchoolConfig)
 End Sub

@@ -8,18 +8,19 @@ Public Enum Dom_LayerErrNum
 End Enum
 
 Public Enum Dom_ErrNum
-    DomErrEmptyObject = vbObjectError + DomErr
-    DomErrInvalidRange
-    DomErrInvalidNaming
-    DomErrInvalidTypeOfObject
-    DomErrInvalidValue
-    DomErrNothingObject
-    DomErrNullString
-    DomErrNotBoolean
-    DomErrEmptyDate
+    DomErrEmptyDate = vbObjectError + DomErr
+    DomErrEmptyObject
     DomErrInvalidDateFormat
     DomErrInvalidDateValue
-    DomErrNotNumeric
+    DomErrInvalidNaming
+    DomErrInvalidRange
+    DomErrInvalidTypeOfObject
+    DomErrInvalidValue
+    DomErrNotBoolean
+    DomErrNotExistsItem
+    DomErrNothingObject
     DomErrNotInteger
+    DomErrNotNumeric
+    DomErrNullString
 End Enum
 

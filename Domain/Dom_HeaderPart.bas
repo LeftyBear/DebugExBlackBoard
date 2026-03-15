@@ -1,4 +1,4 @@
-Attribute VB_Name = "Dom_Translation"
+Attribute VB_Name = "Dom_HeaderPart"
 '@Folder("Domain.StringConstant")
 Option Explicit
 Option Private Module
@@ -16,6 +16,7 @@ Public Const jpnKouji As String = "校時"
 Public Const jpnTokushi As String = "特支"
 Public Const jpnFutsuGakunenSu As String = "普通学年数"
 Public Const jpnFutsuGakkyuSu As String = "普通学級数"
+Public Const jpnJikanwariSu As String = "時間割数"
 Public Const jpnIdou As String = "在籍異動"
 Public Const jpnBikou As String = "在籍備考"
 Public Const jpnSyukeimei As String = "集計名"

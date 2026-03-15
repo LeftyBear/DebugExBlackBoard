@@ -21,24 +21,22 @@ Public Sub Initialize(ByVal Repository As Dom_IConfigRepository)
 End Sub
 
 Public Function Execute() As Dom_SchoolConfig
-    Dim MainStream As Dom_MainStream
-    Set MainStream = GenerateMainStream
-    Dim SpecialStream As Dom_SpecialStream
-    Set SpecialStream = GenerateSpecialClass
-    Dim Subject As Dom_Subject
-    Set Subject = GenerateSubject
-    Dim TimeTable As Dom_TimeTable
-    Set TimeTable = GenerateTimeTable
+    Dim UpperValue As Dom_UpperValue
+    Set UpperValue = GenerateUpperValue
+    Dim SpecialStreamCatalog As Dom_SpecialStreamCatalog
+    Set SpecialStreamCatalog = GenerateSpecialStreamCatalog
+    Dim SubjectCatalog As Dom_SubjectCatalog
+    Set SubjectCatalog = GenerateSubjectCatalog
     Dim Result As Dom_SchoolConfig
     Set Result = New Dom_SchoolConfig
-    Result.Initialize MainStream, SpecialStream, Subject, TimeTable
+    Result.Initialize UpperValue, SpecialStreamCatalog, SubjectCatalog
     Set Execute = Result
 End Function
 
-Private Function GenerateMainStream() As Dom_MainStream
+Private Function GenerateUpperValue() As Dom_UpperValue
     Dim CSVDTO As App_CSVDTO
     Set CSVDTO = New App_CSVDTO
-    CSVDTO.Initialize This.Repository.Load(MainStream)
+    CSVDTO.Initialize This.Repository.Load(UpperValue)
     Dim AddColumnDTO As App_AddColumnDTOatRowUseCase
     Set AddColumnDTO = New App_AddColumnDTOatRowUseCase
     Dim ColumnDTOContainer As VBA.Collection
@@ -49,65 +47,67 @@ Private Function GenerateMainStream() As Dom_MainStream
         Set ColumnDTOs = ColumnDTOContainer.Item(R)
         Dim C As Long
         For C = 1 To ColumnDTOs.Count
+            Dim MainStreamGradeCount As Long, MainStreamClassCount As Long, PeriodCount As Long
             Dim DTO As App_ColumnDTO
             Set DTO = ColumnDTOs.Item(C)
             Select Case DTO.HeaderName
             Case jpnFutsuGakunenSu
-                Dim GradeCount As Long
-                GradeCount = CLng(DTO.RawValue)
+                MainStreamGradeCount = CLng(DTO.RawValue)
             Case jpnFutsuGakkyuSu
-                Dim ClassCount As Long
-                ClassCount = CLng(DTO.RawValue)
+                MainStreamClassCount = CLng(DTO.RawValue)
+            Case jpnJikanwariSu
+                PeriodCount = CLng(DTO.RawValue)
             End Select
+            Dim Result As Dom_UpperValue
+            Set Result = New Dom_UpperValue
+            Result.Initialize MainStreamGradeCount, MainStreamClassCount, PeriodCount
         Next
     Next
-    Dim Result As Dom_MainStream
-    Set Result = New Dom_MainStream
-    Result.Initialize GradeCount, ClassCount
-    Set GenerateMainStream = Result
+    Set GenerateUpperValue = Result
 End Function
 
-Private Function GenerateSpecialClass() As Dom_SpecialStream
+Private Function GenerateSpecialStreamCatalog() As Dom_SpecialStreamCatalog
+    Dim Result As Dom_SpecialStreamCatalog
+    Set Result = New Dom_SpecialStreamCatalog
     Dim CSVDTO As App_CSVDTO
     Set CSVDTO = New App_CSVDTO
-    CSVDTO.Initialize This.Repository.Load(SpecialStream)
+    CSVDTO.Initialize This.Repository.Load(SpecialStreamCatalog)
     Dim AddColumnDTO As App_AddColumnDTOatRowUseCase
     Set AddColumnDTO = New App_AddColumnDTOatRowUseCase
     Dim ColumnDTOContainer As VBA.Collection
     Set ColumnDTOContainer = AddColumnDTO.Execute(CSVDTO)
     Dim R As Long
     For R = 1 To ColumnDTOContainer.Count
-        Dim Names() As String
-        ReDim Names(ColumnDTOContainer.Count)
         Dim ColumnDTOs As VBA.Collection
         Set ColumnDTOs = ColumnDTOContainer.Item(R)
         Dim C As Long
         For C = 1 To ColumnDTOs.Count
+            Dim SpecialStream As Dom_SpecialStream
+            Set SpecialStream = New Dom_SpecialStream
             Dim DTO As App_ColumnDTO
             Set DTO = ColumnDTOs.Item(C)
-            Names(R) = DTO.RawValue
+            Dim Index As Long
+            Index = Index + 1
+            Dim Name As String
+            Name = DTO.RawValue
+            SpecialStream.Initialize Index, Name
+            Result.Add SpecialStream
         Next
     Next
-    Dim Result As Dom_SpecialStream
-    Set Result = New Dom_SpecialStream
-    Result.Initialize Names
-    Set GenerateSpecialClass = Result
+    Set GenerateSpecialStreamCatalog = Result
 End Function
 
-Private Function GenerateSubject() As Dom_Subject
+Private Function GenerateSubjectCatalog() As Dom_SubjectCatalog
     Dim CSVDTO As App_CSVDTO
     Set CSVDTO = New App_CSVDTO
-    CSVDTO.Initialize This.Repository.Load(Subject)
+    CSVDTO.Initialize This.Repository.Load(SubjectCatalog)
     Dim AddColumnDTO As App_AddColumnDTOatRowUseCase
     Set AddColumnDTO = New App_AddColumnDTOatRowUseCase
     Dim ColumnDTOContainer As VBA.Collection
     Set ColumnDTOContainer = AddColumnDTO.Execute(CSVDTO)
-    Dim Names() As String
-    ReDim Names(ColumnDTOContainer.Count)
-    Dim TargetGrades() As String
-    ReDim TargetGrades(ColumnDTOContainer.Count)
-    Dim Marks() As String
-    ReDim Marks(ColumnDTOContainer.Count)
+    Dim Result As Dom_SubjectCatalog
+    Set Result = New Dom_SubjectCatalog
+    Dim Index As Long
     Dim R As Long
     For R = 1 To ColumnDTOContainer.Count
         Dim ColumnDTOs As VBA.Collection
@@ -116,44 +116,21 @@ Private Function GenerateSubject() As Dom_Subject
         For C = 1 To ColumnDTOs.Count
             Dim DTO As App_ColumnDTO
             Set DTO = ColumnDTOs.Item(C)
+            Index = Index + 1
+            Dim Name As String, TargetGrade As String, Mark As String
             Select Case DTO.HeaderName
             Case jpnSyukeimei
-                Names(R) = DTO.RawValue
+                Name = DTO.RawValue
             Case jpnTaisyoGakunen
-                TargetGrades(R) = DTO.RawValue
+                TargetGrade = DTO.RawValue
             Case jpnKigou
-                Marks(R) = DTO.RawValue
+                Mark = DTO.RawValue
             End Select
+            Dim Subject As Dom_Subject
+            Set Subject = New Dom_Subject
+            Subject.Initialize Index, Name, TargetGrade, Mark
+            Result.Add Subject
         Next
     Next
-    Dim Result As Dom_Subject
-    Set Result = New Dom_Subject
-    Result.Initialize Names, TargetGrades, Marks
-    Set GenerateSubject = Result
-End Function
-
-Private Function GenerateTimeTable() As Dom_TimeTable
-    Dim CSVDTO As App_CSVDTO
-    Set CSVDTO = New App_CSVDTO
-    CSVDTO.Initialize This.Repository.Load(TimeTable)
-    Dim AddColumnDTO As App_AddColumnDTOatRowUseCase
-    Set AddColumnDTO = New App_AddColumnDTOatRowUseCase
-    Dim ColumnDTOContainer As VBA.Collection
-    Set ColumnDTOContainer = AddColumnDTO.Execute(CSVDTO)
-    Dim R As Long
-    For R = 1 To ColumnDTOContainer.Count
-        Dim ColumnDTOs As VBA.Collection
-        Set ColumnDTOs = ColumnDTOContainer.Item(R)
-        Dim C As Long
-        For C = 1 To ColumnDTOs.Count
-            Dim DTO As App_ColumnDTO
-            Set DTO = ColumnDTOs.Item(C)
-            Dim PeriodCount As Long
-            PeriodCount = CLng(DTO.RawValue)
-        Next
-    Next
-    Dim Result As Dom_TimeTable
-    Set Result = New Dom_TimeTable
-    Result.Initialize PeriodCount
-    Set GenerateTimeTable = Result
+    Set GenerateSubjectCatalog = Result
 End Function
