@@ -24,9 +24,11 @@ Public Sub Interprete(ByVal Config As Dom_SchoolConfig, ByVal ColumnDTO As App_C
     Dim ClassHourType As Dom_ClassHourType
     ClassHourType = ResolveClassHourType(This.ClassHourType)
     Dim Period As Dom_Period
-    Period = ResolvePeriod(Config, This.Period)
+    Set Period = ResolvePeriod(This.Period)
+    If Config.PeriodCount < Period.Value Then Err.Raise DomErrInvalidRange, "Dom_TimeTableHeaderInterpreter", "校時は設定範囲内である必要があります。"
     Dim Grade As Dom_Grade
-    Grade = ResolveGrade(Config, This.Grade)
+    Set Grade = ResolveGrade(This.Grade)
+    If Config.MainStreamGradeCount < Grade.Value Then Err.Raise DomErrInvalidRange, "Dom_TimeTableHeaderInterpreter", "学年は設定範囲内である必要があります。"
     TimeTables(ClassHourType, Period.Value, Grade.Value) = ColumnDTO.RawValue
 End Sub
 
@@ -54,30 +56,26 @@ Private Function ResolveClassHourType(ByVal Part As String) As Dom_ClassHourType
     End Select
 End Function
 
-Private Function ResolvePeriod(ByVal Config As Dom_SchoolConfig, ByVal Part As String) As Dom_Period
-    Dim Result As Dom_Period
-    Set Result = New Dom_Period
+Private Function ResolvePeriod(ByVal Part As String) As Dom_Period
+    Dim Period As Dom_Period
+    Set Period = New Dom_Period
     Dim Buffer As String
     Buffer = VBA.Replace(Part, jpnKouji, vbNullString)
     If VBA.IsNumeric(Buffer) Then
-        If Config.PeriodCount < CLng(Buffer) Then Err.Raise DomErrInvalidRange, "Dom_TimeTableHeaderInterpreter", "値は設定範囲内である必要があります。"
-        Result.Initialize CLng(Buffer)
+        Set ResolvePeriod = Period.Create(CLng(Buffer))
     Else
-        Result.Initialize 0
+        Set ResolvePeriod = Period.Create(0)
     End If
-    Set ResolvePeriod = Result
 End Function
 
-Private Function ResolveGrade(ByVal Config As Dom_SchoolConfig, ByVal Part As String) As Dom_Grade
-    Dim Result As Dom_Grade
-    Set Result = New Dom_Grade
+Private Function ResolveGrade(ByVal Part As String) As Dom_Grade
+    Dim Grade As Dom_Grade
+    Set Grade = New Dom_Grade
     Dim Buffer As String
     Buffer = VBA.Replace(Part, jpnNen, vbNullString)
     If VBA.IsNumeric(Buffer) Then
-        If Config.MainStreamGradeCount < CLng(Buffer) Then Err.Raise DomErrInvalidRange, "Dom_TimeTableHeaderInterpreter", "値は設定範囲内である必要があります。"
-        Result.Initialize CLng(Buffer)
+        Set ResolveGrade = Grade.Create(CLng(Buffer))
     Else
-        Result.Initialize 0
+        Set ResolveGrade = Grade.Create(0)
     End If
-    Set ResolveGrade = Result
 End Function

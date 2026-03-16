@@ -58,10 +58,10 @@ Private Function GenerateUpperValue() As Dom_UpperValue
             Case jpnJikanwariSu
                 PeriodCount = CLng(DTO.RawValue)
             End Select
-            Dim Result As Dom_UpperValue
-            Set Result = New Dom_UpperValue
-            Result.Initialize MainStreamGradeCount, MainStreamClassCount, PeriodCount
         Next
+        Dim Result As Dom_UpperValue
+        Set Result = New Dom_UpperValue
+        Result.Initialize MainStreamGradeCount, MainStreamClassCount, PeriodCount
     Next
     Set GenerateUpperValue = Result
 End Function
@@ -107,7 +107,6 @@ Private Function GenerateSubjectCatalog() As Dom_SubjectCatalog
     Set ColumnDTOContainer = AddColumnDTO.Execute(CSVDTO)
     Dim Result As Dom_SubjectCatalog
     Set Result = New Dom_SubjectCatalog
-    Dim Index As Long
     Dim R As Long
     For R = 1 To ColumnDTOContainer.Count
         Dim ColumnDTOs As VBA.Collection
@@ -116,21 +115,24 @@ Private Function GenerateSubjectCatalog() As Dom_SubjectCatalog
         For C = 1 To ColumnDTOs.Count
             Dim DTO As App_ColumnDTO
             Set DTO = ColumnDTOs.Item(C)
-            Index = Index + 1
-            Dim Name As String, TargetGrade As String, Mark As String
             Select Case DTO.HeaderName
             Case jpnSyukeimei
+                Dim Name As String
                 Name = DTO.RawValue
             Case jpnTaisyoGakunen
+                Dim TargetGrade As String
                 TargetGrade = DTO.RawValue
             Case jpnKigou
+                Dim Mark As String
                 Mark = DTO.RawValue
             End Select
-            Dim Subject As Dom_Subject
-            Set Subject = New Dom_Subject
-            Subject.Initialize Index, Name, TargetGrade, Mark
-            Result.Add Subject
         Next
+        Dim Index As Long
+        Index = Index + 1
+        Dim Subject As Dom_Subject
+        Set Subject = New Dom_Subject
+        Subject.Initialize Index, Name, TargetGrade, Mark
+        Result.Add Subject
     Next
     Set GenerateSubjectCatalog = Result
 End Function

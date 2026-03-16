@@ -16,10 +16,11 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Value As Long)
+Public Function Create(ByVal Value As Long) As Dom_Period
     If Value < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_Period", "ZŽž‚Í³‚Ì”‚Å‚ ‚é•K—v‚ª‚ ‚è‚Ü‚·B"
     This.Value = Value
-End Sub
+    Set Create = Me
+End Function
 
 Public Property Get Value() As Long
     Value = This.Value

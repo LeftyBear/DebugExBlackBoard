@@ -24,6 +24,10 @@ Public Sub Add(ByVal Subject As Dom_Subject)
     This.Catalog.Add Subject.Name, Subject
 End Sub
 
+Public Function Exists(ByVal Name As String) As Boolean
+    Exists = This.Catalog.Exists(Name)
+End Function
+
 Public Function Count() As Long
     Count = This.Catalog.Count
 End Function
@@ -43,7 +47,7 @@ Public Function Names() As String()
 End Function
 
 Public Function Resolve(ByVal Name As String) As Dom_Subject
-    If Not This.Catalog.Exists(Name) Then Err.Raise DomErrNotExistsItem, "Dom_SubjectCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録キー: " & Name
+    If Not This.Catalog.Exists(Name) Then Exit Function
     Set Resolve = This.Catalog.Item(Name)
 End Function
 

@@ -63,7 +63,7 @@ Private Function BuildEntity(ByVal ColumnDTOContainer As VBA.Collection) As VBA.
             Dim DTO As App_ColumnDTO
             Set DTO = ColumnDTOs.Item(C)
             If 0 < VBA.InStr(1, DTO.HeaderName, charUnderScore) Then
-                This.Interpreter.Interprete DTO, Values
+                This.Interpreter.Interprete This.Config, DTO, Values
             ElseIf DTO.HeaderName Like jpnHizuke Then
                 Dim FixDate As Date
                 FixDate = Dom_Function.NormalizeToDate(DTO.RawValue)

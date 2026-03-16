@@ -16,10 +16,11 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Value As Long)
-    If Value < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_Grade", "学年は正の数である必要があります。"
+Public Function Create(ByVal Value As Long) As Dom_Grade
+    If Value < 0 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_Grade", "0または学年は正の数である必要があります。"
     This.Value = Value
-End Sub
+    Set Create = Me
+End Function
 
 Public Property Get Value() As Long
     Value = This.Value

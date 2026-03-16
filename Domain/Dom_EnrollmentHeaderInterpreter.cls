@@ -19,14 +19,21 @@ End Type
 Private This As Member
 
 '@Ignore ProcedureCanBeWrittenAsFunction
-Public Sub Interprete(ByVal ColumnDTO As App_ColumnDTO, ByRef Values() As Long)
+Public Sub Interprete(ByVal Config As Dom_SchoolConfig, ByVal ColumnDTO As App_ColumnDTO, ByRef Values() As Long)
     ParseHeader ColumnDTO.HeaderName
     Dim StreamType As Dom_StreamType
     StreamType = ResolveStreamType(This.StreamType)
     Dim Grade As Dom_Grade
-    Grade = ResolveGrade(This.StreamType)
+    Set Grade = ResolveGrade(This.StreamType)
     Dim ClassNo As Dom_ClassNo
-    ClassNo = ResolveClassNo(This.ClassNo)
+    Set ClassNo = ResolveClassNo(This.ClassNo)
+    If StreamType = Main Then
+        If Config.MainStreamGradeCount < Grade.Value Then Err.Raise DomErrInvalidRange, "Dom_EnrollmentHeaderInterpreter", "学年は設定範囲内である必要があります。"
+        If Config.MainStreamClassCount < ClassNo.Value Then Err.Raise DomErrInvalidRange, "Dom_EnrollmentHeaderInterpreter", "学級は設定範囲内である必要があります。"
+    ElseIf StreamType = Special Then
+        If Config.SpecialStreamGradeCount < Grade.Value Then Err.Raise DomErrInvalidRange, "Dom_EnrollmentHeaderInterpreter", "学年は設定範囲内である必要があります。"
+        If Config.SpecialStreamClassCount < ClassNo.Value Then Err.Raise DomErrInvalidRange, "Dom_EnrollmentHeaderInterpreter", "学級は設定範囲内である必要があります。"
+    End If
     Dim Gender As Dom_Gender
     Gender = ResolveGender(This.Gender)
     Values(StreamType, Grade.Value, ClassNo.Value, Gender) = Dom_Function.NormalizeToLong(ColumnDTO.RawValue)
@@ -56,29 +63,27 @@ Private Function ResolveStreamType(ByVal Part As String) As Dom_StreamType
 End Function
 
 Private Function ResolveGrade(ByVal Part As String) As Dom_Grade
-    Dim Result As Dom_Grade
-    Set Result = New Dom_Grade
+    Dim Grade As Dom_Grade
+    Set Grade = New Dom_Grade
     Dim Buffer As String
     Buffer = VBA.Replace(Part, jpnNen, vbNullString)
     If VBA.IsNumeric(Buffer) Then
-        Result.Initialize CLng(Buffer)
+        Set ResolveGrade = Grade.Create(CLng(Buffer))
     Else
-        Result.Initialize 0
+        Set ResolveGrade = Grade.Create(0)
     End If
-    Set ResolveGrade = Result
 End Function
 
 Private Function ResolveClassNo(ByVal Part As String) As Dom_ClassNo
-    Dim Result As Dom_ClassNo
-    Set Result = New Dom_ClassNo
+    Dim ClassNo As Dom_ClassNo
+    Set ClassNo = New Dom_ClassNo
     Dim Buffer As String
     Buffer = VBA.Replace(Part, jpnKumi, vbNullString)
     If VBA.IsNumeric(Buffer) Then
-        Result.Initialize CLng(Buffer)
+        Set ResolveClassNo = ClassNo.Create(CLng(Buffer))
     Else
-        Result.Initialize 0
+        Set ResolveClassNo = ClassNo.Create(0)
     End If
-    Set ResolveClassNo = Result
 End Function
 
 Private Function ResolveGender(ByVal Part As String) As Dom_Gender

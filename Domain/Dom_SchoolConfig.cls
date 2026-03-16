@@ -64,6 +64,10 @@ Public Function SubjectNames() As String()
     SubjectNames = This.SubjectCatalog.Names
 End Function
 
+Public Function IsSubjectName(ByVal Name As String) As Boolean
+    IsSubjectName = This.SubjectCatalog.Exists(Name)
+End Function
+
 Public Property Get PeriodCount() As Long
     PeriodCount = This.UpperValue.PeriodCount
 End Property
