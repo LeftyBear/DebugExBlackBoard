@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Dom_TimeTableHeaderInterpreter"
+Attribute VB_Name = "Dom_TimeTableInterpreter"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -25,10 +25,10 @@ Public Sub Interprete(ByVal Config As Dom_SchoolConfig, ByVal ColumnDTO As App_C
     ClassHourType = ResolveClassHourType(This.ClassHourType)
     Dim Period As Dom_Period
     Set Period = ResolvePeriod(This.Period)
-    If Config.PeriodCount < Period.Value Then Err.Raise DomErrInvalidRange, "Dom_TimeTableHeaderInterpreter", "校時は設定範囲内である必要があります。"
+    If Config.PeriodCount < Period.Value Then Err.Raise DomErrInvalidRange, "Dom_TimeTableInterpreter", "校時は設定範囲内である必要があります。"
     Dim Grade As Dom_Grade
     Set Grade = ResolveGrade(This.Grade)
-    If Config.MainStreamGradeCount < Grade.Value Then Err.Raise DomErrInvalidRange, "Dom_TimeTableHeaderInterpreter", "学年は設定範囲内である必要があります。"
+    If Config.MainStreamGradeCount < Grade.Value Then Err.Raise DomErrInvalidRange, "Dom_TimeTableInterpreter", "学年は設定範囲内である必要があります。"
     TimeTables(ClassHourType, Period.Value, Grade.Value) = ColumnDTO.RawValue
 End Sub
 
@@ -62,7 +62,7 @@ Private Function ResolvePeriod(ByVal Part As String) As Dom_Period
     Dim Buffer As String
     Buffer = VBA.Replace(Part, jpnKouji, vbNullString)
     If VBA.IsNumeric(Buffer) Then
-        Set ResolvePeriod = Period.Create(CLng(Buffer))
+        Set ResolvePeriod = Period.Create(Dom_Util_Long.NormalizeToLong(Buffer))
     Else
         Set ResolvePeriod = Period.Create(0)
     End If
@@ -74,7 +74,7 @@ Private Function ResolveGrade(ByVal Part As String) As Dom_Grade
     Dim Buffer As String
     Buffer = VBA.Replace(Part, jpnNen, vbNullString)
     If VBA.IsNumeric(Buffer) Then
-        Set ResolveGrade = Grade.Create(CLng(Buffer))
+        Set ResolveGrade = Grade.Create(Dom_Util_Long.NormalizeToLong(Buffer))
     Else
         Set ResolveGrade = Grade.Create(0)
     End If

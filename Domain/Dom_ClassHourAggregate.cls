@@ -11,31 +11,55 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Entities As VBA.Collection
+    Hours() As Long
+    Marks() As String
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Entities As VBA.Collection)
-    If Entities Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ClassHourAggregate", "コレクションが生成されている必要があります。"
-    If Entities.Count = 0 Then Err.Raise DomErrEmptyObject, "Dom_ClassHourAggregate", "コレクションのアイテムは１件以上ある必要があります。"
-    ValidateRecord Entities
-    Set This.Entities = Entities
+Public Sub Initialize(ByVal MaxType As Long, ByVal MaxSubject As Long, ByVal MaxPeriod As Long, ByVal MaxGrade As Long)
+    ReDim This.Hours(MaxType, MaxSubject, MaxGrade)
+    ReDim This.Marks(MaxType, MaxPeriod, MaxGrade)
 End Sub
 
-Public Property Get Count() As Long
-    Count = This.Entities.Count
-End Property
+Public Sub AddHours(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade, ByVal Hours As Long)
+    This.Hours(ClassHourType, Subject.Index, Grade.Value) = Hours
+End Sub
 
-Public Function GetClassHour(ByVal Index As Long) As Dom_ClassHour
-    Set GetClassHour = This.Entities.Item(Index)
+Public Sub AddMark(ByVal ClassHourType As Dom_ClassHourType, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade, ByVal Mark As String)
+    This.Marks(ClassHourType, Period.Value, Grade.Value) = Mark
+End Sub
+
+Public Function GetHours(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade) As Long
+    GetHours = This.Hours(ClassHourType, Subject.Index, Grade.Value)
 End Function
 
-Private Sub ValidateRecord(ByVal Entities As VBA.Collection)
-    Dim i As Long
-    For i = 1 To Entities.Count
-        If Not TypeOf Entities.Item(i) Is Dom_ClassHour Then
-            Err.Raise DomErrInvalidTypeOfObject, "Dom_ClassHourAggregate", "エンティティは ClassHour である必要があります。"
+Public Function GetMark(ByVal ClassHourType As Dom_ClassHourType, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As String
+    GetMark = This.Marks(ClassHourType, Period.Value, Grade.Value)
+End Function
+
+Public Function MarkCount(ByVal ClassHourType As Dom_ClassHourType, ByVal Grade As Dom_Grade) As Long
+    Dim Period  As Long
+    For Period = 1 To UBound(This.Marks, 2)
+        If This.Marks(ClassHourType, Period, Grade.Value) <> vbNullString Then
+            Dim Count As Long
+            Count = Count + 1
         End If
     Next
-End Sub
+    MarkCount = Count
+End Function
+
+Public Function SubjectCount() As Long
+    SubjectCount = UBound(This.Hours, 2)
+End Function
+
+Public Function GradeCount() As Long
+    GradeCount = UBound(This.Hours, 3)
+End Function
+
+Public Function UpdateHours(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade, ByVal NewValue As Long) As Long
+    Dim OldValue As Long
+    OldValue = This.Hours(ClassHourType, Subject.Index, Grade.Value)
+    This.Hours(ClassHourType, Subject.Index, Grade.Value) = NewValue
+    UpdateHours = NewValue - OldValue
+End Function

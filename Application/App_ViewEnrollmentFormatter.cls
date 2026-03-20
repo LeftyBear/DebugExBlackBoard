@@ -18,11 +18,11 @@ Private Enum C
     TotalColumn
 End Enum
 
-Public Function Format(ByVal Enrollment As Dom_Enrollment, ByVal Config As Dom_SchoolConfig) As Variant()
+Public Function Format(ByVal Enrollment As Dom_EnrollmentAggregate, ByVal Config As Dom_SchoolConfig) As Variant()
     Dim MainStream() As Long
-    MainStream = ToTable(Enrollment, Main, Config.MainStreamGradeCount, Config.MainStreamClassCount)
+    MainStream = ToTable(Main, Enrollment, Config.MainStreamGradeCount, Config.MainStreamClassCount)
     Dim SpecialStream() As Long
-    SpecialStream = ToTable(Enrollment, Special, Config.SpecialStreamGradeCount, Config.SpecialStreamClassCount)
+    SpecialStream = ToTable(Special, Enrollment, Config.SpecialStreamGradeCount, Config.SpecialStreamClassCount)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(MainStream) + UBound(SpecialStream) + 2, 1 To C.TotalColumn)
     OutputTable(1, C.GradeColumn) = jpnNen
@@ -80,7 +80,7 @@ Public Function Format(ByVal Enrollment As Dom_Enrollment, ByVal Config As Dom_S
     Format = OutputTable
 End Function
 
-Private Function ToTable(ByVal Enrollment As Dom_Enrollment, ByVal StreamType As Dom_StreamType, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
+Private Function ToTable(ByVal StreamType As Dom_StreamType, ByVal Enrollment As Dom_EnrollmentAggregate, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
     '@Ignore MultipleDeclarations
     Dim Table() As Long, MaleTotal() As Long, FemaleTotal() As Long, ClassTotal() As Long
     ReDim Table(1 To GradeCount * ClassCount + GradeCount, 1 To C.TotalColumn)
@@ -89,30 +89,46 @@ Private Function ToTable(ByVal Enrollment As Dom_Enrollment, ByVal StreamType As
     ReDim ClassTotal(0 To GradeCount, 1 To ClassCount)
     Dim R As Long
     R = 1
-    Dim Grade As Long
-    For Grade = 1 To GradeCount
-        Dim ClassNo As Long
-        For ClassNo = 1 To ClassCount
+    Dim G As Long
+    For G = 1 To GradeCount
+        Dim Grade As Dom_Grade
+        Set Grade = CreateGrade(G)
+        Dim CN As Long
+        For CN = 1 To ClassCount
+            Dim ClassNo As Dom_ClassNo
+            Set ClassNo = CreateClassNo(CN)
             Dim Gender As Long
             For Gender = Dom_Gender.Male To Dom_Gender.Female
                 Dim Value As Long
-                Value = Enrollment.Value(StreamType, Grade, ClassNo, Gender)
+                Value = Enrollment.GetValue(StreamType, Grade, ClassNo, Gender)
                 If Gender = Dom_Gender.Male Then
-                    MaleTotal(Grade) = MaleTotal(Grade) + Value
+                    MaleTotal(G) = MaleTotal(G) + Value
                     Table(R, C.MaleColumn) = Value
                 Else
-                    FemaleTotal(Grade) = FemaleTotal(Grade) + Value
+                    FemaleTotal(G) = FemaleTotal(G) + Value
                     Table(R, C.FemaleColumn) = Value
                 End If
-                ClassTotal(Grade, ClassNo) = ClassTotal(Grade, ClassNo) + Value
+                ClassTotal(G, CN) = ClassTotal(G, CN) + Value
             Next
-            Table(R, C.TotalColumn) = ClassTotal(Grade, ClassNo)
+            Table(R, C.TotalColumn) = ClassTotal(G, CN)
             R = R + 1
         Next
-        Table(R, C.MaleColumn) = MaleTotal(Grade)
-        Table(R, C.FemaleColumn) = FemaleTotal(Grade)
-        Table(R, C.TotalColumn) = MaleTotal(Grade) + FemaleTotal(Grade)
+        Table(R, C.MaleColumn) = MaleTotal(G)
+        Table(R, C.FemaleColumn) = FemaleTotal(G)
+        Table(R, C.TotalColumn) = MaleTotal(G) + FemaleTotal(G)
         R = R + 1
     Next
     ToTable = Table
+End Function
+
+Private Function CreateGrade(ByVal Value As Long) As Dom_Grade
+    With New Dom_Grade
+        Set CreateGrade = .Create(Value)
+    End With
+End Function
+
+Private Function CreateClassNo(ByVal Value As Long) As Dom_ClassNo
+    With New Dom_ClassNo
+        Set CreateClassNo = .Create(Value)
+    End With
 End Function

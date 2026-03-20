@@ -17,7 +17,7 @@ End Type
 Private This As Member
 
 Public Function Create(ByVal Value As Long) As Dom_ClassNo
-    If Value < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_ClassNo", "学級は正の数である必要があります。"
+'    If Value < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_ClassNo", "学級は正の数である必要があります。"
     This.Value = Value
     Set Create = Me
 End Function

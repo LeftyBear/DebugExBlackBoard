@@ -11,31 +11,34 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Entities As VBA.Collection
+    Values() As Long
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Entities As VBA.Collection)
-    If Entities Is Nothing Then Err.Raise DomErrNothingObject, "Dom_EnrollmentAggregate", "コレクションが生成されている必要があります。"
-    If Entities.Count = 0 Then Err.Raise DomErrEmptyObject, "Dom_EnrollmentAggregate", "コレクションのアイテムは１件以上ある必要があります。"
-    ValidateRecord Entities
-    Set This.Entities = Entities
+Public Sub Initialize(ByVal MaxType As Long, ByVal MaxGrade As Long, ByVal MaxClassNo As Long, ByVal MaxGender As Long)
+    ReDim This.Values(MaxType, MaxGrade, MaxClassNo, MaxGender)
 End Sub
 
-Public Property Get Count() As Long
-    Count = This.Entities.Count
-End Property
+Public Sub AddValue(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender, ByVal Value As Long)
+    This.Values(StreamType, Grade.Value, ClassNo.Value, Gender) = Value
+End Sub
 
-Public Function GetRecord(ByVal Index As Long) As Dom_Enrollment
-    Set GetRecord = This.Entities.Item(Index)
+Public Function GradeCount() As Long
+    GradeCount = UBound(This.Values, 2)
 End Function
 
-Private Sub ValidateRecord(ByVal Entities As VBA.Collection)
-    Dim i As Long
-    For i = 1 To Entities.Count
-        If Not TypeOf Entities.Item(i) Is Dom_Enrollment Then
-            Err.Raise DomErrInvalidTypeOfObject, "Dom_EnrollmentAggregate", "エンティティは EnrollmentRecord である必要があります。"
-        End If
-    Next
-End Sub
+Public Function ClassNoCount() As Long
+    ClassNoCount = UBound(This.Values, 3)
+End Function
+
+Public Function GetValue(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender) As Long
+    GetValue = This.Values(StreamType, Grade.Value, ClassNo.Value, Gender)
+End Function
+
+Public Function UpdateValue(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender, ByVal NewValue As Long) As Long
+    Dim OldValue As Long
+    OldValue = This.Values(StreamType, Grade.Value, ClassNo.Value, Gender)
+    This.Values(StreamType, Grade.Value, ClassNo.Value, Gender) = NewValue
+    UpdateValue = NewValue - OldValue
+End Function

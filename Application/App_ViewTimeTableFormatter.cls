@@ -10,9 +10,9 @@ Attribute VB_Exposed = False
 '@Folder("Application.Formatter")
 Option Explicit
 
-Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal Entity As Dom_ClassHour, ByVal Config As Dom_SchoolConfig) As Variant()
+Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHourAggregate, ByVal Config As Dom_SchoolConfig) As Variant()
     Dim TimeTable() As String
-    TimeTable = ToTimeTable(ClassHourType, Entity, Config)
+    TimeTable = ToTimeTable(ClassHourType, ClassHour, Config)
     Dim Total() As Long
     ReDim Total(Config.MainStreamGradeCount)
     Dim OutputTable() As Variant
@@ -32,7 +32,7 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal Entity As
                 OutputTable(R, C) = Config.SubjectNameOf(R - 1)
             ElseIf R < UBound(TimeTable, 1) + 1 Then
                 OutputTable(R, C) = TimeTable(R - 1, C - 1)
-                If Not OutputTable(R, C) Like vbNullString Then Total(C - 1) = Total(C - 1) + 1
+                If OutputTable(R, C) <> vbNullString Then Total(C - 1) = Total(C - 1) + 1
             ElseIf R = UBound(TimeTable, 1) + 1 And C = 1 Then
                 OutputTable(R, C) = jpnGoukei
             ElseIf R = UBound(TimeTable, 1) + 1 Then
@@ -43,15 +43,31 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal Entity As
     Format = OutputTable
 End Function
 
-Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourType, ByVal Entity As Dom_ClassHour, ByVal Config As Dom_SchoolConfig) As String()
+Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourType, ByVal Entity As Dom_ClassHourAggregate, ByVal Config As Dom_SchoolConfig) As String()
     Dim Table() As String
     ReDim Table(1 To Config.PeriodCount, 1 To Config.MainStreamGradeCount)
-    Dim Grade As Long
-    For Grade = 1 To Config.MainStreamGradeCount
-        Dim Period As Long
-        For Period = 1 To Config.PeriodCount
-            Table(Period, Grade) = Entity.TimeTable(ClassHourType, Period, Grade)
+    Dim G As Long
+    For G = 1 To Config.MainStreamGradeCount
+        Dim Grade As Dom_Grade
+        Set Grade = CreateGrade(G)
+        Dim P As Long
+        For P = 1 To Config.PeriodCount
+            Dim Period As Dom_Period
+            Set Period = CreatePeriod(P)
+            Table(P, G) = Entity.GetMark(ClassHourType, Period, Grade)
         Next
     Next
     ToTimeTable = Table
+End Function
+
+Private Function CreateGrade(ByVal Value As Long) As Dom_Grade
+    With New Dom_Grade
+        Set CreateGrade = .Create(Value)
+    End With
+End Function
+
+Private Function CreatePeriod(ByVal Value As Long) As Dom_Period
+    With New Dom_Period
+        Set CreatePeriod = .Create(Value)
+    End With
 End Function

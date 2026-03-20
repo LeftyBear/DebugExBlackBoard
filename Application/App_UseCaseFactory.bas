@@ -29,9 +29,12 @@ Public Function CreateAggregateEnrollmentUseCase(ByVal SchoolConfig As Dom_Schoo
     Dim BaseRepository As Inf_EnrollmentRepository
     Set BaseRepository = New Inf_EnrollmentRepository
     BaseRepository.Initialize ReadRepository
+    Dim Interpreter As Dom_EnrollmentInterpreter
+    Set Interpreter = New Dom_EnrollmentInterpreter
+    Interpreter.Initialize New Dom_HeaderTokenResolver
     Dim UseCase As App_AggregateEnrollmentUseCase
     Set UseCase = New App_AggregateEnrollmentUseCase
-    UseCase.Initialize BaseRepository, SchoolConfig
+    UseCase.Initialize BaseRepository, SchoolConfig, New Dom_EnrollmentHeaderParser, Interpreter
     Set CreateAggregateEnrollmentUseCase = UseCase
 End Function
 
@@ -45,8 +48,11 @@ Public Function CreateAggregateClassHourUseCase(ByVal SchoolConfig As Dom_School
     Dim BaseRepository As Inf_ClassHourRepository
     Set BaseRepository = New Inf_ClassHourRepository
     BaseRepository.Initialize ReadRepository
+    Dim Interpreter As Dom_ClassHourInterpreter
+    Set Interpreter = New Dom_ClassHourInterpreter
+    Interpreter.Initialize New Dom_HeaderTokenResolver
     Dim UseCase As App_AggregateClassHourUseCase
     Set UseCase = New App_AggregateClassHourUseCase
-    UseCase.Initialize BaseRepository, SchoolConfig
+    UseCase.Initialize BaseRepository, SchoolConfig, New Dom_ClassHourHeaderParser, Interpreter
     Set CreateAggregateClassHourUseCase = UseCase
 End Function

@@ -13,68 +13,32 @@ Option Explicit
 Private Type Member
     Repository  As Dom_IClassHourRepository
     Config      As Dom_SchoolConfig
-    ClassHour   As Dom_ClassHourHeaderInterpreter
-    TimeTable   As Dom_TimeTableHeaderInterpreter
+    Parser      As Dom_ClassHourHeaderParser
+    Interpreter As Dom_ClassHourInterpreter
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Repository As Dom_IClassHourRepository, ByVal Config As Dom_SchoolConfig)
+Public Sub Initialize(ByVal Repository As Dom_IClassHourRepository, ByVal Config As Dom_SchoolConfig, ByVal Parser As Dom_ClassHourHeaderParser, ByVal Interpreter As Dom_ClassHourInterpreter)
     Set This.Repository = Repository
     Set This.Config = Config
-    Set This.ClassHour = New Dom_ClassHourHeaderInterpreter
-    Set This.TimeTable = New Dom_TimeTableHeaderInterpreter
+    Set This.Parser = Parser
+    Set This.Interpreter = Interpreter
 End Sub
 
-Public Function Execute(ByVal TargetDate As Date) As Dom_ClassHourAggregate
+Public Function Execute(ByVal TargetDate As Date) As Dom_ClassHourYearAggregate
     Dim SchoolYear As Long
-    SchoolYear = Dom_Function.GetSchoolYear(TargetDate)
+    SchoolYear = Dom_Util_Date.GetSchoolYear(TargetDate)
     Dim CSVDTO As App_CSVDTO
     Set CSVDTO = New App_CSVDTO
     CSVDTO.Initialize This.Repository.Load(SchoolYear)
     If CSVDTO.RowCount = 0 Then Exit Function
-    Dim AddColumnDTO As App_AddColumnDTOatRowUseCase
-    Set AddColumnDTO = New App_AddColumnDTOatRowUseCase
-    Dim ColumnDTOContainer As VBA.Collection
-    Set ColumnDTOContainer = AddColumnDTO.Execute(CSVDTO)
-    Dim Entities As VBA.Collection
-    Set Entities = BuildEntity(ColumnDTOContainer)
-    Dim Result As Dom_ClassHourAggregate
-    Set Result = New Dom_ClassHourAggregate
-    Result.Initialize Entities
-    Set Execute = Result
-End Function
-
-Private Function BuildEntity(ByVal ColumnDTOContainer As VBA.Collection) As VBA.Collection
-    Dim Result As VBA.Collection
-    Set Result = New VBA.Collection
-    Dim Values() As Long
-    ReDim Values(0 To Dom_ClassHourType.Execution, 0 To This.Config.SubjectCount, 0 To This.Config.MainStreamGradeCount)
-    Dim TimeTables() As String
-    ReDim TimeTables(0 To Dom_ClassHourType.Execution, 0 To This.Config.PeriodCount, 0 To This.Config.MainStreamGradeCount)
-    Dim R As Long
-    For R = 1 To ColumnDTOContainer.Count
-        Dim Entity As Dom_ClassHour
-        Set Entity = New Dom_ClassHour
-        Dim ColumnDTOs As VBA.Collection
-        Set ColumnDTOs = ColumnDTOContainer.Item(R)
-        Dim C As Long
-        For C = 1 To ColumnDTOs.Count
-            Dim DTO As App_ColumnDTO
-            Set DTO = ColumnDTOs.Item(C)
-            If 0 < VBA.InStr(1, DTO.HeaderName, charUnderScore) Then
-                If 0 < VBA.InStr(1, DTO.HeaderName, jpnKouji) Then
-                    This.TimeTable.Interprete This.Config, DTO, TimeTables
-                Else
-                    This.ClassHour.Interprete This.Config, DTO, Values
-                End If
-            ElseIf DTO.HeaderName Like jpnHizuke Then
-                Dim FixDate As Date
-                FixDate = Dom_Function.NormalizeToDate(DTO.RawValue)
-            End If
-        Next
-        Entity.Initialize FixDate, Values, TimeTables
-        Result.Add Entity
-    Next
-    Set BuildEntity = Result
+    With New App_AddColumnDTOatRowUseCase
+        Dim ColumnDTOContainer As VBA.Collection
+        Set ColumnDTOContainer = .Execute(CSVDTO)
+    End With
+    Dim Factory As Dom_ClassHourAggregateFactory
+    Set Factory = New Dom_ClassHourAggregateFactory
+    Factory.Initialize This.Parser, This.Interpreter
+    Set Execute = Factory.Create(This.Config, ColumnDTOContainer)
 End Function

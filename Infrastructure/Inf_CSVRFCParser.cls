@@ -84,7 +84,7 @@ Public Function Parse(ByVal TextData As String) As String()
             End If
         End Select
     Next
-    If Not VBA.Trim$(Buffer) Like vbNullString Then
+    If VBA.Trim$(Buffer) <> vbNullString Then
         CurrentRow.Add Buffer
         RawRows.Add CurrentRow
     End If

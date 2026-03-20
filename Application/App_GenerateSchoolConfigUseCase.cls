@@ -52,11 +52,11 @@ Private Function GenerateUpperValue() As Dom_UpperValue
             Set DTO = ColumnDTOs.Item(C)
             Select Case DTO.HeaderName
             Case jpnFutsuGakunenSu
-                MainStreamGradeCount = CLng(DTO.RawValue)
+                MainStreamGradeCount = Dom_Util_Long.NormalizeToLong(DTO.RawValue)
             Case jpnFutsuGakkyuSu
-                MainStreamClassCount = CLng(DTO.RawValue)
+                MainStreamClassCount = Dom_Util_Long.NormalizeToLong(DTO.RawValue)
             Case jpnJikanwariSu
-                PeriodCount = CLng(DTO.RawValue)
+                PeriodCount = Dom_Util_Long.NormalizeToLong(DTO.RawValue)
             End Select
         Next
         Dim Result As Dom_UpperValue

@@ -80,7 +80,7 @@ Private Sub Inf_IWriteRepository_Delete(ByVal Key As Variant)
     Set Lines = ReadAllLines(This.FilePath)
     Dim i As Long
     For i = Lines.Count To 1 Step -1
-        If ExtractKey(Lines.Item(i)) Like Key Then
+        If ExtractKey(Lines.Item(i)) = Key Then
             Lines.Remove i
             Exit For
         End If
