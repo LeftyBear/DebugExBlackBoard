@@ -11,33 +11,28 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public Function ResolveStreamType(ByVal Token As String) As Dom_StreamType
-    If Token = jpnTokushi Then
-        ResolveStreamType = Dom_StreamType.Special
-    ElseIf 0 < VBA.InStr(1, Token, jpnNen) Then
-        ResolveStreamType = Dom_StreamType.Main
-    Else
-        ResolveStreamType = 0
+    Dim Value As Long
+    If 0 < VBA.InStr(1, Token, jpnNen) Then
+        Value = Dom_StreamTypeEnum.Main
+    ElseIf Token = jpnTokushi Then
+        Value = Dom_StreamTypeEnum.Special
     End If
+    With New Dom_StreamType
+        Set ResolveStreamType = .Create(Value)
+    End With
 End Function
 
 Public Function ResolveClassHourType(ByVal Token As String) As Dom_ClassHourType
-    If Token = jpnKeikaku Then
-        ResolveClassHourType = Dom_ClassHourType.Plan
-    ElseIf Token = jpnJisshi Then
-        ResolveClassHourType = Dom_ClassHourType.Execution
-    Else
-        ResolveClassHourType = 0
-    End If
-End Function
-
-Public Function ResolveGender(ByVal Token As String) As Dom_Gender
-    If Token = jpnOtoko Then
-        ResolveGender = Dom_Gender.Male
-    ElseIf Token = jpnOnna Then
-        ResolveGender = Dom_Gender.Female
-    Else
-        ResolveGender = 0
-    End If
+    Dim Value As Long
+    Select Case Token
+    Case jpnKeikaku
+        Value = Dom_ClassHourTypeEnum.Plan
+    Case jpnJisshi
+        Value = Dom_ClassHourTypeEnum.Execution
+    End Select
+    With New Dom_ClassHourType
+        Set ResolveClassHourType = .Create(Value)
+    End With
 End Function
 
 Public Function ResolveGrade(ByVal Token As String) As Dom_Grade
@@ -46,8 +41,6 @@ Public Function ResolveGrade(ByVal Token As String) As Dom_Grade
     If VBA.IsNumeric(TemporaryValue) Then
         Dim Value As Long
         Value = Dom_Util_Long.NormalizeToLong(TemporaryValue)
-    Else
-        Value = 0
     End If
     With New Dom_Grade
         Set ResolveGrade = .Create(Value)
@@ -60,24 +53,41 @@ Public Function ResolveClassNo(ByVal Token As String) As Dom_ClassNo
     If VBA.IsNumeric(TemporaryValue) Then
         Dim Value As Long
         Value = Dom_Util_Long.NormalizeToLong(TemporaryValue)
-    Else
-        Value = 0
     End If
     With New Dom_ClassNo
         Set ResolveClassNo = .Create(Value)
     End With
 End Function
 
-Public Function ResolvePeriod(ByVal Part As String) As Dom_Period
+Public Function ResolveGender(ByVal Token As String) As Dom_Gender
+    Dim Value As Long
+    Select Case Token
+    Case jpnOtoko
+        Value = Dom_GenderEnum.Male
+    Case jpnOnna
+        Value = Dom_GenderEnum.Female
+    End Select
+    With New Dom_Gender
+        Set ResolveGender = .Create(Value)
+    End With
+End Function
+
+Public Function ResolvePeriod(ByVal Token As String) As Dom_Period
     Dim TemporaryValue As String
-    TemporaryValue = VBA.Replace(Part, jpnKouji, vbNullString)
+    TemporaryValue = VBA.Replace(Token, jpnKouji, vbNullString)
     If VBA.IsNumeric(TemporaryValue) Then
         Dim Value As Long
         Value = Dom_Util_Long.NormalizeToLong(TemporaryValue)
-    Else
-        Value = 0
     End If
     With New Dom_Period
         Set ResolvePeriod = .Create(Value)
     End With
+End Function
+
+Public Function ResolveTransfer(ByVal Token As String) As Boolean
+    ResolveTransfer = Dom_Util_Boolean.NormalizeToBoolean(Token)
+End Function
+
+Public Function ResolveRemarks(ByVal Token As String) As String
+    ResolveRemarks = Token
 End Function

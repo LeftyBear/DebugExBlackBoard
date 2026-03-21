@@ -22,34 +22,28 @@ Public Sub Initialize(ByVal Parser As Dom_EnrollmentHeaderParser, ByVal Interpre
     Set This.Interpreter = Interpreter
 End Sub
 
-Public Function Create(ByVal Config As Dom_SchoolConfig, ByVal ColumnDTOContainer As VBA.Collection) As Dom_EnrollmentYearAggregate
+Public Function Create(ByVal Config As Dom_SchoolStructure, ByVal ColumnDTOGroups As VBA.Collection) As Dom_EnrollmentYearAggregate
     Dim GradeCount As Long
     GradeCount = Bigger(Config.MainStreamGradeCount, Config.SpecialStreamGradeCount)
     Dim ClassNoCount As Long
     ClassNoCount = Bigger(Config.MainStreamClassCount, Config.SpecialStreamClassCount)
     Dim Result As Dom_EnrollmentYearAggregate
     Set Result = New Dom_EnrollmentYearAggregate
-    Result.Initialize Dom_StreamType.Special, GradeCount, ClassNoCount, Dom_Gender.Female
+    Result.Initialize Dom_StreamTypeEnum.Special, GradeCount, ClassNoCount
     Dim Aggregate As Dom_EnrollmentAggregate
     Set Aggregate = New Dom_EnrollmentAggregate
-    Aggregate.Initialize Dom_StreamType.Special, GradeCount, ClassNoCount, Dom_Gender.Female
-    Dim ColumnDTOs As VBA.Collection
-    For Each ColumnDTOs In ColumnDTOContainer
+    Aggregate.Initialize Dom_StreamTypeEnum.Special, GradeCount, ClassNoCount, Dom_GenderEnum.Female
+    Dim ColumnDTOGroup As VBA.Collection
+    For Each ColumnDTOGroup In ColumnDTOGroups
         Dim ColumnDTO As App_ColumnDTO
-        For Each ColumnDTO In ColumnDTOs
+        For Each ColumnDTO In ColumnDTOGroup
             Dim Header As Dom_EnrollmentHeader
-            Set Header = This.Parser.Parse(Config, ColumnDTO.HeaderName)
+            Set Header = This.Parser.Parse(ColumnDTO.HeaderName)
             If Header.TargetDate <> vbNullString Then
                 Dim TargetDate As Date
                 TargetDate = Dom_Util_Date.NormalizeToDate(ColumnDTO.RawValue)
-            ElseIf Header.Transfer <> vbNullString Then
-                Dim Transfer As Boolean
-                Transfer = Dom_Util_Boolean.NormalizeToBoolean(ColumnDTO.RawValue)
-            ElseIf Header.Remarks <> vbNullString Then
-                Dim Remarks As String
-                Remarks = ColumnDTO.RawValue
             Else
-                This.Interpreter.Interprete Config, Header, ColumnDTO.RawValue, Aggregate
+                This.Interpreter.Interprete Header, ColumnDTO.RawValue, Aggregate
             End If
         Next
         Result.Add TargetDate, Aggregate

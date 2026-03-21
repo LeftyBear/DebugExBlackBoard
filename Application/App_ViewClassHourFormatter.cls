@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Application.Formatter")
 Option Explicit
 
-Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHourAggregate, ByVal Config As Dom_SchoolConfig) As Variant()
+Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHourAggregate, ByVal Config As Dom_SchoolStructure) As Variant()
     Dim ClassHourTable() As Long
     ClassHourTable = ToClassHourTable(ClassHourType, ClassHour, Config)
     Dim OutputTable() As Variant
@@ -38,34 +38,33 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour
     Format = OutputTable
 End Function
 
-Private Function ToClassHourTable(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHourAggregate, ByVal Config As Dom_SchoolConfig) As Long()
-    Dim Table() As Long
-    ReDim Table(1 To Config.SubjectCount + 1, 1 To Config.MainStreamGradeCount)
-    Dim Total() As Long
-    ReDim Total(1 To Config.MainStreamGradeCount)
-    Dim G As Long
-    For G = 1 To Config.MainStreamGradeCount
-        Dim Grade As Dom_Grade
-        Set Grade = CreateGrade(G)
-        Dim i As Long
-        For i = 1 To Config.SubjectCount
-            Dim Subject As Dom_Subject
-            Set Subject = CreateSubject(i)
-            Dim Value As Long
-            Value = ClassHour.GetHours(ClassHourType, Subject, Grade)
-            Table(i, G) = Value
-            Total(G) = Total(G) + Value
-        Next
-        Table(UBound(Table), G) = Total(G)
-    Next
-    ToClassHourTable = Table
+Private Function ToClassHourTable(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHourAggregate, ByVal Config As Dom_SchoolStructure) As Long()
+'    Dim Table() As Long
+'    ReDim Table(1 To Config.SubjectCount + 1, 1 To Config.MainStreamGradeCount)
+'    Dim Total() As Long
+'    ReDim Total(1 To Config.MainStreamGradeCount)
+'    Dim G As Long
+'    For G = 1 To Config.MainStreamGradeCount
+'        Dim Grade As Dom_Grade
+'        Set Grade = CreateGrade(G)
+'        Dim i As Long
+'        For i = 1 To Config.SubjectCount
+'            Dim Subject As Dom_Subject
+'            Set Subject = CreateSubject(i)
+'            Dim Value As Long
+'            Value = ClassHour.GetHours(ClassHourType, Subject, Grade)
+'            Table(i, G) = Value
+'            Total(G) = Total(G) + Value
+'        Next
+'        Table(UBound(Table), G) = Total(G)
+'    Next
+'    ToClassHourTable = Table
 End Function
 
 Private Function CreateSubject(ByVal Index As Long) As Dom_Subject
-    Dim Subject As Dom_Subject
-    Set Subject = New Dom_Subject
-    Subject.Initialize Index, vbNullString, vbNullString, vbNullString
-    Set CreateSubject = Subject
+    With New Dom_Subject
+        Set CreateSubject = .Create(Index, vbNullString, vbNullString, vbNullString)
+    End With
 End Function
 
 Private Function CreateGrade(ByVal Value As Long) As Dom_Grade

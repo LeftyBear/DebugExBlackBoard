@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Infrastructure.Logger"
+'@Folder "Infrastructure.Interface"
 Option Explicit
 
 Public Sub WriteLog(ByVal Message As String)

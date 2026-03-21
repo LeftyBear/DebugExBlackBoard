@@ -1,5 +1,5 @@
 Attribute VB_Name = "Dom_HeaderPart"
-'@Folder("Domain.StringConstant")
+'@Folder("Domain.Const.String")
 Option Explicit
 Option Private Module
 

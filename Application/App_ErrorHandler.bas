@@ -1,5 +1,5 @@
 Attribute VB_Name = "App_ErrorHandler"
-'@Folder "Application.Handler.Error"
+'@Folder "Application.Handler"
 Option Explicit
 Option Private Module
 

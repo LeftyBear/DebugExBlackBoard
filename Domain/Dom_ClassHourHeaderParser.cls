@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Parser")
 Option Explicit
 
-Public Function Parse(ByVal Config As Dom_SchoolConfig, ByVal HeaderName As String) As Dom_ClassHourHeader
+Public Function Parse(ByVal Config As Dom_SchoolStructure, ByVal HeaderName As String) As Dom_ClassHourHeader
     Dim Parts() As String
     Parts = VBA.Split(HeaderName, charUnderScore)
     If UBound(Parts) = 2 Then

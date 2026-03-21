@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Model")
+'@Folder("Domain.ValueObject")
 Option Explicit
 
 Private Type Member
@@ -17,10 +17,19 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Index As Long, ByVal Name As String)
+Friend Sub InitializeInternal(ByVal Index As Long, ByVal Name As String)
     This.Index = Index
     This.Name = Name
 End Sub
+
+Public Function Create(ByVal Index As Long, ByVal Name As String) As Dom_SpecialStream
+    If Index < 1 Then Err.Raise DomErrNegativeNumber, "Dom_SpecialStream", "インデックスは1以上である必要があります。"
+    If VBA.Len(Name) = 0 Then Err.Raise DomErrNullString, "Dom_SpecialStream", "集計名は文字列である必要があります。"
+    Dim Result As Dom_SpecialStream
+    Set Result = New Dom_SpecialStream
+    Result.InitializeInternal Index, Name
+    Set Create = Result
+End Function
 
 Public Property Get Index() As Long
     Index = This.Index

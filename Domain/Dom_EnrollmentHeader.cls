@@ -7,12 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.ValueObject")
+'@Folder("Domain.DTO")
 Option Explicit
 
 Private Type Member
     TargetDate  As String
-'    StreamType  As String
     Grade       As String
     ClassNo     As String
     Gender      As String
@@ -24,7 +23,6 @@ Private This As Member
 
 Public Sub Initialize(ByVal TargetDate As String, ByVal Grade As String, ByVal ClassNo As String, ByVal Gender As String, ByVal Transfer As String, ByVal Remarks As String)
     This.TargetDate = TargetDate
-'    This.StreamType = StreamType
     This.Grade = Grade
     This.ClassNo = ClassNo
     This.Gender = Gender
@@ -35,10 +33,6 @@ End Sub
 Public Property Get TargetDate() As String
     TargetDate = This.TargetDate
 End Property
-'
-'Public Property Get StreamType() As String
-'    StreamType = This.StreamType
-'End Property
 
 Public Property Get Grade() As String
     Grade = This.Grade

@@ -33,7 +33,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal StreamCount As Long, ByVal GradeCount As Long, ByVal ClassNoCount As Long, ByVal GenderCount As Long)
+Public Sub Initialize(ByVal StreamCount As Long, ByVal GradeCount As Long, ByVal ClassNoCount As Long)
     Set This.Map = New Scripting.Dictionary
     ReDim This.Main.ClassTotal(366, StreamCount, GradeCount, ClassNoCount)
     ReDim This.Main.MaleTotal(366, StreamCount, GradeCount)
@@ -51,20 +51,20 @@ Public Sub Add(ByVal TargetDate As Date, ByVal Aggregate As Dom_EnrollmentAggreg
     SumValue TargetDate, Aggregate
 End Sub
 
-Public Sub UpdateHours(ByVal TargetDate As Date, ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender, ByVal NewValue As Long)
+Public Sub UpdateHours(ByVal TargetDate As Date, ByVal StreamType As Dom_StreamTypeEnum, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_GenderEnum, ByVal NewValue As Long)
     Dim Aggregate As Dom_EnrollmentAggregate
-    Aggregate = This.Map.Item(TargetDate)
+    Set Aggregate = This.Map.Item(TargetDate)
     Dim Diff As Long
     Diff = Aggregate.UpdateValue(StreamType, Grade, ClassNo, Gender, NewValue)
     Dim DayCount As Long
     DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
     Select Case StreamType
-    Case Dom_StreamType.Main
+    Case Dom_StreamTypeEnum.Main
         This.Main.ClassTotal(DayCount, StreamType, Grade.Value, ClassNo.Value) = This.Main.ClassTotal(DayCount, StreamType, Grade.Value, ClassNo.Value) + Diff
         This.Main.MaleTotal(DayCount, StreamType, Grade.Value) = This.Main.MaleTotal(DayCount, StreamType, Grade.Value) + Diff
         This.Main.FemaleTotal(DayCount, StreamType, Grade.Value) = This.Main.FemaleTotal(DayCount, StreamType, Grade.Value) + Diff
         This.Main.GradeTotal(DayCount, StreamType, Grade.Value) = This.Main.GradeTotal(DayCount, StreamType, Grade.Value) + Diff
-    Case Dom_StreamType.Special
+    Case Dom_StreamTypeEnum.Special
         This.Special.ClassTotal(DayCount, StreamType, Grade.Value, ClassNo.Value) = This.Special.ClassTotal(DayCount, StreamType, Grade.Value, ClassNo.Value) + Diff
         This.Special.MaleTotal(DayCount, StreamType, Grade.Value) = This.Special.MaleTotal(DayCount, StreamType, Grade.Value) + Diff
         This.Special.FemaleTotal(DayCount, StreamType, Grade.Value) = This.Special.FemaleTotal(DayCount, StreamType, Grade.Value) + Diff
@@ -80,49 +80,49 @@ End Function
 Public Function GetMainClassTotal(ByVal TargetDate As Date, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo) As Long
     Dim DayCount As Long
     DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
-    GetMainClassTotal = This.Main.ClassTotal(DayCount, Dom_StreamType.Main, Grade.Value, ClassNo.Value)
+    GetMainClassTotal = This.Main.ClassTotal(DayCount, Dom_StreamTypeEnum.Main, Grade.Value, ClassNo.Value)
 End Function
 
 Public Function GetMainMaleTotal(ByVal TargetDate As Date, ByVal Grade As Dom_Grade) As Long
     Dim DayCount As Long
     DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
-    GetMainMaleTotal = This.Main.MaleTotal(DayCount, Dom_StreamType.Main, Grade.Value)
+    GetMainMaleTotal = This.Main.MaleTotal(DayCount, Dom_StreamTypeEnum.Main, Grade.Value)
 End Function
 
 Public Function GetMainFemaleTotal(ByVal TargetDate As Date, ByVal Grade As Dom_Grade) As Long
     Dim DayCount As Long
     DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
-    GetMainFemaleTotal = This.Main.FemaleTotal(DayCount, Dom_StreamType.Main, Grade.Value)
+    GetMainFemaleTotal = This.Main.FemaleTotal(DayCount, Dom_StreamTypeEnum.Main, Grade.Value)
 End Function
 
 Public Function GetMainGradeTotal(ByVal TargetDate As Date, ByVal Grade As Dom_Grade) As Long
     Dim DayCount As Long
     DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
-    GetMainGradeTotal = This.Main.GradeTotal(DayCount, Dom_StreamType.Main, Grade.Value)
+    GetMainGradeTotal = This.Main.GradeTotal(DayCount, Dom_StreamTypeEnum.Main, Grade.Value)
 End Function
 
 Public Function GetSpecialClassTotal(ByVal TargetDate As Date, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo) As Long
     Dim DayCount As Long
     DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
-    GetSpecialClassTotal = This.Special.ClassTotal(DayCount, Dom_StreamType.Special, Grade.Value, ClassNo.Value)
+    GetSpecialClassTotal = This.Special.ClassTotal(DayCount, Dom_StreamTypeEnum.Special, Grade.Value, ClassNo.Value)
 End Function
 
 Public Function GetSpecialMaleTotal(ByVal TargetDate As Date, ByVal Grade As Dom_Grade) As Long
     Dim DayCount As Long
     DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
-    GetSpecialMaleTotal = This.Special.MaleTotal(DayCount, Dom_StreamType.Special, Grade.Value)
+    GetSpecialMaleTotal = This.Special.MaleTotal(DayCount, Dom_StreamTypeEnum.Special, Grade.Value)
 End Function
 
 Public Function GetSpecialFemaleTotal(ByVal TargetDate As Date, ByVal Grade As Dom_Grade) As Long
     Dim DayCount As Long
     DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
-    GetSpecialFemaleTotal = This.Special.FemaleTotal(DayCount, Dom_StreamType.Special, Grade.Value)
+    GetSpecialFemaleTotal = This.Special.FemaleTotal(DayCount, Dom_StreamTypeEnum.Special, Grade.Value)
 End Function
 
 Public Function GetSpecialGradeTotal(ByVal TargetDate As Date, ByVal Grade As Dom_Grade) As Long
     Dim DayCount As Long
     DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
-    GetSpecialGradeTotal = This.Special.GradeTotal(DayCount, Dom_StreamType.Special, Grade.Value)
+    GetSpecialGradeTotal = This.Special.GradeTotal(DayCount, Dom_StreamTypeEnum.Special, Grade.Value)
 End Function
 
 Public Function GetGrandTotal(ByVal TargetDate As Date) As Long
@@ -142,19 +142,20 @@ Private Sub SumValue(ByVal TargetDate As Date, ByVal Aggregate As Dom_Enrollment
         For C = 1 To Aggregate.ClassNoCount
             Dim ClassNo As Dom_ClassNo
             Set ClassNo = CreateClassNo(C)
+            '@Ignore MultipleDeclarations
             Dim MainMale As Long, MainFemale As Long, SpecialMale As Long, SpecialFemale As Long
-            MainMale = Aggregate.GetValue(Dom_StreamType.Main, Grade, ClassNo, Dom_Gender.Male)
-            MainFemale = Aggregate.GetValue(Dom_StreamType.Main, Grade, ClassNo, Dom_Gender.Female)
-            SpecialMale = Aggregate.GetValue(Dom_StreamType.Special, Grade, ClassNo, Dom_Gender.Male)
-            SpecialFemale = Aggregate.GetValue(Dom_StreamType.Special, Grade, ClassNo, Dom_Gender.Female)
-            This.Main.ClassTotal(DayCount, Dom_StreamType.Main, G, C) = This.Main.ClassTotal(DayCount, Dom_StreamType.Main, G, C) + MainMale + MainFemale
-            This.Main.MaleTotal(DayCount, Dom_StreamType.Main, G) = This.Main.MaleTotal(DayCount, Dom_StreamType.Main, G) + MainMale
-            This.Main.FemaleTotal(DayCount, Dom_StreamType.Main, G) = This.Main.FemaleTotal(DayCount, Dom_StreamType.Main, G) + MainFemale
-            This.Main.GradeTotal(DayCount, Dom_StreamType.Main, G) = This.Main.GradeTotal(DayCount, Dom_StreamType.Main, G) + MainMale + MainFemale
-            This.Special.ClassTotal(DayCount, Dom_StreamType.Main, G, C) = This.Special.ClassTotal(DayCount, Dom_StreamType.Main, G, C) + MainMale + MainFemale
-            This.Special.MaleTotal(DayCount, Dom_StreamType.Main, G) = This.Special.MaleTotal(DayCount, Dom_StreamType.Main, G) + MainMale
-            This.Special.FemaleTotal(DayCount, Dom_StreamType.Main, G) = This.Special.FemaleTotal(DayCount, Dom_StreamType.Main, G) + MainFemale
-            This.Special.GradeTotal(DayCount, Dom_StreamType.Main, G) = This.Special.GradeTotal(DayCount, Dom_StreamType.Main, G) + MainMale + MainFemale
+            MainMale = Aggregate.GetValue(Dom_StreamTypeEnum.Main, Grade, ClassNo, Dom_GenderEnum.Male)
+            MainFemale = Aggregate.GetValue(Dom_StreamTypeEnum.Main, Grade, ClassNo, Dom_GenderEnum.Female)
+            SpecialMale = Aggregate.GetValue(Dom_StreamTypeEnum.Special, Grade, ClassNo, Dom_GenderEnum.Male)
+            SpecialFemale = Aggregate.GetValue(Dom_StreamTypeEnum.Special, Grade, ClassNo, Dom_GenderEnum.Female)
+            This.Main.ClassTotal(DayCount, Dom_StreamTypeEnum.Main, G, C) = This.Main.ClassTotal(DayCount, Dom_StreamTypeEnum.Main, G, C) + MainMale + MainFemale
+            This.Main.MaleTotal(DayCount, Dom_StreamTypeEnum.Main, G) = This.Main.MaleTotal(DayCount, Dom_StreamTypeEnum.Main, G) + MainMale
+            This.Main.FemaleTotal(DayCount, Dom_StreamTypeEnum.Main, G) = This.Main.FemaleTotal(DayCount, Dom_StreamTypeEnum.Main, G) + MainFemale
+            This.Main.GradeTotal(DayCount, Dom_StreamTypeEnum.Main, G) = This.Main.GradeTotal(DayCount, Dom_StreamTypeEnum.Main, G) + MainMale + MainFemale
+            This.Special.ClassTotal(DayCount, Dom_StreamTypeEnum.Main, G, C) = This.Special.ClassTotal(DayCount, Dom_StreamTypeEnum.Main, G, C) + MainMale + MainFemale
+            This.Special.MaleTotal(DayCount, Dom_StreamTypeEnum.Main, G) = This.Special.MaleTotal(DayCount, Dom_StreamTypeEnum.Main, G) + MainMale
+            This.Special.FemaleTotal(DayCount, Dom_StreamTypeEnum.Main, G) = This.Special.FemaleTotal(DayCount, Dom_StreamTypeEnum.Main, G) + MainFemale
+            This.Special.GradeTotal(DayCount, Dom_StreamTypeEnum.Main, G) = This.Special.GradeTotal(DayCount, Dom_StreamTypeEnum.Main, G) + MainMale + MainFemale
             This.GrandTotal(DayCount) = This.GrandTotal(DayCount) + MainMale + MainFemale + SpecialMale + SpecialFemale
         Next
     Next

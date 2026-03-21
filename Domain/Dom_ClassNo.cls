@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Model")
+'@Folder("Domain.ValueObject")
 Option Explicit
 
 Private Type Member
@@ -16,13 +16,27 @@ End Type
 
 Private This As Member
 
-Public Function Create(ByVal Value As Long) As Dom_ClassNo
-'    If Value < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_ClassNo", "学級は正の数である必要があります。"
+Friend Sub InitializeInternal(ByVal Value As Long)
     This.Value = Value
-    Set Create = Me
+End Sub
+
+Public Function Create(ByVal Value As Long) As Dom_ClassNo
+    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_ClassNo", "学級は0以上である必要があります。"
+    Dim Result As Dom_ClassNo
+    Set Result = New Dom_ClassNo
+    Result.InitializeInternal Value
+    Set Create = Result
+End Function
+
+Public Function Equals(ByVal Other As Dom_ClassNo) As Boolean
+    If This.Value <> Other.Value Then Exit Function
+    Equals = True
+End Function
+
+Public Function ToKey() As String
+    ToKey = CStr(This.Value) & jpnKumi
 End Function
 
 Public Property Get Value() As Long
     Value = This.Value
 End Property
-

@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Model")
+'@Folder("Domain.ValueObject")
 Option Explicit
 
 Private Type Member
@@ -18,14 +18,21 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal MainStreamGradeCount As Long, ByVal MainStreamClassCount As Long, ByVal PeriodCount As Long)
-    If MainStreamGradeCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "学年は正の数である必要があります。"
-    If MainStreamClassCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "学級は正の数である必要があります。"
-    If PeriodCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "校時は正の数である必要があります。"
+Friend Sub InitializeInternal(ByVal MainStreamGradeCount As Long, ByVal MainStreamClassCount As Long, ByVal PeriodCount As Long)
     This.MainStreamGradeCount = MainStreamGradeCount
     This.MainStreamClassCount = MainStreamClassCount
     This.PeriodCount = PeriodCount
 End Sub
+
+Public Function Create(ByVal MainStreamGradeCount As Long, ByVal MainStreamClassCount As Long, ByVal PeriodCount As Long) As Dom_UpperValue
+    If MainStreamGradeCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "学年は正の数である必要があります。"
+    If MainStreamClassCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "学級は正の数である必要があります。"
+    If PeriodCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "校時は正の数である必要があります。"
+    Dim Result As Dom_UpperValue
+    Set Result = New Dom_UpperValue
+    Result.InitializeInternal MainStreamGradeCount, MainStreamClassCount, PeriodCount
+    Set Create = Result
+End Function
 
 Public Property Get MainStreamGradeCount() As Long
     MainStreamGradeCount = This.MainStreamGradeCount

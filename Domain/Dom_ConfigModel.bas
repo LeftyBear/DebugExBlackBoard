@@ -1,5 +1,5 @@
-Attribute VB_Name = "Dom_ConfigEnum"
-'@Folder "Domain.ValueObject"
+Attribute VB_Name = "Dom_ConfigModel"
+'@Folder "Domain.Model"
 Option Explicit
 Option Private Module
 

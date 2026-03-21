@@ -3,7 +3,7 @@ Attribute VB_Name = "App_UseCaseFactory"
 Option Explicit
 Option Private Module
 
-Public Function CreateSchoolConfigGenerater() As App_GenerateSchoolConfigUseCase
+Public Function CreateSchoolConfigGenerater() As App_GenerateSchoolStructure
     Dim PathBuilder As Inf_ConfigFilePathBuilder
     Set PathBuilder = New Inf_ConfigFilePathBuilder
     PathBuilder.Initialize New Inf_ConfigFileNameResolver, New Inf_WorkbookPathProvider
@@ -13,13 +13,13 @@ Public Function CreateSchoolConfigGenerater() As App_GenerateSchoolConfigUseCase
     Dim BaseRepository As Inf_ConfigRepository
     Set BaseRepository = New Inf_ConfigRepository
     BaseRepository.Initialize ReadRepository
-    Dim UseCase As App_GenerateSchoolConfigUseCase
-    Set UseCase = New App_GenerateSchoolConfigUseCase
+    Dim UseCase As App_GenerateSchoolStructure
+    Set UseCase = New App_GenerateSchoolStructure
     UseCase.Initialize BaseRepository
     Set CreateSchoolConfigGenerater = UseCase
 End Function
 
-Public Function CreateAggregateEnrollmentUseCase(ByVal SchoolConfig As Dom_SchoolConfig) As App_AggregateEnrollmentUseCase
+Public Function CreateAggregateEnrollmentUseCase(ByVal SchoolStructure As Dom_SchoolStructure) As App_AggregateEnrollment
     Dim PathBuilder As Inf_EntityFilePathBuilder
     Set PathBuilder = New Inf_EntityFilePathBuilder
     PathBuilder.Initialize New Inf_EntityFileNameResolver, New Inf_WorkbookPathProvider
@@ -32,13 +32,13 @@ Public Function CreateAggregateEnrollmentUseCase(ByVal SchoolConfig As Dom_Schoo
     Dim Interpreter As Dom_EnrollmentInterpreter
     Set Interpreter = New Dom_EnrollmentInterpreter
     Interpreter.Initialize New Dom_HeaderTokenResolver
-    Dim UseCase As App_AggregateEnrollmentUseCase
-    Set UseCase = New App_AggregateEnrollmentUseCase
-    UseCase.Initialize BaseRepository, SchoolConfig, New Dom_EnrollmentHeaderParser, Interpreter
+    Dim UseCase As App_AggregateEnrollment
+    Set UseCase = New App_AggregateEnrollment
+    UseCase.Initialize BaseRepository, SchoolStructure, New Dom_EnrollmentHeaderParser, Interpreter
     Set CreateAggregateEnrollmentUseCase = UseCase
 End Function
 
-Public Function CreateAggregateClassHourUseCase(ByVal SchoolConfig As Dom_SchoolConfig) As App_AggregateClassHourUseCase
+Public Function CreateAggregateClassHourUseCase(ByVal SchoolStructure As Dom_SchoolStructure) As App_AggregateClassHour
     Dim PathBuilder As Inf_EntityFilePathBuilder
     Set PathBuilder = New Inf_EntityFilePathBuilder
     PathBuilder.Initialize New Inf_EntityFileNameResolver, New Inf_WorkbookPathProvider
@@ -51,8 +51,8 @@ Public Function CreateAggregateClassHourUseCase(ByVal SchoolConfig As Dom_School
     Dim Interpreter As Dom_ClassHourInterpreter
     Set Interpreter = New Dom_ClassHourInterpreter
     Interpreter.Initialize New Dom_HeaderTokenResolver
-    Dim UseCase As App_AggregateClassHourUseCase
-    Set UseCase = New App_AggregateClassHourUseCase
-    UseCase.Initialize BaseRepository, SchoolConfig, New Dom_ClassHourHeaderParser, Interpreter
+    Dim UseCase As App_AggregateClassHour
+    Set UseCase = New App_AggregateClassHour
+    UseCase.Initialize BaseRepository, SchoolStructure, New Dom_ClassHourHeaderParser, Interpreter
     Set CreateAggregateClassHourUseCase = UseCase
 End Function

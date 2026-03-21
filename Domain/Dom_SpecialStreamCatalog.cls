@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.ValueObject")
+'@Folder("Domain.Catalog")
 Option Explicit
 
 Private Type Member
@@ -28,6 +28,15 @@ Public Function Count() As Long
     Count = This.Catalog.Count
 End Function
 
+Public Function Exists(ByVal Key As String) As Boolean
+    Exists = This.Catalog.Exists(Key)
+End Function
+
+Public Function Resolve(ByVal Key As String) As Dom_SpecialStream
+    If Not Me.Exists(Key) Then Err.Raise DomErrNotExistsItem, "Dom_SpecialStreamCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録キー: " & Key
+    Set Resolve = This.Catalog.Item(Key)
+End Function
+
 Public Function Names() As String()
     Dim Result() As String
     ReDim Result(This.Catalog.Count - 1)
@@ -40,11 +49,6 @@ Public Function Names() As String()
         i = i + 1
     Next
     Names = Result
-End Function
-
-Public Function Resolve(ByVal Name As String) As Dom_SpecialStream
-    If Not This.Catalog.Exists(Name) Then Err.Raise DomErrNotExistsItem, "Dom_SpecialStreamCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録キー: " & Name
-    Set Resolve = This.Catalog.Item(Name)
 End Function
 
 Public Function NameOf(ByVal Index As Long) As String

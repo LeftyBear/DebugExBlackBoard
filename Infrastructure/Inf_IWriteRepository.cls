@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Infrastructure.Repository"
+'@Folder "Infrastructure.Interface"
 Option Explicit
 
 Public Sub WriteAll(ByVal RawRows As VBA.Collection)

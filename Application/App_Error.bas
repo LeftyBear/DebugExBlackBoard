@@ -1,4 +1,4 @@
-Attribute VB_Name = "App_Enum"
+Attribute VB_Name = "App_Error"
 '@Folder "Application.Enum"
 Option Explicit
 Option Private Module
@@ -8,7 +8,7 @@ Public Enum App_LayerErrNum
 End Enum
 
 Public Enum App_ErrNum
-    AppErrSomething = vbObjectError + AppErr
+    AppErrEmptyData = vbObjectError + AppErr
 End Enum
 
 Public Enum App_ViewResult

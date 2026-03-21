@@ -1,5 +1,5 @@
-Attribute VB_Name = "Dom_EntityEnum"
-'@Folder "Domain.ValueObject"
+Attribute VB_Name = "Dom_EntityModel"
+'@Folder "Domain.Model"
 Option Explicit
 Option Private Module
 

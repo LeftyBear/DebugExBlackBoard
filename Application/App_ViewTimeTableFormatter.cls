@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Application.Formatter")
 Option Explicit
 
-Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHourAggregate, ByVal Config As Dom_SchoolConfig) As Variant()
+Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHourAggregate, ByVal Config As Dom_SchoolStructure) As Variant()
     Dim TimeTable() As String
     TimeTable = ToTimeTable(ClassHourType, ClassHour, Config)
     Dim Total() As Long
@@ -43,21 +43,21 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour
     Format = OutputTable
 End Function
 
-Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourType, ByVal Entity As Dom_ClassHourAggregate, ByVal Config As Dom_SchoolConfig) As String()
-    Dim Table() As String
-    ReDim Table(1 To Config.PeriodCount, 1 To Config.MainStreamGradeCount)
-    Dim G As Long
-    For G = 1 To Config.MainStreamGradeCount
-        Dim Grade As Dom_Grade
-        Set Grade = CreateGrade(G)
-        Dim P As Long
-        For P = 1 To Config.PeriodCount
-            Dim Period As Dom_Period
-            Set Period = CreatePeriod(P)
-            Table(P, G) = Entity.GetMark(ClassHourType, Period, Grade)
-        Next
-    Next
-    ToTimeTable = Table
+Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourType, ByVal Entity As Dom_ClassHourAggregate, ByVal Config As Dom_SchoolStructure) As String()
+'    Dim Table() As String
+'    ReDim Table(1 To Config.PeriodCount, 1 To Config.MainStreamGradeCount)
+'    Dim G As Long
+'    For G = 1 To Config.MainStreamGradeCount
+'        Dim Grade As Dom_Grade
+'        Set Grade = CreateGrade(G)
+'        Dim P As Long
+'        For P = 1 To Config.PeriodCount
+'            Dim Period As Dom_Period
+'            Set Period = CreatePeriod(P)
+'            Table(P, G) = Entity.GetMark(ClassHourType, Period, Grade)
+'        Next
+'    Next
+'    ToTimeTable = Table
 End Function
 
 Private Function CreateGrade(ByVal Value As Long) As Dom_Grade

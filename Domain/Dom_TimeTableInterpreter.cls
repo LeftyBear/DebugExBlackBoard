@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Parser")
+'@Folder("Domain.Interpreter")
 Option Explicit
 
 Private Type Member
@@ -19,7 +19,7 @@ End Type
 Private This As Member
 
 '@Ignore ProcedureCanBeWrittenAsFunction
-Public Sub Interprete(ByVal Config As Dom_SchoolConfig, ByVal ColumnDTO As App_ColumnDTO, ByRef TimeTables() As String)
+Public Sub Interprete(ByVal Config As Dom_SchoolStructure, ByVal ColumnDTO As App_ColumnDTO, ByRef TimeTables() As String)
     ParseHeader ColumnDTO.HeaderName
     Dim ClassHourType As Dom_ClassHourType
     ClassHourType = ResolveClassHourType(This.ClassHourType)
@@ -50,10 +50,14 @@ End Sub
 Private Function ResolveClassHourType(ByVal Part As String) As Dom_ClassHourType
     Select Case Part
     Case jpnKeikaku
-        ResolveClassHourType = Dom_ClassHourType.Plan
+        Dim ClassHourType As Long
+        ClassHourType = Dom_ClassHourTypeEnum.Plan
     Case jpnJisshi
-        ResolveClassHourType = Dom_ClassHourType.Execution
+        ClassHourType = Dom_ClassHourTypeEnum.Execution
     End Select
+    With New Dom_ClassHourType
+        Set ResolveClassHourType = .Create(ClassHourType)
+    End With
 End Function
 
 Private Function ResolvePeriod(ByVal Part As String) As Dom_Period

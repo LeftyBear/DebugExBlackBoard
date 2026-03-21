@@ -76,9 +76,9 @@ End Sub
 
 Public Sub UpdateHours(ByVal TargetDate As Date, ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade, ByVal NewValue As Long)
     Dim Aggregate As Dom_ClassHourAggregate
-    Aggregate = This.Map.Item(TargetDate)
+    Set Aggregate = This.Map.Item(TargetDate)
     Dim Diff As Long
-    Diff = Aggregate.UpdateHours(ClassHourType, Subject, Grade, NewValue)
+'    Diff = Aggregate.UpdateHours(ClassHourType, Subject, Grade, NewValue)
     Dim DayCount As Long
     DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
     Dim WeekCount As Long
@@ -86,12 +86,12 @@ Public Sub UpdateHours(ByVal TargetDate As Date, ByVal ClassHourType As Dom_Clas
     Dim MonthCount As Long
     MonthCount = VBA.Month(TargetDate)
     Select Case ClassHourType
-    Case Dom_ClassHourType.Plan
+    Case Dom_ClassHourTypeEnum.Plan
         This.PlanGrade.CumulativeTotal(DayCount, Grade.Value) = This.PlanGrade.CumulativeTotal(DayCount, Grade.Value) + Diff
         This.PlanGrade.DailyTotal(DayCount, Grade.Value) = This.PlanGrade.DailyTotal(DayCount, Grade.Value) + Diff
         This.PlanGrade.WeeklyTotal(WeekCount, Grade.Value) = This.PlanGrade.WeeklyTotal(WeekCount, Grade.Value) + Diff
         This.PlanGrade.MonthlyTotal(MonthCount, Grade.Value) = This.PlanGrade.MonthlyTotal(MonthCount, Grade.Value) + Diff
-    Case Dom_ClassHourType.Execution
+    Case Dom_ClassHourTypeEnum.Execution
         This.ExeGrade.CumulativeTotal(DayCount, Grade.Value) = This.ExeGrade.CumulativeTotal(DayCount, Grade.Value) + Diff
         This.ExeGrade.DailyTotal(DayCount, Grade.Value) = This.ExeGrade.DailyTotal(DayCount, Grade.Value) + Diff
         This.ExeGrade.WeeklyTotal(WeekCount, Grade.Value) = This.ExeGrade.WeeklyTotal(WeekCount, Grade.Value) + Diff
@@ -182,68 +182,67 @@ Public Function GetExeGradeMonthlyTotal(ByVal TargetDate As Date, ByVal Grade As
 End Function
 
 Private Sub SumSubject(ByVal TargetDate As Date, ByVal Aggregate As Dom_ClassHourAggregate)
-    Dim DayCount As Long
-    DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
-    Dim WeekCount As Long
-    WeekCount = Dom_Util_Date.GetSchoolWeek(TargetDate)
-    Dim MonthCount As Long
-    MonthCount = VBA.Month(TargetDate)
-    Dim i As Long
-    For i = 1 To Aggregate.SubjectCount
-        Dim G As Long
-        For G = 1 To Aggregate.GradeCount
-            Dim Grade As Dom_Grade
-            Set Grade = CreateGrade(G)
-            Dim PlanGradeSum As Long
-            PlanGradeSum = PlanGradeSum + Aggregate.GetHours(Dom_ClassHourType.Plan, CreateSubject(i), Grade)
-            Dim ExeGradeSum As Long
-            ExeGradeSum = ExeGradeSum + Aggregate.GetHours(Dom_ClassHourType.Execution, CreateSubject(i), Grade)
-            This.PlanSubject.CumulativeTotal(DayCount, i, G) = This.PlanSubject.CumulativeTotal(DayCount, i, G) + PlanGradeSum
-            This.PlanSubject.DailyTotal(DayCount, i, G) = PlanGradeSum
-            This.PlanSubject.WeeklyTotal(WeekCount, i, G) = This.PlanSubject.WeeklyTotal(WeekCount, i, G) + PlanGradeSum
-            This.PlanSubject.MonthlyTotal(MonthCount, i, G) = This.PlanSubject.MonthlyTotal(MonthCount, i, G) + PlanGradeSum
-            This.ExeSubject.CumulativeTotal(DayCount, i, G) = This.ExeSubject.CumulativeTotal(DayCount, i, G) + ExeGradeSum
-            This.ExeSubject.DailyTotal(DayCount, i, G) = ExeGradeSum
-            This.ExeSubject.WeeklyTotal(WeekCount, i, G) = This.ExeSubject.WeeklyTotal(WeekCount, i, G) + ExeGradeSum
-            This.ExeSubject.MonthlyTotal(MonthCount, i, G) = This.ExeSubject.MonthlyTotal(MonthCount, i, G) + ExeGradeSum
-        Next
-    Next
+'    Dim DayCount As Long
+'    DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
+'    Dim WeekCount As Long
+'    WeekCount = Dom_Util_Date.GetSchoolWeek(TargetDate)
+'    Dim MonthCount As Long
+'    MonthCount = VBA.Month(TargetDate)
+'    Dim i As Long
+'    For i = 1 To Aggregate.SubjectCount
+'        Dim G As Long
+'        For G = 1 To Aggregate.GradeCount
+'            Dim Grade As Dom_Grade
+'            Set Grade = CreateGrade(G)
+'            Dim PlanGradeSum As Long
+'            PlanGradeSum = PlanGradeSum + Aggregate.GetHours(Dom_ClassHourType.Plan, CreateSubject(i), Grade)
+'            Dim ExeGradeSum As Long
+'            ExeGradeSum = ExeGradeSum + Aggregate.GetHours(Dom_ClassHourType.Execution, CreateSubject(i), Grade)
+'            This.PlanSubject.CumulativeTotal(DayCount, i, G) = This.PlanSubject.CumulativeTotal(DayCount, i, G) + PlanGradeSum
+'            This.PlanSubject.DailyTotal(DayCount, i, G) = PlanGradeSum
+'            This.PlanSubject.WeeklyTotal(WeekCount, i, G) = This.PlanSubject.WeeklyTotal(WeekCount, i, G) + PlanGradeSum
+'            This.PlanSubject.MonthlyTotal(MonthCount, i, G) = This.PlanSubject.MonthlyTotal(MonthCount, i, G) + PlanGradeSum
+'            This.ExeSubject.CumulativeTotal(DayCount, i, G) = This.ExeSubject.CumulativeTotal(DayCount, i, G) + ExeGradeSum
+'            This.ExeSubject.DailyTotal(DayCount, i, G) = ExeGradeSum
+'            This.ExeSubject.WeeklyTotal(WeekCount, i, G) = This.ExeSubject.WeeklyTotal(WeekCount, i, G) + ExeGradeSum
+'            This.ExeSubject.MonthlyTotal(MonthCount, i, G) = This.ExeSubject.MonthlyTotal(MonthCount, i, G) + ExeGradeSum
+'        Next
+'    Next
 End Sub
 
 Private Sub SumSubjectOfGrade(ByVal TargetDate As Date, ByVal Aggregate As Dom_ClassHourAggregate)
-    Dim DayCount As Long
-    DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
-    Dim WeekCount As Long
-    WeekCount = Dom_Util_Date.GetSchoolWeek(TargetDate)
-    Dim MonthCount As Long
-    MonthCount = VBA.Month(TargetDate)
-    Dim G As Long
-    For G = 1 To Aggregate.GradeCount
-        Dim Grade As Dom_Grade
-        Set Grade = CreateGrade(G)
-        Dim i As Long
-        For i = 1 To Aggregate.SubjectCount
-            Dim PlanSubjectSum As Long
-            PlanSubjectSum = PlanSubjectSum + Aggregate.GetHours(Dom_ClassHourType.Plan, CreateSubject(i), Grade)
-            Dim ExeSubjectSum As Long
-            ExeSubjectSum = ExeSubjectSum + Aggregate.GetHours(Dom_ClassHourType.Execution, CreateSubject(i), Grade)
-        Next
-        This.PlanGrade.CumulativeTotal(DayCount, G) = This.PlanGrade.CumulativeTotal(DayCount, G) + PlanSubjectSum
-        This.PlanGrade.DailyTotal(DayCount, G) = PlanSubjectSum
-        This.PlanGrade.WeeklyTotal(WeekCount, G) = This.PlanGrade.WeeklyTotal(WeekCount, G) + PlanSubjectSum
-        This.PlanGrade.MonthlyTotal(MonthCount, G) = This.PlanGrade.MonthlyTotal(MonthCount, G) + PlanSubjectSum
-        This.ExeGrade.CumulativeTotal(DayCount, G) = This.ExeGrade.CumulativeTotal(DayCount, G) + ExeSubjectSum
-        This.ExeGrade.DailyTotal(DayCount, G) = ExeSubjectSum
-        This.ExeGrade.WeeklyTotal(WeekCount, G) = This.ExeGrade.WeeklyTotal(WeekCount, G) + ExeSubjectSum
-        This.ExeGrade.MonthlyTotal(MonthCount, G) = This.ExeGrade.MonthlyTotal(MonthCount, G) + ExeSubjectSum
-    Next
+'    Dim DayCount As Long
+'    DayCount = Dom_Util_Date.DiffApr1st(TargetDate)
+'    Dim WeekCount As Long
+'    WeekCount = Dom_Util_Date.GetSchoolWeek(TargetDate)
+'    Dim MonthCount As Long
+'    MonthCount = VBA.Month(TargetDate)
+'    Dim G As Long
+'    For G = 1 To Aggregate.GradeCount
+'        Dim Grade As Dom_Grade
+'        Set Grade = CreateGrade(G)
+'        Dim i As Long
+'        For i = 1 To Aggregate.SubjectCount
+'            Dim PlanSubjectSum As Long
+'            PlanSubjectSum = PlanSubjectSum + Aggregate.GetHours(Dom_ClassHourType.Plan, CreateSubject(i), Grade)
+'            Dim ExeSubjectSum As Long
+'            ExeSubjectSum = ExeSubjectSum + Aggregate.GetHours(Dom_ClassHourType.Execution, CreateSubject(i), Grade)
+'        Next
+'        This.PlanGrade.CumulativeTotal(DayCount, G) = This.PlanGrade.CumulativeTotal(DayCount, G) + PlanSubjectSum
+'        This.PlanGrade.DailyTotal(DayCount, G) = PlanSubjectSum
+'        This.PlanGrade.WeeklyTotal(WeekCount, G) = This.PlanGrade.WeeklyTotal(WeekCount, G) + PlanSubjectSum
+'        This.PlanGrade.MonthlyTotal(MonthCount, G) = This.PlanGrade.MonthlyTotal(MonthCount, G) + PlanSubjectSum
+'        This.ExeGrade.CumulativeTotal(DayCount, G) = This.ExeGrade.CumulativeTotal(DayCount, G) + ExeSubjectSum
+'        This.ExeGrade.DailyTotal(DayCount, G) = ExeSubjectSum
+'        This.ExeGrade.WeeklyTotal(WeekCount, G) = This.ExeGrade.WeeklyTotal(WeekCount, G) + ExeSubjectSum
+'        This.ExeGrade.MonthlyTotal(MonthCount, G) = This.ExeGrade.MonthlyTotal(MonthCount, G) + ExeSubjectSum
+'    Next
 End Sub
 
 Private Function CreateSubject(ByVal Index As Long) As Dom_Subject
-    Dim Subject As Dom_Subject
-    Set Subject = New Dom_Subject
-    Subject.Initialize Index, vbNullString, vbNullString, vbNullString
-    Set CreateSubject = Subject
+    With New Dom_Subject
+        Set CreateSubject = .Create(Index, vbNullString, vbNullString, vbNullString)
+    End With
 End Function
 
 Private Function CreateGrade(ByVal Value As Long) As Dom_Grade

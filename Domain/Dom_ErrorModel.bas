@@ -1,5 +1,5 @@
-Attribute VB_Name = "Dom_Enum"
-'@Folder "Domain.Enum"
+Attribute VB_Name = "Dom_ErrorModel"
+'@Folder "Domain.Model"
 Option Explicit
 Option Private Module
 
@@ -17,11 +17,13 @@ Public Enum Dom_ErrNum
     DomErrInvalidRange
     DomErrInvalidTypeOfObject
     DomErrInvalidValue
+    DomErrNegativeNumber
     DomErrNotBoolean
     DomErrNotExistsItem
     DomErrNothingObject
     DomErrNotInteger
     DomErrNotNumeric
+    DomErrNotUnique
     DomErrNullString
 End Enum
 

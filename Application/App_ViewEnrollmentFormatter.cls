@@ -18,7 +18,7 @@ Private Enum C
     TotalColumn
 End Enum
 
-Public Function Format(ByVal Enrollment As Dom_EnrollmentAggregate, ByVal Config As Dom_SchoolConfig) As Variant()
+Public Function Format(ByVal Enrollment As Dom_EnrollmentAggregate, ByVal Config As Dom_SchoolStructure) As Variant()
     Dim MainStream() As Long
     MainStream = ToTable(Main, Enrollment, Config.MainStreamGradeCount, Config.MainStreamClassCount)
     Dim SpecialStream() As Long
@@ -80,7 +80,7 @@ Public Function Format(ByVal Enrollment As Dom_EnrollmentAggregate, ByVal Config
     Format = OutputTable
 End Function
 
-Private Function ToTable(ByVal StreamType As Dom_StreamType, ByVal Enrollment As Dom_EnrollmentAggregate, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
+Private Function ToTable(ByVal StreamType As Dom_StreamTypeEnum, ByVal Enrollment As Dom_EnrollmentAggregate, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
     '@Ignore MultipleDeclarations
     Dim Table() As Long, MaleTotal() As Long, FemaleTotal() As Long, ClassTotal() As Long
     ReDim Table(1 To GradeCount * ClassCount + GradeCount, 1 To C.TotalColumn)
@@ -98,10 +98,10 @@ Private Function ToTable(ByVal StreamType As Dom_StreamType, ByVal Enrollment As
             Dim ClassNo As Dom_ClassNo
             Set ClassNo = CreateClassNo(CN)
             Dim Gender As Long
-            For Gender = Dom_Gender.Male To Dom_Gender.Female
+            For Gender = Dom_GenderEnum.Male To Dom_GenderEnum.Female
                 Dim Value As Long
                 Value = Enrollment.GetValue(StreamType, Grade, ClassNo, Gender)
-                If Gender = Dom_Gender.Male Then
+                If Gender = Dom_GenderEnum.Male Then
                     MaleTotal(G) = MaleTotal(G) + Value
                     Table(R, C.MaleColumn) = Value
                 Else
