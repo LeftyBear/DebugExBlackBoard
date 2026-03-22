@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'@IgnoreModule UseMeaningfulName
 '@Folder("Domain.Interpreter")
 Option Explicit
 
@@ -43,7 +44,7 @@ Public Sub Interprete(ByVal Config As Dom_SchoolStructure, ByVal Header As Dom_C
     Dim ClassHour As Dom_ClassHour
     Set ClassHour = New Dom_ClassHour
     ClassHour.Initialize ID, NormDate, Hours, Mark
-    Aggregate.Add ClassHour
+    Aggregate.AddInitialClassHour ClassHour
 End Sub
 
 Private Function CreateHours(ByVal Value As Long) As Dom_ClassHourValue

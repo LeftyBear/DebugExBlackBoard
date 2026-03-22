@@ -65,9 +65,9 @@ End Sub
 
 Private Sub App_IPresenterCallback_LogSystemError(ByVal Error As ErrObject)
     Dim Message As String
-    Message = "ErrorNumber: " & VBA.Err.Number & _
-              "  ModuleName: " & VBA.Err.Source & _
-              "  Description: " & VBA.Err.Description
+    Message = "ErrorNumber: " & Error.Number & _
+              "  ModuleName: " & Error.Source & _
+              "  Description: " & Error.Description
     This.Logger.WriteLog Message
 End Sub
 

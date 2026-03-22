@@ -22,3 +22,9 @@ Public Function IsDomainError(ByVal ErrNumber As Long) As Boolean
     BaseNumber = ErrNumber - vbObjectError
     IsDomainError = (Dom_LayerErrNum.DomErr <= BaseNumber And BaseNumber < App_LayerErrNum.AppErr)
 End Function
+
+Public Function IsInfrastructureError(ByVal ErrNumber As Long) As Boolean
+    Dim BaseNumber As Long
+    BaseNumber = ErrNumber - vbObjectError
+    IsInfrastructureError = (Inf_LayerErrNum.InfErr <= BaseNumber And BaseNumber < Inf_LayerErrNum.InfErr + 100)
+End Function

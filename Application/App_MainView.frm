@@ -80,7 +80,7 @@ Private Sub App_IMainView_NotifyBusinessError(ByVal Message As String)
 End Sub
 
 Private Sub App_IMainView_NotifySystemError()
-    MsgBox "例外的なエラーが発生したのでログに書き出しました。", vbCritical, "システムエラー"
+    MsgBox "予期しないエラーが発生したのでログに書き出しました。", vbCritical, "システムエラー"
 End Sub
 
 Private Sub App_IMainView_ShowSuccess(ByVal Message As String)

@@ -16,6 +16,7 @@ Public Function Build(ByVal Repository As Dom_IConfigRepository) As Dom_SpecialS
     Dim CSVDTO As App_CSVDTO
     Set CSVDTO = New App_CSVDTO
     CSVDTO.Initialize Values
+    '@Ignore SelfAssignedDeclaration
     Dim Mapper As New App_HeaderMapper
     Dim ColumnDTOGroups As VBA.Collection
     Set ColumnDTOGroups = Mapper.Map(CSVDTO)

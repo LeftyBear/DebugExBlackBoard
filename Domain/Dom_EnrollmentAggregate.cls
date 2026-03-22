@@ -22,8 +22,8 @@ Public Sub Initialize(ByVal MaxType As Long, ByVal MaxGrade As Long, ByVal MaxCl
     ReDim This.Values(MaxType, MaxGrade, MaxClassNo, MaxGender)
 End Sub
 
-Public Sub AddValue(ByVal StreamType As Dom_StreamTypeEnum, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_GenderEnum, ByVal Value As Long)
-    This.Values(StreamType, Grade.Value, ClassNo.Value, Gender) = Value
+Public Sub AddValue(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender, ByVal Value As Long)
+    This.Values(StreamType.Value, Grade.Value, ClassNo.Value, Gender.Value) = Value
 End Sub
 
 Public Sub AddTransfer(ByVal State As Boolean)

@@ -11,6 +11,10 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
+    HasType         As Boolean
+    HasSubject      As Boolean
+    HasPeriod       As Boolean
+    HasGrade        As Boolean
     ClassHourType   As Dom_ClassHourType
     Subject         As Dom_Subject
     Period          As Dom_Period
@@ -20,10 +24,10 @@ End Type
 Private This As Member
 
 Friend Sub InitializeInternal(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade)
-    This.ClassHourType = ClassHourType
-    Set This.Subject = Subject
-    Set This.Period = Period
-    Set This.Grade = Grade
+    If Not ClassHourType Is Nothing Then Set This.ClassHourType = ClassHourType: This.HasType = True
+    If Not Subject Is Nothing Then Set This.Subject = Subject: This.HasSubject = True
+    If Not Period Is Nothing Then Set This.Period = Period: This.HasPeriod = True
+    If Not Grade Is Nothing Then Set This.Grade = Grade: This.HasGrade = True
 End Sub
 
 Public Function Create(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_ClassHourFilter
@@ -33,35 +37,29 @@ Public Function Create(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject A
     Set Create = Result
 End Function
 
-Public Function MatchAll(ByVal ID As Dom_ClassHourID) As Boolean
-    If This.ClassHourType <> ID.ClassHourType Then Exit Function
-    If Not This.Subject Is Nothing Then
-        If Not This.Subject.Equals(ID.Subject) Then Exit Function
-    End If
-    If Not This.Period Is Nothing Then
-        If Not This.Period.Equals(ID.Period) Then Exit Function
-    End If
-    If Not This.Grade Is Nothing Then
-        If Not This.Grade.Equals(ID.Grade) Then Exit Function
-    End If
-    MatchAll = True
+Public Function IsMatch(ByVal Item As Dom_ClassHour) As Boolean
+    If Not MatchType(Item) Then Exit Function
+    If Not MatchSubject(Item) Then Exit Function
+    If Not MatchPeriod(Item) Then Exit Function
+    If Not MatchGrade(Item) Then Exit Function
+    IsMatch = True
 End Function
 
-Public Function MatchTypeAndSubject(ByVal ID As Dom_ClassHourID) As Boolean
-    If This.ClassHourType <> ID.ClassHourType Then Exit Function
-    If Not This.Subject Is Nothing Then
-        If Not This.Subject.Equals(ID.Subject) Then Exit Function
-    End If
-    MatchTypeAndSubject = True
-End Function
+Public Property Get HasType() As Boolean
+    HasType = This.HasType
+End Property
 
-Public Function MatchTypeAndGrade(ByVal ID As Dom_ClassHourID) As Boolean
-    If This.ClassHourType <> ID.ClassHourType Then Exit Function
-    If Not This.Grade Is Nothing Then
-        If Not This.Grade.Equals(ID.Grade) Then Exit Function
-    End If
-    MatchTypeAndGrade = True
-End Function
+Public Property Get HasSubject() As Boolean
+    HasSubject = This.HasSubject
+End Property
+
+Public Property Get HasPeriod() As Boolean
+    HasPeriod = This.HasPeriod
+End Property
+
+Public Property Get HasGrade() As Boolean
+    HasGrade = This.HasGrade
+End Property
 
 Public Property Get ClassHourType() As Dom_ClassHourType
     Set ClassHourType = This.ClassHourType
@@ -78,3 +76,27 @@ End Property
 Public Property Get Grade() As Dom_Grade
     Set Grade = This.Grade
 End Property
+
+Private Function MatchType(ByVal Item As Dom_ClassHour) As Boolean
+    If Not This.HasType Then Exit Function
+    If Not This.ClassHourType.Equals(Item.GetID.ClassHourType) Then Exit Function
+    MatchType = True
+End Function
+
+Private Function MatchSubject(ByVal Item As Dom_ClassHour) As Boolean
+    If Not This.HasSubject Then Exit Function
+    If Not This.Subject.Equals(Item.GetID.Subject) Then Exit Function
+    MatchSubject = True
+End Function
+
+Private Function MatchPeriod(ByVal Item As Dom_ClassHour) As Boolean
+    If Not This.HasPeriod Then Exit Function
+    If Not This.Period.Equals(Item.GetID.Period) Then Exit Function
+    MatchPeriod = True
+End Function
+
+Private Function MatchGrade(ByVal Item As Dom_ClassHour) As Boolean
+    If Not This.HasGrade Then Exit Function
+    If Not This.Grade.Equals(Item.GetID.Grade) Then Exit Function
+    MatchGrade = True
+End Function

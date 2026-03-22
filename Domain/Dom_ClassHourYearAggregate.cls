@@ -37,7 +37,7 @@ End Function
 
 Public Function GetDailyHourTotal(ByVal TargetDate As Date, ByVal Filter As Dom_ClassHourFilter) As Long
     Dim Daily As Dom_ClassHourAggregate
-    Daily = This.DailyMap.Item(TargetDate)
+    Set Daily = This.DailyMap.Item(TargetDate)
     GetDailyHourTotal = Daily.GetHourTotal(Filter)
 End Function
 
@@ -100,6 +100,6 @@ End Function
 
 Public Function GetMarkCount(ByVal TargetDate As Date, ByVal Filter As Dom_ClassHourFilter) As Long
     Dim Daily As Dom_ClassHourAggregate
-    Daily = This.DailyMap.Item(TargetDate)
+    Set Daily = This.DailyMap.Item(TargetDate)
     GetMarkCount = Daily.GetMarkCount(Filter)
 End Function

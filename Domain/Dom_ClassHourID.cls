@@ -20,7 +20,7 @@ End Type
 Private This As Member
 
 Friend Sub InitializeInternal(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade)
-    This.ClassHourType = ClassHourType
+    Set This.ClassHourType = ClassHourType
     Set This.Subject = Subject
     Set This.Period = Period
     Set This.Grade = Grade
@@ -35,7 +35,7 @@ End Function
 
 Public Function Equals(ByVal Other As Dom_ClassHourID) As Boolean
     If Other Is Nothing Then Exit Function
-    If This.ClassHourType <> Other.ClassHourType Then Exit Function
+    If Not This.ClassHourType.Equals(Other.ClassHourType) Then Exit Function
     If Not This.Subject.Equals(Other.Subject) Then Exit Function
     If Not This.Period.Equals(Other.Period) Then Exit Function
     If Not This.Grade.Equals(Other.Grade) Then Exit Function
@@ -44,7 +44,7 @@ End Function
 
 Public Function ToKey() As String
     Dim ClassHourTypeKey As String
-    Select Case This.ClassHourType
+    Select Case This.ClassHourType.Value
     Case Dom_ClassHourTypeEnum.Plan: ClassHourTypeKey = jpnKeikaku
     Case Dom_ClassHourTypeEnum.Execution: ClassHourTypeKey = jpnJisshi
     End Select
@@ -56,7 +56,7 @@ Public Function ToKey() As String
 End Function
 
 Public Property Get ClassHourType() As Dom_ClassHourType
-    ClassHourType = This.ClassHourType
+    Set ClassHourType = This.ClassHourType
 End Property
 
 Public Property Get Subject() As Dom_Subject

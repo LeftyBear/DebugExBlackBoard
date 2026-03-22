@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'@IgnoreModule UseMeaningfulName
 '@Folder("Domain.Aggregate")
 Option Explicit
 
@@ -25,7 +26,7 @@ Private Sub Class_Initialize()
     Set This.MarkIndex = New Scripting.Dictionary
 End Sub
 
-Public Sub Add(ByVal Item As Dom_ClassHour)
+Public Sub AddInitialClassHour(ByVal Item As Dom_ClassHour)
     This.NormDate = Item.GetDate
     Dim IDKey As String
     IDKey = Item.GetID.ToKey
@@ -39,13 +40,13 @@ Public Sub Add(ByVal Item As Dom_ClassHour)
     AddToIndex This.MarkIndex, MarkIndexKey, IDKey, Item
 End Sub
 
-Public Sub UpdateValue(ByVal ID As Dom_ClassHourID, ByVal NewValue As Long)
+Public Sub UpdateHours(ByVal ID As Dom_ClassHourID, ByVal NewHours As Long)
     Dim Target As Dom_ClassHour
     Set Target = GetById(ID)
     If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ClassHourAggregate", "IDをキーに持つオブジェクトが必要です。"
     With New Dom_ClassHourValue
         Dim Value As Dom_ClassHourValue
-        Set Value = .Create(NewValue)
+        Set Value = .Create(NewHours)
     End With
     Target.ChangeValueInternal Value
     ValidateHourTotal ID
@@ -72,35 +73,15 @@ Public Function GetDate() As Date
 End Function
 
 Public Function GetHourTotal(ByVal Filter As Dom_ClassHourFilter) As Long
-    Dim Items() As Variant
-    Items = SelectTargets(Filter)
-    Dim i As Long
-    For i = LBound(Items) To UBound(Items)
-        Dim Item As Dom_ClassHour
-        Set Item = Items(i)
-        If Filter.MatchTypeAndGrade(Item.GetID) Then
-            Dim Total As Long
-            Total = Total + Item.GetHours.Value
-        End If
-    Next
-    GetHourTotal = Total
+    '@Ignore SelfAssignedDeclaration
+    Dim Calculator As New Dom_ClassHourCalculator
+    GetHourTotal = Calculator.SumSubjectHour(ClassHours(Filter), Filter)
 End Function
 
 Public Function GetMarkCount(ByVal Filter As Dom_ClassHourFilter) As Long
-    Dim Items() As Variant
-    Items = SelectTargets(Filter)
-    Dim i As Long
-    For i = LBound(Items) To UBound(Items)
-        Dim Item As Dom_ClassHour
-        Set Item = Items(i)
-        If Filter.MatchTypeAndGrade(Item.GetID) Then
-            If Item.GetMark.Value <> vbNullString Then
-                Dim Count As Long
-                Count = Count + 1
-            End If
-        End If
-    Next
-    GetMarkCount = Count
+    '@Ignore SelfAssignedDeclaration
+    Dim Calculator As New Dom_ClassHourCalculator
+    GetMarkCount = Calculator.SumMark(ClassHours(Filter), Filter)
 End Function
 
 Private Sub ValidateHourTotal(ByVal ID As Dom_ClassHourID)
@@ -136,25 +117,25 @@ Private Function GetById(ByVal ID As Dom_ClassHourID) As Dom_ClassHour
     End If
 End Function
 
-Private Function SelectTargets(ByVal Filter As Dom_ClassHourFilter) As Variant()
-    If Not Filter.ClassHourType Is Nothing And Not Filter.Subject Is Nothing And Not Filter.Grade Is Nothing Then
+Private Function ClassHours(ByVal Filter As Dom_ClassHourFilter) As Variant()
+    If Not Filter.HasType And Not Filter.HasSubject And Not Filter.HasGrade Then
         Dim ValueIndexKey As String
         ValueIndexKey = Filter.ClassHourType.ToKey & charUnderScore & Filter.Subject.ToKey & Filter.Grade.ToKey
         If This.ValueIndex.Exists(ValueIndexKey) Then
             Dim Target As Scripting.Dictionary
             Set Target = This.ValueIndex.Item(ValueIndexKey)
-            SelectTargets = Target.Items
+            ClassHours = Target.Items
             Exit Function
         End If
     End If
-    If Not Filter.ClassHourType Is Nothing And Not Filter.Period Is Nothing And Not Filter.Grade Is Nothing Then
+    If Not Filter.HasType And Not Filter.HasPeriod And Not Filter.HasGrade Then
         Dim MarkIndexKey As String
         MarkIndexKey = Filter.ClassHourType.ToKey & charUnderScore & Filter.Period.ToKey & Filter.Grade.ToKey
         If This.MarkIndex.Exists(MarkIndexKey) Then
             Set Target = This.MarkIndex.Item(MarkIndexKey)
-            SelectTargets = Target.Items
+            ClassHours = Target.Items
             Exit Function
         End If
     End If
-    SelectTargets = This.ItemList.Items
+    ClassHours = This.ItemList.Items
 End Function
