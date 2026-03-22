@@ -29,7 +29,7 @@ Public Function Execute() As Dom_SchoolStructure
         Dim SpecialStreamCatalog As Dom_SpecialStreamCatalog
         Set SpecialStreamCatalog = .Build(This.Repository)
     End With
-    With New App_SpecialStreamCatalogBuilder
+    With New App_SubjectCatalogBuilder
         Dim SubjectCatalog As Dom_SubjectCatalog
         Set SubjectCatalog = .Build(This.Repository)
     End With

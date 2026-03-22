@@ -11,7 +11,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    TargetDate      As String
+    RawDate         As String
     ClassHourType   As String
     SubjectName     As String
     Period          As String
@@ -20,16 +20,16 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal TargetDate As String, ByVal ClassHourType As String, ByVal SubjectName As String, ByVal Period As String, ByVal Grade As String)
-    This.TargetDate = TargetDate
+Public Sub Initialize(ByVal RawDate As String, ByVal ClassHourType As String, ByVal SubjectName As String, ByVal Period As String, ByVal Grade As String)
+    This.RawDate = RawDate
     This.ClassHourType = ClassHourType
     This.SubjectName = SubjectName
     This.Period = Period
     This.Grade = Grade
 End Sub
 
-Public Property Get TargetDate() As String
-    TargetDate = This.TargetDate
+Public Property Get RawDate() As String
+    RawDate = This.RawDate
 End Property
 
 Public Property Get ClassHourType() As String

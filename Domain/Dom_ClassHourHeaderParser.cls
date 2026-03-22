@@ -31,11 +31,11 @@ Public Function Parse(ByVal Config As Dom_SchoolStructure, ByVal HeaderName As S
             End If
         Next
     Else
-        Dim TargetDate As String
-        TargetDate = Parts(0)
+        Dim RawDate As String
+        RawDate = Parts(0)
     End If
     Dim Result As Dom_ClassHourHeader
     Set Result = New Dom_ClassHourHeader
-    Result.Initialize TargetDate, ClassHourType, SubjectName, Period, Grade
+    Result.Initialize RawDate, ClassHourType, SubjectName, Period, Grade
     Set Parse = Result
 End Function

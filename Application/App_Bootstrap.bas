@@ -4,36 +4,30 @@ Option Explicit
 Option Private Module
 
 Public Sub Run()
-    'SchoolStructure--------------------------------------------------------------------------------
+    'ErrorLog------------------------------------------------------------------------------------
+    Dim Logger As Inf_ILogger
+    Set Logger = App_LoggerFactory.CreateLogger
+    On Error GoTo ErrorHandler
+    'SchoolStructure-----------------------------------------------------------------------------
     Dim SchoolConfigGenerater As App_GenerateSchoolStructure
     Set SchoolConfigGenerater = App_UseCaseFactory.CreateSchoolConfigGenerater
     Dim SchoolStructure As Dom_SchoolStructure
     Set SchoolStructure = SchoolConfigGenerater.Execute
     'UseCase-------------------------------------------------------------------------------------
-    Dim EnrollmentUseCase As App_AggregateEnrollment
-    Set EnrollmentUseCase = App_UseCaseFactory.CreateAggregateEnrollmentUseCase(SchoolStructure)
-    Dim ClassHourUseCase As App_AggregateClassHour
-    Set ClassHourUseCase = App_UseCaseFactory.CreateAggregateClassHourUseCase(SchoolStructure)
-    'Aggregate-----------------------------------------------------------------------------------
-    Dim Enrollment As Dom_EnrollmentYearAggregate
-    Set Enrollment = EnrollmentUseCase.Execute(Date)
-    Dim ClassHour As Dom_ClassHourYearAggregate
-    Set ClassHour = ClassHourUseCase.Execute(Date)
+    Dim AggregateEnrollment As App_AggregateEnrollment
+    Set AggregateEnrollment = App_UseCaseFactory.CreateAggregateEnrollment(SchoolStructure)
+    Dim AggregateClassHour As App_AggregateClassHour
+    Set AggregateClassHour = App_UseCaseFactory.CreateAggregateClassHour(SchoolStructure)
+    'Presenter-----------------------------------------------------------------------------------
+    Dim Presenter As App_Presenter
+    Set Presenter = New App_Presenter
+    Presenter.Initialize Logger, AggregateEnrollment, AggregateClassHour
     'View----------------------------------------------------------------------------------------
-'    Dim EnrollmentFormatter As App_ViewEnrollmentFormatter
-'    Set EnrollmentFormatter = New App_ViewEnrollmentFormatter
-'    Dim EnrollmentTable() As Variant
-'    EnrollmentTable = EnrollmentFormatter.Format(Enrollment.GetAggregate(Date), SchoolStructure)
-'    Dim ClassHourFormatter As App_ViewClassHourFormatter
-'    Set ClassHourFormatter = New App_ViewClassHourFormatter
-'    Dim ClassHourPlanTable() As Variant
-'    ClassHourPlanTable = ClassHourFormatter.Format(Plan, ClassHour.GetAggregate(Date), SchoolStructure)
-'    Dim ClassHourExecutionTable() As Variant
-'    ClassHourExecutionTable = ClassHourFormatter.Format(Execution, ClassHour.GetAggregate(Date), SchoolStructure)
-'    Dim TimeTableFormatter As App_ViewTimeTableFormatter
-'    Set TimeTableFormatter = New App_ViewTimeTableFormatter
-'    Dim TimeTablePlanTable() As Variant
-'    TimeTablePlanTable = TimeTableFormatter.Format(Plan, ClassHour.GetAggregate(Date), SchoolStructure)
-'    Dim TimeTableExecutionTable() As Variant
-'    TimeTableExecutionTable = TimeTableFormatter.Format(Execution, ClassHour.GetAggregate(Date), SchoolStructure)
+    Dim MainView As App_MainView
+    Set MainView = New App_MainView
+    MainView.Initialize Presenter
+    MainView.Show vbModeless
+    Exit Sub
+ErrorHandler:
+    Logger.WriteLog Err.Source & vbTab & Err.Description
 End Sub

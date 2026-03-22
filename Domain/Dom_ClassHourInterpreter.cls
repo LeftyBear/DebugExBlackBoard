@@ -21,6 +21,8 @@ Public Sub Initialize(ByVal Resolver As Dom_HeaderTokenResolver)
 End Sub
 '@Ignore ProcedureCanBeWrittenAsFunction
 Public Sub Interprete(ByVal Config As Dom_SchoolStructure, ByVal Header As Dom_ClassHourHeader, ByVal RawValue As String, ByVal Aggregate As Dom_ClassHourAggregate)
+    Dim NormDate As Date
+    NormDate = This.Resolver.ResolveDate(Header.RawDate)
     Dim ClassHourType As Dom_ClassHourType
     Set ClassHourType = This.Resolver.ResolveClassHourType(Header.ClassHourType)
     If Header.SubjectName <> vbNullString Then
@@ -40,7 +42,7 @@ Public Sub Interprete(ByVal Config As Dom_SchoolStructure, ByVal Header As Dom_C
     Set ID = CreateID(ClassHourType, Subject, Period, Grade)
     Dim ClassHour As Dom_ClassHour
     Set ClassHour = New Dom_ClassHour
-    ClassHour.Initialize ID, Hours, Mark
+    ClassHour.Initialize ID, NormDate, Hours, Mark
     Aggregate.Add ClassHour
 End Sub
 

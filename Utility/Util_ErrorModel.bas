@@ -1,4 +1,4 @@
-Attribute VB_Name = "Util_Error"
+Attribute VB_Name = "Util_ErrorModel"
 '@Folder "Utility.Enum"
 Option Explicit
 Option Private Module

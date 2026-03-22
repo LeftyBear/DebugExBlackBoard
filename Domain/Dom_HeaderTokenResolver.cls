@@ -10,6 +10,10 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Resolver")
 Option Explicit
 
+Public Function ResolveDate(ByVal Token As String) As Date
+    ResolveDate = Dom_Util_Date.NormalizeToDate(Token)
+End Function
+
 Public Function ResolveStreamType(ByVal Token As String) As Dom_StreamType
     Dim Value As Long
     If 0 < VBA.InStr(1, Token, jpnNen) Then

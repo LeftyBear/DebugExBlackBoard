@@ -33,7 +33,7 @@ Public Function Create(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject A
     Set Create = Result
 End Function
 
-Public Function Match(ByVal ID As Dom_ClassHourID) As Boolean
+Public Function MatchAll(ByVal ID As Dom_ClassHourID) As Boolean
     If This.ClassHourType <> ID.ClassHourType Then Exit Function
     If Not This.Subject Is Nothing Then
         If Not This.Subject.Equals(ID.Subject) Then Exit Function
@@ -44,5 +44,37 @@ Public Function Match(ByVal ID As Dom_ClassHourID) As Boolean
     If Not This.Grade Is Nothing Then
         If Not This.Grade.Equals(ID.Grade) Then Exit Function
     End If
-    Match = True
+    MatchAll = True
 End Function
+
+Public Function MatchTypeAndSubject(ByVal ID As Dom_ClassHourID) As Boolean
+    If This.ClassHourType <> ID.ClassHourType Then Exit Function
+    If Not This.Subject Is Nothing Then
+        If Not This.Subject.Equals(ID.Subject) Then Exit Function
+    End If
+    MatchTypeAndSubject = True
+End Function
+
+Public Function MatchTypeAndGrade(ByVal ID As Dom_ClassHourID) As Boolean
+    If This.ClassHourType <> ID.ClassHourType Then Exit Function
+    If Not This.Grade Is Nothing Then
+        If Not This.Grade.Equals(ID.Grade) Then Exit Function
+    End If
+    MatchTypeAndGrade = True
+End Function
+
+Public Property Get ClassHourType() As Dom_ClassHourType
+    Set ClassHourType = This.ClassHourType
+End Property
+
+Public Property Get Subject() As Dom_Subject
+    Set Subject = This.Subject
+End Property
+
+Public Property Get Period() As Dom_Period
+    Set Period = This.Period
+End Property
+
+Public Property Get Grade() As Dom_Grade
+    Set Grade = This.Grade
+End Property

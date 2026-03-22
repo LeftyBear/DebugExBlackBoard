@@ -9,19 +9,75 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder "Application.Presenter"
 Option Explicit
-
+Implements App_IPresenterCallback
 Private Type Member
     Logger      As Inf_ILogger
-    MainView    As App_MainView
+    Enrollment  As App_AggregateEnrollment
+    ClassHour   As App_AggregateClassHour
+    MainView    As App_IMainView
+    Base        As App_BasePresenter
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Logger As Inf_ILogger)
+Public Sub Initialize(ByVal Logger As Inf_ILogger, ByVal Enrollment As App_AggregateEnrollment, ByVal ClassHour As App_AggregateClassHour)
     Set This.Logger = Logger
+    Set This.Enrollment = Enrollment
+    Set This.ClassHour = ClassHour
+    Set This.Base = New App_BasePresenter
 End Sub
 
-Public Sub AttachView(ByVal MainView As App_MainView)
+Public Sub AttachView(ByVal MainView As App_IMainView)
     Set This.MainView = MainView
 End Sub
 
+Public Sub Bootstrap()
+'    Dim YearlyEnrollment As Dom_EnrollmentYearAggregate
+'    Set YearlyEnrollment = This.Enrollment.Execute(Date)
+    Dim YearlyClassHour As Dom_ClassHourYearAggregate
+    Set YearlyClassHour = This.ClassHour.Execute(Date)
+    'View----------------------------------------------------------------------------------------
+'    Dim EnrollmentFormatter As App_ViewEnrollmentFormatter
+'    Set EnrollmentFormatter = New App_ViewEnrollmentFormatter
+'    Dim EnrollmentTable() As Variant
+'    EnrollmentTable = EnrollmentFormatter.Format(Enrollment.GetAggregate(Date), SchoolStructure)
+'    Dim ClassHourFormatter As App_ViewClassHourFormatter
+'    Set ClassHourFormatter = New App_ViewClassHourFormatter
+'    Dim ClassHourPlanTable() As Variant
+'    ClassHourPlanTable = ClassHourFormatter.Format(Plan, ClassHour.GetAggregate(Date), SchoolStructure)
+'    Dim ClassHourExecutionTable() As Variant
+'    ClassHourExecutionTable = ClassHourFormatter.Format(Execution, ClassHour.GetAggregate(Date), SchoolStructure)
+'    Dim TimeTableFormatter As App_ViewTimeTableFormatter
+'    Set TimeTableFormatter = New App_ViewTimeTableFormatter
+'    Dim TimeTablePlanTable() As Variant
+'    TimeTablePlanTable = TimeTableFormatter.Format(Plan, ClassHour.GetAggregate(Date), SchoolStructure)
+'    Dim TimeTableExecutionTable() As Variant
+'    TimeTableExecutionTable = TimeTableFormatter.Format(Execution, ClassHour.GetAggregate(Date), SchoolStructure)
+End Sub
+
+Public Sub Excute()
+    This.Base.Execute Me
+End Sub
+
+Private Sub App_IPresenterCallback_ExecuteCore()
+    
+End Sub
+
+Private Sub App_IPresenterCallback_LogSystemError(ByVal Error As ErrObject)
+    Dim Message As String
+    Message = "ErrorNumber: " & VBA.Err.Number & _
+              "  ModuleName: " & VBA.Err.Source & _
+              "  Description: " & VBA.Err.Description
+    This.Logger.WriteLog Message
+End Sub
+
+Private Sub App_IPresenterCallback_RenderResult(ByVal Result As App_PresenterResult)
+    Select Case Result.ResultType
+    Case App_ViewResultType.Success
+        This.MainView.ShowSuccess Result.Message
+    Case App_ViewResultType.BusinessError
+        This.MainView.NotifyBusinessError Result.Message
+    Case App_ViewResultType.SystemError
+        This.MainView.NotifySystemError
+    End Select
+End Sub

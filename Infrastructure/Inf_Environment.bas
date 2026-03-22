@@ -1,4 +1,4 @@
-Attribute VB_Name = "Util_Environment"
+Attribute VB_Name = "Inf_Environment"
 '@Folder "Utility.Environment"
 Option Explicit
 Option Private Module
@@ -9,11 +9,11 @@ Public Enum Util_EnvironmentType
     ReleaseMode
 End Enum
 
-Public Function GetEnvironment() As Util_EnvironmentType
+Public Function GetEnvironmentType() As Util_EnvironmentType
     If IsDebug Then
-        GetEnvironment = DebugMode
+        GetEnvironmentType = DebugMode
     Else
-        GetEnvironment = ReleaseMode
+        GetEnvironmentType = ReleaseMode
     End If
 End Function
 

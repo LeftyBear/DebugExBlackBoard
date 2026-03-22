@@ -19,7 +19,7 @@ Public Function CreateSchoolConfigGenerater() As App_GenerateSchoolStructure
     Set CreateSchoolConfigGenerater = UseCase
 End Function
 
-Public Function CreateAggregateEnrollmentUseCase(ByVal SchoolStructure As Dom_SchoolStructure) As App_AggregateEnrollment
+Public Function CreateAggregateEnrollment(ByVal SchoolStructure As Dom_SchoolStructure) As App_AggregateEnrollment
     Dim PathBuilder As Inf_EntityFilePathBuilder
     Set PathBuilder = New Inf_EntityFilePathBuilder
     PathBuilder.Initialize New Inf_EntityFileNameResolver, New Inf_WorkbookPathProvider
@@ -35,10 +35,10 @@ Public Function CreateAggregateEnrollmentUseCase(ByVal SchoolStructure As Dom_Sc
     Dim UseCase As App_AggregateEnrollment
     Set UseCase = New App_AggregateEnrollment
     UseCase.Initialize BaseRepository, SchoolStructure, New Dom_EnrollmentHeaderParser, Interpreter
-    Set CreateAggregateEnrollmentUseCase = UseCase
+    Set CreateAggregateEnrollment = UseCase
 End Function
 
-Public Function CreateAggregateClassHourUseCase(ByVal SchoolStructure As Dom_SchoolStructure) As App_AggregateClassHour
+Public Function CreateAggregateClassHour(ByVal SchoolStructure As Dom_SchoolStructure) As App_AggregateClassHour
     Dim PathBuilder As Inf_EntityFilePathBuilder
     Set PathBuilder = New Inf_EntityFilePathBuilder
     PathBuilder.Initialize New Inf_EntityFileNameResolver, New Inf_WorkbookPathProvider
@@ -54,5 +54,5 @@ Public Function CreateAggregateClassHourUseCase(ByVal SchoolStructure As Dom_Sch
     Dim UseCase As App_AggregateClassHour
     Set UseCase = New App_AggregateClassHour
     UseCase.Initialize BaseRepository, SchoolStructure, New Dom_ClassHourHeaderParser, Interpreter
-    Set CreateAggregateClassHourUseCase = UseCase
+    Set CreateAggregateClassHour = UseCase
 End Function

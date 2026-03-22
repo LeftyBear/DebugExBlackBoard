@@ -1,4 +1,4 @@
-Attribute VB_Name = "Inf_Error"
+Attribute VB_Name = "Inf_ErrorModel"
 '@Folder "Infrastructure.Enum"
 Option Explicit
 Option Private Module

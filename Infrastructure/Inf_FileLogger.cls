@@ -28,4 +28,3 @@ Private Sub Inf_ILogger_WriteLog(ByVal Message As String)
     Print #FileNo, Now & charHalfSpace & Message
     Close #FileNo
 End Sub
-

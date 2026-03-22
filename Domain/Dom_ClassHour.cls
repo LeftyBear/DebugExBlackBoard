@@ -11,15 +11,17 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    ID      As Dom_ClassHourID
-    Hours   As Dom_ClassHourValue
-    Mark    As Dom_ClassHourMark
+    ID          As Dom_ClassHourID
+    NormDate    As Date
+    Hours       As Dom_ClassHourValue
+    Mark        As Dom_ClassHourMark
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal ID As Dom_ClassHourID, ByVal Hours As Dom_ClassHourValue, ByVal Mark As Dom_ClassHourMark)
+Public Sub Initialize(ByVal ID As Dom_ClassHourID, ByVal NormDate As Date, ByVal Hours As Dom_ClassHourValue, ByVal Mark As Dom_ClassHourMark)
     Set This.ID = ID
+    This.NormDate = NormDate
     Set This.Hours = Hours
     Set This.Mark = Mark
 End Sub
@@ -34,6 +36,10 @@ End Sub
 
 Public Function GetID() As Dom_ClassHourID
     Set GetID = This.ID
+End Function
+
+Public Function GetDate() As Date
+    GetDate = This.NormDate
 End Function
 
 Public Function GetHours() As Dom_ClassHourValue

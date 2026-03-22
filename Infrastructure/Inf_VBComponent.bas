@@ -1,4 +1,4 @@
-Attribute VB_Name = "Util_VBComponent"
+Attribute VB_Name = "Inf_VBComponent"
 '@Folder "Utility.VBComponent"
 Option Explicit
 Option Private Module
@@ -9,7 +9,7 @@ Private Const CtMsForm As Long = 3
 Private Const RootPath As String = "C:\Users\biz\Documents\GitHub\DebugExBlackBoard"
 
 Public Sub ExportAllModules()
-    If Util_Environment.GetEnvironment = ReleaseMode Then Exit Sub
+    If Inf_Environment.GetEnvironmentType = ReleaseMode Then Exit Sub
     Dim Component As Object
     For Each Component In ThisWorkbook.VBProject.VBComponents
         If IsExportTarget(Component) Then ExportComponent RootPath, Component

@@ -14,4 +14,3 @@ Implements Inf_ILogger
 Private Sub Inf_ILogger_WriteLog(ByVal Message As String)
     Debug.Print Now & charHalfSpace & Message
 End Sub
-

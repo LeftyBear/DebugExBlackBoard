@@ -10,15 +10,26 @@ Attribute VB_Exposed = False
 '@Folder "Application.Resolver"
 Option Explicit
 
-Public Function Resolve(ByVal Environment As Util_EnvironmentType, ByVal LogPath As String) As Inf_ILogger
+Private Type Member
+    Builder As Inf_LogFilePathBuilder
+End Type
+
+Private This As Member
+
+Public Sub Initialize(ByVal Builder As Inf_LogFilePathBuilder)
+    Set This.Builder = Builder
+End Sub
+
+Public Function Resolve(ByVal Environment As Util_EnvironmentType) As Inf_ILogger
     Select Case Environment
     Case Util_EnvironmentType.ReleaseMode
+        Dim FilePath As String
+        FilePath = This.Builder.Builed
         Dim Logger As Inf_FileLogger
         Set Logger = New Inf_FileLogger
-        Logger.Initialize LogPath
+        Logger.Initialize FilePath
         Set Resolve = Logger
     Case Else
         Set Resolve = New Inf_DebugLogger
     End Select
 End Function
-

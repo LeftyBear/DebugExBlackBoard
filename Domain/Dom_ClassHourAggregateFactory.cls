@@ -23,26 +23,20 @@ Public Sub Initialize(ByVal Parser As Dom_ClassHourHeaderParser, ByVal Interpret
 End Sub
 
 Public Function Create(ByVal Config As Dom_SchoolStructure, ByVal ColumnDTOGroups As VBA.Collection) As Dom_ClassHourYearAggregate
-'    Dim Result As Dom_ClassHourYearAggregate
-'    Set Result = New Dom_ClassHourYearAggregate
+    Dim Result As Dom_ClassHourYearAggregate
+    Set Result = New Dom_ClassHourYearAggregate
 '    Result.Initialize Config.SubjectCount, Config.MainStreamGradeCount
-'    Dim Aggregate As Dom_ClassHourAggregate
-'    Set Aggregate = New Dom_ClassHourAggregate
-'    Aggregate.Initialize Dom_ClassHourType.Execution, Config.SubjectCount, Config.PeriodCount, Config.MainStreamGradeCount
-'    Dim ColumnDTOGroup As VBA.Collection
-'    For Each ColumnDTOGroup In ColumnDTOGroups
-'        Dim ColumnDTO As App_ColumnDTO
-'        For Each ColumnDTO In ColumnDTOGroup
-'            Dim Header As Dom_ClassHourHeader
-'            Set Header = This.Parser.Parse(Config, ColumnDTO.HeaderName)
-'            If Header.TargetDate <> vbNullString Then
-'                Dim TargetDate As Date
-'                TargetDate = Dom_Util_Date.NormalizeToDate(ColumnDTO.RawValue)
-'            Else
-'                This.Interpreter.Interprete Config, Header, ColumnDTO.RawValue, Aggregate
-'            End If
-'        Next
-'        Result.Add TargetDate, Aggregate
-'    Next
-'    Set Create = Result
+    Dim Daily As Dom_ClassHourAggregate
+    Set Daily = New Dom_ClassHourAggregate
+    Dim ColumnDTOGroup As VBA.Collection
+    For Each ColumnDTOGroup In ColumnDTOGroups
+        Dim ColumnDTO As App_ColumnDTO
+        For Each ColumnDTO In ColumnDTOGroup
+            Dim Header As Dom_ClassHourHeader
+            Set Header = This.Parser.Parse(Config, ColumnDTO.HeaderName)
+            This.Interpreter.Interprete Config, Header, ColumnDTO.RawValue, Daily
+        Next
+        Result.Add Daily
+    Next
+    Set Create = Result
 End Function

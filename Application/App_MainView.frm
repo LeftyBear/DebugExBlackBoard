@@ -15,12 +15,18 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '@Folder "Application.View"
 Option Explicit
+Implements App_IMainView
+Private Type Member
+    Presenter As App_Presenter
+End Type
 
-'Private Type Member
-'    SelectedDate As Date
-'End Type
+Private This As Member
 
-'Private This As Member
+Public Sub Initialize(ByVal Presenter As App_Presenter)
+    Set This.Presenter = Presenter
+    This.Presenter.AttachView Me
+    This.Presenter.Bootstrap
+End Sub
 
 Private Sub SetGridValue(ByVal Kind As String, ByVal Value As Variant, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long)
     Dim Cell As Object
@@ -69,3 +75,15 @@ Private Function BuildGridControlName(ByVal Kind As String, Optional ByVal Grade
     BuildGridControlName = VBA.Join(Cells, charUnderScore)
 End Function
 
+Private Sub App_IMainView_NotifyBusinessError(ByVal Message As String)
+    MsgBox Message, vbCritical, "業務エラー"
+End Sub
+
+Private Sub App_IMainView_NotifySystemError()
+    MsgBox "例外的なエラーが発生したのでログに書き出しました。", vbCritical, "システムエラー"
+End Sub
+
+Private Sub App_IMainView_ShowSuccess(ByVal Message As String)
+    If Message = vbNullString Then Exit Sub
+    MsgBox Message, vbInformation, "処理完了"
+End Sub
