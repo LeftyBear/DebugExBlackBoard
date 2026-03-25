@@ -10,33 +10,18 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Factory")
 Option Explicit
 
-Private Type Member
-    Parser      As Dom_ClassHourHeaderParser
-    Interpreter As Dom_ClassHourInterpreter
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Parser As Dom_ClassHourHeaderParser, ByVal Interpreter As Dom_ClassHourInterpreter)
-    Set This.Parser = Parser
-    Set This.Interpreter = Interpreter
-End Sub
-
-Public Function Create(ByVal Config As Dom_SchoolStructure, ByVal ColumnDTOGroups As VBA.Collection) As Dom_ClassHourYearAggregate
-    Dim Result As Dom_ClassHourYearAggregate
-    Set Result = New Dom_ClassHourYearAggregate
-'    Result.Initialize Config.SubjectCount, Config.MainStreamGradeCount
-    Dim Daily As Dom_ClassHourAggregate
-    Set Daily = New Dom_ClassHourAggregate
-    Dim ColumnDTOGroup As VBA.Collection
-    For Each ColumnDTOGroup In ColumnDTOGroups
-        Dim ColumnDTO As App_ColumnDTO
-        For Each ColumnDTO In ColumnDTOGroup
-            Dim Header As Dom_ClassHourHeader
-            Set Header = This.Parser.Parse(Config, ColumnDTO.HeaderName)
-            This.Interpreter.Interprete Config, Header, ColumnDTO.RawValue, Daily
+Public Function Create(ByVal EntityGroups As VBA.Collection) As Dom_ClassHourYearAggregate
+    Dim Yearly As Dom_ClassHourYearAggregate
+    Set Yearly = New Dom_ClassHourYearAggregate
+    Dim EntityGroup As VBA.Collection
+    For Each EntityGroup In EntityGroups
+        Dim Daily As Dom_ClassHourAggregate
+        Set Daily = New Dom_ClassHourAggregate
+        Dim ClassHour As Dom_ClassHour
+        For Each ClassHour In EntityGroup
+            Daily.AddInitialClassHour ClassHour
         Next
-        Result.Add Daily
+        Yearly.Add Daily
     Next
-    Set Create = Result
+    Set Create = Yearly
 End Function

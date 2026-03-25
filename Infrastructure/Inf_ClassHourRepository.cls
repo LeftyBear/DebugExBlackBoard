@@ -20,8 +20,8 @@ Public Sub Initialize(ByVal Repository As Inf_CSVReadRepository)
     Set This.Repository = Repository
 End Sub
 
-Private Function Dom_IClassHourRepository_Load(ByVal SchoolYear As Long) As String()
+Private Function Dom_IClassHourRepository_Load(ByVal FilePath As String) As String()
     Dim RawRows() As String
-    RawRows = This.Repository.Load(Dom_Entity.ClassHour, SchoolYear)
+    RawRows = This.Repository.Load(FilePath)
     Dom_IClassHourRepository_Load = RawRows
 End Function

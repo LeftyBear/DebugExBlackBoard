@@ -11,25 +11,19 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Builder As Inf_ConfigFilePathBuilder
     Reader  As Inf_TextStreamReader
     Parser  As Inf_CSVRFCParser
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Builder As Inf_ConfigFilePathBuilder, ByVal Reader As Inf_TextStreamReader, ByVal Parser As Inf_CSVRFCParser)
-    Set This.Builder = Builder
-    Set This.Reader = Reader
-    Set This.Parser = Parser
+Private Sub Class_Initialize()
+    Set This.Reader = New Inf_TextStreamReader
+    Set This.Parser = New Inf_CSVRFCParser
 End Sub
 
-Public Function Load(ByVal ConfigName As Dom_Config) As String()
-    Dim FilePath As String
-    FilePath = This.Builder.Builed(ConfigName)
-    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise InfErrNotFoundFile, "Inf_ConfigReadRepository", "Not found file."
-    Dim TextData As String
-    TextData = This.Reader.ReadAll(FilePath)
-    Load = This.Parser.Parse(TextData)
+Public Function Load(ByVal FilePath As String) As String()
+    Dim RawText As String
+    RawText = This.Reader.ReadAll(FilePath)
+    Load = This.Parser.Parse(RawText)
 End Function
-

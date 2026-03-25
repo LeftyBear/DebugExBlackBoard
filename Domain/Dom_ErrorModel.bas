@@ -19,6 +19,7 @@ Public Enum Dom_ErrNum
     DomErrInvalidValue
     DomErrNegativeNumber
     DomErrNotBoolean
+    DomErrNotFourDigitNumber
     DomErrNotExistsItem
     DomErrNothingObject
     DomErrNotInteger

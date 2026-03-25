@@ -3,56 +3,67 @@ Attribute VB_Name = "App_UseCaseFactory"
 Option Explicit
 Option Private Module
 
-Public Function CreateSchoolConfigGenerater() As App_GenerateSchoolStructure
-    Dim PathBuilder As Inf_ConfigFilePathBuilder
-    Set PathBuilder = New Inf_ConfigFilePathBuilder
-    PathBuilder.Initialize New Inf_ConfigFileNameResolver, New Inf_WorkbookPathProvider
-    Dim ReadRepository As Inf_ConfigReadRepository
-    Set ReadRepository = New Inf_ConfigReadRepository
-    ReadRepository.Initialize PathBuilder, New Inf_TextStreamReader, New Inf_CSVRFCParser
-    Dim BaseRepository As Inf_ConfigRepository
-    Set BaseRepository = New Inf_ConfigRepository
-    BaseRepository.Initialize ReadRepository
-    Dim UseCase As App_GenerateSchoolStructure
-    Set UseCase = New App_GenerateSchoolStructure
-    UseCase.Initialize BaseRepository
-    Set CreateSchoolConfigGenerater = UseCase
+Public Function CreateGenerateSchoolStructure() As App_AggregateSchoolStructure
+    'Builder------------------------------------------------------------------------------------
+    Dim Provider As App_IWorkbookPathProvider
+    Set Provider = New Inf_WorkbookPathProvider
+    Dim Builder As App_ConfigFilePathBuilder
+    Set Builder = New App_ConfigFilePathBuilder
+    Builder.Initialize Provider
+    'Repository---------------------------------------------------------------------------------
+    Dim Repository As Inf_ConfigRepository
+    Set Repository = New Inf_ConfigRepository
+    'UseCase------------------------------------------------------------------------------------
+    Dim UseCase As App_AggregateSchoolStructure
+    Set UseCase = New App_AggregateSchoolStructure
+    UseCase.Initialize Builder, Repository
+    Set CreateGenerateSchoolStructure = UseCase
 End Function
 
-Public Function CreateAggregateEnrollment(ByVal SchoolStructure As Dom_SchoolStructure) As App_AggregateEnrollment
-    Dim PathBuilder As Inf_EntityFilePathBuilder
-    Set PathBuilder = New Inf_EntityFilePathBuilder
-    PathBuilder.Initialize New Inf_EntityFileNameResolver, New Inf_WorkbookPathProvider
+Public Function CreateAggregateEnrollment(ByVal Structure As Dom_SchoolStructure) As App_AggregateEnrollment
+    'Builder------------------------------------------------------------------------------------
+    Dim Provider As App_IWorkbookPathProvider
+    Set Provider = New Inf_WorkbookPathProvider
+    Dim Builder As App_EntityFilePathBuilder
+    Set Builder = New App_EntityFilePathBuilder
+    Builder.Initialize Provider
+    'Repository---------------------------------------------------------------------------------
     Dim ReadRepository As Inf_CSVReadRepository
     Set ReadRepository = New Inf_CSVReadRepository
-    ReadRepository.Initialize PathBuilder, New Inf_TextStreamReader, New Inf_CSVRFCParser
     Dim BaseRepository As Inf_EnrollmentRepository
     Set BaseRepository = New Inf_EnrollmentRepository
     BaseRepository.Initialize ReadRepository
-    Dim Interpreter As Dom_EnrollmentInterpreter
-    Set Interpreter = New Dom_EnrollmentInterpreter
-    Interpreter.Initialize New Dom_HeaderTokenResolver
-    Dim UseCase As App_AggregateEnrollment
-    Set UseCase = New App_AggregateEnrollment
-    UseCase.Initialize BaseRepository, SchoolStructure, New Dom_EnrollmentHeaderParser, Interpreter
-    Set CreateAggregateEnrollment = UseCase
+    'Resolver-----------------------------------------------------------------------------------
+'    Dim Resolver As Dom_ClassHourColumnResolver
+'    Set Resolver = New Dom_ClassHourColumnResolver
+'    Resolver.Initialize Structure
+    'UseCase------------------------------------------------------------------------------------
+'    Dim UseCase As App_AggregateEnrollment
+'    Set UseCase = New App_AggregateEnrollment
+'    UseCase.Initialize Builder, BaseRepository, Resolver
+'    Set CreateAggregateEnrollment = UseCase
 End Function
 
-Public Function CreateAggregateClassHour(ByVal SchoolStructure As Dom_SchoolStructure) As App_AggregateClassHour
-    Dim PathBuilder As Inf_EntityFilePathBuilder
-    Set PathBuilder = New Inf_EntityFilePathBuilder
-    PathBuilder.Initialize New Inf_EntityFileNameResolver, New Inf_WorkbookPathProvider
+Public Function CreateAggregateClassHour(ByVal Structure As Dom_SchoolStructure) As App_AggregateClassHour
+    'Builder------------------------------------------------------------------------------------
+    Dim Provider As App_IWorkbookPathProvider
+    Set Provider = New Inf_WorkbookPathProvider
+    Dim Builder As App_EntityFilePathBuilder
+    Set Builder = New App_EntityFilePathBuilder
+    Builder.Initialize Provider
+    'Repository---------------------------------------------------------------------------------
     Dim ReadRepository As Inf_CSVReadRepository
     Set ReadRepository = New Inf_CSVReadRepository
-    ReadRepository.Initialize PathBuilder, New Inf_TextStreamReader, New Inf_CSVRFCParser
     Dim BaseRepository As Inf_ClassHourRepository
     Set BaseRepository = New Inf_ClassHourRepository
     BaseRepository.Initialize ReadRepository
-    Dim Interpreter As Dom_ClassHourInterpreter
-    Set Interpreter = New Dom_ClassHourInterpreter
-    Interpreter.Initialize New Dom_HeaderTokenResolver
+    'Resolver-----------------------------------------------------------------------------------
+    Dim Resolver As Dom_ClassHourColumnResolver
+    Set Resolver = New Dom_ClassHourColumnResolver
+    Resolver.Initialize Structure
+    'UseCase------------------------------------------------------------------------------------
     Dim UseCase As App_AggregateClassHour
     Set UseCase = New App_AggregateClassHour
-    UseCase.Initialize BaseRepository, SchoolStructure, New Dom_ClassHourHeaderParser, Interpreter
+    UseCase.Initialize Builder, BaseRepository, Resolver
     Set CreateAggregateClassHour = UseCase
 End Function

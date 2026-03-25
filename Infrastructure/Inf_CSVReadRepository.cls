@@ -11,23 +11,18 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Builder As Inf_EntityFilePathBuilder
     Reader  As Inf_TextStreamReader
     Parser  As Inf_CSVRFCParser
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Builder As Inf_EntityFilePathBuilder, ByVal Reader As Inf_TextStreamReader, ByVal Parser As Inf_CSVRFCParser)
-    Set This.Builder = Builder
-    Set This.Reader = Reader
-    Set This.Parser = Parser
+Private Sub Class_Initialize()
+    Set This.Reader = New Inf_TextStreamReader
+    Set This.Parser = New Inf_CSVRFCParser
 End Sub
 
-Public Function Load(ByVal EntityName As Dom_Entity, ByVal SchoolYear As Long) As String()
-    Dim FilePath As String
-    FilePath = This.Builder.Builed(EntityName, SchoolYear)
-    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise InfErrNotFoundFile, "Inf_CSVReadRepository", "Not found file."
+Public Function Load(ByVal FilePath As String) As String()
     Dim TextData As String
     TextData = This.Reader.ReadAll(FilePath)
     Load = This.Parser.Parse(TextData)

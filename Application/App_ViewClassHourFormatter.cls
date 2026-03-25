@@ -10,9 +10,9 @@ Attribute VB_Exposed = False
 '@Folder("Application.Formatter")
 Option Explicit
 
-Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHourAggregate, ByVal Config As Dom_SchoolStructure) As Variant()
+Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHourAggregate, ByVal Structure As Dom_SchoolStructure) As Variant()
     Dim ClassHourTable() As Long
-    ClassHourTable = ToClassHourTable(ClassHourType, ClassHour, Config)
+    ClassHourTable = ToClassHourTable(ClassHourType, ClassHour, Structure)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(ClassHourTable, 1) + 1, 1 To UBound(ClassHourTable, 2) + 1)
     Dim C As Long
@@ -27,7 +27,7 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour
     For R = 2 To UBound(ClassHourTable, 1) + 1
         For C = 1 To UBound(ClassHourTable, 2) + 1
             If R < UBound(ClassHourTable, 1) + 1 And C = 1 Then
-                OutputTable(R, C) = Config.SubjectNameOf(R - 1)
+                OutputTable(R, C) = Structure.SubjectNameOf(R - 1)
             ElseIf R = UBound(ClassHourTable, 1) + 1 And C = 1 Then
                 OutputTable(R, C) = jpnGoukei
             Else
@@ -38,17 +38,17 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour
     Format = OutputTable
 End Function
 
-Private Function ToClassHourTable(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHourAggregate, ByVal Config As Dom_SchoolStructure) As Long()
+Private Function ToClassHourTable(ByVal ClassHourType As Dom_ClassHourType, ByVal ClassHour As Dom_ClassHourAggregate, ByVal Structure As Dom_SchoolStructure) As Long()
 '    Dim Table() As Long
-'    ReDim Table(1 To Config.SubjectCount + 1, 1 To Config.MainStreamGradeCount)
+'    ReDim Table(1 To Structure.SubjectCount + 1, 1 To Structure.MainStreamGradeCount)
 '    Dim Total() As Long
-'    ReDim Total(1 To Config.MainStreamGradeCount)
+'    ReDim Total(1 To Structure.MainStreamGradeCount)
 '    Dim G As Long
-'    For G = 1 To Config.MainStreamGradeCount
+'    For G = 1 To Structure.MainStreamGradeCount
 '        Dim Grade As Dom_Grade
 '        Set Grade = CreateGrade(G)
 '        Dim i As Long
-'        For i = 1 To Config.SubjectCount
+'        For i = 1 To Structure.SubjectCount
 '            Dim Subject As Dom_Subject
 '            Set Subject = CreateSubject(i)
 '            Dim Value As Long

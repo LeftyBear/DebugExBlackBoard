@@ -16,7 +16,7 @@ Private Enum ParserState
     InsideQuotedField
 End Enum
 
-Public Function Parse(ByVal TextData As String) As String()
+Public Function Parse(ByVal RawText As String) As String()
     Dim RawRows As VBA.Collection
     Set RawRows = New VBA.Collection
     Dim CurrentRow As VBA.Collection
@@ -26,12 +26,12 @@ Public Function Parse(ByVal TextData As String) As String()
     Dim Buffer As String
     Buffer = vbNullString
     Dim i As Long
-    For i = 1 To VBA.Len(TextData)
+    For i = 1 To VBA.Len(RawText)
         Dim Char As String
-        Char = VBA.Mid$(TextData, i, 1)
-        If i < VBA.Len(TextData) Then
+        Char = VBA.Mid$(RawText, i, 1)
+        If i < VBA.Len(RawText) Then
             Dim NextChar As String
-            NextChar = VBA.Mid$(TextData, i + 1, 1)
+            NextChar = VBA.Mid$(RawText, i + 1, 1)
         Else
             NextChar = vbNullString
         End If

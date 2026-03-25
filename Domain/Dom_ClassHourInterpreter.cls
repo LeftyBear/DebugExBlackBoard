@@ -7,45 +7,53 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@IgnoreModule UseMeaningfulName
 '@Folder("Domain.Interpreter")
 Option Explicit
 
 Private Type Member
-    Resolver As Dom_HeaderTokenResolver
+    Structure   As Dom_SchoolStructure
+    Resolver    As Dom_HeaderTokenResolver
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Resolver As Dom_HeaderTokenResolver)
-    Set This.Resolver = Resolver
+Public Sub Initialize(ByVal Structure As Dom_SchoolStructure)
+    Set This.Structure = Structure
+    Set This.Resolver = New Dom_HeaderTokenResolver
 End Sub
-'@Ignore ProcedureCanBeWrittenAsFunction
-Public Sub Interprete(ByVal Config As Dom_SchoolStructure, ByVal Header As Dom_ClassHourHeader, ByVal RawValue As String, ByVal Aggregate As Dom_ClassHourAggregate)
-    Dim NormDate As Date
-    NormDate = This.Resolver.ResolveDate(Header.RawDate)
-    Dim ClassHourType As Dom_ClassHourType
-    Set ClassHourType = This.Resolver.ResolveClassHourType(Header.ClassHourType)
+
+Public Function Interprete(ByVal Header As Dom_ClassHourHeader, ByVal RawValue As String) As Dom_ClassHour
+    If Header.ClassHourType <> vbNullString Then
+        Dim ClassHourType As Dom_ClassHourType
+        Set ClassHourType = This.Resolver.ResolveClassHourType(RawValue)
+    End If
     If Header.SubjectName <> vbNullString Then
         Dim Subject As Dom_Subject
-        Set Subject = Config.ResolveSubject(Header.SubjectName)
+        Set Subject = This.Structure.ResolveSubject(RawValue)
         Dim Hours As Dom_ClassHourValue
         Set Hours = CreateHours(Dom_Util_Long.NormalizeToLong(RawValue))
-    ElseIf Header.Period <> vbNullString Then
+    End If
+    If Header.Period <> vbNullString Then
         Dim Period As Dom_Period
-        Set Period = This.Resolver.ResolvePeriod(Header.Period)
+        Set Period = This.Resolver.ResolvePeriod(RawValue)
         Dim Mark As Dom_ClassHourMark
         Set Mark = CreateMark(RawValue)
     End If
-    Dim Grade As Dom_Grade
-    Set Grade = This.Resolver.ResolveGrade(Header.Grade)
-    Dim ID As Dom_ClassHourID
-    Set ID = CreateID(ClassHourType, Subject, Period, Grade)
+    If Header.Grade <> vbNullString Then
+        Dim Grade As Dom_Grade
+        Set Grade = This.Resolver.ResolveGrade(RawValue)
+    End If
+    Dim ClassHourID As Dom_ClassHourID
+    Set ClassHourID = CreateID(ClassHourType, Subject, Period, Grade)
+    If Header.RawDate <> vbNullString Then
+        Dim NormDate As Date
+        NormDate = This.Resolver.ResolveDate(RawValue)
+    End If
     Dim ClassHour As Dom_ClassHour
     Set ClassHour = New Dom_ClassHour
-    ClassHour.Initialize ID, NormDate, Hours, Mark
-    Aggregate.AddInitialClassHour ClassHour
-End Sub
+    ClassHour.Initialize ClassHourID, NormDate, Hours, Mark
+    Set Interprete = ClassHour
+End Function
 
 Private Function CreateHours(ByVal Value As Long) As Dom_ClassHourValue
     With New Dom_ClassHourValue

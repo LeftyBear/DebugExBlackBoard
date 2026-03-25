@@ -18,11 +18,11 @@ Private Enum C
     TotalColumn
 End Enum
 
-Public Function Format(ByVal Enrollment As Dom_EnrollmentAggregate, ByVal Config As Dom_SchoolStructure) As Variant()
+Public Function Format(ByVal Enrollment As Dom_EnrollmentAggregate, ByVal Structure As Dom_SchoolStructure) As Variant()
     Dim MainStream() As Long
-    MainStream = ToTable(Main, Enrollment, Config.MainStreamGradeCount, Config.MainStreamClassCount)
+    MainStream = ToTable(Main, Enrollment, Structure.MainStreamGradeCount, Structure.MainStreamClassCount)
     Dim SpecialStream() As Long
-    SpecialStream = ToTable(Special, Enrollment, Config.SpecialStreamGradeCount, Config.SpecialStreamClassCount)
+    SpecialStream = ToTable(Special, Enrollment, Structure.SpecialStreamGradeCount, Structure.SpecialStreamClassCount)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(MainStream) + UBound(SpecialStream) + 2, 1 To C.TotalColumn)
     OutputTable(1, C.GradeColumn) = jpnNen
@@ -33,9 +33,9 @@ Public Function Format(ByVal Enrollment As Dom_EnrollmentAggregate, ByVal Config
     Dim R As Long
     R = 2
     Dim Grade As Long
-    For Grade = 1 To Config.MainStreamGradeCount
+    For Grade = 1 To Structure.MainStreamGradeCount
         Dim ClassNo As Long
-        For ClassNo = 1 To Config.MainStreamClassCount
+        For ClassNo = 1 To Structure.MainStreamClassCount
             OutputTable(R, C.GradeColumn) = Grade
             OutputTable(R, C.ClassColumn) = ClassNo
             OutputTable(R, C.MaleColumn) = MainStream(R - 1, C.MaleColumn)
@@ -54,10 +54,10 @@ Public Function Format(ByVal Enrollment As Dom_EnrollmentAggregate, ByVal Config
         GrandFemaleTotal = GrandFemaleTotal + MainStream(R - 1, C.FemaleColumn)
         R = R + 1
     Next
-    For Grade = 1 To Config.SpecialStreamGradeCount
-        For ClassNo = 1 To Config.SpecialStreamClassCount
+    For Grade = 1 To Structure.SpecialStreamGradeCount
+        For ClassNo = 1 To Structure.SpecialStreamClassCount
             OutputTable(R, C.GradeColumn) = jpnTokushi
-            OutputTable(R, C.ClassColumn) = Config.SpecialStreamClassNameOf(ClassNo)
+            OutputTable(R, C.ClassColumn) = Structure.SpecialStreamClassNameOf(ClassNo)
             OutputTable(R, C.MaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.MaleColumn)
             OutputTable(R, C.FemaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.FemaleColumn)
             OutputTable(R, C.TotalColumn) = SpecialStream(R - UBound(MainStream) - 1, C.TotalColumn)

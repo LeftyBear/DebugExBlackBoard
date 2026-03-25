@@ -3,8 +3,8 @@ Attribute VB_Name = "Dom_ConfigModel"
 Option Explicit
 Option Private Module
 
-Public Enum Dom_Config
-    UpperValue = 1
-    SpecialStreamCatalog
-    SubjectCatalog
+Public Enum Dom_StructureName
+    UpperValues = 1
+    SpecialStream
+    Subject
 End Enum

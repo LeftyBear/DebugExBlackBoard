@@ -9,7 +9,7 @@ Private Const CtMsForm As Long = 3
 Private Const RootPath As String = "C:\Users\biz\Documents\GitHub\DebugExBlackBoard"
 
 Public Sub ExportAllModules()
-    If Inf_Environment.GetEnvironmentType = ReleaseMode Then Exit Sub
+    If App_Environment.GetEnvironmentType = ReleaseMode Then Exit Sub
     Dim Component As Object
     For Each Component In ThisWorkbook.VBProject.VBComponents
         If IsExportTarget(Component) Then ExportComponent RootPath, Component
@@ -82,7 +82,7 @@ Private Function ResolveExportPath(ByVal RootPath As String, ByVal Component As 
     Case CtMsForm
         ResolveExportPath = LayerFolder & Component.Name & ".frm"
     Case Else
-        Err.Raise UtilErrUnsupportedComponentType, "Util_VBComponent", "Unsupported component type."
+        Err.Raise InfErrUnsupportedComponentType, "Util_VBComponent", "Unsupported component type."
     End Select
 End Function
 
@@ -96,6 +96,6 @@ Private Function ResolveLayerFolder(ByVal RootPath As String, ByVal ModuleName A
     ElseIf ModuleName Like "Util_*" Then
         ResolveLayerFolder = RootPath & "\Utility\"
     Else
-        Err.Raise UtilErrNotFoundLayerPrefix, "Util_VBComponent", "Layer prefix not found: " & ModuleName
+        Err.Raise InfErrNotFoundLayerPrefix, "Util_VBComponent", "Layer prefix not found: " & ModuleName
     End If
 End Function

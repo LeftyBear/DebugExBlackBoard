@@ -44,6 +44,7 @@ End Function
 
 Public Function ToKey() As String
     Dim ClassHourTypeKey As String
+    ClassHourTypeKey = This.ClassHourType.ToKey
     Select Case This.ClassHourType.Value
     Case Dom_ClassHourTypeEnum.Plan: ClassHourTypeKey = jpnKeikaku
     Case Dom_ClassHourTypeEnum.Execution: ClassHourTypeKey = jpnJisshi

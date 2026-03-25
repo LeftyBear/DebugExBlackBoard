@@ -16,10 +16,10 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Repository As Inf_ConfigReadRepository)
-    Set This.Repository = Repository
+Private Sub Class_Initialize()
+    Set This.Repository = New Inf_ConfigReadRepository
 End Sub
 
-Private Function Dom_IConfigRepository_Load(ByVal ConfigName As Dom_Config) As String()
-    Dom_IConfigRepository_Load = This.Repository.Load(ConfigName)
+Private Function Dom_IConfigRepository_Load(ByVal FilePath As String) As String()
+    Dom_IConfigRepository_Load = This.Repository.Load(FilePath)
 End Function

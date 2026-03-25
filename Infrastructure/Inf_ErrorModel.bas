@@ -9,4 +9,6 @@ End Enum
 
 Public Enum Inf_ErrNum
     InfErrNotFoundFile = vbObjectError + InfErr
+    InfErrNotFoundLayerPrefix
+    InfErrUnsupportedComponentType
 End Enum

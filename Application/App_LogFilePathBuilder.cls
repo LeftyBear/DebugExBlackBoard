@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Inf_LogFilePathBuilder"
+Attribute VB_Name = "App_LogFilePathBuilder"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -11,12 +11,12 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Provider As Inf_WorkbookPathProvider
+    Provider As App_IWorkbookPathProvider
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Provider As Inf_WorkbookPathProvider)
+Public Sub Initialize(ByVal Provider As App_IWorkbookPathProvider)
     Set This.Provider = Provider
 End Sub
 

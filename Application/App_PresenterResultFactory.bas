@@ -1,6 +1,7 @@
 Attribute VB_Name = "App_PresenterResultFactory"
 '@Folder "Application.Factory"
 Option Explicit
+Option Private Module
 
 Public Function CreateSuccess() As App_PresenterResult
     Dim Result As App_PresenterResult

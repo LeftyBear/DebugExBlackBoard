@@ -10,7 +10,17 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Parser")
 Option Explicit
 
-Public Function Parse(ByVal Config As Dom_SchoolStructure, ByVal HeaderName As String) As Dom_ClassHourHeader
+Private Type Member
+    Structure As Dom_SchoolStructure
+End Type
+
+Private This As Member
+
+Public Sub Initialize(ByVal Structure As Dom_SchoolStructure)
+    Set This.Structure = Structure
+End Sub
+
+Public Function Parse(ByVal HeaderName As String) As Dom_ClassHourHeader
     Dim Parts() As String
     Parts = VBA.Split(HeaderName, charUnderScore)
     If UBound(Parts) = 2 Then
@@ -19,7 +29,7 @@ Public Function Parse(ByVal Config As Dom_SchoolStructure, ByVal HeaderName As S
             If 0 < VBA.InStr(1, Parts(i), jpnKeikaku) Or 0 < VBA.InStr(1, Parts(i), jpnJisshi) Then
                 Dim ClassHourType As String
                 ClassHourType = Parts(i)
-            ElseIf Config.IsSubject(Parts(i)) Then
+            ElseIf This.Structure.IsSubject(Parts(i)) Then
                 Dim SubjectName As String
                 SubjectName = Parts(i)
             ElseIf 0 < VBA.InStr(1, Parts(i), jpnKouji) Then

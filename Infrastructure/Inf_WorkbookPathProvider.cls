@@ -9,17 +9,18 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder Infrastructure.Provider
 Option Explicit
+Implements App_IWorkbookPathProvider
 
-Public Function GetBaseFolderPath() As String
+Private Function GetParentPath(ByVal TargetPath As String) As String
+    GetParentPath = VBA.Left$(TargetPath, VBA.InStrRev(TargetPath, charBackSlash) - 1)
+End Function
+
+Private Function App_IWorkbookPathProvider_GetBaseFolderPath() As String
     Dim CurrentPath As String
     CurrentPath = ThisWorkbook.Path
     Dim ParentPath As String
     ParentPath = GetParentPath(CurrentPath)
     Dim GrandParentPath As String
     GrandParentPath = GetParentPath(ParentPath)
-    GetBaseFolderPath = GrandParentPath & charBackSlash
-End Function
-
-Private Function GetParentPath(ByVal TargetPath As String) As String
-    GetParentPath = VBA.Left$(TargetPath, VBA.InStrRev(TargetPath, charBackSlash) - 1)
+    App_IWorkbookPathProvider_GetBaseFolderPath = GrandParentPath & charBackSlash
 End Function

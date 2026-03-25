@@ -11,34 +11,34 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
+    Builder     As App_EntityFilePathBuilder
     Repository  As Dom_IClassHourRepository
-    Config      As Dom_SchoolStructure
-    Parser      As Dom_ClassHourHeaderParser
-    Interpreter As Dom_ClassHourInterpreter
+    Resolver    As Dom_ClassHourColumnResolver
+    Factory     As Dom_ClassHourAggregateFactory
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Repository As Dom_IClassHourRepository, ByVal Config As Dom_SchoolStructure, ByVal Parser As Dom_ClassHourHeaderParser, ByVal Interpreter As Dom_ClassHourInterpreter)
+Public Sub Initialize(ByVal Builder As App_EntityFilePathBuilder, ByVal Repository As Dom_IClassHourRepository, ByVal Resolver As Dom_ClassHourColumnResolver)
+    Set This.Builder = Builder
     Set This.Repository = Repository
-    Set This.Config = Config
-    Set This.Parser = Parser
-    Set This.Interpreter = Interpreter
+    Set This.Resolver = Resolver
+    Set This.Factory = New Dom_ClassHourAggregateFactory
 End Sub
 
 Public Function Execute(ByVal TargetDate As Date) As Dom_ClassHourYearAggregate
-    Dim SchoolYear As Long
-    SchoolYear = Dom_Util_Date.GetSchoolYear(TargetDate)
-    Dim CSVDTO As App_CSVDTO
-    Set CSVDTO = New App_CSVDTO
-    CSVDTO.Initialize This.Repository.Load(SchoolYear)
-    If CSVDTO.RowCount = 0 Then Err.Raise AppErrEmptyData, "App_AggregateClassHour", "CSV data is empty."
-    With New App_HeaderMapper
-        Dim ColumnDTOGroups As VBA.Collection
-        Set ColumnDTOGroups = .Map(CSVDTO)
+    With New Dom_SchoolYear
+        Dim SchoolYear As Dom_SchoolYear
+        Set SchoolYear = .Create(Dom_Util_Date.GetSchoolYear(TargetDate))
     End With
-    Dim Factory As Dom_ClassHourAggregateFactory
-    Set Factory = New Dom_ClassHourAggregateFactory
-    Factory.Initialize This.Parser, This.Interpreter
-    Set Execute = Factory.Create(This.Config, ColumnDTOGroups)
+    Dim FilePath As String
+    FilePath = This.Builder.Builed(ClassHour, SchoolYear)
+    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise AppErrInvalidFilePath, "App_AggregateClassHour", "File path is invalid."
+    Dim RawCSVRows() As String
+    RawCSVRows = This.Repository.Load(SchoolYear)
+    If App_Util_Array.IsEmpty(RawCSVRows) Then Err.Raise AppErrEmptyArray, "App_AggregateClassHour", "RawCSVRows is empty."
+    Dim EntityGroups As VBA.Collection
+    Set EntityGroups = This.Resolver.Resolve(RawCSVRows)
+    If EntityGroups.Count = 0 Then Err.Raise AppErrNothingItem, "App_AggregateClassHour", "EntityGroups item is nothing."
+    Set Execute = This.Factory.Create(EntityGroups)
 End Function

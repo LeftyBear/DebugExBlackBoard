@@ -10,6 +10,5 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Interface")
 Option Explicit
 
-Public Function Load(ByVal ConfigName As Dom_Config) As String()
+Public Function Load(ByVal FilePath As String) As String()
 End Function
-

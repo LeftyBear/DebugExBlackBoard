@@ -75,6 +75,12 @@ Public Function GetSchoolWeek(ByVal TargetDate As Date) As Long
     GetSchoolWeek = ((TargetMonday - BaseMonday) / 7) + 1
 End Function
 
+Public Function IsFourDigitNumber(ByVal Value As String) As Boolean
+    If VBA.Len(Value) <> 4 Then Exit Function
+    If Not VBA.IsNumeric(Value) Then Exit Function
+    IsFourDigitNumber = True
+End Function
+
 Public Function NormalizeToDate(ByVal RawText As String) As Date
     Dim TextValue As String
     TextValue = VBA.Trim$(RawText)

@@ -9,15 +9,15 @@ Public Sub Run()
     Set Logger = App_LoggerFactory.CreateLogger
     On Error GoTo ErrorHandler
     'SchoolStructure-----------------------------------------------------------------------------
-    Dim SchoolConfigGenerater As App_GenerateSchoolStructure
-    Set SchoolConfigGenerater = App_UseCaseFactory.CreateSchoolConfigGenerater
-    Dim SchoolStructure As Dom_SchoolStructure
-    Set SchoolStructure = SchoolConfigGenerater.Execute
+    Dim GenerateStructure As App_AggregateSchoolStructure
+    Set GenerateStructure = App_UseCaseFactory.CreateGenerateSchoolStructure
+    Dim Structure As Dom_SchoolStructure
+    Set Structure = GenerateStructure.Execute
     'UseCase-------------------------------------------------------------------------------------
     Dim AggregateEnrollment As App_AggregateEnrollment
-    Set AggregateEnrollment = App_UseCaseFactory.CreateAggregateEnrollment(SchoolStructure)
+    Set AggregateEnrollment = App_UseCaseFactory.CreateAggregateEnrollment(Structure)
     Dim AggregateClassHour As App_AggregateClassHour
-    Set AggregateClassHour = App_UseCaseFactory.CreateAggregateClassHour(SchoolStructure)
+    Set AggregateClassHour = App_UseCaseFactory.CreateAggregateClassHour(Structure)
     'Presenter-----------------------------------------------------------------------------------
     Dim Presenter As App_Presenter
     Set Presenter = New App_Presenter

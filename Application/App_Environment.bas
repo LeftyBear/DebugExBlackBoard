@@ -1,19 +1,18 @@
-Attribute VB_Name = "Inf_Environment"
-'@Folder "Utility.Environment"
+Attribute VB_Name = "App_Environment"
+'@Folder "Application.Model"
 Option Explicit
 Option Private Module
 
 Private Const IsDebug As Boolean = True
-Public Enum Util_EnvironmentType
+Public Enum App_EnvironmentType
     DebugMode
     ReleaseMode
 End Enum
 
-Public Function GetEnvironmentType() As Util_EnvironmentType
+Public Function GetEnvironmentType() As App_EnvironmentType
     If IsDebug Then
         GetEnvironmentType = DebugMode
     Else
         GetEnvironmentType = ReleaseMode
     End If
 End Function
-

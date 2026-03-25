@@ -22,21 +22,21 @@ Public Sub Initialize(ByVal Parser As Dom_EnrollmentHeaderParser, ByVal Interpre
     Set This.Interpreter = Interpreter
 End Sub
 
-Public Function Create(ByVal Config As Dom_SchoolStructure, ByVal ColumnDTOGroups As VBA.Collection) As Dom_EnrollmentYearAggregate
+Public Function Create(ByVal Structure As Dom_SchoolStructure, ByVal EntityGroups As VBA.Collection) As Dom_EnrollmentYearAggregate
     Dim GradeCount As Long
-    GradeCount = Bigger(Config.MainStreamGradeCount, Config.SpecialStreamGradeCount)
+    GradeCount = Bigger(Structure.MainStreamGradeCount, Structure.SpecialStreamGradeCount)
     Dim ClassNoCount As Long
-    ClassNoCount = Bigger(Config.MainStreamClassCount, Config.SpecialStreamClassCount)
+    ClassNoCount = Bigger(Structure.MainStreamClassCount, Structure.SpecialStreamClassCount)
     Dim Result As Dom_EnrollmentYearAggregate
     Set Result = New Dom_EnrollmentYearAggregate
     Result.Initialize Dom_StreamTypeEnum.Special, GradeCount, ClassNoCount
     Dim Aggregate As Dom_EnrollmentAggregate
     Set Aggregate = New Dom_EnrollmentAggregate
     Aggregate.Initialize Dom_StreamTypeEnum.Special, GradeCount, ClassNoCount, Dom_GenderEnum.Female
-    Dim ColumnDTOGroup As VBA.Collection
-    For Each ColumnDTOGroup In ColumnDTOGroups
-        Dim ColumnDTO As App_ColumnDTO
-        For Each ColumnDTO In ColumnDTOGroup
+    Dim EntityGroup As VBA.Collection
+    For Each EntityGroup In EntityGroups
+        Dim ColumnDTO As Dom_Column
+        For Each ColumnDTO In EntityGroup
             Dim Header As Dom_EnrollmentHeader
             Set Header = This.Parser.Parse(ColumnDTO.HeaderName)
             If Header.TargetDate <> vbNullString Then

@@ -3,7 +3,7 @@ Attribute VB_Name = "Dom_EntityModel"
 Option Explicit
 Option Private Module
 
-Public Enum Dom_Entity
+Public Enum Dom_EntityName
     ClassHour = 1
     Enrollment
 End Enum

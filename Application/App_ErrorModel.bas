@@ -8,7 +8,9 @@ Public Enum App_LayerErrNum
 End Enum
 
 Public Enum App_ErrNum
-    AppErrEmptyData = vbObjectError + AppErr
+    AppErrEmptyArray = vbObjectError + AppErr
+    AppErrInvalidFilePath
+    AppErrNothingItem
 End Enum
 
 Public Enum App_ViewResultType

@@ -11,20 +11,21 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Builder As Inf_LogFilePathBuilder
+    Builder As App_LogFilePathBuilder
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Builder As Inf_LogFilePathBuilder)
+Public Sub Initialize(ByVal Builder As App_LogFilePathBuilder)
     Set This.Builder = Builder
 End Sub
 
-Public Function Resolve(ByVal Environment As Util_EnvironmentType) As Inf_ILogger
+Public Function Resolve(ByVal Environment As App_EnvironmentType) As Inf_ILogger
     Select Case Environment
-    Case Util_EnvironmentType.ReleaseMode
+    Case App_EnvironmentType.ReleaseMode
         Dim FilePath As String
         FilePath = This.Builder.Builed
+        If VBA.Dir(FilePath) = 0 Then Err.Raise AppErrInvalidFilePath, "App_LoggerResolver", "File path is invalid"
         Dim Logger As Inf_FileLogger
         Set Logger = New Inf_FileLogger
         Logger.Initialize FilePath
