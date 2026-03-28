@@ -46,13 +46,13 @@ Public Function GetWeeklyHourTotal(ByVal TargetDate As Date, ByVal Filter As Dom
     TargetWeek = Dom_Util_Date.GetSchoolWeek(TargetDate)
     Dim Dates() As Variant
     Dates = This.DailyMap.Keys
-    Dim Years() As Variant
-    Years = This.DailyMap.Years
+    Dim ClassHours() As Variant
+    ClassHours = This.DailyMap.Items
     Dim i As Long
-    For i = LBound(Years) To UBound(Years)
+    For i = LBound(Dates) To UBound(Dates)
         If Dom_Util_Date.GetSchoolWeek(CDate(Dates(i))) = TargetWeek Then
             Dim Daily As Dom_ClassHourAggregate
-            Set Daily = Years(i)
+            Set Daily = ClassHours(i)
             Dim Total As Long
             Total = Total + Daily.GetHourTotal(Filter)
         End If
@@ -65,13 +65,13 @@ Public Function GetMonthlyHourTotal(ByVal TargetDate As Date, ByVal Filter As Do
     TargetMonth = VBA.Month(TargetDate)
     Dim Dates() As Variant
     Dates = This.DailyMap.Keys
-    Dim Years() As Variant
-    Years = This.DailyMap.Years
+    Dim ClassHours() As Variant
+    ClassHours = This.DailyMap.Items
     Dim i As Long
-    For i = LBound(Years) To UBound(Years)
+    For i = LBound(Dates) To UBound(Dates)
         If VBA.Month(CDate(Dates(i))) = TargetMonth Then
             Dim Daily As Dom_ClassHourAggregate
-            Set Daily = Years(i)
+            Set Daily = ClassHours(i)
             Dim Total As Long
             Total = Total + Daily.GetHourTotal(Filter)
         End If
@@ -82,17 +82,15 @@ End Function
 Public Function GetCumulativeHourTotal(ByVal TargetDate As Date, ByVal Filter As Dom_ClassHourFilter) As Long
     Dim Dates() As Variant
     Dates = This.DailyMap.Keys
-    Dim Years() As Variant
-    Years = This.DailyMap.Years
+    Dim ClassHours() As Variant
+    ClassHours = This.DailyMap.Items
     Dim i As Long
-    For i = LBound(Years) To UBound(Years)
+    For i = LBound(Dates) To UBound(Dates)
         If CDate(Dates(i)) <= TargetDate Then
             Dim Daily As Dom_ClassHourAggregate
-            Set Daily = Years(i)
+            Set Daily = ClassHours(i)
             Dim Total As Long
             Total = Total + Daily.GetHourTotal(Filter)
-        Else
-            Exit For
         End If
     Next
     GetCumulativeHourTotal = Total

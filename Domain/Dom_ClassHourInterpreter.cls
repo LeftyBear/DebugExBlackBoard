@@ -36,8 +36,8 @@ Public Function Interprete(ByVal Header As Dom_ClassHourHeader, ByVal RawValue A
     If Header.Period <> vbNullString Then
         Dim Period As Dom_Period
         Set Period = This.Resolver.ResolvePeriod(RawValue)
-        Dim Mark As Dom_ClassHourMark
-        Set Mark = CreateMark(RawValue)
+        Dim Mark As String
+        Mark = RawValue
     End If
     If Header.Grade <> vbNullString Then
         Dim Grade As Dom_Grade
@@ -55,20 +55,15 @@ Public Function Interprete(ByVal Header As Dom_ClassHourHeader, ByVal RawValue A
     Set Interprete = ClassHour
 End Function
 
+Private Function CreateID(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_ClassHourID
+    With New Dom_ClassHourID
+        Set CreateID = .Create(ClassHourType, Subject, Period, Grade)
+    End With
+End Function
+
 Private Function CreateHours(ByVal Value As Long) As Dom_ClassHourValue
     With New Dom_ClassHourValue
         Set CreateHours = .Create(Value)
     End With
 End Function
 
-Private Function CreateMark(ByVal Value As String) As Dom_ClassHourMark
-    With New Dom_ClassHourMark
-        Set CreateMark = .Create(Value)
-    End With
-End Function
-
-Private Function CreateID(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_ClassHourID
-    With New Dom_ClassHourID
-        Set CreateID = .Create(ClassHourType, Subject, Period, Grade)
-    End With
-End Function

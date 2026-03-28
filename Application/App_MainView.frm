@@ -19,7 +19,7 @@ Implements App_IMainView
 Private Type Member
     Presenter As App_Presenter
 End Type
-
+'@Ignore MoveFieldCloserToUsage
 Private This As Member
 
 Public Sub Initialize(ByVal Presenter As App_Presenter)

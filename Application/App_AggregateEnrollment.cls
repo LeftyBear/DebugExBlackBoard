@@ -13,19 +13,17 @@ Option Explicit
 Private Type Member
     Builder     As App_EntityFilePathBuilder
     Repository  As Dom_IEnrollmentRepository
-    Structure   As Dom_SchoolStructure
-    Parser      As Dom_EnrollmentHeaderParser
-    Interpreter As Dom_EnrollmentInterpreter
+    Resolver    As Dom_EnrollmentColumnResolver
+    Factory     As Dom_EnrollmentAggregateFactory
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Builder As App_EntityFilePathBuilder, ByVal Repository As Dom_IEnrollmentRepository, ByVal Structure As Dom_SchoolStructure, ByVal Parser As Dom_EnrollmentHeaderParser, ByVal Interpreter As Dom_EnrollmentInterpreter)
+Public Sub Initialize(ByVal Builder As App_EntityFilePathBuilder, ByVal Repository As Dom_IEnrollmentRepository, ByVal Resolver As Dom_EnrollmentColumnResolver)
     Set This.Builder = Builder
     Set This.Repository = Repository
-    Set This.Structure = Structure
-    Set This.Parser = Parser
-    Set This.Interpreter = Interpreter
+    Set This.Resolver = Resolver
+    Set This.Factory = New Dom_EnrollmentAggregateFactory
 End Sub
 
 Public Function Execute(ByVal TargetDate As Date) As Dom_EnrollmentYearAggregate
@@ -36,16 +34,11 @@ Public Function Execute(ByVal TargetDate As Date) As Dom_EnrollmentYearAggregate
     Dim FilePath As String
     FilePath = This.Builder.Builed(Enrollment, SchoolYear)
     If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise AppErrInvalidFilePath, "App_AggregateEnrollment", "File path is invalid."
-'    Dim CSVDTO As App_CSVDTO
-'    Set CSVDTO = New App_CSVDTO
-'    CSVDTO.Initialize This.Repository.Load(SchoolYear)
-'    If CSVDTO.RowCount = 0 Then Err.Raise AppErrEmptyArray, "App_AggregateEnrollment", "CSV data is empty."
-'    With New App_HeaderMapper
-'        Dim EntityGroups As VBA.Collection
-'        Set EntityGroups = .Map(CSVDTO)
-'    End With
-'    Dim Factory As Dom_EnrollmentAggregateFactory
-'    Set Factory = New Dom_EnrollmentAggregateFactory
-'    Factory.Initialize This.Parser, This.Interpreter
-'    Set Execute = Factory.Create(This.Structure, EntityGroups)
+    Dim RawCSVRows() As String
+    RawCSVRows = This.Repository.Load(FilePath)
+    If App_Util_Array.IsEmpty(RawCSVRows) Then Err.Raise AppErrEmptyArray, "App_AggregateEnrollment", "RawCSVRows is empty."
+    Dim EntityGroups As VBA.Collection
+    Set EntityGroups = This.Resolver.Resolve(RawCSVRows)
+    If EntityGroups.Count = 0 Then Err.Raise AppErrNothingItem, "App_AggregateEnrollment", "EntityGroups item is nothing."
+    Set Execute = This.Factory.Create(EntityGroups)
 End Function

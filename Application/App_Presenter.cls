@@ -12,6 +12,7 @@ Option Explicit
 Implements App_IPresenterCallback
 Private Type Member
     Logger      As Inf_ILogger
+    Structure   As Dom_SchoolStructure
     Enrollment  As App_AggregateEnrollment
     ClassHour   As App_AggregateClassHour
     MainView    As App_IMainView
@@ -20,8 +21,9 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Logger As Inf_ILogger, ByVal Enrollment As App_AggregateEnrollment, ByVal ClassHour As App_AggregateClassHour)
+Public Sub Initialize(ByVal Logger As Inf_ILogger, ByVal Structure As Dom_SchoolStructure, ByVal Enrollment As App_AggregateEnrollment, ByVal ClassHour As App_AggregateClassHour)
     Set This.Logger = Logger
+    Set This.Structure = Structure
     Set This.Enrollment = Enrollment
     Set This.ClassHour = ClassHour
     Set This.Base = New App_BasePresenter
@@ -32,27 +34,27 @@ Public Sub AttachView(ByVal MainView As App_IMainView)
 End Sub
 
 Public Sub Bootstrap()
-'    Dim YearlyEnrollment As Dom_EnrollmentYearAggregate
-'    Set YearlyEnrollment = This.Enrollment.Execute(Date)
+    Dim YearlyEnrollment As Dom_EnrollmentYearAggregate
+    Set YearlyEnrollment = This.Enrollment.Execute(Date)
     Dim YearlyClassHour As Dom_ClassHourYearAggregate
     Set YearlyClassHour = This.ClassHour.Execute(Date)
     'View----------------------------------------------------------------------------------------
-'    Dim EnrollmentFormatter As App_ViewEnrollmentFormatter
-'    Set EnrollmentFormatter = New App_ViewEnrollmentFormatter
-'    Dim EnrollmentTable() As Variant
-'    EnrollmentTable = EnrollmentFormatter.Format(Enrollment.GetAggregate(Date), SchoolStructure)
-'    Dim ClassHourFormatter As App_ViewClassHourFormatter
-'    Set ClassHourFormatter = New App_ViewClassHourFormatter
-'    Dim ClassHourPlanTable() As Variant
-'    ClassHourPlanTable = ClassHourFormatter.Format(Plan, ClassHour.GetAggregate(Date), SchoolStructure)
-'    Dim ClassHourExecutionTable() As Variant
-'    ClassHourExecutionTable = ClassHourFormatter.Format(Execution, ClassHour.GetAggregate(Date), SchoolStructure)
-'    Dim TimeTableFormatter As App_ViewTimeTableFormatter
-'    Set TimeTableFormatter = New App_ViewTimeTableFormatter
-'    Dim TimeTablePlanTable() As Variant
-'    TimeTablePlanTable = TimeTableFormatter.Format(Plan, ClassHour.GetAggregate(Date), SchoolStructure)
-'    Dim TimeTableExecutionTable() As Variant
-'    TimeTableExecutionTable = TimeTableFormatter.Format(Execution, ClassHour.GetAggregate(Date), SchoolStructure)
+    Dim EnrollmentFormatter As App_ViewEnrollmentFormatter
+    Set EnrollmentFormatter = New App_ViewEnrollmentFormatter
+    Dim EnrollmentTable() As Variant
+    EnrollmentTable = EnrollmentFormatter.Format(YearlyEnrollment.GetByDate(Date), This.Structure)
+    Dim ClassHourFormatter As App_ViewClassHourFormatter
+    Set ClassHourFormatter = New App_ViewClassHourFormatter
+    Dim ClassHourPlanTable() As Variant
+    ClassHourPlanTable = ClassHourFormatter.Format(Plan, YearlyClassHour.GetByDate(Date), This.Structure)
+    Dim ClassHourExecutionTable() As Variant
+    ClassHourExecutionTable = ClassHourFormatter.Format(Execution, YearlyClassHour.GetByDate(Date), This.Structure)
+    Dim TimeTableFormatter As App_ViewTimeTableFormatter
+    Set TimeTableFormatter = New App_ViewTimeTableFormatter
+    Dim TimeTablePlanTable() As Variant
+    TimeTablePlanTable = TimeTableFormatter.Format(Plan, YearlyClassHour.GetByDate(Date), This.Structure)
+    Dim TimeTableExecutionTable() As Variant
+    TimeTableExecutionTable = TimeTableFormatter.Format(Execution, YearlyClassHour.GetByDate(Date), This.Structure)
 End Sub
 
 Public Sub Excute()

@@ -34,14 +34,14 @@ Public Function CreateAggregateEnrollment(ByVal Structure As Dom_SchoolStructure
     Set BaseRepository = New Inf_EnrollmentRepository
     BaseRepository.Initialize ReadRepository
     'Resolver-----------------------------------------------------------------------------------
-'    Dim Resolver As Dom_ClassHourColumnResolver
-'    Set Resolver = New Dom_ClassHourColumnResolver
-'    Resolver.Initialize Structure
+    Dim Resolver As Dom_EnrollmentColumnResolver
+    Set Resolver = New Dom_EnrollmentColumnResolver
+    Resolver.Initialize Structure
     'UseCase------------------------------------------------------------------------------------
-'    Dim UseCase As App_AggregateEnrollment
-'    Set UseCase = New App_AggregateEnrollment
-'    UseCase.Initialize Builder, BaseRepository, Resolver
-'    Set CreateAggregateEnrollment = UseCase
+    Dim UseCase As App_AggregateEnrollment
+    Set UseCase = New App_AggregateEnrollment
+    UseCase.Initialize Builder, BaseRepository, Resolver
+    Set CreateAggregateEnrollment = UseCase
 End Function
 
 Public Function CreateAggregateClassHour(ByVal Structure As Dom_SchoolStructure) As App_AggregateClassHour

@@ -93,14 +93,16 @@ Private Function ToTable(ByVal StreamType As Dom_StreamTypeEnum, ByVal Enrollmen
     For G = 1 To GradeCount
         Dim Grade As Dom_Grade
         Set Grade = CreateGrade(G)
-        Dim CN As Long
-        For CN = 1 To ClassCount
+        Dim No As Long
+        For No = 1 To ClassCount
             Dim ClassNo As Dom_ClassNo
-            Set ClassNo = CreateClassNo(CN)
+            Set ClassNo = CreateClassNo(No)
             Dim Gender As Long
             For Gender = Dom_GenderEnum.Male To Dom_GenderEnum.Female
+                Dim Filter As Dom_EnrollmentFilter
+                Set Filter = CreateFilter(StreamType, Grade, ClassNo, Gender)
                 Dim Value As Long
-                Value = Enrollment.GetValue(StreamType, Grade, ClassNo, Gender)
+                Value = Enrollment.GetValueTotal(Filter)
                 If Gender = Dom_GenderEnum.Male Then
                     MaleTotal(G) = MaleTotal(G) + Value
                     Table(R, C.MaleColumn) = Value
@@ -108,9 +110,9 @@ Private Function ToTable(ByVal StreamType As Dom_StreamTypeEnum, ByVal Enrollmen
                     FemaleTotal(G) = FemaleTotal(G) + Value
                     Table(R, C.FemaleColumn) = Value
                 End If
-                ClassTotal(G, CN) = ClassTotal(G, CN) + Value
+                ClassTotal(G, No) = ClassTotal(G, No) + Value
             Next
-            Table(R, C.TotalColumn) = ClassTotal(G, CN)
+            Table(R, C.TotalColumn) = ClassTotal(G, No)
             R = R + 1
         Next
         Table(R, C.MaleColumn) = MaleTotal(G)
@@ -119,6 +121,22 @@ Private Function ToTable(ByVal StreamType As Dom_StreamTypeEnum, ByVal Enrollmen
         R = R + 1
     Next
     ToTable = Table
+End Function
+
+Private Function CreateFilter(ByVal StreamTypeNum As Dom_StreamTypeEnum, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal GenderNum As Long) As Dom_EnrollmentFilter
+    Dim StreamType As Dom_StreamType
+    Set StreamType = CreateStreamType(StreamTypeNum)
+    Dim Gender As Dom_Gender
+    Set Gender = CreateGender(GenderNum)
+    With New Dom_EnrollmentFilter
+        Set CreateFilter = .Create(StreamType, Grade, ClassNo, Gender)
+    End With
+End Function
+
+Private Function CreateStreamType(ByVal Value As Long) As Dom_StreamType
+    With New Dom_StreamType
+        Set CreateStreamType = .Create(Value)
+    End With
 End Function
 
 Private Function CreateGrade(ByVal Value As Long) As Dom_Grade
@@ -130,5 +148,11 @@ End Function
 Private Function CreateClassNo(ByVal Value As Long) As Dom_ClassNo
     With New Dom_ClassNo
         Set CreateClassNo = .Create(Value)
+    End With
+End Function
+
+Private Function CreateGender(ByVal Value As Long) As Dom_Gender
+    With New Dom_Gender
+        Set CreateGender = .Create(Value)
     End With
 End Function

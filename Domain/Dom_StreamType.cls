@@ -33,10 +33,6 @@ Public Function Equals(ByVal Other As Dom_StreamType) As Boolean
     Equals = True
 End Function
 
-Public Function ToKey() As String
-    ToKey = CStr(This.Value) & jpnKouji
-End Function
-
 Public Property Get Value() As Long
     Value = This.Value
 End Property

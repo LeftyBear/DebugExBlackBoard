@@ -29,7 +29,7 @@ Public Function SumMark(ByRef Items() As Variant, ByVal Filter As Dom_ClassHourF
         Dim Item As Dom_ClassHour
         Set Item = Items(i)
         If Filter.IsMatch(Item) Then
-            If Item.GetMark.Value <> vbNullString Then
+            If Item.GetMark <> vbNullString Then
                 Dim Count As Long
                 Count = Count + 1
             End If

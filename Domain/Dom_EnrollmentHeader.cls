@@ -11,7 +11,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    TargetDate  As String
+    RawDate     As String
     Grade       As String
     ClassNo     As String
     Gender      As String
@@ -21,8 +21,8 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal TargetDate As String, ByVal Grade As String, ByVal ClassNo As String, ByVal Gender As String, ByVal Transfer As String, ByVal Remarks As String)
-    This.TargetDate = TargetDate
+Public Sub Initialize(ByVal RawDate As String, ByVal Grade As String, ByVal ClassNo As String, ByVal Gender As String, ByVal Transfer As String, ByVal Remarks As String)
+    This.RawDate = RawDate
     This.Grade = Grade
     This.ClassNo = ClassNo
     This.Gender = Gender
@@ -30,8 +30,8 @@ Public Sub Initialize(ByVal TargetDate As String, ByVal Grade As String, ByVal C
     This.Remarks = Remarks
 End Sub
 
-Public Property Get TargetDate() As String
-    TargetDate = This.TargetDate
+Public Property Get RawDate() As String
+    RawDate = This.RawDate
 End Property
 
 Public Property Get Grade() As String

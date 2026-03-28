@@ -35,7 +35,7 @@ Public Function Execute(ByVal TargetDate As Date) As Dom_ClassHourYearAggregate
     FilePath = This.Builder.Builed(ClassHour, SchoolYear)
     If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise AppErrInvalidFilePath, "App_AggregateClassHour", "File path is invalid."
     Dim RawCSVRows() As String
-    RawCSVRows = This.Repository.Load(SchoolYear)
+    RawCSVRows = This.Repository.Load(FilePath)
     If App_Util_Array.IsEmpty(RawCSVRows) Then Err.Raise AppErrEmptyArray, "App_AggregateClassHour", "RawCSVRows is empty."
     Dim EntityGroups As VBA.Collection
     Set EntityGroups = This.Resolver.Resolve(RawCSVRows)

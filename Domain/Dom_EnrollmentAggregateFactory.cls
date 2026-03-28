@@ -10,51 +10,18 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Factory")
 Option Explicit
 
-Private Type Member
-    Parser      As Dom_EnrollmentHeaderParser
-    Interpreter As Dom_EnrollmentInterpreter
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Parser As Dom_EnrollmentHeaderParser, ByVal Interpreter As Dom_EnrollmentInterpreter)
-    Set This.Parser = Parser
-    Set This.Interpreter = Interpreter
-End Sub
-
-Public Function Create(ByVal Structure As Dom_SchoolStructure, ByVal EntityGroups As VBA.Collection) As Dom_EnrollmentYearAggregate
-    Dim GradeCount As Long
-    GradeCount = Bigger(Structure.MainStreamGradeCount, Structure.SpecialStreamGradeCount)
-    Dim ClassNoCount As Long
-    ClassNoCount = Bigger(Structure.MainStreamClassCount, Structure.SpecialStreamClassCount)
-    Dim Result As Dom_EnrollmentYearAggregate
-    Set Result = New Dom_EnrollmentYearAggregate
-    Result.Initialize Dom_StreamTypeEnum.Special, GradeCount, ClassNoCount
-    Dim Aggregate As Dom_EnrollmentAggregate
-    Set Aggregate = New Dom_EnrollmentAggregate
-    Aggregate.Initialize Dom_StreamTypeEnum.Special, GradeCount, ClassNoCount, Dom_GenderEnum.Female
+Public Function Create(ByVal EntityGroups As VBA.Collection) As Dom_EnrollmentYearAggregate
+    Dim Yearly As Dom_EnrollmentYearAggregate
+    Set Yearly = New Dom_EnrollmentYearAggregate
     Dim EntityGroup As VBA.Collection
     For Each EntityGroup In EntityGroups
-        Dim ColumnDTO As Dom_Column
-        For Each ColumnDTO In EntityGroup
-            Dim Header As Dom_EnrollmentHeader
-            Set Header = This.Parser.Parse(ColumnDTO.HeaderName)
-            If Header.TargetDate <> vbNullString Then
-                Dim TargetDate As Date
-                TargetDate = Dom_Util_Date.NormalizeToDate(ColumnDTO.RawValue)
-            Else
-                This.Interpreter.Interprete Header, ColumnDTO.RawValue, Aggregate
-            End If
+        Dim Daily As Dom_EnrollmentAggregate
+        Set Daily = New Dom_EnrollmentAggregate
+        Dim Enrollment As Dom_Enrollment
+        For Each Enrollment In EntityGroup
+            Daily.AddInitialEnrollment Enrollment
         Next
-        Result.Add TargetDate, Aggregate
+        Yearly.Add Daily
     Next
-    Set Create = Result
-End Function
-
-Private Function Bigger(ByVal Value As Long, ByVal Another As Long) As Long
-    If Value < Another Then
-        Bigger = Another
-    Else
-        Bigger = Value
-    End If
+    Set Create = Yearly
 End Function

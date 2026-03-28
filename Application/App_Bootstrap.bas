@@ -21,7 +21,7 @@ Public Sub Run()
     'Presenter-----------------------------------------------------------------------------------
     Dim Presenter As App_Presenter
     Set Presenter = New App_Presenter
-    Presenter.Initialize Logger, AggregateEnrollment, AggregateClassHour
+    Presenter.Initialize Logger, Structure, AggregateEnrollment, AggregateClassHour
     'View----------------------------------------------------------------------------------------
     Dim MainView As App_MainView
     Set MainView = New App_MainView

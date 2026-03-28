@@ -25,7 +25,7 @@ Public Function Resolve(ByVal Environment As App_EnvironmentType) As Inf_ILogger
     Case App_EnvironmentType.ReleaseMode
         Dim FilePath As String
         FilePath = This.Builder.Builed
-        If VBA.Dir(FilePath) = 0 Then Err.Raise AppErrInvalidFilePath, "App_LoggerResolver", "File path is invalid"
+        If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise AppErrInvalidFilePath, "App_LoggerResolver", "File path is invalid"
         Dim Logger As Inf_FileLogger
         Set Logger = New Inf_FileLogger
         Logger.Initialize FilePath

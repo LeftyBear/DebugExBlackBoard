@@ -33,10 +33,10 @@ Public Sub AddInitialClassHour(ByVal Item As Dom_ClassHour)
     If This.ItemList.Exists(IDKey) Then Err.Raise DomErrNotUnique, "Dom_ClassHourAggregate", "キーは一意である必要があります。" & vbCrLf & "重複しているIDキー: " & IDKey
     This.ItemList.Add IDKey, Item
     Dim ValueIndexKey As String
-    ValueIndexKey = Item.GetID.ClassHourType.ToKey & charUnderScore & Item.GetID.Subject.ToKey & Item.GetID.Grade.ToKey
+    ValueIndexKey = Item.GetID.ClassHourType.ToKey & charUnderScore & Item.GetID.Subject.ToKey & charUnderScore & Item.GetID.Grade.ToKey
     AddToIndex This.ValueIndex, ValueIndexKey, IDKey, Item
     Dim MarkIndexKey As String
-    MarkIndexKey = Item.GetID.ClassHourType.ToKey & charUnderScore & Item.GetID.Period.ToKey & Item.GetID.Grade.ToKey
+    MarkIndexKey = Item.GetID.ClassHourType.ToKey & charUnderScore & Item.GetID.Period.ToKey & charUnderScore & Item.GetID.Grade.ToKey
     AddToIndex This.MarkIndex, MarkIndexKey, IDKey, Item
 End Sub
 
@@ -56,11 +56,7 @@ Public Sub UpdateMark(ByVal ID As Dom_ClassHourID, ByVal NewMark As String)
     Dim Target As Dom_ClassHour
     Set Target = GetById(ID)
     If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ClassHourAggregate", "IDをキーに持つオブジェクトが必要です。"
-    With New Dom_ClassHourMark
-        Dim Mark As Dom_ClassHourMark
-        Set Mark = .Create(NewMark)
-    End With
-    Target.ChangeMarkInternal Mark
+    Target.ChangeMarkInternal NewMark
     ValidateHourTotal ID
 End Sub
 
