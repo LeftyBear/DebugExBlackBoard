@@ -43,7 +43,7 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal Class
     Format = OutputTable
 End Function
 
-Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal Entity As Dom_ClassHourAggregate, ByVal Structure As Dom_SchoolStructure) As String()
+Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourColumn, ByVal Structure As Dom_SchoolStructure) As String()
     Dim Table() As String
     ReDim Table(1 To Structure.PeriodCount, 1 To Structure.MainStreamGradeCount)
     Dim G As Long
@@ -55,18 +55,18 @@ Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal
             Dim Period As Dom_Period
             Set Period = CreatePeriod(P)
             Dim Filter As Dom_ClassHourFilter
-            Set Filter = CreateFilter(ClassHourType, Nothing, Period, Grade)
-            Table(P, G) = Entity.GetMarkCount(Filter)
+            Set Filter = CreateFilter(ClassHourType, Period, Grade)
+            Table(P, G) = ClassHour.GetMarkCount(Filter)
         Next
     Next
     ToTimeTable = Table
 End Function
 
-Private Function CreateFilter(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal Subject As Dom_Subject, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_ClassHourFilter
+Private Function CreateFilter(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_ClassHourFilter
     Dim ClassHourType As Dom_ClassHourType
     Set ClassHourType = CreateClassHourType(ClassHourTypeEnum)
     With New Dom_ClassHourFilter
-        Set CreateFilter = .Create(ClassHourType, Subject, Period, Grade)
+        Set CreateFilter = .Create(ClassHourType, Period, Grade)
     End With
 End Function
 

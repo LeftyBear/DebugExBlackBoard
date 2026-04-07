@@ -4,7 +4,8 @@ Option Explicit
 Option Private Module
 
 Public Enum Dom_StructureName
-    UpperValues = 1
+    SchoolEvent = 1
     SpecialStream
     Subject
+    UpperValues
 End Enum

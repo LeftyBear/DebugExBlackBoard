@@ -33,6 +33,11 @@ Public Function Create(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Gr
     Set Create = Result
 End Function
 
+Public Function IsNoMeaning() As Boolean
+    If 0 < This.ClassNo.Value And 0 < This.Gender.Value Then Exit Function
+    IsNoMeaning = True
+End Function
+
 Public Function Equals(ByVal Other As Dom_EnrollmentID) As Boolean
     If Other Is Nothing Then Exit Function
     If Not This.StreamType.Equals(Other.StreamType) Then Exit Function

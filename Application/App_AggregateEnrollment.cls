@@ -19,14 +19,14 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Builder As App_EntityFilePathBuilder, ByVal Repository As Dom_IEnrollmentRepository, ByVal Resolver As Dom_EnrollmentColumnResolver)
+Public Sub Initialize(ByVal Builder As App_EntityFilePathBuilder, ByVal Repository As Dom_IEnrollmentRepository)
     Set This.Builder = Builder
     Set This.Repository = Repository
-    Set This.Resolver = Resolver
+    Set This.Resolver = New Dom_EnrollmentColumnResolver
     Set This.Factory = New Dom_EnrollmentAggregateFactory
 End Sub
 
-Public Function Execute(ByVal TargetDate As Date) As Dom_EnrollmentYearAggregate
+Public Function Execute(ByVal TargetDate As Date) As Dom_EnrollmentAggregate
     With New Dom_SchoolYear
         Dim SchoolYear As Dom_SchoolYear
         Set SchoolYear = .Create(Dom_Util_Date.GetSchoolYear(TargetDate))
@@ -37,8 +37,8 @@ Public Function Execute(ByVal TargetDate As Date) As Dom_EnrollmentYearAggregate
     Dim RawCSVRows() As String
     RawCSVRows = This.Repository.Load(FilePath)
     If App_Util_Array.IsEmpty(RawCSVRows) Then Err.Raise AppErrEmptyArray, "App_AggregateEnrollment", "RawCSVRows is empty."
-    Dim EntityGroups As VBA.Collection
-    Set EntityGroups = This.Resolver.Resolve(RawCSVRows)
-    If EntityGroups.Count = 0 Then Err.Raise AppErrNothingItem, "App_AggregateEnrollment", "EntityGroups item is nothing."
-    Set Execute = This.Factory.Create(EntityGroups)
+    Dim ColumnGroup As VBA.Collection
+    Set ColumnGroup = This.Resolver.Resolve(RawCSVRows)
+    If ColumnGroup.Count = 0 Then Err.Raise AppErrNothingItem, "App_AggregateEnrollment", "ColumnGroup item is nothing."
+    Set Execute = This.Factory.Create(ColumnGroup)
 End Function

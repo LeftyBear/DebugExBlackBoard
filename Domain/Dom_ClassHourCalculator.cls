@@ -10,30 +10,15 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Calculator")
 Option Explicit
 
-Public Function SumSubjectHour(ByRef Items() As Variant, ByVal Filter As Dom_ClassHourFilter) As Long
+Public Function Calculate(ByRef Items() As Variant, ByVal Filter As Dom_ClassHourFilter) As Long
     Dim i As Long
     For i = LBound(Items) To UBound(Items)
         Dim Item As Dom_ClassHour
         Set Item = Items(i)
         If Filter.IsMatch(Item) Then
             Dim Total As Long
-            Total = Total + Item.GetHours.Value
+            Total = Total + Item.GetValue
         End If
     Next
-    SumSubjectHour = Total
-End Function
-
-Public Function SumMark(ByRef Items() As Variant, ByVal Filter As Dom_ClassHourFilter) As Long
-    Dim i As Long
-    For i = LBound(Items) To UBound(Items)
-        Dim Item As Dom_ClassHour
-        Set Item = Items(i)
-        If Filter.IsMatch(Item) Then
-            If Item.GetMark <> vbNullString Then
-                Dim Count As Long
-                Count = Count + 1
-            End If
-        End If
-    Next
-    SumMark = Count
+    Calculate = Total
 End Function

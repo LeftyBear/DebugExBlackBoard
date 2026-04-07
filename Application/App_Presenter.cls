@@ -34,10 +34,10 @@ Public Sub AttachView(ByVal MainView As App_IMainView)
 End Sub
 
 Public Sub Bootstrap()
-    Dim YearlyEnrollment As Dom_EnrollmentYearAggregate
+    Dim YearlyEnrollment As Dom_EnrollmentAggregate
     Set YearlyEnrollment = This.Enrollment.Execute(Date)
-    Dim YearlyClassHour As Dom_ClassHourYearAggregate
-    Set YearlyClassHour = This.ClassHour.Execute(Date)
+    Dim YearlyClassHour As Dom_ClassHourAggregate
+    Set YearlyClassHour = This.ClassHour.Execute(Date, This.Structure)
     'View----------------------------------------------------------------------------------------
     Dim EnrollmentFormatter As App_ViewEnrollmentFormatter
     Set EnrollmentFormatter = New App_ViewEnrollmentFormatter

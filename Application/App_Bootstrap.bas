@@ -15,9 +15,9 @@ Public Sub Run()
     Set Structure = GenerateStructure.Execute
     'UseCase-------------------------------------------------------------------------------------
     Dim AggregateEnrollment As App_AggregateEnrollment
-    Set AggregateEnrollment = App_UseCaseFactory.CreateAggregateEnrollment(Structure)
+    Set AggregateEnrollment = App_UseCaseFactory.CreateAggregateEnrollment
     Dim AggregateClassHour As App_AggregateClassHour
-    Set AggregateClassHour = App_UseCaseFactory.CreateAggregateClassHour(Structure)
+    Set AggregateClassHour = App_UseCaseFactory.CreateAggregateClassHour
     'Presenter-----------------------------------------------------------------------------------
     Dim Presenter As App_Presenter
     Set Presenter = New App_Presenter

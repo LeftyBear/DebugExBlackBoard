@@ -12,12 +12,13 @@ Option Explicit
 
 Public Function Resolve(ByVal StructureName As Dom_StructureName) As String
     Select Case StructureName
-    Case Dom_StructureName.UpperValues
-        Resolve = "UpperValue.csv"
+    Case Dom_StructureName.SchoolEvent
+        Resolve = "SchoolEventCatalog.csv"
     Case Dom_StructureName.SpecialStream
         Resolve = "SpecialStreamCatalog.csv"
     Case Dom_StructureName.Subject
         Resolve = "SubjectCatalog.csv"
+    Case Dom_StructureName.UpperValues
+        Resolve = "UpperValue.csv"
     End Select
 End Function
-

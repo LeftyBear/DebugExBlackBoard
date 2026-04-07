@@ -31,34 +31,17 @@ Public Function Interprete(ByVal Header As Dom_EnrollmentHeader, ByVal RawValue 
     Set Gender = This.Resolver.ResolveGender(Header.Gender)
     Dim EnrollmentID As Dom_EnrollmentID
     Set EnrollmentID = CreateID(StreamType, Grade, ClassNo, Gender)
-    If Header.RawDate <> vbNullString Then
-        Dim NormDate As Date
-        NormDate = This.Resolver.ResolveDate(RawValue)
-    End If
+    If EnrollmentID.IsNoMeaning Then Exit Function
     Dim Value As Dom_EnrollmentValue
-    Set Value = CreateValue(RawValue)
-    If Header.Transfer <> vbNullString Then
-        Dim Transfer As Boolean
-        Transfer = This.Resolver.ResolveTransfer(RawValue)
-    End If
-    If Header.Remarks <> vbNullString Then
-        Dim Remarks As String
-        Remarks = This.Resolver.ResolveRemarks(RawValue)
-    End If
+    Set Value = This.Resolver.ResolveEnrollmentValue(RawValue)
     Dim Enrollment As Dom_Enrollment
     Set Enrollment = New Dom_Enrollment
-    Enrollment.Initialize EnrollmentID, NormDate, Value, Transfer, Remarks
+    Enrollment.Initialize EnrollmentID, Value
     Set Interprete = Enrollment
 End Function
 
 Private Function CreateID(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender) As Dom_EnrollmentID
     With New Dom_EnrollmentID
         Set CreateID = .Create(StreamType, Grade, ClassNo, Gender)
-    End With
-End Function
-
-Private Function CreateValue(ByVal Value As Long) As Dom_EnrollmentValue
-    With New Dom_EnrollmentValue
-        Set CreateValue = .Create(Value)
     End With
 End Function

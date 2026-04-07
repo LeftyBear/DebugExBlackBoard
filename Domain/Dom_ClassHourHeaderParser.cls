@@ -16,7 +16,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Structure As Dom_SchoolStructure)
+Public Sub AddOn(ByVal Structure As Dom_SchoolStructure)
     Set This.Structure = Structure
 End Sub
 

@@ -20,7 +20,7 @@ Public Function CreateGenerateSchoolStructure() As App_AggregateSchoolStructure
     Set CreateGenerateSchoolStructure = UseCase
 End Function
 
-Public Function CreateAggregateEnrollment(ByVal Structure As Dom_SchoolStructure) As App_AggregateEnrollment
+Public Function CreateAggregateEnrollment() As App_AggregateEnrollment
     'Builder------------------------------------------------------------------------------------
     Dim Provider As App_IWorkbookPathProvider
     Set Provider = New Inf_WorkbookPathProvider
@@ -33,18 +33,14 @@ Public Function CreateAggregateEnrollment(ByVal Structure As Dom_SchoolStructure
     Dim BaseRepository As Inf_EnrollmentRepository
     Set BaseRepository = New Inf_EnrollmentRepository
     BaseRepository.Initialize ReadRepository
-    'Resolver-----------------------------------------------------------------------------------
-    Dim Resolver As Dom_EnrollmentColumnResolver
-    Set Resolver = New Dom_EnrollmentColumnResolver
-    Resolver.Initialize Structure
     'UseCase------------------------------------------------------------------------------------
     Dim UseCase As App_AggregateEnrollment
     Set UseCase = New App_AggregateEnrollment
-    UseCase.Initialize Builder, BaseRepository, Resolver
+    UseCase.Initialize Builder, BaseRepository
     Set CreateAggregateEnrollment = UseCase
 End Function
 
-Public Function CreateAggregateClassHour(ByVal Structure As Dom_SchoolStructure) As App_AggregateClassHour
+Public Function CreateAggregateClassHour() As App_AggregateClassHour
     'Builder------------------------------------------------------------------------------------
     Dim Provider As App_IWorkbookPathProvider
     Set Provider = New Inf_WorkbookPathProvider
@@ -57,13 +53,9 @@ Public Function CreateAggregateClassHour(ByVal Structure As Dom_SchoolStructure)
     Dim BaseRepository As Inf_ClassHourRepository
     Set BaseRepository = New Inf_ClassHourRepository
     BaseRepository.Initialize ReadRepository
-    'Resolver-----------------------------------------------------------------------------------
-    Dim Resolver As Dom_ClassHourColumnResolver
-    Set Resolver = New Dom_ClassHourColumnResolver
-    Resolver.Initialize Structure
     'UseCase------------------------------------------------------------------------------------
     Dim UseCase As App_AggregateClassHour
     Set UseCase = New App_AggregateClassHour
-    UseCase.Initialize Builder, BaseRepository, Resolver
+    UseCase.Initialize Builder, BaseRepository, New Dom_ClassHourColumnResolver
     Set CreateAggregateClassHour = UseCase
 End Function

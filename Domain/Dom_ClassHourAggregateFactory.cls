@@ -10,17 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Factory")
 Option Explicit
 
-Public Function Create(ByVal EntityGroups As VBA.Collection) As Dom_ClassHourYearAggregate
-    Dim Yearly As Dom_ClassHourYearAggregate
-    Set Yearly = New Dom_ClassHourYearAggregate
-    Dim EntityGroup As VBA.Collection
-    For Each EntityGroup In EntityGroups
-        Dim Daily As Dom_ClassHourAggregate
-        Set Daily = New Dom_ClassHourAggregate
-        Dim ClassHour As Dom_ClassHour
-        For Each ClassHour In EntityGroup
-            Daily.AddInitialClassHour ClassHour
-        Next
+Public Function Create(ByVal ColumnGroup As VBA.Collection) As Dom_ClassHourAggregate
+    Dim Yearly As Dom_ClassHourAggregate
+    Set Yearly = New Dom_ClassHourAggregate
+    Dim Daily As Dom_ClassHourColumn
+    For Each Daily In ColumnGroup
         Yearly.Add Daily
     Next
     Set Create = Yearly

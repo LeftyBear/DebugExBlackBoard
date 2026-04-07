@@ -11,15 +11,18 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Structure   As Dom_SchoolStructure
     Resolver    As Dom_HeaderTokenResolver
+    Structure   As Dom_SchoolStructure
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Structure As Dom_SchoolStructure)
-    Set This.Structure = Structure
+Private Sub Class_Initialize()
     Set This.Resolver = New Dom_HeaderTokenResolver
+End Sub
+
+Public Sub AddOn(ByVal Structure As Dom_SchoolStructure)
+    Set This.Structure = Structure
 End Sub
 
 Public Function Interprete(ByVal Header As Dom_ClassHourHeader, ByVal RawValue As String) As Dom_ClassHour
@@ -30,40 +33,24 @@ Public Function Interprete(ByVal Header As Dom_ClassHourHeader, ByVal RawValue A
     If Header.SubjectName <> vbNullString Then
         Dim Subject As Dom_Subject
         Set Subject = This.Structure.ResolveSubject(RawValue)
-        Dim Hours As Dom_ClassHourValue
-        Set Hours = CreateHours(Dom_Util_Long.NormalizeToLong(RawValue))
-    End If
-    If Header.Period <> vbNullString Then
-        Dim Period As Dom_Period
-        Set Period = This.Resolver.ResolvePeriod(RawValue)
-        Dim Mark As String
-        Mark = RawValue
     End If
     If Header.Grade <> vbNullString Then
         Dim Grade As Dom_Grade
         Set Grade = This.Resolver.ResolveGrade(RawValue)
     End If
     Dim ClassHourID As Dom_ClassHourID
-    Set ClassHourID = CreateID(ClassHourType, Subject, Period, Grade)
-    If Header.RawDate <> vbNullString Then
-        Dim NormDate As Date
-        NormDate = This.Resolver.ResolveDate(RawValue)
-    End If
+    Set ClassHourID = CreateID(ClassHourType, Subject, Grade)
+    If ClassHourID.IsNoMeaning Then Exit Function
+    Dim Value As Dom_ClassHourValue
+    Set Value = This.Resolver.ResolveClassHourValue(RawValue)
     Dim ClassHour As Dom_ClassHour
     Set ClassHour = New Dom_ClassHour
-    ClassHour.Initialize ClassHourID, NormDate, Hours, Mark
+    ClassHour.Initialize ClassHourID, Value
     Set Interprete = ClassHour
 End Function
 
-Private Function CreateID(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_ClassHourID
+Private Function CreateID(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade) As Dom_ClassHourID
     With New Dom_ClassHourID
-        Set CreateID = .Create(ClassHourType, Subject, Period, Grade)
+        Set CreateID = .Create(ClassHourType, Subject, Grade)
     End With
 End Function
-
-Private Function CreateHours(ByVal Value As Long) As Dom_ClassHourValue
-    With New Dom_ClassHourValue
-        Set CreateHours = .Create(Value)
-    End With
-End Function
-

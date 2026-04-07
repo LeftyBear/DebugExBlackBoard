@@ -26,7 +26,7 @@ Public Sub Initialize(ByVal Builder As App_EntityFilePathBuilder, ByVal Reposito
     Set This.Factory = New Dom_ClassHourAggregateFactory
 End Sub
 
-Public Function Execute(ByVal TargetDate As Date) As Dom_ClassHourYearAggregate
+Public Function Execute(ByVal TargetDate As Date, ByVal Structure As Dom_SchoolStructure) As Dom_ClassHourAggregate
     With New Dom_SchoolYear
         Dim SchoolYear As Dom_SchoolYear
         Set SchoolYear = .Create(Dom_Util_Date.GetSchoolYear(TargetDate))
@@ -37,8 +37,9 @@ Public Function Execute(ByVal TargetDate As Date) As Dom_ClassHourYearAggregate
     Dim RawCSVRows() As String
     RawCSVRows = This.Repository.Load(FilePath)
     If App_Util_Array.IsEmpty(RawCSVRows) Then Err.Raise AppErrEmptyArray, "App_AggregateClassHour", "RawCSVRows is empty."
-    Dim EntityGroups As VBA.Collection
-    Set EntityGroups = This.Resolver.Resolve(RawCSVRows)
-    If EntityGroups.Count = 0 Then Err.Raise AppErrNothingItem, "App_AggregateClassHour", "EntityGroups item is nothing."
-    Set Execute = This.Factory.Create(EntityGroups)
+    This.Resolver.AddOn Structure
+    Dim ColumnGroup As VBA.Collection
+    Set ColumnGroup = This.Resolver.Resolve(RawCSVRows)
+    If ColumnGroup.Count = 0 Then Err.Raise AppErrNothingItem, "App_AggregateClassHour", "ColumnGroup item is nothing."
+    Set Execute = This.Factory.Create(ColumnGroup)
 End Function

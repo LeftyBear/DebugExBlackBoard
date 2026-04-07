@@ -10,16 +10,6 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Parser")
 Option Explicit
 
-Private Type Member
-    Structure As Dom_SchoolStructure
-End Type
-'@Ignore MoveFieldCloserToUsage
-Private This As Member
-
-Public Sub Initialize(ByVal Structure As Dom_SchoolStructure)
-    Set This.Structure = Structure
-End Sub
-
 Public Function Parse(ByVal HeaderName As String) As Dom_EnrollmentHeader
     Dim Parts() As String
     Parts = VBA.Split(HeaderName, charUnderScore)

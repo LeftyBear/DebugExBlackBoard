@@ -12,41 +12,25 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    ID          As Dom_ClassHourID
-    NormDate    As Date
-    Hours       As Dom_ClassHourValue
-    Mark        As String
+    ID      As Dom_ClassHourID
+    Value   As Dom_ClassHourValue
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal ID As Dom_ClassHourID, ByVal NormDate As Date, ByVal Hours As Dom_ClassHourValue, ByVal Mark As String)
+Public Sub Initialize(ByVal ID As Dom_ClassHourID, ByVal Value As Dom_ClassHourValue)
     Set This.ID = ID
-    This.NormDate = NormDate
-    Set This.Hours = Hours
-    This.Mark = Mark
+    Set This.Value = Value
 End Sub
 
 Friend Sub ChangeValueInternal(ByVal NewValue As Dom_ClassHourValue)
-    Set This.Hours = NewValue
-End Sub
-
-Friend Sub ChangeMarkInternal(ByVal NewMark As String)
-    This.Mark = NewMark
+    Set This.Value = NewValue
 End Sub
 
 Public Function GetID() As Dom_ClassHourID
     Set GetID = This.ID
 End Function
 
-Public Function GetDate() As Date
-    GetDate = This.NormDate
-End Function
-
-Public Function GetHours() As Dom_ClassHourValue
-    Set GetHours = This.Hours
-End Function
-
-Public Function GetMark() As String
-    GetMark = This.Mark
+Public Function GetValue() As Long
+    GetValue = This.Value.Value
 End Function

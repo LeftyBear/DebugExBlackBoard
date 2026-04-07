@@ -7,131 +7,115 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@IgnoreModule UseMeaningfulName
 '@Folder("Domain.Aggregate")
 Option Explicit
 
 Private Type Member
-    NormDate    As Date
-    ItemList    As Scripting.Dictionary
-    ValueIndex  As Scripting.Dictionary
-    MarkIndex   As Scripting.Dictionary
+    DailyMap As Scripting.Dictionary
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.ItemList = New Scripting.Dictionary
-    Set This.ValueIndex = New Scripting.Dictionary
-    Set This.MarkIndex = New Scripting.Dictionary
+    Set This.DailyMap = New Scripting.Dictionary
 End Sub
 
-Public Sub AddInitialClassHour(ByVal Item As Dom_ClassHour)
-    This.NormDate = Item.GetDate
-    Dim IDKey As String
-    IDKey = Item.GetID.ToKey
-    If This.ItemList.Exists(IDKey) Then Err.Raise DomErrNotUnique, "Dom_ClassHourAggregate", "キーは一意である必要があります。" & vbCrLf & "重複しているIDキー: " & IDKey
-    This.ItemList.Add IDKey, Item
-    Dim ValueIndexKey As String
-    ValueIndexKey = Item.GetID.ClassHourType.ToKey & charUnderScore & Item.GetID.Subject.ToKey & charUnderScore & Item.GetID.Grade.ToKey
-    AddToIndex This.ValueIndex, ValueIndexKey, IDKey, Item
-    Dim MarkIndexKey As String
-    MarkIndexKey = Item.GetID.ClassHourType.ToKey & charUnderScore & Item.GetID.Period.ToKey & charUnderScore & Item.GetID.Grade.ToKey
-    AddToIndex This.MarkIndex, MarkIndexKey, IDKey, Item
+Public Sub Add(ByVal Daily As Dom_ClassHourColumn)
+    Dim Key As String
+    Key = Daily.GetDateKey
+    If This.DailyMap.Exists(Key) Then Err.Raise DomErrNotUnique, "Dom_ClassHourAggregate", "キーは一意である必要があります。" & vbCrLf & "重複している日付キー: " & Key
+    This.DailyMap.Add Key, Daily
 End Sub
 
-Public Sub UpdateHours(ByVal ID As Dom_ClassHourID, ByVal NewHours As Long)
-    Dim Target As Dom_ClassHour
-    Set Target = GetById(ID)
-    If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ClassHourAggregate", "IDをキーに持つオブジェクトが必要です。"
-    With New Dom_ClassHourValue
-        Dim Value As Dom_ClassHourValue
-        Set Value = .Create(NewHours)
-    End With
-    Target.ChangeValueInternal Value
-    ValidateHourTotal ID
+Public Sub UpdatePlanValue(ByVal TargetDate As Date, ByVal ID As Dom_ClassHourID, ByVal NewValue As Long)
+    Me.GetByDate(TargetDate).UpdatePlanValue ID, NewValue
+    ValidateTotal TargetDate, ID
 End Sub
 
-Public Sub UpdateMark(ByVal ID As Dom_ClassHourID, ByVal NewMark As String)
-    Dim Target As Dom_ClassHour
-    Set Target = GetById(ID)
-    If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ClassHourAggregate", "IDをキーに持つオブジェクトが必要です。"
-    Target.ChangeMarkInternal NewMark
-    ValidateHourTotal ID
+Public Sub UpdatePlanMark(ByVal TargetDate As Date, ByVal ID As Dom_ClassHourID, ByVal NewMark As String)
+    Me.GetByDate(TargetDate).UpdatePlanMark ID, NewMark
+    ValidateTotal TargetDate, ID
+End Sub
+
+Public Sub UpdateExeValue(ByVal TargetDate As Date, ByVal ID As Dom_ClassHourID, ByVal NewValue As Long)
+    Me.GetByDate(TargetDate).UpdateExeValue ID, NewValue
+    ValidateTotal TargetDate, ID
+End Sub
+
+Public Sub UpdateExeMark(ByVal TargetDate As Date, ByVal ID As Dom_ClassHourID, ByVal NewMark As String)
+    Me.GetByDate(TargetDate).UpdateExeMark ID, NewMark
+    ValidateTotal TargetDate, ID
 End Sub
 
 Public Function Count() As Long
-    Count = This.ItemList.Count
+    Count = This.DailyMap.Count
 End Function
 
-Public Function GetDate() As Date
-    GetDate = This.NormDate
+Public Function GetByDate(ByVal TargetDate As Date) As Dom_ClassHourColumn
+    Dim Daily As Dom_ClassHourColumn
+    Daily = Me.GetByDate(TargetDate)
+    If Not Daily Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ClassHourAggregate", "オブジェクトが見つかりません。"
+    Set GetByDate = Daily
 End Function
 
-Public Function GetHourTotal(ByVal Filter As Dom_ClassHourFilter) As Long
-    '@Ignore SelfAssignedDeclaration
-    Dim Calculator As New Dom_ClassHourCalculator
-    GetHourTotal = Calculator.SumSubjectHour(ClassHours(Filter), Filter)
+Public Function GetWeeklyHourTotal(ByVal TargetDate As Date, ByVal Filter As Dom_ClassHourFilter) As Long
+    Dim TargetWeeks As Long
+    TargetWeeks = Dom_Util_Date.GetSchoolWeek(TargetDate)
+    Dim DateKey As Variant
+    For Each DateKey In This.DailyMap.Keys
+        If Dom_Util_Date.GetSchoolWeek(CDate(DateKey)) = TargetWeeks Then
+            Dim Daily As Dom_ClassHourColumn
+            Set Daily = This.DailyMap.Item(DateKey)
+            Dim Total As Long
+            Total = Total + Daily.GetHourTotal(Filter)
+        End If
+    Next
+    GetWeeklyHourTotal = Total
 End Function
 
-Public Function GetMarkCount(ByVal Filter As Dom_ClassHourFilter) As Long
-    '@Ignore SelfAssignedDeclaration
-    Dim Calculator As New Dom_ClassHourCalculator
-    GetMarkCount = Calculator.SumMark(ClassHours(Filter), Filter)
+Public Function GetMonthlyHourTotal(ByVal TargetDate As Date, ByVal Filter As Dom_ClassHourFilter) As Long
+    Dim TargetMonth As Long
+    TargetMonth = VBA.Month(TargetDate)
+    Dim DateKey As Variant
+    For Each DateKey In This.DailyMap.Keys
+        If VBA.Month(CDate(DateKey)) = TargetMonth Then
+            Dim Daily As Dom_ClassHourColumn
+            Set Daily = This.DailyMap.Item(DateKey)
+            Dim Total As Long
+            Total = Total + Daily.GetHourTotal(Filter)
+        End If
+    Next
+    GetMonthlyHourTotal = Total
 End Function
 
-Private Sub ValidateHourTotal(ByVal ID As Dom_ClassHourID)
+Public Function GetCumulativeHourTotal(ByVal TargetDate As Date, ByVal Filter As Dom_ClassHourFilter) As Long
+    Dim DateKey As Variant
+    For Each DateKey In This.DailyMap.Keys
+        If CDate(DateKey) <= TargetDate Then
+            Dim Daily As Dom_ClassHourColumn
+            Set Daily = This.DailyMap.Item(DateKey)
+            Dim Total As Long
+            Total = Total + Daily.GetHourTotal(Filter)
+        End If
+    Next
+    GetCumulativeHourTotal = Total
+End Function
+
+Private Sub ValidateTotal(ByVal TargetDate As Date, ByVal ID As Dom_ClassHourID)
+    Dim Daily As Dom_ClassHourColumn
+    Set Daily = Me.GetByDate(TargetDate)
     With New Dom_ClassHourFilter
-        Dim Filter As Dom_ClassHourFilter
-        Set Filter = .Create(ID.ClassHourType, ID.Subject, ID.Period, ID.Grade)
+        Dim ClassHourFilter As Dom_ClassHourFilter
+        Set ClassHourFilter = .Create(ID.ClassHourType, Nothing, ID.Grade)
     End With
     Dim HourTotal As Long
-    HourTotal = Me.GetHourTotal(Filter)
+    HourTotal = Daily.GetHourTotal(ClassHourFilter)
+    With New Dom_TimeTableFilter
+        Dim TimeTableFilter As Dom_TimeTableFilter
+        Set TimeTableFilter = .Create(ID.ClassHourType, Nothing, ID.Grade)
+    End With
     Dim MarkCount As Long
-    MarkCount = Me.GetMarkCount(Filter)
-    If HourTotal <> MarkCount Then
-        Err.Raise DomErrUnmatch, "Dom_ClassHourAggregate", ID.ClassHourType.ToKey & charHalfSpace & ID.Grade.ToKey & "の時数と時間割を一致させてください。"
-    End If
+    MarkCount = Daily.GetMarkCount(TimeTableFilter)
+    If HourTotal = MarkCount Then Exit Sub
+    Err.Raise DomErrUnmatch, "Dom_ClassHourAggregate", ID.ClassHourType.ToKey & charHalfSpace & ID.Grade.ToKey & "の時数と時間割を一致させてください。"
 End Sub
-
-Private Sub AddToIndex(ByVal Index As Scripting.Dictionary, ByVal Key As String, ByVal IDKey As String, ByVal Item As Dom_ClassHour)
-    Dim Bucket As Scripting.Dictionary
-    If Index.Exists(Key) Then
-        Set Bucket = Index.Item(Key)
-    Else
-        Set Bucket = New Scripting.Dictionary
-        Index.Add Key, Bucket
-    End If
-    Bucket.Add IDKey, Item
-End Sub
-
-Private Function GetById(ByVal ID As Dom_ClassHourID) As Dom_ClassHour
-    Dim Key As String
-    Key = ID.ToKey
-    If This.ItemList.Exists(Key) Then
-        Set GetById = This.ItemList.Item(Key)
-    End If
-End Function
-
-Private Function ClassHours(ByVal Filter As Dom_ClassHourFilter) As Variant()
-    If Not Filter.HasType And Not Filter.HasSubject And Not Filter.HasGrade Then
-        Dim ValueIndexKey As String
-        ValueIndexKey = Filter.ClassHourType.ToKey & charUnderScore & Filter.Subject.ToKey & Filter.Grade.ToKey
-        If This.ValueIndex.Exists(ValueIndexKey) Then
-            Dim Target As Scripting.Dictionary
-            Set Target = This.ValueIndex.Item(ValueIndexKey)
-            ClassHours = Target.Items
-            Exit Function
-        End If
-    End If
-    If Not Filter.HasType And Not Filter.HasPeriod And Not Filter.HasGrade Then
-        Dim MarkIndexKey As String
-        MarkIndexKey = Filter.ClassHourType.ToKey & charUnderScore & Filter.Period.ToKey & Filter.Grade.ToKey
-        If This.MarkIndex.Exists(MarkIndexKey) Then
-            Set Target = This.MarkIndex.Item(MarkIndexKey)
-            ClassHours = Target.Items
-            Exit Function
-        End If
-    End If
-    ClassHours = This.ItemList.Items
-End Function

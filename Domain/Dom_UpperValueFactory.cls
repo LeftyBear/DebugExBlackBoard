@@ -18,13 +18,13 @@ Public Function Create(ByRef RawCSVRows() As String) As Dom_UpperValue
             Select Case RawCSVRows(1, C)
             Case jpnFutsuGakunenSu
                 Dim MainStreamGrade As Long
-                MainStreamGrade = Dom_Util_Long.NormalizeToLong(RawCSVRows(R, C))
+                MainStreamGrade = Dom_Util_Numeric.NormalizeToLong(RawCSVRows(R, C))
             Case jpnFutsuGakkyuSu
                 Dim MainStreamClass As Long
-                MainStreamClass = Dom_Util_Long.NormalizeToLong(RawCSVRows(R, C))
+                MainStreamClass = Dom_Util_Numeric.NormalizeToLong(RawCSVRows(R, C))
             Case jpnJikanwariSu
                 Dim Period As Long
-                Period = Dom_Util_Long.NormalizeToLong(RawCSVRows(R, C))
+                Period = Dom_Util_Numeric.NormalizeToLong(RawCSVRows(R, C))
             End Select
         Next
     Next

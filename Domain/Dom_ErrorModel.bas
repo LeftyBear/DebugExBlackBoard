@@ -4,12 +4,13 @@ Option Explicit
 Option Private Module
 
 Public Enum Dom_LayerErrNum
-    DomErr = 1000
+    domerr = 1000
 End Enum
 
 Public Enum Dom_ErrNum
-    DomErrCanNotParse = vbObjectError + DomErr
+    DomErrCanNotParse = vbObjectError + domerr
     DomErrEmptyDate
+    DomErrEmptyFilter
     DomErrEmptyObject
     DomErrInvalidDateFormat
     DomErrInvalidDateValue
