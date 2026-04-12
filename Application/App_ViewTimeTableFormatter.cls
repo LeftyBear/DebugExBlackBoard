@@ -10,9 +10,9 @@ Attribute VB_Exposed = False
 '@Folder("Application.Formatter")
 Option Explicit
 
-Public Function Format(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourAggregate, ByVal Structure As Dom_SchoolStructure) As Variant()
+Public Function Format(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As Variant()
     Dim TimeTable() As String
-    TimeTable = ToTimeTable(ClassHourType, ClassHour, Structure)
+    TimeTable = ToTimeTable(ClassHourType, ClassHour, TargetDate, Structure)
     Dim Total() As Long
     ReDim Total(Structure.MainStreamGradeCount)
     Dim OutputTable() As Variant
@@ -43,7 +43,7 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal Class
     Format = OutputTable
 End Function
 
-Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourColumn, ByVal Structure As Dom_SchoolStructure) As String()
+Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As String()
     Dim Table() As String
     ReDim Table(1 To Structure.PeriodCount, 1 To Structure.MainStreamGradeCount)
     Dim G As Long
@@ -54,18 +54,19 @@ Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal
         For P = 1 To Structure.PeriodCount
             Dim Period As Dom_Period
             Set Period = CreatePeriod(P)
-            Dim Filter As Dom_ClassHourFilter
+            Dim Filter As Dom_TimeTableFilter
             Set Filter = CreateFilter(ClassHourType, Period, Grade)
-            Table(P, G) = ClassHour.GetMarkCount(Filter)
+            Dim Service As New App_TimeTableService
+            Table(P, G) = Service.GetDailyMarkCount(ClassHour, TargetDate, New Dom_TimeTableCalculator, Filter)
         Next
     Next
     ToTimeTable = Table
 End Function
 
-Private Function CreateFilter(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_ClassHourFilter
+Private Function CreateFilter(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_TimeTableFilter
     Dim ClassHourType As Dom_ClassHourType
     Set ClassHourType = CreateClassHourType(ClassHourTypeEnum)
-    With New Dom_ClassHourFilter
+    With New Dom_TimeTableFilter
         Set CreateFilter = .Create(ClassHourType, Period, Grade)
     End With
 End Function

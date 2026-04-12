@@ -11,41 +11,27 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Resolver    As Dom_HeaderTokenResolver
-    Interpreter As Dom_ScheduleInterpreter
+    Builder As Dom_ScheduleRowBuilder
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.Resolver = New Dom_HeaderTokenResolver
-    Set This.Interpreter = New Dom_ScheduleInterpreter
+    Set This.Builder = New Dom_ScheduleRowBuilder
+End Sub
+
+Public Sub AddOn(ByVal Structure As Dom_SchoolStructure)
+    This.Builder.AddOn Structure
 End Sub
 
 Public Function Resolve(ByRef RawCSVRows() As String) As VBA.Collection
-    Dim ColumnGroup As VBA.Collection
-    Set ColumnGroup = New VBA.Collection
+    Dim Result As VBA.Collection
+    Set Result = New VBA.Collection
     Dim R As Long
     For R = LBound(RawCSVRows) + 1 To UBound(RawCSVRows)
-        Dim Column As Dom_ScheduleColumn
-        Set Column = New Dom_ScheduleColumn
-        Dim ItemList As Scripting.Dictionary
-        Set ItemList = New Scripting.Dictionary
-        Dim C As Long
-        For C = LBound(RawCSVRows, 2) To UBound(RawCSVRows, 2)
-            Dim HeaderName As String
-            HeaderName = RawCSVRows(1, C)
-            If HeaderName = jpnHizuke Then
-                Dim DateID As Dom_DateID
-                DateID = This.Resolver.ResolveDate(RawCSVRows(R, C))
-            Else
-                Dim Schedule As Dom_Schedule
-                Set Schedule = This.Interpreter.Interprete(HeaderName, RawCSVRows(R, C))
-                ItemList.Add HeaderName, Schedule
-            End If
-        Next
-        Column.Initialize DateID, ItemList
-        ColumnGroup.Add Column
+        Dim Column As Dom_ScheduleAggregate
+        Set Column = This.Builder.Build(RawCSVRows, R)
+        Result.Add Column
     Next
-    Set Resolve = ColumnGroup
+    Set Resolve = Result
 End Function

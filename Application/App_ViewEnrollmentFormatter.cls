@@ -18,11 +18,11 @@ Private Enum C
     TotalColumn
 End Enum
 
-Public Function Format(ByVal Enrollment As Dom_EnrollmentColumn, ByVal Structure As Dom_SchoolStructure) As Variant()
+Public Function Format(ByVal Enrollment As Dom_EnrollmentYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As Variant()
     Dim MainStream() As Long
-    MainStream = ToTable(Main, Enrollment, Structure.MainStreamGradeCount, Structure.MainStreamClassCount)
+    MainStream = ToTable(Main, Enrollment, TargetDate, Structure.MainStreamGradeCount, Structure.MainStreamClassCount)
     Dim SpecialStream() As Long
-    SpecialStream = ToTable(Special, Enrollment, Structure.SpecialStreamGradeCount, Structure.SpecialStreamClassCount)
+    SpecialStream = ToTable(Special, Enrollment, TargetDate, Structure.SpecialStreamGradeCount, Structure.SpecialStreamClassCount)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(MainStream) + UBound(SpecialStream) + 2, 1 To C.TotalColumn)
     OutputTable(1, C.GradeColumn) = jpnNen
@@ -80,7 +80,7 @@ Public Function Format(ByVal Enrollment As Dom_EnrollmentColumn, ByVal Structure
     Format = OutputTable
 End Function
 
-Private Function ToTable(ByVal StreamType As Dom_StreamTypeEnum, ByVal Enrollment As Dom_EnrollmentColumn, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
+Private Function ToTable(ByVal StreamType As Dom_StreamTypeEnum, ByVal Enrollment As Dom_EnrollmentYearAggregate, ByVal TargetDate As Dom_DateID, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
     '@Ignore MultipleDeclarations
     Dim Table() As Long, MaleTotal() As Long, FemaleTotal() As Long, ClassTotal() As Long
     ReDim Table(1 To GradeCount * ClassCount + GradeCount, 1 To C.TotalColumn)
@@ -101,8 +101,9 @@ Private Function ToTable(ByVal StreamType As Dom_StreamTypeEnum, ByVal Enrollmen
             For Gender = Dom_GenderEnum.Male To Dom_GenderEnum.Female
                 Dim Filter As Dom_EnrollmentFilter
                 Set Filter = CreateFilter(StreamType, Grade, ClassNo, Gender)
+                Dim Service As New App_EnrollmentService
                 Dim Value As Long
-                Value = Enrollment.GetTotal(Filter)
+                Value = Service.GetDailyTotal(Enrollment, TargetDate, New Dom_EnrollmentCalculator, Filter)
                 If Gender = Dom_GenderEnum.Male Then
                     MaleTotal(G) = MaleTotal(G) + Value
                     Table(R, C.MaleColumn) = Value

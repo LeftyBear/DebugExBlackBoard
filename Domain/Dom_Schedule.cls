@@ -13,17 +13,17 @@ Option Explicit
 
 Private Type Member
     ID      As Dom_ScheduleID
-    Value   As String
+    Value   As Dom_ScheduleValue
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal ID As Dom_ScheduleID, ByVal Value As String)
+Public Sub Initialize(ByVal ID As Dom_ScheduleID, ByVal Value As Dom_ScheduleValue)
     Set This.ID = ID
-    This.Value = Value
+    Set This.Value = Value
 End Sub
 
-Friend Sub ChangeValueInternal(ByVal NewValue As String)
+Friend Sub ChangeValueInternal(ByVal NewValue As Dom_ScheduleValue)
     This.Value = NewValue
 End Sub
 
@@ -31,6 +31,6 @@ Public Function GetID() As Dom_ScheduleID
     Set GetID = This.ID
 End Function
 
-Public Function GetValue() As String
+Public Function GetValue() As Dom_ScheduleValue
     GetValue = This.Value
 End Function

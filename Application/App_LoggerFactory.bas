@@ -3,7 +3,7 @@ Attribute VB_Name = "App_LoggerFactory"
 Option Explicit
 Option Private Module
 
-Public Function CreateLogger() As Inf_ILogger
+Public Function CreateLogger() As App_ILogger
     Dim Provider As App_IWorkbookPathProvider
     Set Provider = New Inf_WorkbookPathProvider
     Dim Builder As App_LogFilePathBuilder

@@ -7,38 +7,52 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Aggregate")
+'@IgnoreModule UseMeaningfulName
+'@Folder("Domain.Entity")
 Option Explicit
 
 Private Type Member
-    DailyMap As Scripting.Dictionary
+    NormDate    As Dom_DateID
+    ItemList    As Scripting.Dictionary
 End Type
 
 Private This As Member
 
-Private Sub Class_Initialize()
-    Set This.DailyMap = New Scripting.Dictionary
+Public Sub Initialize(ByVal NormDate As Dom_DateID, ByVal ItemList As Scripting.Dictionary)
+    Set This.NormDate = NormDate
+    Set This.ItemList = ItemList
+ End Sub
+
+Public Sub UpdateSchedule(ByVal ID As Dom_ScheduleID, ByVal NewSchedule As Dom_ScheduleValue)
+    Dim Schedule As Dom_Schedule
+    Set Schedule = GetScheduleByID(ID)
+    If Schedule Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ScheduleAggregate", "Scheduleオブジェクトが必要です。"
+    Schedule.ChangeValueInternal NewSchedule
 End Sub
 
-Public Sub Add(ByVal Daily As Dom_ScheduleColumn)
-    Dim Key As String
-    Key = Daily.GetDateKey
-    If This.DailyMap.Exists(Key) Then Err.Raise DomErrNotUnique, "Dom_ScheduleAggregate", "キーは一意である必要があります。" & vbCrLf & "重複している日付キー: " & Key
-    This.DailyMap.Add Key, Daily
-End Sub
-
-Public Sub UpdateValue(ByVal TargetDate As Date, ByVal ID As Dom_ScheduleID, ByVal NewSchedule As String)
-    Me.GetByDate(TargetDate).UpdateSchedule ID, NewSchedule
-End Sub
-
-Public Function Count() As Long
-    Count = This.DailyMap.Count
+Public Function GetDateKey() As String
+    GetDateKey = This.NormDate.ToKey
 End Function
 
-Public Function GetByDate(ByVal TargetDate As Date) As Dom_ScheduleColumn
+Public Function GetValue(ByVal ID As Dom_ScheduleID) As String
+    Dim Schedule As Dom_Schedule
+    Set Schedule = GetScheduleByID(ID)
+    If Schedule Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ScheduleAggregate", "Scheduleオブジェクトが必要です。"
+    GetValue = Schedule.GetValue.Value
+End Function
+
+Public Function GetIDs() As Variant()
+    GetIDs = This.ItemList.Keys
+End Function
+
+Public Function GetValues() As Variant()
+    GetValues = This.ItemList.Items
+End Function
+
+Private Function GetScheduleByID(ByVal ID As Dom_ScheduleID) As Dom_Schedule
     Dim Key As String
-    Key = CDate(TargetDate)
-    If This.DailyMap.Exists(Key) Then
-        Set GetByDate = This.DailyMap.Item(Key)
+    Key = ID.ToKey
+    If This.ItemList.Exists(Key) Then
+        Set GetScheduleByID = This.ItemList.Item(Key)
     End If
 End Function

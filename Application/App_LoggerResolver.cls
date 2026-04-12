@@ -20,7 +20,7 @@ Public Sub Initialize(ByVal Builder As App_LogFilePathBuilder)
     Set This.Builder = Builder
 End Sub
 
-Public Function Resolve(ByVal Environment As App_EnvironmentType) As Inf_ILogger
+Public Function Resolve(ByVal Environment As App_EnvironmentType) As App_ILogger
     Select Case Environment
     Case App_EnvironmentType.ReleaseMode
         Dim FilePath As String

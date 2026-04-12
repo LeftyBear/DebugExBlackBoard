@@ -11,15 +11,15 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Builder     As App_ConfigFilePathBuilder
-    Repository  As Dom_IConfigRepository
+    Builder As App_ConfigFilePathBuilder
+    Reader  As Dom_IConfigReader
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Builder As App_ConfigFilePathBuilder, ByVal Repository As Dom_IConfigRepository)
+Public Sub Initialize(ByVal Builder As App_ConfigFilePathBuilder, ByVal Reader As Dom_IConfigReader)
     Set This.Builder = Builder
-    Set This.Repository = Repository
+    Set This.Reader = Reader
 End Sub
 
 Public Function Execute() As Dom_SchoolStructure
@@ -28,7 +28,7 @@ Public Function Execute() As Dom_SchoolStructure
     UpperValueFilePath = This.Builder.Builed(UpperValues)
     If VBA.Len(VBA.Dir(UpperValueFilePath)) = 0 Then Err.Raise AppErrInvalidFilePath, "App_AggregateSchoolStructure", "UpperValue file path is Invalid."
     Dim UpperValueRows() As String
-    UpperValueRows = This.Repository.Load(UpperValueFilePath)
+    UpperValueRows = This.Reader.Load(UpperValueFilePath)
     If App_Util_Array.IsEmpty(UpperValueRows) Then Err.Raise AppErrEmptyArray, "App_AggregateSchoolStructure", "UpperValue RawCSVRows is empty."
     '@Ignore SelfAssignedDeclaration
     Dim UpperValueFactory As New Dom_UpperValueFactory
@@ -39,7 +39,7 @@ Public Function Execute() As Dom_SchoolStructure
     SpecialStreamFilePath = This.Builder.Builed(SpecialStream)
     If VBA.Len(VBA.Dir(SpecialStreamFilePath)) = 0 Then Err.Raise AppErrInvalidFilePath, "App_AggregateSchoolStructure", "SpecialStream file path is Invalid."
     Dim SpecialStreamRows() As String
-    SpecialStreamRows = This.Repository.Load(SpecialStreamFilePath)
+    SpecialStreamRows = This.Reader.Load(SpecialStreamFilePath)
     If App_Util_Array.IsEmpty(SpecialStreamRows) Then Err.Raise AppErrEmptyArray, "App_AggregateSchoolStructure", "SpecialStream RawCSVRows is empty."
     '@Ignore SelfAssignedDeclaration
     Dim SpecialStreamCatalogFactory As New Dom_SpecialStreamCatalogFactory
@@ -50,7 +50,7 @@ Public Function Execute() As Dom_SchoolStructure
     SubjectFilePath = This.Builder.Builed(Subject)
     If VBA.Len(VBA.Dir(SubjectFilePath)) = 0 Then Err.Raise AppErrInvalidFilePath, "App_AggregateSchoolStructure", "Subject file path is Invalid."
     Dim SubjectRows() As String
-    SubjectRows = This.Repository.Load(SubjectFilePath)
+    SubjectRows = This.Reader.Load(SubjectFilePath)
     If App_Util_Array.IsEmpty(SubjectRows) Then Err.Raise AppErrEmptyArray, "App_AggregateSchoolStructure", "Subject RawCSVRows is empty."
     '@Ignore SelfAssignedDeclaration
     Dim SubjectCatalogFactory As New Dom_SubjectCatalogFactory
@@ -61,7 +61,7 @@ Public Function Execute() As Dom_SchoolStructure
     SchoolEventFilePath = This.Builder.Builed(Subject)
     If VBA.Len(VBA.Dir(SchoolEventFilePath)) = 0 Then Err.Raise AppErrInvalidFilePath, "App_AggregateSchoolStructure", "SchoolEvent file path is Invalid."
     Dim SchoolEventRows() As String
-    SchoolEventRows = This.Repository.Load(SchoolEventFilePath)
+    SchoolEventRows = This.Reader.Load(SchoolEventFilePath)
     If App_Util_Array.IsEmpty(SchoolEventRows) Then Err.Raise AppErrEmptyArray, "App_AggregateSchoolStructure", "SchoolEvent RawCSVRows is empty."
     '@Ignore SelfAssignedDeclaration
     Dim SchoolEventCatalogFactory As New Dom_SchoolEventCatalogFactory

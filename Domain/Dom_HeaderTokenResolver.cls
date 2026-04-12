@@ -10,14 +10,6 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Resolver")
 Option Explicit
 
-Public Function ResolveDate(ByVal Token As String) As Dom_DateID
-    Dim Value As Date
-    Value = Dom_Util_Date.NormalizeToDate(Token)
-    With New Dom_DateID
-        Set ResolveDate = .Create(Value)
-    End With
-End Function
-
 Public Function ResolveClassHourType(ByVal Token As String) As Dom_ClassHourType
     Select Case Token
     Case jpnKeikaku
@@ -93,35 +85,5 @@ Public Function ResolvePeriod(ByVal Token As String) As Dom_Period
     End If
     With New Dom_Period
         Set ResolvePeriod = .Create(Value)
-    End With
-End Function
-
-Public Function ResolveTransfer(ByVal Token As String) As Dom_Transfer
-    Dim Value As Boolean
-    Value = Dom_Util_Boolean.NormalizeToBoolean(Token)
-    With New Dom_Transfer
-        Set ResolveTransfer = .Create(Value)
-    End With
-End Function
-
-Public Function ResolveRemarks(ByVal Token As String) As Dom_Remarks
-    With New Dom_Remarks
-        Set ResolveRemarks = .Create(Token)
-    End With
-End Function
-
-Public Function ResolveEnrollmentValue(ByVal Token As String) As Dom_EnrollmentValue
-    Dim Value As Long
-    Value = Dom_Util_Numeric.NormalizeToLong(Token)
-    With New Dom_EnrollmentValue
-        Set ResolveEnrollmentValue = .Create(Value)
-    End With
-End Function
-
-Public Function ResolveClassHourValue(ByVal Token As String) As Dom_ClassHourValue
-    Dim Value As Long
-    Value = Dom_Util_Numeric.NormalizeToLong(Token)
-    With New Dom_ClassHourValue
-        Set ResolveClassHourValue = .Create(Value)
     End With
 End Function

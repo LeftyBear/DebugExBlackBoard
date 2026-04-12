@@ -12,6 +12,7 @@ Option Explicit
 
 Private Type Member
     Resolver    As Dom_HeaderTokenResolver
+    Factory     As Dom_ClassHourFactory
     Structure   As Dom_SchoolStructure
 End Type
 
@@ -19,6 +20,7 @@ Private This As Member
 
 Private Sub Class_Initialize()
     Set This.Resolver = New Dom_HeaderTokenResolver
+    Set This.Factory = New Dom_ClassHourFactory
 End Sub
 
 Public Sub AddOn(ByVal Structure As Dom_SchoolStructure)
@@ -38,19 +40,10 @@ Public Function Interprete(ByVal Header As Dom_ClassHourHeader, ByVal RawValue A
         Dim Grade As Dom_Grade
         Set Grade = This.Resolver.ResolveGrade(RawValue)
     End If
-    Dim ClassHourID As Dom_ClassHourID
-    Set ClassHourID = CreateID(ClassHourType, Subject, Grade)
-    If ClassHourID.IsNoMeaning Then Exit Function
-    Dim Value As Dom_ClassHourValue
-    Set Value = This.Resolver.ResolveClassHourValue(RawValue)
+    Dim ID As Dom_ClassHourID
+    Set ID = Dom_ValueObjectFactory.CreateClassHourID(ClassHourType, Subject, Grade)
+    If ID.IsNoMeaning Then Exit Function
     Dim ClassHour As Dom_ClassHour
-    Set ClassHour = New Dom_ClassHour
-    ClassHour.Initialize ClassHourID, Value
+    Set ClassHour = This.Factory.Create(ID, RawValue)
     Set Interprete = ClassHour
-End Function
-
-Private Function CreateID(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade) As Dom_ClassHourID
-    With New Dom_ClassHourID
-        Set CreateID = .Create(ClassHourType, Subject, Grade)
-    End With
 End Function

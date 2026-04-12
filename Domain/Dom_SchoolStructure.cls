@@ -19,7 +19,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal UpperValue As Dom_UpperValue, ByVal SpecialStreamCatalog As Dom_SpecialStreamCatalog, ByVal SubjectCatalog As Dom_SubjectCatalog, SchoolEventCatalog As Dom_SchoolEventCatalog)
+Public Sub Initialize(ByVal UpperValue As Dom_UpperValue, ByVal SpecialStreamCatalog As Dom_SpecialStreamCatalog, ByVal SubjectCatalog As Dom_SubjectCatalog, ByVal SchoolEventCatalog As Dom_SchoolEventCatalog)
     Set This.UpperValue = UpperValue
     Set This.SpecialStreamCatalog = SpecialStreamCatalog
     Set This.SubjectCatalog = SubjectCatalog
@@ -52,10 +52,6 @@ End Property
 
 Public Function ResolveSubject(ByVal Name As String) As Dom_Subject
     Set ResolveSubject = This.SubjectCatalog.Resolve(Name)
-End Function
-
-Public Function ResolveSchoolEvent(ByVal Name As String) As Dom_SchoolEvent
-    Set ResolveSchoolEvent = This.SchoolEventCatalog.Resolve(Name)
 End Function
 
 Public Function SubjectNameOf(ByVal Index As Long) As String

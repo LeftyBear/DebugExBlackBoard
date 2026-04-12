@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Dom_ClassHourValue"
+Attribute VB_Name = "Dom_TimeTableMark"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -11,23 +11,22 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Value As Long
+    Value As String
 End Type
 
 Private This As Member
 
-Public Function Create(ByVal Value As Long) As Dom_ClassHourValue
-    Dim Result As Dom_ClassHourValue
-    Set Result = New Dom_ClassHourValue
+Public Function Create(ByVal Value As String) As Dom_TimeTableMark
+    Dim Result As Dom_TimeTableMark
+    Set Result = New Dom_TimeTableMark
     Result.SetValueInternal Value
     Set Create = Result
 End Function
 
-Public Property Get Value() As Long
+Public Property Get Value() As String
     Value = This.Value
 End Property
 
-Friend Sub SetValueInternal(ByVal Value As Long)
-    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_ClassHourValue", "数値は0以上である必要があります。"
+Friend Sub SetValueInternal(ByVal Value As String)
     This.Value = Value
 End Sub

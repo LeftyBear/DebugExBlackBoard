@@ -9,8 +9,8 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder "Utility.Logger"
 Option Explicit
-Implements Inf_ILogger
+Implements App_ILogger
 
-Private Sub Inf_ILogger_WriteLog(ByVal Message As String)
+Private Sub App_ILogger_WriteLog(ByVal Message As String)
     Debug.Print Now & charHalfSpace & Message
 End Sub

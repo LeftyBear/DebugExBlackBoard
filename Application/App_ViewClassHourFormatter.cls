@@ -10,9 +10,9 @@ Attribute VB_Exposed = False
 '@Folder("Application.Formatter")
 Option Explicit
 
-Public Function Format(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourColumn, ByVal Structure As Dom_SchoolStructure) As Variant()
+Public Function Format(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As Variant()
     Dim ClassHourTable() As Long
-    ClassHourTable = ToClassHourTable(ClassHourType, ClassHour, Structure)
+    ClassHourTable = ToClassHourTable(ClassHourType, ClassHour, TargetDate, Structure)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(ClassHourTable, 1) + 1, 1 To UBound(ClassHourTable, 2) + 1)
     Dim C As Long
@@ -38,7 +38,7 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal Class
     Format = OutputTable
 End Function
 
-Private Function ToClassHourTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourColumn, ByVal Structure As Dom_SchoolStructure) As Long()
+Private Function ToClassHourTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As Long()
     Dim Table() As Long
     ReDim Table(1 To Structure.SubjectCount + 1, 1 To Structure.MainStreamGradeCount)
     Dim Total() As Long
@@ -53,8 +53,9 @@ Private Function ToClassHourTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, 
             Set Subject = CreateSubject(i)
             Dim Filter As Dom_ClassHourFilter
             Set Filter = CreateFilter(ClassHourType, Subject, Grade)
+            Dim Service As New App_ClassHourService
             Dim Value As Long
-            Value = ClassHour.GetHourTotal(Filter)
+            Value = Service.GetDailyHourTotal(ClassHour, TargetDate, New Dom_ClassHourCalculator, Filter)
             Table(i, G) = Value
             Total(G) = Total(G) + Value
         Next

@@ -13,18 +13,18 @@ Option Explicit
 
 Private Type Member
     ID      As Dom_TimeTableID
-    Mark    As String
+    Mark    As Dom_TimeTableMark
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal ID As Dom_TimeTableID, ByVal Mark As String)
+Public Sub Initialize(ByVal ID As Dom_TimeTableID, ByVal Mark As Dom_TimeTableMark)
     Set This.ID = ID
-    This.Mark = Mark
+    Set This.Mark = Mark
 End Sub
 
-Friend Sub ChangeValueInternal(ByVal NewMark As String)
-    This.Mark = NewMark
+Friend Sub ChangeValueInternal(ByVal NewMark As Dom_TimeTableMark)
+    Set This.Mark = NewMark
 End Sub
 
 Public Function GetID() As Dom_TimeTableID
@@ -32,5 +32,5 @@ Public Function GetID() As Dom_TimeTableID
 End Function
 
 Public Function GetMark() As String
-    GetMark = This.Mark
+    GetMark = This.Mark.Value
 End Function

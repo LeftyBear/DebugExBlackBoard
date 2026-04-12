@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Infrastructure.Logger")
 Option Explicit
-Implements Inf_ILogger
+Implements App_ILogger
 Private Type Member
     FilePath As String
 End Type
@@ -20,7 +20,7 @@ Public Sub Initialize(ByVal FilePath As String)
     This.FilePath = FilePath
 End Sub
 
-Private Sub Inf_ILogger_WriteLog(ByVal Message As String)
+Private Sub App_ILogger_WriteLog(ByVal Message As String)
     '@Ignore IntegerDataType
     Dim FileNo As Integer
     FileNo = VBA.FreeFile

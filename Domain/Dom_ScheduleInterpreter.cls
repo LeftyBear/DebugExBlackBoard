@@ -11,26 +11,25 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Resolver As Dom_HeaderTokenResolver
+    Resolver    As Dom_HeaderTokenResolver
+    Factory     As Dom_ScheduleFactory
+    Structure As Dom_SchoolStructure
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
     Set This.Resolver = New Dom_HeaderTokenResolver
+    Set This.Factory = New Dom_ScheduleFactory
 End Sub
 
-Public Function Interprete(ByVal HeaderName As String, ByVal RawValue As String) As Dom_Schedule
-    Dim ScheduleID As Dom_ScheduleID
-    Set ScheduleID = CreateID(HeaderName)
-    Dim Schedule As Dom_Schedule
-    Set Schedule = New Dom_Schedule
-    Schedule.Initialize ScheduleID, RawValue
-    Set Interprete = Schedule
-End Function
+Public Sub AddOn(ByVal Structure As Dom_SchoolStructure)
+    Set This.Structure = Structure
+End Sub
 
-Private Function CreateID(ByVal Key As String) As Dom_ScheduleID
-    With New Dom_ScheduleID
-        Set CreateID = .Create(Key)
-    End With
+Public Function Interprete(ByVal HeaderName As String, ByVal RawText As String) As Dom_Schedule
+    If This.Structure.IsSchoolEvent(HeaderName) Then Exit Function
+    Dim ID As Dom_ScheduleID
+    Set ID = Dom_ValueObjectFactory.CreateScheduleID(HeaderName)
+    Set Interprete = This.Factory.Create(ID, RawText)
 End Function

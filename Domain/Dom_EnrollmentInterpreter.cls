@@ -11,16 +11,18 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Resolver As Dom_HeaderTokenResolver
+    Resolver    As Dom_HeaderTokenResolver
+    Factory     As Dom_EnrollmentFactory
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
     Set This.Resolver = New Dom_HeaderTokenResolver
+    Set This.Factory = New Dom_ClassHourFactory
 End Sub
 
-Public Function Interprete(ByVal Header As Dom_EnrollmentHeader, ByVal RawValue As String) As Dom_Enrollment
+Public Function Interprete(ByVal Header As Dom_EnrollmentHeader, ByVal RawText As String) As Dom_Enrollment
     Dim StreamType As Dom_StreamType
     Set StreamType = This.Resolver.ResolveStreamType(Header.Grade)
     Dim Grade As Dom_Grade
@@ -29,19 +31,13 @@ Public Function Interprete(ByVal Header As Dom_EnrollmentHeader, ByVal RawValue 
     Set ClassNo = This.Resolver.ResolveClassNo(Header.ClassNo)
     Dim Gender As Dom_Gender
     Set Gender = This.Resolver.ResolveGender(Header.Gender)
-    Dim EnrollmentID As Dom_EnrollmentID
-    Set EnrollmentID = CreateID(StreamType, Grade, ClassNo, Gender)
-    If EnrollmentID.IsNoMeaning Then Exit Function
+    Dim ID As Dom_EnrollmentID
+    Set ID = Dom_ValueObjectFactory.CreateEnrollmentID(StreamType, Grade, ClassNo, Gender)
+    If ID.IsNoMeaning Then Exit Function
     Dim Value As Dom_EnrollmentValue
-    Set Value = This.Resolver.ResolveEnrollmentValue(RawValue)
+    Set Value = This.Factory.Create(ID, RawText)
     Dim Enrollment As Dom_Enrollment
     Set Enrollment = New Dom_Enrollment
-    Enrollment.Initialize EnrollmentID, Value
+    Enrollment.Initialize ID, Value
     Set Interprete = Enrollment
-End Function
-
-Private Function CreateID(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender) As Dom_EnrollmentID
-    With New Dom_EnrollmentID
-        Set CreateID = .Create(StreamType, Grade, ClassNo, Gender)
-    End With
 End Function

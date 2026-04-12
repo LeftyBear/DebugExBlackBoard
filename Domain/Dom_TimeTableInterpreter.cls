@@ -36,14 +36,22 @@ Public Function Interprete(ByVal Header As Dom_ClassHourHeader, ByVal RawValue A
     Dim TimeTableID As Dom_TimeTableID
     Set TimeTableID = CreateID(ClassHourType, Period, Grade)
     If TimeTableID.IsNoMeaning Then Exit Function
+    Dim Value As Dom_TimeTableMark
+    Set Value = CreateMark(RawValue)
     Dim TimeTable As Dom_TimeTable
     Set TimeTable = New Dom_TimeTable
-    TimeTable.Initialize TimeTableID, RawValue
+    TimeTable.Initialize TimeTableID, Value
     Set Interprete = TimeTable
 End Function
 
 Private Function CreateID(ByVal ClassHourType As Dom_ClassHourType, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_TimeTableID
     With New Dom_TimeTableID
         Set CreateID = .Create(ClassHourType, Period, Grade)
+    End With
+End Function
+
+Private Function CreateMark(ByVal RawValue As String) As Dom_TimeTableMark
+    With New Dom_TimeTableMark
+        Set CreateMark = .Create(RawValue)
     End With
 End Function

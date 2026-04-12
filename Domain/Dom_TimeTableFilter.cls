@@ -27,9 +27,9 @@ Friend Sub InitializeInternal(ByVal ClassHourType As Dom_ClassHourType, ByVal Pe
     If Not Grade Is Nothing Then Set This.Grade = Grade: This.HasGrade = True
 End Sub
 
-Public Function Create(ByVal ClassHourType As Dom_ClassHourType, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_ClassHourFilter
-    Dim Result As Dom_ClassHourFilter
-    Set Result = New Dom_ClassHourFilter
+Public Function Create(ByVal ClassHourType As Dom_ClassHourType, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_TimeTableFilter
+    Dim Result As Dom_TimeTableFilter
+    Set Result = New Dom_TimeTableFilter
     Result.InitializeInternal ClassHourType, Period, Grade
     Set Create = Result
 End Function
