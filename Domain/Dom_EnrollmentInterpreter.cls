@@ -19,7 +19,7 @@ Private This As Member
 
 Private Sub Class_Initialize()
     Set This.Resolver = New Dom_HeaderTokenResolver
-    Set This.Factory = New Dom_ClassHourFactory
+    Set This.Factory = New Dom_EnrollmentFactory
 End Sub
 
 Public Function Interprete(ByVal Header As Dom_EnrollmentHeader, ByVal RawText As String) As Dom_Enrollment

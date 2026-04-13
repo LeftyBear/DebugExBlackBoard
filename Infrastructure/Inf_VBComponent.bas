@@ -39,6 +39,7 @@ End Sub
 Private Sub CleanupUnusedFiles(ByVal RootPath As String)
     CleanupFolder RootPath & "\Domain\"
     CleanupFolder RootPath & "\Application\"
+    CleanupFolder RootPath & "\Presentation\"
     CleanupFolder RootPath & "\Infrastructure\"
     CleanupFolder RootPath & "\Utility\"
 End Sub
@@ -46,6 +47,7 @@ End Sub
 Private Function HasLayerPrefix(ByVal ModuleName As String) As Boolean
     If VBA.Left$(ModuleName, 4) = "Dom_" Then HasLayerPrefix = True
     If VBA.Left$(ModuleName, 4) = "App_" Then HasLayerPrefix = True
+    If VBA.Left$(ModuleName, 4) = "Pre_" Then HasLayerPrefix = True
     If VBA.Left$(ModuleName, 4) = "Inf_" Then HasLayerPrefix = True
     If VBA.Left$(ModuleName, 5) = "Util_" Then HasLayerPrefix = True
 End Function
@@ -91,6 +93,8 @@ Private Function ResolveLayerFolder(ByVal RootPath As String, ByVal ModuleName A
         ResolveLayerFolder = RootPath & "\Domain\"
     ElseIf ModuleName Like "App_*" Then
         ResolveLayerFolder = RootPath & "\Application\"
+    ElseIf ModuleName Like "Pre_*" Then
+        ResolveLayerFolder = RootPath & "\Presentation\"
     ElseIf ModuleName Like "Inf_*" Then
         ResolveLayerFolder = RootPath & "\Infrastructure\"
     ElseIf ModuleName Like "Util_*" Then
