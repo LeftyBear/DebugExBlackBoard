@@ -10,9 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Factory")
 Option Explicit
 
-Public Function Create(ByVal ID As Dom_EnrollmentID, ByVal RawText As String) As Dom_Enrollment
+Public Function Create(ByVal ID As Dom_EnrollmentID, ByVal RawValue As Long) As Dom_Enrollment
+    '@Ignore SelfAssignedDeclaration
+    Dim VOFactory As New Dom_ValueObjectFactory
     Dim Value As Dom_EnrollmentValue
-    Set Value = Dom_ValueObjectFactory.CreateEnrollmentValue(RawText)
+    Set Value = VOFactory.CreateEnrollmentValue(RawValue)
     Dim Result As Dom_Enrollment
     Set Result = New Dom_Enrollment
     Result.Initialize ID, Value

@@ -25,9 +25,9 @@ Public Function Build(ByRef RawCSVRows() As String, ByVal RowIndex As Long) As D
     Dim DateID As Dom_DateID
     Dim Transfer As Dom_Transfer
     Dim Remarks As Dom_Remarks
-    Dim MainStreamList As New Scripting.Dictionary
+    Dim MainStreamList As Scripting.Dictionary
     Set MainStreamList = New Scripting.Dictionary
-    Dim SpecialStreamList As New Scripting.Dictionary
+    Dim SpecialStreamList As Scripting.Dictionary
     Set SpecialStreamList = New Scripting.Dictionary
     Dim C As Long
     For C = LBound(RawCSVRows, 2) To UBound(RawCSVRows, 2)

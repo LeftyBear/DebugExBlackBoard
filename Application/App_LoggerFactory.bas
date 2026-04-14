@@ -1,5 +1,5 @@
 Attribute VB_Name = "App_LoggerFactory"
-'@Folder "Application.CompositionRoot"
+'@Folder "Application.Factory"
 Option Explicit
 Option Private Module
 

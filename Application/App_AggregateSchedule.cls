@@ -26,7 +26,7 @@ Public Sub Initialize(ByVal Builder As App_EntityFilePathBuilder, ByVal Reader A
     Set This.Factory = New Dom_ScheduleYearAggFactory
 End Sub
 
-Public Function Execute(ByVal TargetDate As Date, ByVal Structure As Dom_SchoolStructure) As Dom_ScheduleAggregate
+Public Function Execute(ByVal TargetDate As Date, ByVal Structure As Dom_SchoolStructure) As Dom_ScheduleYearAggregate
     With New Dom_SchoolYear
         Dim SchoolYear As Dom_SchoolYear
         Set SchoolYear = .Create(Dom_Util_Date.GetSchoolYear(TargetDate))

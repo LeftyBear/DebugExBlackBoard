@@ -28,8 +28,8 @@ Public Function Parse(ByVal HeaderName As String) As Dom_EnrollmentHeader
             End If
         Next
     ElseIf 0 < VBA.InStr(1, Parts(i), jpnHizuke) Then
-        Dim TargetDate As String
-        TargetDate = Parts(0)
+        Dim RawDate As String
+        RawDate = Parts(0)
     ElseIf 0 < VBA.InStr(1, Parts(i), jpnIdou) Then
         Dim Transfer As String
         Transfer = Parts(0)
@@ -39,6 +39,6 @@ Public Function Parse(ByVal HeaderName As String) As Dom_EnrollmentHeader
     End If
     Dim Result As Dom_EnrollmentHeader
     Set Result = New Dom_EnrollmentHeader
-    Result.Initialize TargetDate, Grade, ClassNo, Gender, Transfer, Remarks
+    Result.Initialize RawDate, Grade, ClassNo, Gender, Transfer, Remarks
     Set Parse = Result
 End Function

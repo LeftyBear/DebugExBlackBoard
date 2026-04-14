@@ -137,6 +137,7 @@ Private Function GetHourTotal(ByVal Filter As Dom_ClassHourFilter) As Long
     Case Dom_ClassHourTypeEnum.Execution
         Items = This.ExeValueList.Items
     End Select
+    '@Ignore SelfAssignedDeclaration
     Dim Calculator As New Dom_ClassHourCalculator
     GetHourTotal = Calculator.Calculate(Items, Filter)
 End Function
@@ -149,6 +150,7 @@ Private Function GetMarkCount(ByVal Filter As Dom_TimeTableFilter) As Long
     Case Dom_ClassHourTypeEnum.Execution
         Items = This.ExeMarkList.Items
     End Select
+    '@Ignore SelfAssignedDeclaration
     Dim Calculator As New Dom_TimeTableCalculator
     GetMarkCount = Calculator.Calculate(Items, Filter)
 End Function

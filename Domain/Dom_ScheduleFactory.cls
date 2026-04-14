@@ -11,8 +11,10 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public Function Create(ByVal ID As Dom_ScheduleID, ByVal RawText As String) As Dom_Schedule
+    '@Ignore SelfAssignedDeclaration
+    Dim VOFactory As New Dom_ValueObjectFactory
     Dim ScheduleValue As Dom_ScheduleValue
-    Set ScheduleValue = Dom_ValueObjectFactory.CreateSchedlueValue(RawText)
+    Set ScheduleValue = VOFactory.CreateSchedlueValue(RawText)
     Dim Result As Dom_Schedule
     Set Result = New Dom_Schedule
     Result.Initialize ID, ScheduleValue

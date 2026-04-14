@@ -12,6 +12,7 @@ Option Explicit
 Implements App_IPresenterCallback
 Private Type Member
     Structure   As Dom_SchoolStructure
+    VOFactory   As Dom_ValueObjectFactory
     Logger      As App_ILogger
     Schedule    As App_AggregateSchedule
     Enrollment  As App_AggregateEnrollment
@@ -26,6 +27,7 @@ Private This As Member
 
 Public Sub Initialize(ByVal Structure As Dom_SchoolStructure, ByVal Logger As App_ILogger, ByVal Schedule As App_AggregateSchedule, ByVal Enrollment As App_AggregateEnrollment, ByVal ClassHour As App_AggregateClassHour)
     Set This.Structure = Structure
+    Set This.VOFactory = New Dom_ValueObjectFactory
     Set This.Logger = Logger
     Set This.Schedule = Schedule
     Set This.Enrollment = Enrollment
@@ -73,25 +75,21 @@ Private Sub App_IPresenterCallback_RenderResult(ByVal Result As App_PresenterRes
 End Sub
 
 Private Sub LoadByDate(ByVal SelectedDate As Date)
-    Dim ScheduleAgg As Dom_ScheduleAggregate
+    Dim ScheduleAgg As Dom_ScheduleYearAggregate
     Set ScheduleAgg = This.Schedule.Execute(SelectedDate, This.Structure)
-    Dim EnrollmentAgg As Dom_EnrollmentAggregate
+    Dim EnrollmentAgg As Dom_EnrollmentYearAggregate
     Set EnrollmentAgg = This.Enrollment.Execute(SelectedDate)
-    Dim ClassHourAgg As Dom_ClassHourAggregate
+    Dim ClassHourAgg As Dom_ClassHourYearAggregate
     Set ClassHourAgg = This.ClassHour.Execute(SelectedDate, This.Structure)
     Dim TargetDate As Dom_DateID
-    TargetDate = ResolveDate(SelectedDate)
+    Set TargetDate = This.VOFactory.CreateDateID(SelectedDate)
+    Dim Schedule As Dom_ScheduleAggregate
+    Set Schedule = ScheduleAgg.GetByDate(TargetDate)
     Dim NewVM As Pre_ViewModel
-    Set NewVM = This.Builder.Build(EnrollmentAgg, ClassHourAgg, This.Structure, TargetDate)
+    Set NewVM = This.Builder.Build(Schedule, EnrollmentAgg, ClassHourAgg, This.Structure, TargetDate)
     RenderDiff This.CurrentVM, NewVM
     Set This.CurrentVM = NewVM
 End Sub
-
-Private Function ResolveDate(ByVal SelectedDate As Date) As Dom_DateID
-    With New Dom_DateID
-        Set ResolveDate = .Create(SelectedDate)
-    End With
-End Function
 
 Private Sub RenderDiff(ByVal OldVM As Pre_ViewModel, ByVal NewVM As Pre_ViewModel)
     If OldVM Is Nothing Then

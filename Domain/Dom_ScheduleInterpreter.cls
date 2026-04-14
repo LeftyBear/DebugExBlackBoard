@@ -13,7 +13,7 @@ Option Explicit
 Private Type Member
     Resolver    As Dom_HeaderTokenResolver
     Factory     As Dom_ScheduleFactory
-    Structure As Dom_SchoolStructure
+    VOFactory   As Dom_ValueObjectFactory
 End Type
 
 Private This As Member
@@ -21,15 +21,11 @@ Private This As Member
 Private Sub Class_Initialize()
     Set This.Resolver = New Dom_HeaderTokenResolver
     Set This.Factory = New Dom_ScheduleFactory
+    Set This.VOFactory = New Dom_ValueObjectFactory
 End Sub
 
-Public Sub AddOn(ByVal Structure As Dom_SchoolStructure)
-    Set This.Structure = Structure
-End Sub
-
-Public Function Interprete(ByVal HeaderName As String, ByVal RawText As String) As Dom_Schedule
-    If This.Structure.IsSchoolEvent(HeaderName) Then Exit Function
+Public Function Interprete(ByVal Header As Dom_ScheduleHeader, ByVal RawText As String) As Dom_Schedule
     Dim ID As Dom_ScheduleID
-    Set ID = Dom_ValueObjectFactory.CreateScheduleID(HeaderName)
+    Set ID = This.VOFactory.CreateScheduleID(Header.RawText)
     Set Interprete = This.Factory.Create(ID, RawText)
 End Function

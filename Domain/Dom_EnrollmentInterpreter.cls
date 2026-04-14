@@ -13,6 +13,7 @@ Option Explicit
 Private Type Member
     Resolver    As Dom_HeaderTokenResolver
     Factory     As Dom_EnrollmentFactory
+    VOFactory   As Dom_ValueObjectFactory
 End Type
 
 Private This As Member
@@ -20,6 +21,7 @@ Private This As Member
 Private Sub Class_Initialize()
     Set This.Resolver = New Dom_HeaderTokenResolver
     Set This.Factory = New Dom_EnrollmentFactory
+    Set This.VOFactory = New Dom_ValueObjectFactory
 End Sub
 
 Public Function Interprete(ByVal Header As Dom_EnrollmentHeader, ByVal RawText As String) As Dom_Enrollment
@@ -32,12 +34,7 @@ Public Function Interprete(ByVal Header As Dom_EnrollmentHeader, ByVal RawText A
     Dim Gender As Dom_Gender
     Set Gender = This.Resolver.ResolveGender(Header.Gender)
     Dim ID As Dom_EnrollmentID
-    Set ID = Dom_ValueObjectFactory.CreateEnrollmentID(StreamType, Grade, ClassNo, Gender)
+    Set ID = This.VOFactory.CreateEnrollmentID(StreamType, Grade, ClassNo, Gender)
     If ID.IsNoMeaning Then Exit Function
-    Dim Value As Dom_EnrollmentValue
-    Set Value = This.Factory.Create(ID, RawText)
-    Dim Enrollment As Dom_Enrollment
-    Set Enrollment = New Dom_Enrollment
-    Enrollment.Initialize ID, Value
-    Set Interprete = Enrollment
+    Set Interprete = This.Factory.Create(ID, RawText)
 End Function

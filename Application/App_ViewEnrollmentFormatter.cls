@@ -101,6 +101,7 @@ Private Function ToTable(ByVal StreamType As Dom_StreamTypeEnum, ByVal Enrollmen
             For Gender = Dom_GenderEnum.Male To Dom_GenderEnum.Female
                 Dim Filter As Dom_EnrollmentFilter
                 Set Filter = CreateFilter(StreamType, Grade, ClassNo, Gender)
+                '@Ignore SelfAssignedDeclaration
                 Dim Service As New App_EnrollmentService
                 Dim Value As Long
                 Value = Service.GetDailyTotal(Enrollment, TargetDate, New Dom_EnrollmentCalculator, Filter)

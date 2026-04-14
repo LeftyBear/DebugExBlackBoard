@@ -24,7 +24,7 @@ Public Sub Initialize(ByVal ID As Dom_ScheduleID, ByVal Value As Dom_ScheduleVal
 End Sub
 
 Friend Sub ChangeValueInternal(ByVal NewValue As Dom_ScheduleValue)
-    This.Value = NewValue
+    Set This.Value = NewValue
 End Sub
 
 Public Function GetID() As Dom_ScheduleID
@@ -32,5 +32,5 @@ Public Function GetID() As Dom_ScheduleID
 End Function
 
 Public Function GetValue() As Dom_ScheduleValue
-    GetValue = This.Value
+    Set GetValue = This.Value
 End Function

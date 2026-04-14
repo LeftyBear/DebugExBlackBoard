@@ -56,6 +56,7 @@ Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal
             Set Period = CreatePeriod(P)
             Dim Filter As Dom_TimeTableFilter
             Set Filter = CreateFilter(ClassHourType, Period, Grade)
+            '@Ignore SelfAssignedDeclaration
             Dim Service As New App_TimeTableService
             Table(P, G) = Service.GetDailyMarkCount(ClassHour, TargetDate, New Dom_TimeTableCalculator, Filter)
         Next

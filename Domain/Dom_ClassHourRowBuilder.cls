@@ -28,13 +28,13 @@ End Sub
 
 Public Function Build(ByRef RawCSVRows() As String, ByVal RowIndex As Long) As Dom_ClassHourAggregate
     Dim DateID As Dom_DateID
-    Dim PlanValueList As New Scripting.Dictionary
+    Dim PlanValueList As Scripting.Dictionary
     Set PlanValueList = New Scripting.Dictionary
-    Dim PlanMarkList As New Scripting.Dictionary
+    Dim PlanMarkList As Scripting.Dictionary
     Set PlanMarkList = New Scripting.Dictionary
-    Dim ExeValueList As New Scripting.Dictionary
+    Dim ExeValueList As Scripting.Dictionary
     Set ExeValueList = New Scripting.Dictionary
-    Dim ExeMarkList As New Scripting.Dictionary
+    Dim ExeMarkList As Scripting.Dictionary
     Set ExeMarkList = New Scripting.Dictionary
     Dim C As Long
     For C = LBound(RawCSVRows, 2) To UBound(RawCSVRows, 2)

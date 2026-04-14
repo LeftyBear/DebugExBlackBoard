@@ -11,6 +11,8 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
+    Structure                   As Dom_SchoolStructure
+    Schedule                    As Dom_ScheduleAggregate
     EnrollmentTable()           As Variant
     ClassHourPlanTable()        As Variant
     ClassHourExecutionTable()   As Variant
@@ -19,6 +21,14 @@ Private Type Member
 End Type
 
 Private This As Member
+
+Public Property Set Structure(ByVal Value As Dom_SchoolStructure)
+    Set This.Structure = Value
+End Property
+
+Public Property Set Schedule(ByVal Value As Dom_ScheduleAggregate)
+    Set This.Schedule = Value
+End Property
 
 Public Property Let EnrollmentTable(ByRef Value() As Variant)
     This.EnrollmentTable = Value
@@ -38,6 +48,14 @@ End Property
 
 Public Property Let TimeTableExecutionTable(ByRef Value() As Variant)
     This.TimeTableExecutionTable = Value
+End Property
+
+Public Property Get Structure() As Dom_SchoolStructure
+    Set Structure = This.Structure
+End Property
+
+Public Property Get Schedule() As Dom_ScheduleAggregate
+    Set Schedule = This.Schedule
 End Property
 
 Public Property Get EnrollmentTable() As Variant()

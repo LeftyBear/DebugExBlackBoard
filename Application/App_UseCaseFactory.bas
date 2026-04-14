@@ -1,5 +1,5 @@
 Attribute VB_Name = "App_UseCaseFactory"
-'@Folder "Application.CompositionRoot"
+'@Folder "Application.Factory"
 Option Explicit
 Option Private Module
 

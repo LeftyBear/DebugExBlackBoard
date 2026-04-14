@@ -13,23 +13,26 @@ Option Explicit
 Private Type Member
     HeaderResolver  As Dom_HeaderTokenResolver
     Interpreter     As Dom_EnrollmentInterpreter
+    VOFactory       As Dom_ValueObjectFactory
 End Type
+
 Private This As Member
 
 Private Sub Class_Initialize()
     Set This.HeaderResolver = New Dom_HeaderTokenResolver
     Set This.Interpreter = New Dom_EnrollmentInterpreter
+    Set This.VOFactory = New Dom_ValueObjectFactory
 End Sub
 
 '@Ignore ParameterCanBeByVal
 '@Ignore ParameterCanBeByVal
 Public Sub Resolve(ByVal Header As Dom_EnrollmentHeader, ByVal RawText As String, ByRef DateID As Dom_DateID, ByRef Transfer As Dom_Transfer, ByRef Remarks As Dom_Remarks, ByRef MainStreamList As Scripting.Dictionary, ByRef SpecialStreamList As Scripting.Dictionary)
     If Header.RawDate <> vbNullString Then
-        Set DateID = Dom_ValueObjectFactory.CreateDateID(RawText)
+        Set DateID = This.VOFactory.CreateDateID(RawText)
     ElseIf Header.Transfer <> vbNullString Then
-        Set Transfer = Dom_ValueObjectFactory.CreateTransfer(RawText)
+        Set Transfer = This.VOFactory.CreateTransfer(RawText)
     ElseIf Header.Remarks <> vbNullString Then
-        Set Remarks = Dom_ValueObjectFactory.CreateRemarks(RawText)
+        Set Remarks = This.VOFactory.CreateRemarks(RawText)
     Else
         Dim Enrollment As Dom_Enrollment
         Set Enrollment = This.Interpreter.Interprete(Header, RawText)

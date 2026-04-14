@@ -53,6 +53,7 @@ Private Function ToClassHourTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, 
             Set Subject = CreateSubject(i)
             Dim Filter As Dom_ClassHourFilter
             Set Filter = CreateFilter(ClassHourType, Subject, Grade)
+            '@Ignore SelfAssignedDeclaration
             Dim Service As New App_ClassHourService
             Dim Value As Long
             Value = Service.GetDailyHourTotal(ClassHour, TargetDate, New Dom_ClassHourCalculator, Filter)

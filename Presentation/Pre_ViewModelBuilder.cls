@@ -24,12 +24,17 @@ Private Sub Class_Initialize()
     Set This.TimeTableFormatter = New App_ViewTimeTableFormatter
 End Sub
 
-Public Function Build(ByVal Enrollment As Dom_EnrollmentYearAggregate, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal Structure As Dom_SchoolStructure, ByVal TargetDate As Dom_DateID) As Pre_ViewModel
-    Dim VM As New Pre_ViewModel
-    VM.EnrollmentTable = This.EnrollmentFormatter.Format(Enrollment, TargetDate, Structure)
-    VM.ClassHourPlanTable = This.ClassHourFormatter.Format(Plan, ClassHour, TargetDate, Structure)
-    VM.ClassHourExecutionTable = This.ClassHourFormatter.Format(Execution, ClassHour, TargetDate, Structure)
-    VM.TimeTablePlanTable = This.TimeTableFormatter.Format(Plan, ClassHour, TargetDate, Structure)
-    VM.TimeTableExecutionTable = This.TimeTableFormatter.Format(Execution, ClassHour, TargetDate, Structure)
-    Set Build = VM
+Public Function Build(ByVal Schedule As Dom_ScheduleAggregate, ByVal Enrollment As Dom_EnrollmentYearAggregate, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal Structure As Dom_SchoolStructure, ByVal TargetDate As Dom_DateID) As Pre_ViewModel
+    '@Ignore SelfAssignedDeclaration
+    Dim ViewModel As New Pre_ViewModel
+    With ViewModel
+        Set .Structure = Structure
+        Set .Schedule = Schedule
+        .EnrollmentTable = This.EnrollmentFormatter.Format(Enrollment, TargetDate, Structure)
+        .ClassHourPlanTable = This.ClassHourFormatter.Format(Plan, ClassHour, TargetDate, Structure)
+        .ClassHourExecutionTable = This.ClassHourFormatter.Format(Execution, ClassHour, TargetDate, Structure)
+        .TimeTablePlanTable = This.TimeTableFormatter.Format(Plan, ClassHour, TargetDate, Structure)
+        .TimeTableExecutionTable = This.TimeTableFormatter.Format(Execution, ClassHour, TargetDate, Structure)
+    End With
+    Set Build = ViewModel
 End Function

@@ -76,7 +76,7 @@ Private Function BuildGridControlName(ByVal Kind As String, Optional ByVal Grade
 End Function
 
 Private Sub Pre_IMainView_HideLoading()
-    Application.StatusBar = ""
+    Application.StatusBar = vbNullString
 End Sub
 
 Private Sub Pre_IMainView_NotifyBusinessError(ByVal Message As String)
@@ -87,12 +87,12 @@ Private Sub Pre_IMainView_NotifySystemError()
     MsgBox "予期しないエラーが発生したのでログに書き出しました。", vbCritical, "システムエラー"
 End Sub
 
-Private Sub Pre_IMainView_Render(ByVal VM As Pre_ViewModel)
-    Pre_IMainView_RenderEnrollment VM.EnrollmentTable
-    Pre_IMainView_RenderClassHourPlan VM.ClassHourPlanTable
-    Pre_IMainView_RenderClassHourExecution VM.ClassHourExecutionTable
-    Pre_IMainView_RenderTimeTablePlan VM.TimeTablePlanTable
-    Pre_IMainView_RenderTimeTableExecution VM.TimeTableExecutionTable
+Private Sub Pre_IMainView_Render(ByVal ViewModel As Pre_ViewModel)
+    Pre_IMainView_RenderEnrollment ViewModel.EnrollmentTable
+    Pre_IMainView_RenderClassHourPlan ViewModel.ClassHourPlanTable
+    Pre_IMainView_RenderClassHourExecution ViewModel.ClassHourExecutionTable
+    Pre_IMainView_RenderTimeTablePlan ViewModel.TimeTablePlanTable
+    Pre_IMainView_RenderTimeTableExecution ViewModel.TimeTableExecutionTable
 End Sub
 
 Private Sub Pre_IMainView_RenderClassHourExecution(Table() As Variant)

@@ -11,8 +11,10 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public Function Create(ByVal ID As Dom_ClassHourID, ByVal RawValue As Long) As Dom_ClassHour
+    '@Ignore SelfAssignedDeclaration
+    Dim VOFactory As New Dom_ValueObjectFactory
     Dim Value As Dom_ClassHourValue
-    Set Value = Dom_ValueObjectFactory.CreateClassHourValue(RawValue)
+    Set Value = VOFactory.CreateClassHourValue(RawValue)
     Dim Result As Dom_ClassHour
     Set Result = New Dom_ClassHour
     Result.Initialize ID, Value
