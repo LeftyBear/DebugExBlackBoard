@@ -26,14 +26,10 @@ Public Sub Initialize(ByVal Builder As App_EntityFilePathBuilder, ByVal Reader A
     Set This.Factory = New Dom_EnrollmentYearAggFactory
 End Sub
 
-Public Function Execute(ByVal SelectedDate As Date) As Dom_EnrollmentYearAggregate
-    With New Dom_SchoolYear
-        Dim SchoolYear As Dom_SchoolYear
-        Set SchoolYear = .Create(Dom_Util_Date.GetSchoolYear(SelectedDate))
-    End With
+Public Function Execute(SchoolYear As Dom_SchoolYear) As Dom_EnrollmentYearAggregate
     Dim FilePath As String
     FilePath = This.Builder.Builed(Enrollment, SchoolYear)
-    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise AppErrInvalidFilePath, "App_AggregateEnrollment", "File path is invalid."
+    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function
     Dim RawCSVRows() As String
     RawCSVRows = This.Reader.Load(FilePath)
     If App_Util_Array.IsEmpty(RawCSVRows) Then Err.Raise AppErrEmptyArray, "App_AggregateEnrollment", "RawCSVRows is empty."

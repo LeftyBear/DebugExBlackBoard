@@ -26,14 +26,10 @@ Public Sub Initialize(ByVal Builder As App_EntityFilePathBuilder, ByVal Reader A
     Set This.Factory = New Dom_ClassHourYearAggFactory
 End Sub
 
-Public Function Execute(ByVal SelectedDate As Date, ByVal Structure As Dom_SchoolStructure) As Dom_ClassHourYearAggregate
-    With New Dom_SchoolYear
-        Dim SchoolYear As Dom_SchoolYear
-        Set SchoolYear = .Create(Dom_Util_Date.GetSchoolYear(SelectedDate))
-    End With
+Public Function Execute(SchoolYear As Dom_SchoolYear, ByVal Structure As Dom_SchoolStructure) As Dom_ClassHourYearAggregate
     Dim FilePath As String
     FilePath = This.Builder.Builed(ClassHour, SchoolYear)
-    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise AppErrInvalidFilePath, "App_AggregateClassHour", "File path is invalid."
+    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function
     Dim RawCSVRows() As String
     RawCSVRows = This.Reader.Load(FilePath)
     If App_Util_Array.IsEmpty(RawCSVRows) Then Err.Raise AppErrEmptyArray, "App_AggregateClassHour", "RawCSVRows is empty."

@@ -10,9 +10,23 @@ Attribute VB_Exposed = False
 '@Folder("Application.Formatter")
 Option Explicit
 
-Public Function Format(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As Variant()
+Private Type Member
+    Calculator  As Dom_TimeTableCalculator
+    Factory     As App_ValueObjectFactory
+    Service     As App_TimeTableService
+End Type
+
+Private This As Member
+
+Private Sub Class_Initialize()
+    Set This.Calculator = New Dom_TimeTableCalculator
+    Set This.Factory = New App_ValueObjectFactory
+    Set This.Service = New App_TimeTableService
+End Sub
+
+Public Function Format(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As Variant()
     Dim TimeTable() As String
-    TimeTable = ToTimeTable(ClassHourType, ClassHour, TargetDate, Structure)
+    TimeTable = ToTimeTable(ClassHourTypeEnum, ClassHour, TargetDate, Structure)
     Dim Total() As Long
     ReDim Total(Structure.MainStreamGradeCount)
     Dim OutputTable() As Variant
@@ -43,49 +57,32 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal Class
     Format = OutputTable
 End Function
 
-Private Function ToTimeTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As String()
+Private Function ToTimeTable(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As String()
     Dim Table() As String
     ReDim Table(1 To Structure.PeriodCount, 1 To Structure.MainStreamGradeCount)
+    If ClassHour Is Nothing Then GoTo Finalize
+    Dim ClassHourType As Dom_ClassHourType
+    Set ClassHourType = This.Factory.CreateClassHourType(ClassHourTypeEnum)
     Dim G As Long
     For G = 1 To Structure.MainStreamGradeCount
         Dim Grade As Dom_Grade
-        Set Grade = CreateGrade(G)
+        Set Grade = This.Factory.CreateGrade(G)
         Dim P As Long
         For P = 1 To Structure.PeriodCount
             Dim Period As Dom_Period
-            Set Period = CreatePeriod(P)
+            Set Period = This.Factory.CreatePeriod(P)
             Dim Filter As Dom_TimeTableFilter
-            Set Filter = CreateFilter(ClassHourType, Period, Grade)
-            '@Ignore SelfAssignedDeclaration
-            Dim Service As New App_TimeTableService
-            Table(P, G) = Service.GetDailyMarkCount(ClassHour, TargetDate, New Dom_TimeTableCalculator, Filter)
+            Set Filter = CreateTimeTableFilter(ClassHourType, Period, Grade)
+            Table(P, G) = This.Service.GetDailyMarkCount(ClassHour, TargetDate, This.Calculator, Filter)
         Next
     Next
+Finalize:
     ToTimeTable = Table
 End Function
 
-Private Function CreateFilter(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_TimeTableFilter
-    Dim ClassHourType As Dom_ClassHourType
-    Set ClassHourType = CreateClassHourType(ClassHourTypeEnum)
+Private Function CreateTimeTableFilter(ByVal ClassHourType As Dom_ClassHourType, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_TimeTableFilter
     With New Dom_TimeTableFilter
-        Set CreateFilter = .Create(ClassHourType, Period, Grade)
+        Set CreateTimeTableFilter = .Create(ClassHourType, Period, Grade)
     End With
 End Function
 
-Private Function CreateClassHourType(ByVal Value As Long) As Dom_ClassHourType
-    With New Dom_ClassHourType
-        Set CreateClassHourType = .Create(Value)
-    End With
-End Function
-
-Private Function CreatePeriod(ByVal Value As Long) As Dom_Period
-    With New Dom_Period
-        Set CreatePeriod = .Create(Value)
-    End With
-End Function
-
-Private Function CreateGrade(ByVal Value As Long) As Dom_Grade
-    With New Dom_Grade
-        Set CreateGrade = .Create(Value)
-    End With
-End Function

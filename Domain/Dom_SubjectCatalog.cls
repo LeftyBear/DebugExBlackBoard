@@ -59,6 +59,16 @@ Public Function NameOf(ByVal Index As Long) As String
     Next
 End Function
 
+Public Function IndexOf(ByVal Index As Long) As Dom_Subject
+    If Not IndexContains(Index) Then Err.Raise DomErrNotExistsItem, "Dom_SubjectCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録インデックス: " & Index
+    Dim Item As Variant
+    For Each Item In This.Catalog.Items
+        Dim Subject As Dom_Subject
+        Set Subject = Item
+        If Subject.Index = Index Then IndexOf = Subject: Exit For
+    Next
+End Function
+
 Private Function IndexContains(ByVal Index As Long) As Boolean
     IndexContains = (0 < Index) And (Index <= This.Catalog.Count)
 End Function

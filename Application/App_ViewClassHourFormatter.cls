@@ -10,9 +10,23 @@ Attribute VB_Exposed = False
 '@Folder("Application.Formatter")
 Option Explicit
 
-Public Function Format(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As Variant()
+Private Type Member
+    Calculator  As Dom_ClassHourCalculator
+    Factory     As App_ValueObjectFactory
+    Service     As App_ClassHourService
+End Type
+
+Private This As Member
+
+Private Sub Class_Initialize()
+    Set This.Calculator = New Dom_ClassHourCalculator
+    Set This.Factory = New App_ValueObjectFactory
+    Set This.Service = New App_ClassHourService
+End Sub
+
+Public Function Format(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As Variant()
     Dim ClassHourTable() As Long
-    ClassHourTable = ToClassHourTable(ClassHourType, ClassHour, TargetDate, Structure)
+    ClassHourTable = ToClassHourTable(ClassHourTypeEnum, ClassHour, TargetDate, Structure)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(ClassHourTable, 1) + 1, 1 To UBound(ClassHourTable, 2) + 1)
     Dim C As Long
@@ -38,55 +52,37 @@ Public Function Format(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal Class
     Format = OutputTable
 End Function
 
-Private Function ToClassHourTable(ByVal ClassHourType As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As Long()
+Private Function ToClassHourTable(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal ClassHour As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Structure As Dom_SchoolStructure) As Long()
     Dim Table() As Long
     ReDim Table(1 To Structure.SubjectCount + 1, 1 To Structure.MainStreamGradeCount)
+    If ClassHour Is Nothing Then GoTo Finalize
     Dim Total() As Long
     ReDim Total(1 To Structure.MainStreamGradeCount)
+    Dim ClassHourType As Dom_ClassHourType
+    Set ClassHourType = This.Factory.CreateClassHourType(ClassHourTypeEnum)
     Dim G As Long
     For G = 1 To Structure.MainStreamGradeCount
         Dim Grade As Dom_Grade
-        Set Grade = CreateGrade(G)
+        Set Grade = This.Factory.CreateGrade(G)
         Dim i As Long
         For i = 1 To Structure.SubjectCount
             Dim Subject As Dom_Subject
-            Set Subject = CreateSubject(i)
+            Set Subject = Structure.SubjectIndexOf(i)
             Dim Filter As Dom_ClassHourFilter
-            Set Filter = CreateFilter(ClassHourType, Subject, Grade)
-            '@Ignore SelfAssignedDeclaration
-            Dim Service As New App_ClassHourService
+            Set Filter = CreateClassHourFilter(ClassHourType, Subject, Grade)
             Dim Value As Long
-            Value = Service.GetDailyHourTotal(ClassHour, TargetDate, New Dom_ClassHourCalculator, Filter)
+            Value = This.Service.GetDailyHourTotal(ClassHour, TargetDate, This.Calculator, Filter)
             Table(i, G) = Value
             Total(G) = Total(G) + Value
         Next
         Table(UBound(Table), G) = Total(G)
     Next
+Finalize:
     ToClassHourTable = Table
 End Function
 
-Private Function CreateFilter(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade) As Dom_ClassHourFilter
-    Dim ClassHourType As Dom_ClassHourType
-    Set ClassHourType = CreateClassHourType(ClassHourTypeEnum)
+Private Function CreateClassHourFilter(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade) As Dom_ClassHourFilter
     With New Dom_ClassHourFilter
-        Set CreateFilter = .Create(ClassHourType, Subject, Grade)
-    End With
-End Function
-
-Private Function CreateClassHourType(ByVal Value As Long) As Dom_ClassHourType
-    With New Dom_ClassHourType
-        Set CreateClassHourType = .Create(Value)
-    End With
-End Function
-
-Private Function CreateSubject(ByVal Index As Long) As Dom_Subject
-    With New Dom_Subject
-        Set CreateSubject = .Create(Index, vbNullString, vbNullString, vbNullString)
-    End With
-End Function
-
-Private Function CreateGrade(ByVal Value As Long) As Dom_Grade
-    With New Dom_Grade
-        Set CreateGrade = .Create(Value)
+        Set CreateClassHourFilter = .Create(ClassHourType, Subject, Grade)
     End With
 End Function

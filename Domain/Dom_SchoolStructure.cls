@@ -54,6 +54,10 @@ Public Function ResolveSubject(ByVal Name As String) As Dom_Subject
     Set ResolveSubject = This.SubjectCatalog.Resolve(Name)
 End Function
 
+Public Function SubjectIndexOf(ByVal Index As Long) As Dom_Subject
+    SubjectIndexOf = This.SubjectCatalog.IndexOf(Index)
+End Function
+
 Public Function SubjectNameOf(ByVal Index As Long) As String
     SubjectNameOf = This.SubjectCatalog.NameOf(Index)
 End Function

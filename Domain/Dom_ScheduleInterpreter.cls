@@ -13,7 +13,6 @@ Option Explicit
 Private Type Member
     Resolver    As Dom_HeaderTokenResolver
     Factory     As Dom_ScheduleFactory
-    VOFactory   As Dom_ValueObjectFactory
 End Type
 
 Private This As Member
@@ -21,11 +20,17 @@ Private This As Member
 Private Sub Class_Initialize()
     Set This.Resolver = New Dom_HeaderTokenResolver
     Set This.Factory = New Dom_ScheduleFactory
-    Set This.VOFactory = New Dom_ValueObjectFactory
 End Sub
 
 Public Function Interprete(ByVal Header As Dom_ScheduleHeader, ByVal RawText As String) As Dom_Schedule
     Dim ID As Dom_ScheduleID
-    Set ID = This.VOFactory.CreateScheduleID(Header.RawText)
+    Set ID = CreateScheduleID(Header.RawText)
     Set Interprete = This.Factory.Create(ID, RawText)
 End Function
+
+Private Function CreateScheduleID(ByVal Key As String) As Dom_ScheduleID
+    With New Dom_ScheduleID
+        Set CreateScheduleID = .Create(Key)
+    End With
+End Function
+

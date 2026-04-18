@@ -13,7 +13,7 @@ Option Explicit
 Private Type Member
     ClassHourInterpreter    As Dom_ClassHourInterpreter
     TimeTableInterpreter    As Dom_TimeTableInterpreter
-    VOFactory               As Dom_ValueObjectFactory
+    Factory                 As Dom_DateIDFactory
 End Type
 
 Private This As Member
@@ -21,7 +21,7 @@ Private This As Member
 Private Sub Class_Initialize()
     Set This.ClassHourInterpreter = New Dom_ClassHourInterpreter
     Set This.TimeTableInterpreter = New Dom_TimeTableInterpreter
-    Set This.VOFactory = New Dom_ValueObjectFactory
+    Set This.Factory = New Dom_DateIDFactory
 End Sub
 
 Public Sub AddOn(ByVal Structure As Dom_SchoolStructure)
@@ -34,7 +34,9 @@ End Sub
 '@Ignore ParameterCanBeByVal
 Public Sub Resolve(ByVal Header As Dom_ClassHourHeader, ByVal RawText As String, ByRef DateID As Dom_DateID, ByRef PlanValueList As Scripting.Dictionary, ByRef PlanMarkList As Scripting.Dictionary, ByRef ExeValueList As Scripting.Dictionary, ByRef ExeMarkList As Scripting.Dictionary)
     If Header.RawDate <> vbNullString Then
-        Set DateID = This.VOFactory.CreateDateID(RawText)
+        Dim NormDate As Date
+        NormDate = Dom_Util_Date.NormalizeToDate(RawText)
+        Set DateID = This.Factory.Create(NormDate)
     ElseIf Header.ClassHourType = jpnKeikaku Then
         Dim ClassHour As Dom_ClassHour
         Set ClassHour = This.ClassHourInterpreter.Interprete(Header, RawText)
