@@ -16,27 +16,20 @@ End Type
 
 Private This As Member
 
-Friend Sub InitializeInternal(ByVal Value As Long)
+Public Sub Initialize(ByVal Value As Long)
+    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_Period", "校時は0以上である必要があります。"
     This.Value = Value
 End Sub
 
-Public Function Create(ByVal Value As Long) As Dom_Period
-    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_Period", "校時は0以上である必要があります。"
-    Dim Result As Dom_Period
-    Set Result = New Dom_Period
-    Result.InitializeInternal Value
-    Set Create = Result
+Public Property Get Value() As Long
+    Value = This.Value
+End Property
+
+Public Function ToKey() As String
+    ToKey = CStr(This.Value) & jpnKouji
 End Function
 
 Public Function Equals(ByVal Other As Dom_Period) As Boolean
     If This.Value <> Other.Value Then Exit Function
     Equals = True
 End Function
-
-Public Function ToKey() As String
-    ToKey = CStr(This.Value) & jpnKouji
-End Function
-
-Public Property Get Value() As Long
-    Value = This.Value
-End Property

@@ -32,9 +32,9 @@ Public Function Exists(ByVal Key As String) As Boolean
     Exists = This.Catalog.Exists(Key)
 End Function
 
-Public Function Resolve(ByVal Key As String) As Dom_SpecialStream
-    If Not Me.Exists(Key) Then Err.Raise DomErrNotExistsItem, "Dom_SpecialStreamCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録キー: " & Key
-    Set Resolve = This.Catalog.Item(Key)
+Public Function Item(ByVal Key As String) As Dom_SpecialStream
+    If Not This.Catalog.Exists(Key) Then Err.Raise DomErrNotExistsItem, "Dom_SpecialStreamCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録キー: " & Key
+    Set Item = This.Catalog.Item(Key)
 End Function
 
 Public Function Names() As String()

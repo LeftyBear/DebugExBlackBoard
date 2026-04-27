@@ -16,17 +16,15 @@ End Type
 
 Private This As Member
 
-Public Function Create(ByVal Value As String) As Dom_ScheduleValue
-    Dim Result As Dom_ScheduleValue
-    Set Result = New Dom_ScheduleValue
-    Result.SetValueInternal Value
-    Set Create = Result
-End Function
+Public Sub Initialize(ByVal Value As String)
+    This.Value = Value
+End Sub
 
-Public Property Get Value() As String
+Public Property Get Value() As Long
     Value = This.Value
 End Property
 
-Friend Sub SetValueInternal(ByVal Value As String)
-    This.Value = Value
-End Sub
+Public Function Equals(ByVal Other As Dom_ScheduleValue) As Boolean
+    If Other Is Nothing Then Exit Function
+    Equals = (This.Value = Other.Value)
+End Function

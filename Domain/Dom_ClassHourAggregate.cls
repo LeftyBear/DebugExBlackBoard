@@ -11,184 +11,77 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    DateID          As Dom_DateID
-    PlanValueList   As Scripting.Dictionary
-    PlanMarkList    As Scripting.Dictionary
-    ExeValueList    As Scripting.Dictionary
-    ExeMarkList     As Scripting.Dictionary
+    DateID      As Dom_DateID
+    ClassHours  As VBA.Collection
+    TimeTables  As VBA.Collection
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal DateID As Dom_DateID, ByVal PlanValueList As Scripting.Dictionary, ByVal PlanMarkList As Scripting.Dictionary, ByVal ExeValueList As Scripting.Dictionary, ByVal ExeMarkList As Scripting.Dictionary)
+Public Sub Initialize(ByVal DateID As Dom_DateID, ByVal ClassHours As VBA.Collection, ByVal TimeTables As VBA.Collection)
     Set This.DateID = DateID
-    Set This.PlanValueList = PlanValueList
-    Set This.PlanMarkList = PlanMarkList
-    Set This.ExeValueList = ExeValueList
-    Set This.ExeMarkList = ExeMarkList
+    Set This.ClassHours = ClassHours
+    Set This.TimeTables = TimeTables
 End Sub
 
-Public Sub UpdatePlanValue(ByVal ID As Dom_ClassHourID, ByVal NewValue As Dom_ClassHourValue)
+Public Sub UpdateClassHourValue(ByVal ID As Dom_ClassHourID, ByVal NewValue As Long)
     Dim Target As Dom_ClassHour
-    Set Target = FindPlanValue(ID)
+    Set Target = FindClassHour(ID)
     If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ClassHourAggregate", "ClassHourオブジェクトが必要です。"
-    Dim Value As Dom_ClassHourValue
-    With New Dom_ClassHourValue
-        Set Value = .Create(NewValue.Value)
-    End With
-    Target.ChangeValueInternal Value
-    ValidateTotal ID
+    Dim VO As Dom_ClassHourValue
+    Set VO = New Dom_ClassHourValue
+    VO.Initialize NewValue
+    Target.ChangeValueInternal VO
 End Sub
 
-Public Sub UpdatePlanMark(ByVal ID As Dom_TimeTableID, ByVal NewValue As Dom_TimeTableMark)
+Public Sub UpdateTimeTableValue(ByVal ID As Dom_TimeTableID, ByVal NewValue As String)
     Dim Target As Dom_TimeTable
-    Set Target = FindPlanMark(ID)
+    Set Target = FindTimeTable(ID)
     If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ClassHourAggregate", "ClassHourオブジェクトが必要です。"
-    Dim Value As Dom_TimeTableMark
-    With New Dom_TimeTableMark
-        Set Value = .Create(NewValue.Value)
-    End With
-    Target.ChangeValueInternal Value
-    ValidateTotal ToClassHourID(ID)
+    Dim VO As Dom_TimeTableValue
+    Set VO = New Dom_TimeTableValue
+    VO.Initialize NewValue
+    Target.ChangeValueInternal VO
 End Sub
 
-Public Sub UpdateExeValue(ByVal ID As Dom_ClassHourID, ByVal NewValue As Dom_ClassHourValue)
-    Dim Target As Dom_ClassHour
-    Set Target = FindExeValue(ID)
-    If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ClassHourAggregate", "ClassHourオブジェクトが必要です。"
-    Dim Value As Dom_ClassHourValue
-    With New Dom_ClassHourValue
-        Set Value = .Create(NewValue.Value)
-    End With
-    Target.ChangeValueInternal Value
-    ValidateTotal ID
-End Sub
+Public Property Get DateID() As Dom_DateID
+    Set DateID = This.DateID
+End Property
 
-Public Sub UpdateExeMark(ByVal ID As Dom_TimeTableID, ByVal NewValue As Dom_TimeTableMark)
-    Dim Target As Dom_TimeTable
-    Set Target = FindExeMark(ID)
-    If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ClassHourAggregate", "ClassHourオブジェクトが必要です。"
-    Dim Value As Dom_TimeTableMark
-    With New Dom_TimeTableMark
-        Set Value = .Create(NewValue.Value)
-    End With
-    Target.ChangeValueInternal Value
-    ValidateTotal ToClassHourID(ID)
-End Sub
-
-Public Function GetDateKey() As String
-    GetDateKey = This.DateID.ToKey
+Public Function ClassHoursCount() As Long
+    ClassHoursCount = This.ClassHours.Count
 End Function
 
-Public Function GetPlanValueKeys() As Variant()
-    GetPlanValueKeys = This.PlanValueList.Keys
+Public Function TimeTablesCount() As Long
+    TimeTablesCount = This.TimeTables.Count
 End Function
 
-Public Function GetPlanMarkKeys() As Variant()
-    GetPlanMarkKeys = This.PlanMarkList.Keys
+Public Function ClassHoursItem(ByVal Index As Long) As Dom_ClassHour
+    Set ClassHoursItem = This.ClassHours.Item(Index)
 End Function
 
-Public Function GetExeValueKeys() As Variant()
-    GetExeValueKeys = This.ExeValueList.Keys
+Public Function TimeTablesItem(ByVal Index As Long) As Dom_TimeTable
+    Set TimeTablesItem = This.TimeTables.Item(Index)
 End Function
 
-Public Function GetExeMarkKeys() As Variant()
-    GetExeMarkKeys = This.ExeMarkList.Keys
+Private Function FindClassHour(ByVal ID As Dom_ClassHourID) As Dom_ClassHour
+    Dim i As Long
+    For i = 1 To This.ClassHours.Count
+        Dim ClassHour As Dom_ClassHour
+        Set ClassHour = This.ClassHours.Item(i)
+        If ClassHour.ID.Equals(ID) Then
+            Set FindClassHour = ClassHour: Exit Function
+        End If
+    Next
 End Function
 
-Public Function GetPlanValues() As Variant()
-    GetPlanValues = This.PlanValueList.Items
-End Function
-
-Public Function GetPlanMarks() As Variant()
-    GetPlanMarks = This.PlanMarkList.Items
-End Function
-
-Public Function GetExeValues() As Variant()
-    GetExeValues = This.ExeValueList.Items
-End Function
-
-Public Function GetExeMarks() As Variant()
-    GetExeMarks = This.ExeMarkList.Items
-End Function
-
-Private Sub ValidateTotal(ByVal ID As Dom_ClassHourID)
-    With New Dom_ClassHourFilter
-        Dim ClassHourFilter As Dom_ClassHourFilter
-        Set ClassHourFilter = .Create(ID.ClassHourType, Nothing, ID.Grade)
-    End With
-    Dim HourTotal As Long
-    HourTotal = GetHourTotal(ClassHourFilter)
-    With New Dom_TimeTableFilter
-        Dim TimeTableFilter As Dom_TimeTableFilter
-        Set TimeTableFilter = .Create(ID.ClassHourType, Nothing, ID.Grade)
-    End With
-    Dim MarkCount As Long
-    MarkCount = GetMarkCount(TimeTableFilter)
-    If HourTotal = MarkCount Then Exit Sub
-    Err.Raise DomErrUnmatch, "Dom_ClassHourAggregate", ID.ClassHourType.ToKey & charHalfSpace & ID.Grade.ToKey & "の時数と時間割を一致させてください。"
-End Sub
-
-Private Function GetHourTotal(ByVal Filter As Dom_ClassHourFilter) As Long
-    Select Case Filter.ClassHourType.Value
-    Case Dom_ClassHourTypeEnum.Plan
-        Dim Items() As Variant
-        Items = This.PlanValueList.Items
-    Case Dom_ClassHourTypeEnum.Execution
-        Items = This.ExeValueList.Items
-    End Select
-    '@Ignore SelfAssignedDeclaration
-    Dim Calculator As New Dom_ClassHourCalculator
-    GetHourTotal = Calculator.Calculate(Items, Filter)
-End Function
-
-Private Function GetMarkCount(ByVal Filter As Dom_TimeTableFilter) As Long
-    Select Case Filter.ClassHourType.Value
-    Case Dom_ClassHourTypeEnum.Plan
-        Dim Items() As Variant
-        Items = This.PlanMarkList.Items
-    Case Dom_ClassHourTypeEnum.Execution
-        Items = This.ExeMarkList.Items
-    End Select
-    '@Ignore SelfAssignedDeclaration
-    Dim Calculator As New Dom_TimeTableCalculator
-    GetMarkCount = Calculator.Calculate(Items, Filter)
-End Function
-
-Private Function FindPlanValue(ByVal ID As Dom_ClassHourID) As Dom_ClassHour
-    Dim Key As String
-    Key = ID.ToKey
-    If This.PlanValueList.Exists(Key) Then
-        Set FindPlanValue = This.PlanValueList.Item(Key)
-    End If
-End Function
-
-Private Function FindPlanMark(ByVal ID As Dom_TimeTableID) As Dom_TimeTable
-    Dim Key As String
-    Key = ID.ToKey
-    If This.PlanMarkList.Exists(Key) Then
-        Set FindPlanMark = This.PlanMarkList.Item(Key)
-    End If
-End Function
-
-Private Function FindExeValue(ByVal ID As Dom_ClassHourID) As Dom_ClassHour
-    Dim Key As String
-    Key = ID.ToKey
-    If This.ExeValueList.Exists(Key) Then
-        Set FindExeValue = This.ExeValueList.Item(Key)
-    End If
-End Function
-
-Private Function FindExeMark(ByVal ID As Dom_TimeTableID) As Dom_TimeTable
-    Dim Key As String
-    Key = ID.ToKey
-    If This.ExeMarkList.Exists(Key) Then
-        Set FindExeMark = This.ExeMarkList.Item(Key)
-    End If
-End Function
-
-Private Function ToClassHourID(ByVal ID As Dom_TimeTableID) As Dom_ClassHourID
-    With New Dom_ClassHourID
-        Set ToClassHourID = .Create(ID.ClassHourType, Nothing, ID.Grade)
-    End With
+Private Function FindTimeTable(ByVal ID As Dom_ClassHourID) As Dom_TimeTable
+    Dim i As Long
+    For i = 1 To This.TimeTables.Count
+        Dim TimeTable As Dom_TimeTable
+        Set TimeTable = This.TimeTables.Item(i)
+        If TimeTable.ID.Equals(ID) Then
+            Set FindTimeTable = TimeTable: Exit Function
+        End If
+    Next
 End Function

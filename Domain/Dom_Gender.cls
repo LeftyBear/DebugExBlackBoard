@@ -16,32 +16,25 @@ End Type
 
 Private This As Member
 
-Friend Sub InitializeInternal(ByVal Value As Long)
+Public Sub Initialize(ByVal Value As Long)
+    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_Gender", "性別型は0以上である必要があります。"
     This.Value = Value
 End Sub
 
-Public Function Create(ByVal Value As Long) As Dom_Gender
-    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_Gender", "性別型は0以上である必要があります。"
-    Dim Result As Dom_Gender
-    Set Result = New Dom_Gender
-    Result.InitializeInternal Value
-    Set Create = Result
+Public Property Get Value() As Long
+    Value = This.Value
+End Property
+
+Public Function ToKey() As String
+    Select Case This.Value
+    Case Dom_GenderTypeEnum.Male
+        ToKey = jpnOtoko
+    Case Dom_GenderTypeEnum.Female
+        ToKey = jpnOnna
+    End Select
 End Function
 
 Public Function Equals(ByVal Other As Dom_Gender) As Boolean
     If This.Value <> Other.Value Then Exit Function
     Equals = True
 End Function
-
-Public Function ToKey() As String
-    Select Case This.Value
-    Case Dom_GenderEnum.Male
-        ToKey = jpnOtoko
-    Case Dom_GenderEnum.Female
-        ToKey = jpnOnna
-    End Select
-End Function
-
-Public Property Get Value() As Long
-    Value = This.Value
-End Property

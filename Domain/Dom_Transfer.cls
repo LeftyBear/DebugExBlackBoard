@@ -7,30 +7,28 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.ValueObject")
+'@Folder("Domain.Entity")
 Option Explicit
 
 Private Type Member
-    Value As Boolean
+    DateID  As Dom_DateID
+    Value   As Boolean
 End Type
 
 Private This As Member
 
-Friend Sub InitializeInternal(ByVal Value As Boolean)
+Public Sub Initialize(ByVal DateID As Dom_DateID, ByVal Value As Boolean)
+    Set This.DateID = DateID
     This.Value = Value
 End Sub
 
-Public Function Create(ByVal Value As Boolean) As Dom_Transfer
-    Dim Result As Dom_Transfer
-    Set Result = New Dom_Transfer
-    Result.InitializeInternal Value
-    Set Create = Result
-End Function
+Friend Sub ChangeValueInternal(ByVal NewValue As Boolean)
+    This.Value = NewValue
+End Sub
 
-Public Function Equals(ByVal Other As Dom_Transfer) As Boolean
-    If This.Value <> Other.Value Then Exit Function
-    Equals = True
-End Function
+Public Property Get DateID() As Dom_DateID
+    DateID = This.DateID
+End Property
 
 Public Property Get Value() As Boolean
     Value = This.Value

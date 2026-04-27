@@ -10,15 +10,20 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service")
 Option Explicit
 
-Public Function GetDailyTotal(ByVal Yearly As Dom_EnrollmentYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Calculator As Dom_EnrollmentCalculator, ByVal Filter As Dom_EnrollmentFilter) As Long
-    Dim Daily As Dom_EnrollmentAggregate
-    Set Daily = Yearly.GetByDate(TargetDate)
-    Select Case Filter.StreamType.Value
-    Case Dom_StreamTypeEnum.Main
-        Dim Items() As Variant
-        Items = Daily.GetMainStreams
-    Case Dom_StreamTypeEnum.Special
-        Items = Daily.GetSpecialStreams
-    End Select
-    GetDailyTotal = Calculator.Calculate(Items, Filter)
+Private Type Member
+    Calculator As App_EnrollmentCalculator
+End Type
+
+Private This As Member
+
+Public Sub Initialize(ByVal Calculator As App_EnrollmentCalculator)
+    Set This.Calculator = Calculator
+End Sub
+
+Public Function GetMainClassTotal(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Condition As App_EnrollmentFilterCondition) As Dom_EnrollmentValue
+    Set GetMainClassTotal = This.Calculator.SumClass(Aggregate, Condition)
+End Function
+
+Public Function GetMainGenderTotal(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Condition As App_EnrollmentFilterCondition) As Dom_EnrollmentValue
+    Set GetMainGenderTotal = This.Calculator.SumGender(Aggregate, Condition)
 End Function

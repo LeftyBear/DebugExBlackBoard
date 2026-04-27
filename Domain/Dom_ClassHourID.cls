@@ -18,35 +18,11 @@ End Type
 
 Private This As Member
 
-Friend Sub InitializeInternal(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade)
+Public Sub Initialize(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade)
     Set This.ClassHourType = ClassHourType
     Set This.Subject = Subject
     Set This.Grade = Grade
 End Sub
-
-Public Function Create(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade) As Dom_ClassHourID
-    Dim Result As Dom_ClassHourID
-    Set Result = New Dom_ClassHourID
-    Result.InitializeInternal ClassHourType, Subject, Grade
-    Set Create = Result
-End Function
-
-Public Function IsNoMeaning() As Boolean
-    If 0 < This.Subject.Index And 0 < This.Grade.Value Then Exit Function
-    IsNoMeaning = True
-End Function
-
-Public Function Equals(ByVal Other As Dom_ClassHourID) As Boolean
-    If Other Is Nothing Then Exit Function
-    If Not This.ClassHourType.Equals(Other.ClassHourType) Then Exit Function
-    If Not This.Subject.Equals(Other.Subject) Then Exit Function
-    If Not This.Grade.Equals(Other.Grade) Then Exit Function
-    Equals = True
-End Function
-
-Public Function ToKey() As String
-    ToKey = This.ClassHourType.ToKey & charUnderScore & This.Subject.ToKey & charUnderScore & This.Grade.ToKey
-End Function
 
 Public Property Get ClassHourType() As Dom_ClassHourType
     Set ClassHourType = This.ClassHourType
@@ -59,3 +35,20 @@ End Property
 Public Property Get Grade() As Dom_Grade
     Set Grade = This.Grade
 End Property
+
+Public Function ToKey() As String
+    ToKey = This.ClassHourType.ToKey & charUnderScore & This.Subject.ToKey & charUnderScore & This.Grade.ToKey
+End Function
+
+Public Function Equals(ByVal Other As Dom_ClassHourID) As Boolean
+    If Other Is Nothing Then Exit Function
+    If Not This.ClassHourType.Equals(Other.ClassHourType) Then Exit Function
+    If Not This.Subject.Equals(Other.Subject) Then Exit Function
+    If Not This.Grade.Equals(Other.Grade) Then Exit Function
+    Equals = True
+End Function
+
+Public Function IsNoMeaning() As Boolean
+    If 0 < This.Subject.Index And 0 < This.Grade.Value Then Exit Function
+    IsNoMeaning = True
+End Function

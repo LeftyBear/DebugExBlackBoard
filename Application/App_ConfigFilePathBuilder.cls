@@ -12,17 +12,17 @@ Option Explicit
 
 Private Type Member
     Resolver As Dom_ConfigFileNameResolver
-    Provider As App_IWorkbookPathProvider
+    Provider As Dom_IWorkbookPathProvider
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Provider As App_IWorkbookPathProvider)
-    Set This.Resolver = New Dom_ConfigFileNameResolver
+Public Sub Initialize(ByVal Resolver As Dom_ConfigFileNameResolver, ByVal Provider As Dom_IWorkbookPathProvider)
+    Set This.Resolver = Resolver
     Set This.Provider = Provider
 End Sub
 
-Public Function Builed(ByVal StructureName As Dom_StructureName) As String
+Public Function Builed(ByVal StructureName As Dom_StructureTypeEnum) As String
     Dim FileName As String
     FileName = This.Resolver.Resolve(StructureName)
     Builed = This.Provider.GetBaseFolderPath & "root\Config\" & FileName

@@ -11,31 +11,30 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Builder     As App_EntityFilePathBuilder
     Reader      As Dom_IScheduleReader
-    Resolver    As Dom_ScheduleColumnResolver
-    Factory     As Dom_ScheduleYearAggFactory
+    Builder     As App_EntityFilePathBuilder
+    Resolver    As App_ScheduleRowResolver
+    Factory     As App_ScheduleYearAggFactory
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Builder As App_EntityFilePathBuilder, ByVal Reader As Dom_IScheduleReader)
-    Set This.Builder = Builder
+Public Sub Initialize(ByVal Reader As Dom_IScheduleReader, ByVal Builder As App_EntityFilePathBuilder, ByVal Resolver As App_ScheduleRowResolver, ByVal Factory As App_ScheduleYearAggFactory)
     Set This.Reader = Reader
-    Set This.Resolver = New Dom_ScheduleColumnResolver
-    Set This.Factory = New Dom_ScheduleYearAggFactory
+    Set This.Builder = Builder
+    Set This.Resolver = Resolver
+    Set This.Factory = Factory
 End Sub
 
 Public Function Execute(ByVal SchoolYear As Dom_SchoolYear, ByVal Structure As Dom_SchoolStructure) As Dom_ScheduleYearAggregate
     Dim FilePath As String
     FilePath = This.Builder.Builed(Schedule, SchoolYear)
     If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function
-    Dim RawCSVRows() As String
-    RawCSVRows = This.Reader.Load(FilePath)
-    If App_Util_Array.IsEmpty(RawCSVRows) Then Err.Raise AppErrEmptyArray, "App_AggregateSchedule", "RawCSVRows is empty."
-    This.Resolver.AddOn Structure
-    Dim ColumnGroup As VBA.Collection
-    Set ColumnGroup = This.Resolver.Resolve(RawCSVRows)
-    If ColumnGroup.Count = 0 Then Err.Raise AppErrNothingItem, "App_AggregateSchedule", "ColumnGroup item is nothing."
-    Set Execute = This.Factory.Create(ColumnGroup)
+    Dim RawRows() As String
+    RawRows = This.Reader.Load(FilePath)
+    If App_ArrayUtility.IsEmpty(RawRows) Then Err.Raise AppErrEmptyArray, "App_AggregateSchedule", "RawRows is empty."
+    Dim Rows As VBA.Collection
+    Set Rows = This.Resolver.Resolve(RawRows)
+    If Rows.Count = 0 Then Err.Raise AppErrNothingItem, "App_AggregateSchedule", "Rows item is nothing."
+    Set Execute = This.Factory.Create(Rows)
 End Function

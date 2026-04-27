@@ -12,25 +12,31 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
+    DateID  As Dom_DateID
     ID      As Dom_TimeTableID
-    Mark    As Dom_TimeTableMark
+    Value   As Dom_TimeTableValue
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal ID As Dom_TimeTableID, ByVal Mark As Dom_TimeTableMark)
+Public Sub Initialize(ByVal DateID As Dom_DateID, ByVal ID As Dom_TimeTableID, ByVal Value As Dom_TimeTableValue)
+    Set This.DateID = DateID
     Set This.ID = ID
-    Set This.Mark = Mark
+    Set This.Value = Value
 End Sub
 
-Friend Sub ChangeValueInternal(ByVal NewMark As Dom_TimeTableMark)
-    Set This.Mark = NewMark
+Friend Sub ChangeValueInternal(ByVal NewMark As Dom_TimeTableValue)
+    Set This.Value = NewMark
 End Sub
 
-Public Function GetID() As Dom_TimeTableID
-    Set GetID = This.ID
-End Function
+Public Property Get DateID() As Dom_DateID
+    Set DateID = This.DateID
+End Property
 
-Public Function GetMark() As String
-    GetMark = This.Mark.Value
-End Function
+Public Property Get ID() As Dom_TimeTableID
+    Set ID = This.ID
+End Property
+
+Public Property Get Value() As Dom_TimeTableValue
+    Set Value = This.Value
+End Property

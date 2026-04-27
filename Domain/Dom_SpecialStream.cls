@@ -17,19 +17,12 @@ End Type
 
 Private This As Member
 
-Friend Sub InitializeInternal(ByVal Index As Long, ByVal Name As String)
+Public Sub Initialize(ByVal Index As Long, ByVal Name As String)
+    If Index < 1 Then Err.Raise DomErrNegativeNumber, "Dom_SpecialStream", "インデックスは1以上である必要があります。"
+    If VBA.Len(Name) = 0 Then Err.Raise DomErrNullString, "Dom_SpecialStream", "集計名は文字列である必要があります。"
     This.Index = Index
     This.Name = Name
 End Sub
-
-Public Function Create(ByVal Index As Long, ByVal Name As String) As Dom_SpecialStream
-    If Index < 1 Then Err.Raise DomErrNegativeNumber, "Dom_SpecialStream", "インデックスは1以上である必要があります。"
-    If VBA.Len(Name) = 0 Then Err.Raise DomErrNullString, "Dom_SpecialStream", "集計名は文字列である必要があります。"
-    Dim Result As Dom_SpecialStream
-    Set Result = New Dom_SpecialStream
-    Result.InitializeInternal Index, Name
-    Set Create = Result
-End Function
 
 Public Property Get Index() As Long
     Index = This.Index
@@ -38,3 +31,8 @@ End Property
 Public Property Get Name() As String
     Name = This.Name
 End Property
+
+Public Function Equals(ByVal Other As Dom_SpecialStream) As Boolean
+    If This.Index <> Other.Index Then Exit Function
+    Equals = True
+End Function

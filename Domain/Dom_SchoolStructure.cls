@@ -35,7 +35,7 @@ Public Property Get MainStreamClassCount() As Long
 End Property
 
 Public Function ResolveSpecialStream(ByVal Name As String) As Dom_SpecialStream
-    Set ResolveSpecialStream = This.SpecialStreamCatalog.Resolve(Name)
+    Set ResolveSpecialStream = This.SpecialStreamCatalog.Item(Name)
 End Function
 
 Public Function SpecialStreamClassNameOf(ByVal Index As Long) As String

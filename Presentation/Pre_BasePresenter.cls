@@ -10,22 +10,33 @@ Attribute VB_Exposed = False
 '@Folder("Application.Presenter")
 Option Explicit
 
-Public Sub Execute(ByVal Callback As App_IPresenterCallback)
+Private Type Member
+    Factory As Pre_PresenterResultFactory
+End Type
+
+Private This As Member
+
+Public Sub Initialize(ByVal Factory As Pre_PresenterResultFactory)
+    Set This.Factory = Factory
+End Sub
+
+Public Sub Execute(ByVal Callback As Pre_IPresenterCallback)
     On Error GoTo ErrHandler
+    Dim Factory As New Pre_PresenterResultFactory
     Callback.ExecuteCore
-    Dim Result As App_PresenterResult
-    Set Result = App_PresenterResultFactory.CreateSuccess
+    Dim Result As Pre_PresenterResult
+    Set Result = This.Factory.CreateSuccess
     GoTo Finally
 ErrHandler:
-    If App_ErrorModel.IsDomainError(Err.Number) Or App_ErrorModel.IsInfrastructureError(Err.Number) Then
+    If Pre_ErrorUtility.IsDomainError(Err.Number) Or Pre_ErrorUtility.IsInfrastructureError(Err.Number) Then
         Dim Message As String
         Message = "î‘çÜ: " & Err.Number & vbCrLf & _
                   "èÍèä: " & Err.Source & vbCrLf & _
                   "ê‡ñæ: " & Err.Description
-        Set Result = App_PresenterResultFactory.CreateBusinessError(Message)
+        Set Result = This.Factory.CreateBusinessError(Message)
     Else
         Callback.LogSystemError Err
-        Set Result = App_PresenterResultFactory.CreateSystemError
+        Set Result = This.Factory.CreateSystemError
     End If
 Finally:
     Callback.RenderResult Result

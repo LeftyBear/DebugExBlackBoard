@@ -87,7 +87,7 @@ Private Sub Pre_IMainView_NotifySystemError()
     MsgBox "予期しないエラーが発生したのでログに書き出しました。", vbCritical, "システムエラー"
 End Sub
 
-Private Sub Pre_IMainView_Render(ByVal ViewModel As Pre_ViewModel)
+Private Sub Pre_IMainView_Render(ByVal ViewModel As App_ViewDTO)
     Pre_IMainView_RenderEnrollment ViewModel.EnrollmentTable
     Pre_IMainView_RenderClassHourPlan ViewModel.ClassHourPlanTable
     Pre_IMainView_RenderClassHourExecution ViewModel.ClassHourExecutionTable

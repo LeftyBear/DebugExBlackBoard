@@ -11,12 +11,12 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements Dom_IScheduleReader
 Private Type Member
-    Repository As Inf_CSVReadRepository
+    Repository As Inf_CSVReader
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Repository As Inf_CSVReadRepository)
+Public Sub Initialize(ByVal Repository As Inf_CSVReader)
     Set This.Repository = Repository
 End Sub
 

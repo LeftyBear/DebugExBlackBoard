@@ -10,82 +10,33 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service")
 Option Explicit
 
-Public Function GetDailyHourTotal(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Calculator As Dom_ClassHourCalculator, ByVal Filter As Dom_ClassHourFilter) As Long
-    Dim Daily As Dom_ClassHourAggregate
-    Set Daily = Yearly.GetByDate(TargetDate)
-    Select Case Filter.ClassHourType.Value
-    Case Dom_ClassHourTypeEnum.Plan
-        Dim Items() As Variant
-        Items = Daily.GetPlanValues
-    Case Dom_ClassHourTypeEnum.Execution
-        Items = Daily.GetExeValues
-    End Select
-    GetDailyHourTotal = Calculator.Calculate(Items, Filter)
-End Function
+Private Type Member
+    Calculator As App_ClassHourCalculator
+End Type
 
-Public Function GetWeeklyHourTotal(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Filter As Dom_ClassHourFilter) As Long
-    Dim TargetWeeks As Long
-    TargetWeeks = Dom_Util_Date.GetSchoolWeek(TargetDate.Value)
-    Dim DateKeys() As Variant
-    DateKeys = GetDateKeys(Yearly, TargetDate, Filter)
-    Dim DateKey As Variant
-    For Each DateKey In DateKeys
-        If Dom_Util_Date.GetSchoolWeek(CDate(DateKey)) = TargetWeeks Then
-            Dim Total As Long
-            Total = Total + Me.GetDailyHourTotal(Yearly, TargetDate, New Dom_ClassHourCalculator, Filter)
-        End If
+Private This As Member
+
+Public Sub Initialize(ByVal Calculator As App_ClassHourCalculator)
+    Set This.Calculator = Calculator
+End Sub
+
+Public Function CalculateTotal(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Condition As App_ClassHourFilterCondition) As Dom_ClassHourValue
+'    Dim BeginDate As Date
+'    BeginDate = App_DateUtility.GetMonday(InitialDate.Value)
+'    Dim BeginIndex As Long
+'    BeginIndex = App_DateUtility.DiffApr1st(BeginDate)
+'    Dim EndDate As Date
+'    EndDate = App_DateUtility.GetSunday(InitialDate.Value)
+'    Dim EndIndex As Long
+'    EndIndex = App_DateUtility.DiffApr1st(EndDate)
+    Dim Total As Dom_ClassHourValue
+    Set Total = New Dom_ClassHourValue
+    Total.Initialize 0
+    Dim Index As Long
+    For Index = BeginIndex To EndIndex
+        Dim Value As Dom_ClassHourValue
+        Set Value = This.Calculator.SumHours(Yearly.Item(Index), Condition)
+        Set Total = Total.Add(Value)
     Next
-    GetWeeklyHourTotal = Total
-End Function
-
-Public Function GetMonthlyHourTotal(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Calculator As Dom_ClassHourCalculator, ByVal Filter As Dom_ClassHourFilter) As Long
-    Dim TargetMonth As Long
-    TargetMonth = VBA.Month(TargetDate)
-    Dim DateKeys() As Variant
-    DateKeys = GetDateKeys(Yearly, TargetDate, Filter)
-    Dim DateKey As Variant
-    For Each DateKey In DateKeys
-        If VBA.Month(CDate(DateKey)) = TargetMonth Then
-            Dim Total As Long
-            Total = Total + Me.GetDailyHourTotal(Yearly, TargetDate, Calculator, Filter)
-        End If
-    Next
-    GetMonthlyHourTotal = Total
-End Function
-
-Public Function GetCumulativeHourTotal(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Calculator As Dom_ClassHourCalculator, ByVal Filter As Dom_ClassHourFilter) As Long
-    Dim DateKeys() As Variant
-    DateKeys = GetDateKeys(Yearly, TargetDate, Filter)
-    Dim DateKey As Variant
-    For Each DateKey In DateKeys
-        If CDate(DateKey) <= TargetDate.Value Then
-            Dim Total As Long
-            Total = Total + Me.GetDailyHourTotal(Yearly, TargetDate, Calculator, Filter)
-        End If
-    Next
-    GetCumulativeHourTotal = Total
-End Function
-
-Public Function GetDailyMarkCount(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Calculator As Dom_TimeTableCalculator, ByVal Filter As Dom_TimeTableFilter) As Long
-    Dim Daily As Dom_ClassHourAggregate
-    Set Daily = Yearly.GetByDate(TargetDate)
-    Select Case Filter.ClassHourType.Value
-    Case Dom_ClassHourTypeEnum.Plan
-        Dim Items() As Variant
-        Items = Daily.GetPlanMarks
-    Case Dom_ClassHourTypeEnum.Execution
-        Items = Daily.GetExeMarks
-    End Select
-    GetDailyMarkCount = Calculator.Calculate(Items, Filter)
-End Function
-
-Private Function GetDateKeys(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Filter As Dom_ClassHourFilter) As Variant
-    Dim Daily As Dom_ClassHourAggregate
-    Set Daily = Yearly.GetByDate(TargetDate)
-    Select Case Filter.ClassHourType.Value
-    Case Dom_ClassHourTypeEnum.Plan
-        GetDateKeys = Daily.GetPlanValueKeys
-    Case Dom_ClassHourTypeEnum.Execution
-        GetDateKeys = Daily.GetExeValueKeys
-    End Select
+    Set CalculateTotal = Total
 End Function

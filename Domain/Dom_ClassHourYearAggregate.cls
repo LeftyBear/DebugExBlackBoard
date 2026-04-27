@@ -11,43 +11,24 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    DailyMap As Scripting.Dictionary
+    Items As VBA.Collection
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.DailyMap = New Scripting.Dictionary
+    Set This.Items = New VBA.Collection
 End Sub
 
 Public Sub Add(ByVal Daily As Dom_ClassHourAggregate)
-    Dim Key As String
-    Key = Daily.GetDateKey
-    If This.DailyMap.Exists(Key) Then Err.Raise DomErrNotUnique, "Dom_ClassHourYearAggregate", "キーは一意である必要があります。" & vbCrLf & "重複している日付キー: " & Key
-    This.DailyMap.Add Key, Daily
-End Sub
-
-Public Sub UpdatePlanValue(ByVal TargetDate As Dom_DateID, ByVal ID As Dom_ClassHourID, ByVal NewValue As Dom_ClassHourValue)
-    Me.GetByDate(TargetDate).UpdatePlanValue ID, NewValue
-End Sub
-
-Public Sub UpdatePlanMark(ByVal TargetDate As Dom_DateID, ByVal ID As Dom_TimeTableID, ByVal NewMark As Dom_TimeTableMark)
-    Me.GetByDate(TargetDate).UpdatePlanMark ID, NewMark
-End Sub
-
-Public Sub UpdateExeValue(ByVal TargetDate As Dom_DateID, ByVal ID As Dom_ClassHourID, ByVal NewValue As Dom_ClassHourValue)
-    Me.GetByDate(TargetDate).UpdateExeValue ID, NewValue
-End Sub
-
-Public Sub UpdateExeMark(ByVal TargetDate As Dom_DateID, ByVal ID As Dom_TimeTableID, ByVal NewMark As Dom_TimeTableMark)
-    Me.GetByDate(TargetDate).UpdateExeMark ID, NewMark
+    This.Items.Add Daily
 End Sub
 
 Public Function Count() As Long
-    Count = This.DailyMap.Count
+    Count = This.Items.Count
 End Function
 
-Public Function GetByDate(ByVal TargetDate As Dom_DateID) As Dom_ClassHourAggregate
-    If Not This.DailyMap.Exists(TargetDate.ToKey) Then Err.Raise DomErrNothingObject, "Dom_ClassHourYearAggregate", "ClassHourAggregateオブジェクトが必要です。"
-    Set GetByDate = This.DailyMap.Item(TargetDate.ToKey)
+Public Function Item(ByVal Index As Long) As Dom_ClassHourAggregate
+    If Index < 1 Or This.Items.Count < Index Then Err.Raise DomErrNothingObject, "Dom_ClassHourYearAggregate", "ClassHourAggregateオブジェクトが必要です。"
+    Set Item = This.Items.Item(Index)
 End Function

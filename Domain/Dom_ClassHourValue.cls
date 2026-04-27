@@ -16,18 +16,23 @@ End Type
 
 Private This As Member
 
-Public Function Create(ByVal Value As Long) As Dom_ClassHourValue
-    Dim Result As Dom_ClassHourValue
-    Set Result = New Dom_ClassHourValue
-    Result.SetValueInternal Value
-    Set Create = Result
-End Function
+Public Sub Initialize(ByVal Value As Long)
+    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_ClassHourValue", "数値は0以上である必要があります。"
+    This.Value = Value
+End Sub
 
 Public Property Get Value() As Long
     Value = This.Value
 End Property
 
-Friend Sub SetValueInternal(ByVal Value As Long)
-    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_ClassHourValue", "数値は0以上である必要があります。"
-    This.Value = Value
-End Sub
+Public Function Add(ByVal Other As Dom_ClassHourValue) As Dom_ClassHourValue
+    Dim Result As Dom_ClassHourValue
+    Set Result = New Dom_ClassHourValue
+    Result.Initialize This.Value + Other.Value
+    Set Add = Result
+End Function
+
+Public Function Equals(ByVal Other As Dom_ClassHourValue) As Boolean
+    If Other Is Nothing Then Exit Function
+    Equals = (This.Value = Other.Value)
+End Function

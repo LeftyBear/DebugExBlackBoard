@@ -10,15 +10,16 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service")
 Option Explicit
 
-Public Function GetDailyMarkCount(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal TargetDate As Dom_DateID, ByVal Calculator As Dom_TimeTableCalculator, ByVal Filter As Dom_TimeTableFilter) As Long
-    Dim Daily As Dom_ClassHourAggregate
-    Set Daily = Yearly.GetByDate(TargetDate)
-    Select Case Filter.ClassHourType.Value
-    Case Dom_ClassHourTypeEnum.Plan
-        Dim Items() As Variant
-        Items = Daily.GetPlanMarks
-    Case Dom_ClassHourTypeEnum.Execution
-        Items = Daily.GetExeMarks
-    End Select
-    GetDailyMarkCount = Calculator.Calculate(Items, Filter)
+Private Type Member
+    Counter As App_TimeTableCounter
+End Type
+
+Private This As Member
+
+Public Sub Initialize(ByVal Counter As App_TimeTableCounter)
+    Set This.Counter = Counter
+End Sub
+
+Public Function CountHours(ByVal Aggregate As Dom_ClassHourAggregate, ByVal Condition As App_TimeTableFilterCondition) As Long
+    CountHours = This.Counter.Count(Aggregate, Condition)
 End Function

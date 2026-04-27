@@ -33,7 +33,7 @@ Public Function Exists(ByVal Key As String) As Boolean
 End Function
 
 Public Function Resolve(ByVal Key As String) As Dom_Subject
-    If Not Me.Exists(Key) Then Err.Raise DomErrNotExistsItem, "Dom_SubjectCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録キー: " & Key
+    If Not This.Catalog.Exists(Key) Then Err.Raise DomErrNotExistsItem, "Dom_SubjectCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録キー: " & Key
     Set Resolve = This.Catalog.Item(Key)
 End Function
 

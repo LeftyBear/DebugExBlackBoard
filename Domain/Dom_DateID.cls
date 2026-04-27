@@ -16,27 +16,20 @@ End Type
 
 Private This As Member
 
-Friend Sub InitializeInternal(ByVal Value As Date)
+Public Sub Initialize(ByVal Value As Date)
+    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_DateID", "日付型は0以上である必要があります。"
     This.Value = Value
 End Sub
 
-Public Function Create(ByVal Value As Date) As Dom_DateID
-    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_DateID", "日付型は0以上である必要があります。"
-    Dim Result As Dom_DateID
-    Set Result = New Dom_DateID
-    Result.InitializeInternal Value
-    Set Create = Result
+Public Property Get Value() As Date
+    Value = This.Value
+End Property
+
+Public Function ToKey() As String
+    ToKey = CStr(This.Value)
 End Function
 
 Public Function Equals(ByVal Other As Dom_DateID) As Boolean
     If This.Value <> Other.Value Then Exit Function
     Equals = True
 End Function
-
-Public Function ToKey() As String
-    ToKey = CStr(This.Value)
-End Function
-
-Public Property Get Value() As Date
-    Value = This.Value
-End Property

@@ -11,13 +11,13 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements Dom_IConfigReader
 Private Type Member
-    Repository As Inf_CSVReadRepository
+    Repository As Inf_CSVReader
 End Type
 
 Private This As Member
 
-Private Sub Class_Initialize()
-    Set This.Repository = New Inf_CSVReadRepository
+Public Sub Initialize(ByVal Repository As Inf_CSVReader)
+    Set This.Repository = Repository
 End Sub
 
 Private Function Dom_IConfigReader_Load(ByVal FilePath As String) As String()

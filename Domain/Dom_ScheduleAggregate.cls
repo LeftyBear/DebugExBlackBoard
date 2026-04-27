@@ -12,47 +12,46 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    NormDate    As Dom_DateID
-    ItemList    As Scripting.Dictionary
+    DateID      As Dom_DateID
+    Schedules   As VBA.Collection
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal NormDate As Dom_DateID, ByVal ItemList As Scripting.Dictionary)
-    Set This.NormDate = NormDate
-    Set This.ItemList = ItemList
+Public Sub Initialize(ByVal DateID As Dom_DateID, ByVal Schedules As VBA.Collection)
+    Set This.DateID = DateID
+    Set This.Schedules = Schedules
  End Sub
 
-Public Sub UpdateSchedule(ByVal ID As Dom_ScheduleID, ByVal NewSchedule As Dom_ScheduleValue)
-    Dim Schedule As Dom_Schedule
-    Set Schedule = GetScheduleByID(ID)
-    If Schedule Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ScheduleAggregate", "Scheduleオブジェクトが必要です。"
-    Schedule.ChangeValueInternal NewSchedule
+Public Sub UpdateSchedule(ByVal ID As Dom_ScheduleID, ByVal NewValue As String)
+    Dim Target As Dom_Schedule
+    Set Target = FindSchedule(ID)
+    If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ScheduleAggregate", "Scheduleオブジェクトが必要です。"
+    Dim Value As Dom_ScheduleValue
+    Set Value = New Dom_ScheduleValue
+    Value.Initialize NewValue
+    Target.ChangeValueInternal Value
 End Sub
 
-Public Function GetDateKey() As String
-    GetDateKey = This.NormDate.ToKey
+Public Property Get DateID() As Dom_DateID
+    Set DateID = This.DateID
+End Property
+
+Public Function ScheduleCount() As Long
+    ScheduleCount = This.Schedules.Count
 End Function
 
-Public Function GetValue(ByVal ID As Dom_ScheduleID) As String
-    Dim Schedule As Dom_Schedule
-    Set Schedule = GetScheduleByID(ID)
-    If Schedule Is Nothing Then Err.Raise DomErrNothingObject, "Dom_ScheduleAggregate", "Scheduleオブジェクトが必要です。"
-    GetValue = Schedule.GetValue.Value
+Public Function ScheduleItem(ByVal Index As Long) As Dom_Schedule
+    Set ScheduleItem = This.Schedules.Item(Index)
 End Function
 
-Public Function GetIDs() As Variant()
-    GetIDs = This.ItemList.Keys
-End Function
-
-Public Function GetValues() As Variant()
-    GetValues = This.ItemList.Items
-End Function
-
-Private Function GetScheduleByID(ByVal ID As Dom_ScheduleID) As Dom_Schedule
-    Dim Key As String
-    Key = ID.ToKey
-    If This.ItemList.Exists(Key) Then
-        Set GetScheduleByID = This.ItemList.Item(Key)
-    End If
+Private Function FindSchedule(ByVal ID As Dom_ScheduleID) As Dom_Schedule
+    Dim i As Long
+    For i = 1 To This.Schedules.Count
+        Dim Schedule As Dom_Schedule
+        Set Schedule = This.Schedules.Item(i)
+        If Schedule.ID.Equals(ID) Then
+            Set FindSchedule = Schedule: Exit Function
+        End If
+    Next
 End Function

@@ -12,17 +12,17 @@ Option Explicit
 
 Private Type Member
     Resolver As Dom_EntityFileNameResolver
-    Provider As App_IWorkbookPathProvider
+    Provider As Dom_IWorkbookPathProvider
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Provider As App_IWorkbookPathProvider)
-    Set This.Resolver = New Dom_EntityFileNameResolver
+Public Sub Initialize(ByVal Resolver As Dom_EntityFileNameResolver, ByVal Provider As Dom_IWorkbookPathProvider)
+    Set This.Resolver = Resolver
     Set This.Provider = Provider
 End Sub
 
-Public Function Builed(ByVal EntityName As Dom_EntityName, ByVal SchoolYear As Dom_SchoolYear) As String
+Public Function Builed(ByVal EntityName As Dom_EntityTypeEnum, ByVal SchoolYear As Dom_SchoolYear) As String
     Dim FileName As String
     FileName = This.Resolver.Resolve(EntityName, SchoolYear)
     Builed = This.Provider.GetBaseFolderPath & "root\data\schoolyears\" & SchoolYear.ToKey & charBackSlash & FileName

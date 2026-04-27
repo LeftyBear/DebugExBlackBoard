@@ -10,13 +10,13 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Resolver")
 Option Explicit
 
-Public Function Resolve(ByVal EntityName As Dom_EntityName, ByVal SchoolYear As Dom_SchoolYear) As String
+Public Function Resolve(ByVal EntityName As Dom_EntityTypeEnum, ByVal SchoolYear As Dom_SchoolYear) As String
     Select Case EntityName
-    Case Dom_EntityName.ClassHour
+    Case Dom_EntityTypeEnum.ClassHour
         Resolve = "ClassHour" & SchoolYear.ToKey & ".csv"
-    Case Dom_EntityName.Enrollment
+    Case Dom_EntityTypeEnum.Enrollment
         Resolve = "Enrollment" & SchoolYear.ToKey & ".csv"
-    Case Dom_EntityName.Schedule
+    Case Dom_EntityTypeEnum.Schedule
         Resolve = "Schedule" & SchoolYear.ToKey & ".csv"
     End Select
 End Function

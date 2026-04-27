@@ -7,30 +7,28 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.ValueObject")
+'@Folder("Domain.Entity")
 Option Explicit
 
 Private Type Member
-    Value As String
+    DateID  As Dom_DateID
+    Value   As String
 End Type
 
 Private This As Member
 
-Friend Sub InitializeInternal(ByVal Value As String)
+Public Sub Initialize(ByVal DateID As Dom_DateID, ByVal Value As String)
+    Set This.DateID = DateID
     This.Value = Value
 End Sub
 
-Public Function Create(ByVal Value As String) As Dom_Remarks
-    Dim Result As Dom_Remarks
-    Set Result = New Dom_Remarks
-    Result.InitializeInternal Value
-    Set Create = Result
-End Function
+Friend Sub ChangeValueInternal(ByVal NewValue As String)
+    This.Value = NewValue
+End Sub
 
-Public Function Equals(ByVal Other As Dom_Remarks) As String
-    If This.Value <> Other.Value Then Exit Function
-    Equals = True
-End Function
+Public Property Get DateID() As Dom_DateID
+    DateID = This.DateID
+End Property
 
 Public Property Get Value() As String
     Value = This.Value

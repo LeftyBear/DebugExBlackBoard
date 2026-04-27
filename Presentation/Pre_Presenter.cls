@@ -9,34 +9,32 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder "Application.Presenter"
 Option Explicit
-Implements App_IPresenterCallback
+Implements Pre_IPresenterCallback
 Private Type Member
-    CurrentSY   As Dom_SchoolYear
-    DateFactory As Dom_DateIDFactory
-    Structure   As Dom_SchoolStructure
+    CurrentYear As Dom_SchoolYear
     Logger      As App_ILogger
-    Schedule    As App_AggregateSchedule
-    Enrollment  As App_AggregateEnrollment
+    Structure   As App_AggregateSchoolStructure
     ClassHour   As App_AggregateClassHour
-    VOFactory   As App_ValueObjectFactory
-    Builder     As Pre_ViewModelBuilder
+    Enrollment  As App_AggregateEnrollment
+    Schedule    As App_AggregateSchedule
+    Factory     As App_ValueObjectFactory
+    Builder     As App_ViewDTOBuilder
+    CurrentDTO  As App_ViewDTO
     Base        As Pre_BasePresenter
-    CurrentVM   As Pre_ViewModel
     MainView    As Pre_IMainView
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Structure As Dom_SchoolStructure, ByVal Logger As App_ILogger, ByVal Schedule As App_AggregateSchedule, ByVal Enrollment As App_AggregateEnrollment, ByVal ClassHour As App_AggregateClassHour)
-    Set This.DateFactory = New Dom_DateIDFactory
-    Set This.Structure = Structure
+Public Sub Initialize(ByVal Logger As App_ILogger, ByVal Structure As App_AggregateSchoolStructure, ByVal ClassHour As App_AggregateClassHour, ByVal Enrollment As App_AggregateEnrollment, ByVal Schedule As App_AggregateSchedule, ByVal Factory As App_ValueObjectFactory, ByVal Builder As App_ViewDTOBuilder, ByVal Base As Pre_BasePresenter)
     Set This.Logger = Logger
-    Set This.Schedule = Schedule
-    Set This.Enrollment = Enrollment
+    Set This.Structure = Structure
     Set This.ClassHour = ClassHour
-    Set This.VOFactory = New App_ValueObjectFactory
-    Set This.Builder = New Pre_ViewModelBuilder
-    Set This.Base = New Pre_BasePresenter
+    Set This.Enrollment = Enrollment
+    Set This.Schedule = Schedule
+    Set This.Factory = Factory
+    Set This.Base = Base
+    Set This.Builder = Builder
 End Sub
 
 Public Sub AttachView(ByVal MainView As Pre_IMainView)
@@ -54,11 +52,11 @@ Public Sub Excute()
     This.Base.Execute Me
 End Sub
 
-Private Sub App_IPresenterCallback_ExecuteCore()
+Private Sub Pre_IPresenterCallback_ExecuteCore()
     
 End Sub
 
-Private Sub App_IPresenterCallback_LogSystemError(ByVal Error As ErrObject)
+Private Sub Pre_IPresenterCallback_LogSystemError(ByVal Error As ErrObject)
     Dim Message As String
     Message = "ErrorNumber: " & Error.Number & _
               "  ModuleName: " & Error.Source & _
@@ -66,65 +64,59 @@ Private Sub App_IPresenterCallback_LogSystemError(ByVal Error As ErrObject)
     This.Logger.WriteLog Message
 End Sub
 
-Private Sub App_IPresenterCallback_RenderResult(ByVal Result As App_PresenterResult)
+Private Sub Pre_IPresenterCallback_RenderResult(ByVal Result As Pre_PresenterResult)
     Select Case Result.ResultType
-    Case App_ViewResultType.Success
+    Case Pre_ViewResultTypeEnum.Success
         This.MainView.ShowSuccess Result.Message
-    Case App_ViewResultType.BusinessError
+    Case Pre_ViewResultTypeEnum.BusinessError
         This.MainView.NotifyBusinessError Result.Message
-    Case App_ViewResultType.SystemError
+    Case Pre_ViewResultTypeEnum.SystemError
         This.MainView.NotifySystemError
     End Select
 End Sub
 
 Private Sub LoadByDate(ByVal SelectedDate As Date)
-    Dim NewSY As Dom_SchoolYear
-    Set NewSY = CreateSchoolYear(SelectedDate)
-    If This.CurrentSY.Equals(NewSY) Then Exit Sub
-    Dim ScheduleAgg As Dom_ScheduleYearAggregate
-    Set ScheduleAgg = This.Schedule.Execute(NewSY, This.Structure)
-    Dim EnrollmentAgg As Dom_EnrollmentYearAggregate
-    Set EnrollmentAgg = This.Enrollment.Execute(NewSY)
-    Dim ClassHourAgg As Dom_ClassHourYearAggregate
-    Set ClassHourAgg = This.ClassHour.Execute(NewSY, This.Structure)
+    Dim SchoolYear As Long
+    SchoolYear = App_DateUtility.GetSchoolYear(SelectedDate)
+    Dim NewYear As Dom_SchoolYear
+    Set NewYear = This.Factory.CreateSchoolYear(SchoolYear)
+    If This.CurrentYear.Equals(NewYear) Then Exit Sub
+    Dim ClassHour As Dom_ClassHourYearAggregate
+    Set ClassHour = This.ClassHour.Execute(NewYear, This.Structure)
+    Dim Enrollment As Dom_EnrollmentYearAggregate
+    Set Enrollment = This.Enrollment.Execute(NewYear)
+    Dim Schedule As Dom_ScheduleYearAggregate
+    Set Schedule = This.Schedule.Execute(NewYear, This.Structure)
     Dim TargetDate As Dom_DateID
-    Set TargetDate = This.DateFactory.Create(SelectedDate)
-    Dim NewVM As Pre_ViewModel
-    Set NewVM = This.Builder.Build(ScheduleAgg, EnrollmentAgg, ClassHourAgg, This.Structure, TargetDate)
-    RenderDiff This.CurrentVM, NewVM
-    Set This.CurrentVM = NewVM
-    Set This.CurrentSY = NewSY
+    Set TargetDate = This.Factory.CreateDateID(SelectedDate)
+    Dim NewDTO As App_ViewDTO
+    Set NewDTO = This.Builder.Build(TargetDate, ClassHour, Enrollment, Schedule, This.Structure)
+    RenderDiff This.CurrentDTO, NewDTO
+    Set This.CurrentDTO = NewDTO
+    Set This.CurrentYear = NewYear
 End Sub
 
-Private Sub RenderDiff(ByVal OldVM As Pre_ViewModel, ByVal NewVM As Pre_ViewModel)
-    If OldVM Is Nothing Then
-        This.MainView.Render NewVM
+Private Sub RenderDiff(ByVal OldDTO As App_ViewDTO, ByVal NewDTO As App_ViewDTO)
+    If OldDTO Is Nothing Then
+        This.MainView.Render NewDTO
         Exit Sub
     End If
-    If Not IsSameArray(OldVM.EnrollmentTable, NewVM.EnrollmentTable) Then
-        This.MainView.RenderEnrollment NewVM.EnrollmentTable
+    If Not IsSameArray(OldDTO.EnrollmentTable, NewDTO.EnrollmentTable) Then
+        This.MainView.RenderEnrollment NewDTO.EnrollmentTable
     End If
-    If Not IsSameArray(OldVM.ClassHourPlanTable, NewVM.ClassHourPlanTable) Then
-        This.MainView.RenderClassHourPlan NewVM.ClassHourPlanTable
+    If Not IsSameArray(OldDTO.ClassHourPlanTable, NewDTO.ClassHourPlanTable) Then
+        This.MainView.RenderClassHourPlan NewDTO.ClassHourPlanTable
     End If
-    If Not IsSameArray(OldVM.ClassHourExecutionTable, NewVM.ClassHourExecutionTable) Then
-        This.MainView.RenderClassHourExecution NewVM.ClassHourExecutionTable
+    If Not IsSameArray(OldDTO.ClassHourExecutionTable, NewDTO.ClassHourExecutionTable) Then
+        This.MainView.RenderClassHourExecution NewDTO.ClassHourExecutionTable
     End If
-    If Not IsSameArray(OldVM.TimeTablePlanTable, NewVM.TimeTablePlanTable) Then
-        This.MainView.RenderTimeTablePlan NewVM.TimeTablePlanTable
+    If Not IsSameArray(OldDTO.TimeTablePlanTable, NewDTO.TimeTablePlanTable) Then
+        This.MainView.RenderTimeTablePlan NewDTO.TimeTablePlanTable
     End If
-    If Not IsSameArray(OldVM.TimeTableExecutionTable, NewVM.TimeTableExecutionTable) Then
-        This.MainView.RenderTimeTableExecution NewVM.TimeTableExecutionTable
+    If Not IsSameArray(OldDTO.TimeTableExecutionTable, NewDTO.TimeTableExecutionTable) Then
+        This.MainView.RenderTimeTableExecution NewDTO.TimeTableExecutionTable
     End If
 End Sub
-
-Private Function CreateSchoolYear(ByVal TargetDate As Date) As Dom_SchoolYear
-    Dim Value As Long
-    Value = Dom_Util_Date.GetSchoolYear(TargetDate)
-    With New Dom_SchoolYear
-        Set CreateSchoolYear = .Create(Value)
-    End With
-End Function
 
 Private Function IsSameArray(ByRef OneArray As Variant, ByRef AnotherArray As Variant) As Boolean
     On Error GoTo ErrHandle

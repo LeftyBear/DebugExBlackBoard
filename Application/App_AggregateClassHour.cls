@@ -11,31 +11,46 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Builder     As App_EntityFilePathBuilder
     Reader      As Dom_IClassHourReader
-    Resolver    As Dom_ClassHourColumnResolver
-    Factory     As Dom_ClassHourYearAggFactory
+    Builder     As App_EntityFilePathBuilder
+    ColResolver As App_ClassHourColumnResolver
+    RowResolver As App_ClassHourRowResolver
+    Factory     As App_ClassHourYearAggFactory
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Builder As App_EntityFilePathBuilder, ByVal Reader As Dom_IClassHourReader)
-    Set This.Builder = Builder
+Public Sub Initialize(ByVal Reader As Dom_IClassHourReader, ByVal Builder As App_EntityFilePathBuilder, ByVal ColResolver As App_ClassHourColumnResolver, ByVal RowResolver As App_ClassHourRowResolver, ByVal Factory As App_ClassHourYearAggFactory)
     Set This.Reader = Reader
-    Set This.Resolver = New Dom_ClassHourColumnResolver
-    Set This.Factory = New Dom_ClassHourYearAggFactory
+    Set This.Builder = Builder
+    Set This.ColResolver = ColResolver
+    Set This.RowResolver = RowResolver
+    Set This.Factory = Factory
 End Sub
 
-Public Function Execute(SchoolYear As Dom_SchoolYear, ByVal Structure As Dom_SchoolStructure) As Dom_ClassHourYearAggregate
+Public Function Execute(ByVal SchoolYear As Dom_SchoolYear, ByVal Structure As Dom_SchoolStructure) As App_ClassHourRepository
     Dim FilePath As String
     FilePath = This.Builder.Builed(ClassHour, SchoolYear)
     If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function
-    Dim RawCSVRows() As String
-    RawCSVRows = This.Reader.Load(FilePath)
-    If App_Util_Array.IsEmpty(RawCSVRows) Then Err.Raise AppErrEmptyArray, "App_AggregateClassHour", "RawCSVRows is empty."
-    This.Resolver.AddOn Structure
-    Dim ColumnGroup As VBA.Collection
-    Set ColumnGroup = This.Resolver.Resolve(RawCSVRows)
-    If ColumnGroup.Count = 0 Then Err.Raise AppErrNothingItem, "App_AggregateClassHour", "ColumnGroup item is nothing."
-    Set Execute = This.Factory.Create(ColumnGroup)
+    Dim RawRows() As String
+    RawRows = This.Reader.Load(FilePath)
+    If App_ArrayUtility.IsEmpty(RawRows) Then Err.Raise AppErrEmptyArray, "App_AggregateClassHour", "RawRows is empty."
+    Dim HeaderRow() As String
+    HeaderRow = App_ArrayUtility.GetHeaderRow(RawRows)
+    Dim MetaMap As Scripting.Dictionary
+    Set MetaMap = This.ColResolver.Resolve(HeaderRow)
+    Dim Rows As VBA.Collection
+    Set Rows = This.RowResolver.Resolve(RawRows, MetaMap)
+    If Rows.Count = 0 Then Err.Raise AppErrNothingItem, "App_AggregateClassHour", "Rows item is nothing."
+    Dim Repository As App_ClassHourRepository
+    Set Repository = New App_ClassHourRepository
+    Dim YearAggregate As Dom_ClassHourYearAggregate
+    Set YearAggregate = This.Factory.Create(Rows)
+    Dim i As Long
+    For i = 1 To YearAggregate.Count
+        Dim Aggregate As Dom_ClassHourAggregate
+        Set Aggregate = YearAggregate.Item(i)
+        Repository.Add Aggregate
+    Next
+    Set Execute = Repository
 End Function

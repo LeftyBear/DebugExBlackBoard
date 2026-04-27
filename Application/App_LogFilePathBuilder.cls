@@ -11,12 +11,12 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Provider As App_IWorkbookPathProvider
+    Provider As Dom_IWorkbookPathProvider
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Provider As App_IWorkbookPathProvider)
+Public Sub Initialize(ByVal Provider As Dom_IWorkbookPathProvider)
     Set This.Provider = Provider
 End Sub
 

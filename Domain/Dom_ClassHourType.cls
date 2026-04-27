@@ -16,22 +16,14 @@ End Type
 
 Private This As Member
 
-Friend Sub InitializeInternal(ByVal Value As Long)
+Public Sub Initialize(ByVal Value As Long)
+    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_ClassHourType", "数値は0以上である必要があります。"
     This.Value = Value
 End Sub
 
-Public Function Create(ByVal Value As Long) As Dom_ClassHourType
-    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_ClassHourType", "数値は0以上である必要があります。"
-    Dim Result As Dom_ClassHourType
-    Set Result = New Dom_ClassHourType
-    Result.InitializeInternal Value
-    Set Create = Result
-End Function
-
-Public Function Equals(ByVal Other As Dom_ClassHourType) As Boolean
-    If This.Value <> Other.Value Then Exit Function
-    Equals = True
-End Function
+Public Property Get Value() As Long
+    Value = This.Value
+End Property
 
 Public Function ToKey() As String
     Select Case This.Value
@@ -42,6 +34,7 @@ Public Function ToKey() As String
     End Select
 End Function
 
-Public Property Get Value() As Long
-    Value = This.Value
-End Property
+Public Function Equals(ByVal Other As Dom_ClassHourType) As Boolean
+    If This.Value <> Other.Value Then Exit Function
+    Equals = True
+End Function

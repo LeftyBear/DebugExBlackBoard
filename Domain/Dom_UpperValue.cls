@@ -18,21 +18,14 @@ End Type
 
 Private This As Member
 
-Friend Sub InitializeInternal(ByVal MainStreamGradeCount As Long, ByVal MainStreamClassCount As Long, ByVal PeriodCount As Long)
+Public Sub Initialize(ByVal MainStreamGradeCount As Long, ByVal MainStreamClassCount As Long, ByVal PeriodCount As Long)
+    If MainStreamGradeCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "学年は正の数である必要があります。"
+    If MainStreamClassCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "学級は正の数である必要があります。"
+    If PeriodCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "校時は正の数である必要があります。"
     This.MainStreamGradeCount = MainStreamGradeCount
     This.MainStreamClassCount = MainStreamClassCount
     This.PeriodCount = PeriodCount
 End Sub
-
-Public Function Create(ByVal MainStreamGradeCount As Long, ByVal MainStreamClassCount As Long, ByVal PeriodCount As Long) As Dom_UpperValue
-    If MainStreamGradeCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "学年は正の数である必要があります。"
-    If MainStreamClassCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "学級は正の数である必要があります。"
-    If PeriodCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "校時は正の数である必要があります。"
-    Dim Result As Dom_UpperValue
-    Set Result = New Dom_UpperValue
-    Result.InitializeInternal MainStreamGradeCount, MainStreamClassCount, PeriodCount
-    Set Create = Result
-End Function
 
 Public Property Get MainStreamGradeCount() As Long
     MainStreamGradeCount = This.MainStreamGradeCount
@@ -45,3 +38,10 @@ End Property
 Public Property Get PeriodCount() As Long
     PeriodCount = This.PeriodCount
 End Property
+
+Public Function Equals(ByVal Other As Dom_UpperValue) As Boolean
+    If Other Is Nothing Then Exit Function
+    Equals = (This.MainStreamGradeCount = Other.MainStreamGradeCount)
+    Equals = (This.MainStreamClassCount = Other.MainStreamClassCount)
+    Equals = (This.PeriodCount = Other.PeriodCount)
+End Function

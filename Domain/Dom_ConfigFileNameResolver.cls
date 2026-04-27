@@ -10,15 +10,15 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Resolver")
 Option Explicit
 
-Public Function Resolve(ByVal StructureName As Dom_StructureName) As String
+Public Function Resolve(ByVal StructureName As Dom_StructureTypeEnum) As String
     Select Case StructureName
-    Case Dom_StructureName.SchoolEvent
+    Case Dom_StructureTypeEnum.SchoolEvent
         Resolve = "SchoolEventCatalog.csv"
-    Case Dom_StructureName.SpecialStream
+    Case Dom_StructureTypeEnum.SpecialStream
         Resolve = "SpecialStreamCatalog.csv"
-    Case Dom_StructureName.Subject
+    Case Dom_StructureTypeEnum.Subject
         Resolve = "SubjectCatalog.csv"
-    Case Dom_StructureName.UpperValues
+    Case Dom_StructureTypeEnum.UpperValues
         Resolve = "UpperValue.csv"
     End Select
 End Function

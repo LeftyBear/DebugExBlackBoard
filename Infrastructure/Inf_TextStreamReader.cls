@@ -10,14 +10,24 @@ Attribute VB_Exposed = False
 '@Folder Infrastructure.Reader
 Option Explicit
 
+Private Type Member
+    Stream As ADODB.Stream
+End Type
+
+Private This As Member
+
+Public Sub Initialize(ByVal Stream As ADODB.Stream)
+    Set This.Stream = Stream
+End Sub
+
 Public Function ReadAll(ByVal FilePath As String) As String
-    Dim Stream As ADODB.Stream
-    Set Stream = New ADODB.Stream
-    Stream.Type = adTypeText
-    Stream.Charset = "Shift_JIS"
-    Stream.Open
-    Stream.LoadFromFile FilePath
-    ReadAll = Stream.ReadText(adReadAll)
-    Stream.Close
-    Set Stream = Nothing
+    With This.Stream
+        .Type = adTypeText
+        .Charset = "Shift_JIS"
+        .Open
+        .LoadFromFile FilePath
+        ReadAll = .ReadText(adReadAll)
+        .Close
+    End With
+    Set This.Stream = Nothing
 End Function

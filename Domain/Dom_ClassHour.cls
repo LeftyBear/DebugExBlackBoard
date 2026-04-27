@@ -12,13 +12,15 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
+    DateID  As Dom_DateID
     ID      As Dom_ClassHourID
     Value   As Dom_ClassHourValue
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal ID As Dom_ClassHourID, ByVal Value As Dom_ClassHourValue)
+Public Sub Initialize(ByVal DateID As Dom_DateID, ByVal ID As Dom_ClassHourID, ByVal Value As Dom_ClassHourValue)
+    Set This.DateID = DateID
     Set This.ID = ID
     Set This.Value = Value
 End Sub
@@ -27,10 +29,14 @@ Friend Sub ChangeValueInternal(ByVal NewValue As Dom_ClassHourValue)
     Set This.Value = NewValue
 End Sub
 
-Public Function GetID() As Dom_ClassHourID
-    Set GetID = This.ID
-End Function
+Public Property Get DateID() As Dom_DateID
+    Set DateID = This.DateID
+End Property
 
-Public Function GetValue() As Long
-    GetValue = This.Value.Value
-End Function
+Public Property Get ID() As Dom_ClassHourID
+    Set ID = This.ID
+End Property
+
+Public Property Get Value() As Dom_ClassHourValue
+    Value = This.Value
+End Property
