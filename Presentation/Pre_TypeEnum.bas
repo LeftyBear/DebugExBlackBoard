@@ -1,5 +1,5 @@
 Attribute VB_Name = "Pre_TypeEnum"
-'@Folder("Presentation.Enum")
+'@Folder("Presentation.ValueObject")
 Option Explicit
 Option Private Module
 

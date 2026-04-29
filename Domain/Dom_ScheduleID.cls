@@ -11,22 +11,20 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Key As String
+    Value As String
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Key As String)
-    If Key = vbNullString Then Err.Raise DomErrNullString, "Dom_ScheduleID", "IDは文字列である必要があります。"
-    This.Key = Key
+Public Sub Initialize(ByVal Value As String)
+    If Value = vbNullString Then Err.Raise DomErrNullString, "Dom_ScheduleID", "IDは文字列である必要があります。"
+    This.Value = Value
 End Sub
 
-Public Function ToKey() As String
-    ToKey = This.Key
+Public Function Value() As String
+    Value = This.Value
 End Function
 
 Public Function Equals(ByVal Other As Dom_ScheduleID) As Boolean
-    If Other Is Nothing Then Exit Function
-    If Me.ToKey <> Other.ToKey Then Exit Function
-    Equals = True
+    Equals = (This.Value = Other.Value)
 End Function

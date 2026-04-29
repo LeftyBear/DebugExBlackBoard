@@ -10,6 +10,8 @@ Attribute VB_Exposed = False
 '@Folder("Application.DTO")
 Option Explicit
 
+Public ColDate  As String
 Public TypeCode As Long
 Public Subject  As String
+Public Period   As Long
 Public Grade    As Long

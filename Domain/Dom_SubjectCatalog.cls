@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Catalog")
+'@Folder("Domain.Service")
 Option Explicit
 
 Private Type Member
@@ -32,9 +32,16 @@ Public Function Exists(ByVal Key As String) As Boolean
     Exists = This.Catalog.Exists(Key)
 End Function
 
-Public Function Resolve(ByVal Key As String) As Dom_Subject
+Public Function FindByIndex(ByVal Index As Long) As Dom_Subject
+    Dim Key As String
+    Key = NameOf(Index)
     If Not This.Catalog.Exists(Key) Then Err.Raise DomErrNotExistsItem, "Dom_SubjectCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録キー: " & Key
-    Set Resolve = This.Catalog.Item(Key)
+    Set FindByIndex = This.Catalog.Item(Key)
+End Function
+
+Public Function FindByName(ByVal Key As String) As Dom_Subject
+    If Not This.Catalog.Exists(Key) Then Err.Raise DomErrNotExistsItem, "Dom_SubjectCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録キー: " & Key
+    Set FindByName = This.Catalog.Item(Key)
 End Function
 
 Public Function Names() As String()
@@ -56,16 +63,6 @@ Public Function NameOf(ByVal Index As Long) As String
         Dim Subject As Dom_Subject
         Set Subject = Item
         If Subject.Index = Index Then NameOf = Subject.Name: Exit For
-    Next
-End Function
-
-Public Function IndexOf(ByVal Index As Long) As Dom_Subject
-    If Not IndexContains(Index) Then Err.Raise DomErrNotExistsItem, "Dom_SubjectCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録インデックス: " & Index
-    Dim Item As Variant
-    For Each Item In This.Catalog.Items
-        Dim Subject As Dom_Subject
-        Set Subject = Item
-        If Subject.Index = Index Then IndexOf = Subject: Exit For
     Next
 End Function
 

@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Application.Factory"
+'@Folder("Presentation.ViewModelFactory")
 Option Explicit
 
 Public Function CreateSuccess() As Pre_PresenterResult

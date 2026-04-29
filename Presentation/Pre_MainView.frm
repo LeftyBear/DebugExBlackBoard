@@ -15,7 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '@Folder "Application.View"
 Option Explicit
-Implements Pre_IMainView
+Implements App_IMainView
 Private Type Member
     ClassHourController As Pre_ClassHourController
 End Type
@@ -75,52 +75,52 @@ Private Function BuildGridControlName(ByVal Kind As String, Optional ByVal Grade
     BuildGridControlName = VBA.Join(Cells, charUnderScore)
 End Function
 
-Private Sub Pre_IMainView_HideLoading()
+Private Sub App_IMainView_HideLoading()
     Application.StatusBar = vbNullString
 End Sub
 
-Private Sub Pre_IMainView_NotifyBusinessError(ByVal Message As String)
+Private Sub App_IMainView_NotifyBusinessError(ByVal Message As String)
     MsgBox Message, vbCritical, "業務エラー"
 End Sub
 
-Private Sub Pre_IMainView_NotifySystemError()
+Private Sub App_IMainView_NotifySystemError()
     MsgBox "予期しないエラーが発生したのでログに書き出しました。", vbCritical, "システムエラー"
 End Sub
 
-Private Sub Pre_IMainView_Render(ByVal ViewModel As App_ViewDTO)
-    Pre_IMainView_RenderEnrollment ViewModel.EnrollmentTable
-    Pre_IMainView_RenderClassHourPlan ViewModel.ClassHourPlanTable
-    Pre_IMainView_RenderClassHourExecution ViewModel.ClassHourExecutionTable
-    Pre_IMainView_RenderTimeTablePlan ViewModel.TimeTablePlanTable
-    Pre_IMainView_RenderTimeTableExecution ViewModel.TimeTableExecutionTable
+Private Sub App_IMainView_Render(ByVal ViewModel As App_ViewDTO)
+    App_IMainView_RenderEnrollment ViewModel.EnrollmentTable
+    App_IMainView_RenderClassHourPlan ViewModel.ClassHourPlanTable
+    App_IMainView_RenderClassHourExecution ViewModel.ClassHourExecutionTable
+    App_IMainView_RenderTimeTablePlan ViewModel.TimeTablePlanTable
+    App_IMainView_RenderTimeTableExecution ViewModel.TimeTableExecutionTable
 End Sub
 
-Private Sub Pre_IMainView_RenderClassHourExecution(Table() As Variant)
-
-End Sub
-
-Private Sub Pre_IMainView_RenderClassHourPlan(Table() As Variant)
+Private Sub App_IMainView_RenderClassHourExecution(Table() As Variant)
 
 End Sub
 
-Private Sub Pre_IMainView_RenderEnrollment(Table() As Variant)
+Private Sub App_IMainView_RenderClassHourPlan(Table() As Variant)
 
 End Sub
 
-Private Sub Pre_IMainView_RenderTimeTableExecution(Table() As Variant)
+Private Sub App_IMainView_RenderEnrollment(Table() As Variant)
 
 End Sub
 
-Private Sub Pre_IMainView_RenderTimeTablePlan(Table() As Variant)
+Private Sub App_IMainView_RenderTimeTableExecution(Table() As Variant)
 
 End Sub
 
-Private Sub Pre_IMainView_ShowLoading()
+Private Sub App_IMainView_RenderTimeTablePlan(Table() As Variant)
+
+End Sub
+
+Private Sub App_IMainView_ShowLoading()
     Application.StatusBar = "Loading..."
     DoEvents
 End Sub
 
-Private Sub Pre_IMainView_ShowSuccess(ByVal Message As String)
+Private Sub App_IMainView_ShowSuccess(ByVal Message As String)
     If Message = vbNullString Then Exit Sub
     MsgBox Message, vbInformation, "処理完了"
 End Sub

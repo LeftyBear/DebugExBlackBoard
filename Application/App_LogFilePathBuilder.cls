@@ -7,19 +7,19 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.Builder")
+'@Folder("Application.Service")
 Option Explicit
 
 Private Type Member
-    Provider As Dom_IWorkbookPathProvider
+    Provider As App_IWorkbookPathProvider
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Provider As Dom_IWorkbookPathProvider)
+Public Sub Initialize(ByVal Provider As App_IWorkbookPathProvider)
     Set This.Provider = Provider
 End Sub
 
-Public Function Builed() As String
-    Builed = This.Provider.GetBaseFolderPath & "root\data\errorlog\error.log"
+Public Function BuiledPath() As String
+    BuiledPath = This.Provider.GetBaseFolderPath & "root\data\errorlog\error.log"
 End Function

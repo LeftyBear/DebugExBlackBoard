@@ -1,6 +1,6 @@
 Attribute VB_Name = "Dom_Const"
 '@IgnoreModule ConstantNotUsed
-'@Folder("Domain.Const")
+'@Folder("Domain.ValueObject")
 Option Explicit
 Option Private Module
 

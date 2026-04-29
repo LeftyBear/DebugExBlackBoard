@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Presenter")
+'@Folder("Presentation.ViewModel")
 Option Explicit
 
 Private Type Member
@@ -20,7 +20,7 @@ Public Sub Initialize(ByVal Factory As Pre_PresenterResultFactory)
     Set This.Factory = Factory
 End Sub
 
-Public Sub Execute(ByVal Callback As Pre_IPresenterCallback)
+Public Sub Execute(ByVal Callback As App_IPresenterCallback)
     On Error GoTo ErrHandler
     Dim Factory As New Pre_PresenterResultFactory
     Callback.ExecuteCore

@@ -10,11 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Application.DTO")
 Option Explicit
 
-Public NormDate As Date
-Public TypeCode As Long
-Public Grade    As Long
-Public ClassNo  As Long
-Public Gender   As Long
-Public Value    As Long
-Public Transfer As Boolean
-Public Remarks  As String
+Public NormDate     As Date
+Public TypeCode     As Long
+Public Grade        As Long
+Public ClassNo      As Long
+Public Gender       As Long
+Public Value        As Long
+Public RawTransfer  As String
+Public RawRemarks   As String

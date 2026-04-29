@@ -7,35 +7,70 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Factory")
+'@Folder("Application.Factory")
 Option Explicit
 
 Private Type Member
-    Structure As Dom_SchoolStructure
-    CHFactory As App_ClassHourFactory
-    TTFactory As App_TimeTableFactory
-    VOFactory As App_ValueObjectFactory
+    ClassHourFactory    As Dom_ClassHourFactory
+    TimeTableFactory    As Dom_TimeTableFactory
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal ClassHourFactory As App_ClassHourFactory, ByVal TimeTableFactory As App_TimeTableFactory, ByVal VOFactory As App_ValueObjectFactory)
-    Set This.CHFactory = ClassHourFactory
-    Set This.TTFactory = TimeTableFactory
-    Set This.VOFactory = VOFactory
-End Sub
-
-Public Sub AddOn(ByVal Structure As Dom_SchoolStructure)
-    Set This.Structure = Structure
+Public Sub Initialize(ByVal ClassHourFactory As Dom_ClassHourFactory, ByVal TimeTableFactory As Dom_TimeTableFactory)
+    Set This.ClassHourFactory = ClassHourFactory
+    Set This.TimeTableFactory = TimeTableFactory
 End Sub
 
 Public Function Create(ByVal Rows As VBA.Collection) As Dom_ClassHourYearAggregate
-    Dim Result As Dom_ClassHourYearAggregate
-    Set Result = New Dom_ClassHourYearAggregate
+    Dim Yearly As Dom_ClassHourYearAggregate
+    Set Yearly = New Dom_ClassHourYearAggregate
+    Dim Grouped As Scripting.Dictionary
+    Set Grouped = GroupByDate(Rows)
+    Dim Key As Variant
+    For Each Key In Grouped.Keys
+        Dim Daily As Dom_ClassHourAggregate
+        Set Daily = CreateDaily(Grouped.Item(Key))
+        Yearly.Add Daily
+    Next
+    Set Create = Yearly
+End Function
+
+Private Function GroupByDate(ByVal Rows As VBA.Collection) As Scripting.Dictionary
+    Dim Groups As Scripting.Dictionary
+    Set Groups = New Scripting.Dictionary
     Dim i As Long
     For i = 1 To Rows.Count
-        Dim Aggregate As Dom_ClassHourAggregate
-        Result.Add Aggregate
+        Dim Row As App_ClassHourRow
+        Set Row = Rows.Item(i)
+        Dim Key As String
+        Key = CStr(Row.NormDate)
+        If Not Groups.Exists(Key) Then
+            Groups.Add Key, New VBA.Collection
+        End If
+        Dim Items As VBA.Collection
+        Set Items = Groups.Item(Key)
+        Items.Add Row
     Next
-    Set Create = Result
+    Set GroupByDate = Groups
+End Function
+
+Private Function CreateDaily(ByVal Rows As VBA.Collection) As Dom_ClassHourAggregate
+    Dim Aggregate As Dom_ClassHourAggregate
+    Set Aggregate = New Dom_ClassHourAggregate
+    Dim i As Long
+    For i = 1 To Rows.Count
+        Dim Row As App_ClassHourRow
+        Set Row = Rows.Item(i)
+        If Row.Subject <> vbNullString Then
+            Dim ClassHour As Dom_ClassHour
+            Set ClassHour = This.ClassHourFactory.Create(Row)
+            If Not ClassHour Is Nothing Then Aggregate.AddClassHour ClassHour
+        ElseIf Row.Period <> 0 Then
+            Dim TimeTable As Dom_TimeTable
+            Set TimeTable = This.TimeTableFactory.Create(Row)
+            If Not TimeTable Is Nothing Then Aggregate.AddTimeTable TimeTable
+        End If
+    Next
+    Set CreateDaily = Aggregate
 End Function

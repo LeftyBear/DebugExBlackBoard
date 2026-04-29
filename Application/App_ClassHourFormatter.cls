@@ -7,17 +7,17 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Formatter")
+'@Folder("Application.Usecase")
 Option Explicit
 
 Private Type Member
     Service As App_ClassHourService
-    Factory As App_ValueObjectFactory
+    Factory As Dom_ValueObjectFactory
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Service As App_ClassHourService, ByVal Factory As App_ValueObjectFactory)
+Public Sub Initialize(ByVal Service As App_ClassHourService, ByVal Factory As Dom_ValueObjectFactory)
     Set This.Service = Service
     Set This.Factory = Factory
 End Sub
@@ -65,11 +65,11 @@ Private Function ToClassHourTable(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEn
         Dim i As Long
         For i = 1 To Structure.SubjectCount
             Dim Subject As Dom_Subject
-            Set Subject = Structure.SubjectIndexOf(i)
+            Set Subject = Structure.SubjectByIndex(i)
             Dim Condition As App_ClassHourFilterCondition
             Set Condition = This.Factory.CreateClassHourFilterCondition(ClassHourType, Subject, Grade)
             Dim Value As Long
-            Value = This.Service.CalculateTotal(Aggregate, BeginIndex, EndIndex, Condition)
+            Value = This.Service.SumValue(Aggregate, BeginIndex, EndIndex, Condition)
             Table(i, G) = Value
             Total(G) = Total(G) + Value
         Next

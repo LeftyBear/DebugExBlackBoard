@@ -26,15 +26,13 @@ Public Property Get Value() As Long
 End Property
 
 Public Function ToKey() As String
-    Select Case This.Value
-    Case Dom_GenderTypeEnum.Male
+    If This.Value = Dom_GenderTypeEnum.Male Then
         ToKey = jpnOtoko
-    Case Dom_GenderTypeEnum.Female
+    ElseIf This.Value = Dom_GenderTypeEnum.Female Then
         ToKey = jpnOnna
-    End Select
+    End If
 End Function
 
 Public Function Equals(ByVal Other As Dom_Gender) As Boolean
-    If This.Value <> Other.Value Then Exit Function
-    Equals = True
+    Equals = (This.Value = Other.Value)
 End Function

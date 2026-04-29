@@ -43,10 +43,10 @@ Public Property Get Grade() As Dom_Grade
 End Property
 
 Public Function ToKey() As String
-    If This.StreamType.Value = Dom_StreamTypeEnum.Special Then
-        ToKey = jpnTokushi & charUnderScore & This.ClassNo.ToKey & charUnderScore & This.Gender.ToKey
-    Else
+    If This.StreamType.Value = Dom_StreamTypeEnum.Main Then
         ToKey = This.Grade.ToKey & charUnderScore & This.ClassNo.ToKey & charUnderScore & This.Gender.ToKey
+    ElseIf This.StreamType.Value = Dom_StreamTypeEnum.Special Then
+        ToKey = jpnTokushi & charUnderScore & This.ClassNo.ToKey & charUnderScore & This.Gender.ToKey
     End If
 End Function
 
@@ -59,7 +59,10 @@ Public Function Equals(ByVal Other As Dom_EnrollmentID) As Boolean
     Equals = True
 End Function
 
-Public Function IsNoMeaning() As Boolean
-    If 0 < This.ClassNo.Value And 0 < This.Gender.Value Then Exit Function
-    IsNoMeaning = True
+Public Function IsMainStream() As Boolean
+    IsMainStream = (This.StreamType.Value = Dom_StreamTypeEnum.Main)
+End Function
+
+Public Function IsSpecialStream() As Boolean
+    IsSpecialStream = (This.StreamType.Value = Dom_StreamTypeEnum.Special)
 End Function

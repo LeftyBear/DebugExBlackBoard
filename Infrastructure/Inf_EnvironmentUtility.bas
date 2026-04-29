@@ -1,5 +1,5 @@
 Attribute VB_Name = "Inf_EnvironmentUtility"
-'@Folder("Infrastructure.Utility")
+'@Folder("Infrastructure.Service")
 Option Explicit
 Option Private Module
 'ŠJ”­’†‚Í IsDebug = True ‚Æ‚·‚é

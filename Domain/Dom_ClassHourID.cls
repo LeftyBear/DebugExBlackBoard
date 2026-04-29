@@ -41,14 +41,16 @@ Public Function ToKey() As String
 End Function
 
 Public Function Equals(ByVal Other As Dom_ClassHourID) As Boolean
-    If Other Is Nothing Then Exit Function
     If Not This.ClassHourType.Equals(Other.ClassHourType) Then Exit Function
     If Not This.Subject.Equals(Other.Subject) Then Exit Function
     If Not This.Grade.Equals(Other.Grade) Then Exit Function
     Equals = True
 End Function
 
-Public Function IsNoMeaning() As Boolean
-    If 0 < This.Subject.Index And 0 < This.Grade.Value Then Exit Function
-    IsNoMeaning = True
+Public Function IsPlan() As Boolean
+    IsPlan = (This.ClassHourType.Value = Dom_ClassHourTypeEnum.Plan)
+End Function
+
+Public Function IsExecution() As Boolean
+    IsExecution = (This.ClassHourType.Value = Dom_ClassHourTypeEnum.Execution)
 End Function

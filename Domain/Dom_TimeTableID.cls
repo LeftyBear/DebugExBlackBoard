@@ -41,14 +41,8 @@ Public Function ToKey() As String
 End Function
 
 Public Function Equals(ByVal Other As Dom_TimeTableID) As Boolean
-    If Other Is Nothing Then Exit Function
     If Not This.ClassHourType.Equals(Other.ClassHourType) Then Exit Function
     If Not This.Period.Equals(Other.Period) Then Exit Function
     If Not This.Grade.Equals(Other.Grade) Then Exit Function
     Equals = True
-End Function
-
-Public Function IsNoMeaning() As Boolean
-    If 0 < This.Period.Value And 0 < This.Grade.Value Then Exit Function
-    IsNoMeaning = True
 End Function

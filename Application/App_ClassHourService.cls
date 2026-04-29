@@ -20,7 +20,7 @@ Public Sub Initialize(ByVal Calculator As App_ClassHourCalculator)
     Set This.Calculator = Calculator
 End Sub
 
-Public Function CalculateTotal(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Condition As App_ClassHourFilterCondition) As Dom_ClassHourValue
+Public Function SumValue(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Condition As App_ClassHourFilterCondition) As Dom_ClassHourValue
 '    Dim BeginDate As Date
 '    BeginDate = App_DateUtility.GetMonday(InitialDate.Value)
 '    Dim BeginIndex As Long
@@ -38,5 +38,5 @@ Public Function CalculateTotal(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal
         Set Value = This.Calculator.SumHours(Yearly.Item(Index), Condition)
         Set Total = Total.Add(Value)
     Next
-    Set CalculateTotal = Total
+    Set SumValue = Total
 End Function

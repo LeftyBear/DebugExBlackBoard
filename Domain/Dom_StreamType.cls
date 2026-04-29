@@ -26,6 +26,5 @@ Public Property Get Value() As Long
 End Property
 
 Public Function Equals(ByVal Other As Dom_StreamType) As Boolean
-    If This.Value <> Other.Value Then Exit Function
-    Equals = True
+    Equals = (This.Value = Other.Value)
 End Function

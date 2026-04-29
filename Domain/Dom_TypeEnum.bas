@@ -1,5 +1,5 @@
 Attribute VB_Name = "Dom_TypeEnum"
-'@Folder("Domain.Enum")
+'@Folder("Domain.ValueObject")
 Option Explicit
 Option Private Module
 
@@ -30,4 +30,3 @@ Public Enum Dom_StructureTypeEnum
     Subject
     UpperValues
 End Enum
-

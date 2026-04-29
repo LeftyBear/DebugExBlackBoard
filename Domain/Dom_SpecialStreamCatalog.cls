@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Catalog")
+'@Folder("Domain.Service")
 Option Explicit
 
 Private Type Member
@@ -40,12 +40,10 @@ End Function
 Public Function Names() As String()
     Dim Result() As String
     ReDim Result(This.Catalog.Count - 1)
-    Dim Item As Variant
-    For Each Item In This.Catalog.Items
-        Dim SpecialStream As Dom_SpecialStream
-        Set SpecialStream = Item
+    Dim Key As Variant
+    For Each Key In This.Catalog.Keys
         Dim i As Long
-        Result(i) = SpecialStream.Name
+        Result(i) = Key
         i = i + 1
     Next
     Names = Result

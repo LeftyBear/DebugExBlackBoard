@@ -7,14 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Entity")
+'@Folder("Domain.Aggregate")
 Option Explicit
 
 Private Type Member
     DateID      As Dom_DateID
     Entities    As VBA.Collection
-    Transfer    As Dom_Transfer
-    Remarks     As Dom_Remarks
 End Type
 
 Private This As Member
@@ -23,19 +21,8 @@ Private Sub Class_Initialize()
     Set This.Entities = New VBA.Collection
 End Sub
 
-Public Sub SetDateID(ByVal DateID As Dom_DateID)
-    Set This.DateID = DateID
-End Sub
-
-Public Sub SetTransfer(ByVal Transfer As Dom_Transfer)
-    Set This.Transfer = Transfer
-End Sub
-
-Public Sub SetRemarks(ByVal Remarks As Dom_Remarks)
-    Set This.Remarks = Remarks
-End Sub
-
-Public Sub AddEnrollment(ByVal Entity As Dom_Enrollment)
+Public Sub Add(ByVal Entity As Dom_Enrollment)
+    If This.DateID Is Nothing Then Set This.DateID = Entity.DateID
     This.Entities.Add Entity
 End Sub
 
@@ -49,32 +36,28 @@ Public Sub UpdateValue(ByVal ID As Dom_EnrollmentID, ByVal NewValue As Long)
     Target.ChangeValueInternal Value
 End Sub
 
-Public Sub UpdateTransfer(ByVal DateID As Dom_DateID, ByVal NewValue As Boolean)
-    If Not This.Transfer.DateID.Equals(DateID) Then Err.Raise DomErrUnmatch, "Dom_EnrollmentAggregate", "日付が一致する必要があります。"
+Public Sub UpdateTransfer(ByVal NewValue As Boolean)
+    Dim Target As Dom_Enrollment
+    Set Target = FindTransfer
+    If Target Is Nothing Then Err.Raise DomErrUnmatch, "Dom_EnrollmentAggregate", "Enrollmentオブジェクトが必要です。"
     Dim Transfer As Dom_Transfer
     Set Transfer = New Dom_Transfer
-    Transfer.Initialize DateID, NewValue
-    Set This.Transfer = Transfer
+    Transfer.Initialize NewValue
+    Target.ChangeTransferInternal Transfer
 End Sub
 
-Public Sub UpdateRemarks(ByVal DateID As Dom_DateID, ByVal NewValue As String)
-    If Not This.Remarks.DateID.Equals(DateID) Then Err.Raise DomErrUnmatch, "Dom_EnrollmentAggregate", "日付が一致する必要があります。"
+Public Sub UpdateRemarks(ByVal NewValue As String)
+    Dim Target As Dom_Enrollment
+    Set Target = FindRemarks
+    If Target Is Nothing Then Err.Raise DomErrUnmatch, "Dom_EnrollmentAggregate", "Enrollmentオブジェクトが必要です。"
     Dim Remarks As Dom_Remarks
     Set Remarks = New Dom_Remarks
-    Remarks.Initialize DateID, NewValue
-    Set This.Remarks = Remarks
+    Remarks.Initialize NewValue
+    Target.ChangeRemarksInternal Remarks
 End Sub
 
 Public Property Get DateID() As Dom_DateID
     Set DateID = This.DateID
-End Property
-
-Public Property Get Transfer() As Dom_Transfer
-    Set Transfer = This.Transfer
-End Property
-
-Public Property Get Remarks() As Dom_Remarks
-    Set Remarks = This.Remarks
 End Property
 
 Public Function Count() As Long
@@ -92,6 +75,28 @@ Private Function FindByID(ByVal ID As Dom_EnrollmentID) As Dom_Enrollment
         Set Entity = This.Entities.Item(i)
         If Entity.ID.Equals(ID) Then
             Set FindByID = Entity: Exit Function
+        End If
+    Next
+End Function
+
+Private Function FindTransfer() As Dom_Enrollment
+    Dim i As Long
+    For i = 1 To This.Entities.Count
+        Dim Entity As Dom_Enrollment
+        Set Entity = This.Entities.Item(i)
+        If Entity.HasTransfer Then
+            Set FindTransfer = Entity: Exit Function
+        End If
+    Next
+End Function
+
+Private Function FindRemarks() As Dom_Enrollment
+    Dim i As Long
+    For i = 1 To This.Entities.Count
+        Dim Entity As Dom_Enrollment
+        Set Entity = This.Entities.Item(i)
+        If Entity.HasRemarks Then
+            Set FindRemarks = Entity: Exit Function
         End If
     Next
 End Function

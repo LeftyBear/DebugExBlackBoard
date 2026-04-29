@@ -1,5 +1,5 @@
 Attribute VB_Name = "Inf_ErrorEnum"
-'@Folder("Infrastructure.Enum")
+'@Folder("Infrastructure.ValueObject")
 Option Explicit
 Option Private Module
 

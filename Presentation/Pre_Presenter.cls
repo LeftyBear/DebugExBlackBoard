@@ -7,37 +7,37 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Application.Presenter"
+'@Folder("Presentation.ViewModel")
 Option Explicit
-Implements Pre_IPresenterCallback
+Implements App_IPresenterCallback
 Private Type Member
     CurrentYear As Dom_SchoolYear
     Logger      As App_ILogger
-    Structure   As App_AggregateSchoolStructure
-    ClassHour   As App_AggregateClassHour
-    Enrollment  As App_AggregateEnrollment
-    Schedule    As App_AggregateSchedule
-    Factory     As App_ValueObjectFactory
+    Structure   As App_SchoolStructureAggregator
+    ClassHour   As App_ClassHourAggregator
+    Enrollment  As App_EnrollmentAggregator
+    Schedule    As App_ScheduleAggregator
+    Factory     As Dom_ValueObjectFactory
     Builder     As App_ViewDTOBuilder
     CurrentDTO  As App_ViewDTO
+    MainView    As App_IMainView
     Base        As Pre_BasePresenter
-    MainView    As Pre_IMainView
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Logger As App_ILogger, ByVal Structure As App_AggregateSchoolStructure, ByVal ClassHour As App_AggregateClassHour, ByVal Enrollment As App_AggregateEnrollment, ByVal Schedule As App_AggregateSchedule, ByVal Factory As App_ValueObjectFactory, ByVal Builder As App_ViewDTOBuilder, ByVal Base As Pre_BasePresenter)
+Public Sub Initialize(ByVal Logger As App_ILogger, ByVal Structure As App_SchoolStructureAggregator, ByVal ClassHour As App_ClassHourAggregator, ByVal Enrollment As App_EnrollmentAggregator, ByVal Schedule As App_ScheduleAggregator, ByVal Factory As Dom_ValueObjectFactory, ByVal Builder As App_ViewDTOBuilder, ByVal Base As Pre_BasePresenter)
     Set This.Logger = Logger
     Set This.Structure = Structure
     Set This.ClassHour = ClassHour
     Set This.Enrollment = Enrollment
     Set This.Schedule = Schedule
     Set This.Factory = Factory
-    Set This.Base = Base
     Set This.Builder = Builder
+    Set This.Base = Base
 End Sub
 
-Public Sub AttachView(ByVal MainView As Pre_IMainView)
+Public Sub AttachView(ByVal MainView As App_IMainView)
     Set This.MainView = MainView
 End Sub
 
@@ -50,29 +50,6 @@ End Sub
 
 Public Sub Excute()
     This.Base.Execute Me
-End Sub
-
-Private Sub Pre_IPresenterCallback_ExecuteCore()
-    
-End Sub
-
-Private Sub Pre_IPresenterCallback_LogSystemError(ByVal Error As ErrObject)
-    Dim Message As String
-    Message = "ErrorNumber: " & Error.Number & _
-              "  ModuleName: " & Error.Source & _
-              "  Description: " & Error.Description
-    This.Logger.WriteLog Message
-End Sub
-
-Private Sub Pre_IPresenterCallback_RenderResult(ByVal Result As Pre_PresenterResult)
-    Select Case Result.ResultType
-    Case Pre_ViewResultTypeEnum.Success
-        This.MainView.ShowSuccess Result.Message
-    Case Pre_ViewResultTypeEnum.BusinessError
-        This.MainView.NotifyBusinessError Result.Message
-    Case Pre_ViewResultTypeEnum.SystemError
-        This.MainView.NotifySystemError
-    End Select
 End Sub
 
 Private Sub LoadByDate(ByVal SelectedDate As Date)
@@ -130,3 +107,28 @@ Private Function IsSameArray(ByRef OneArray As Variant, ByRef AnotherArray As Va
 ErrHandle:
     IsSameArray = False
 End Function
+
+Private Sub App_IPresenterCallback_ExecuteCore()
+    
+End Sub
+
+Private Sub App_IPresenterCallback_LogSystemError(ByVal Error As ErrObject)
+    Dim Message As String
+    Message = "ErrorNumber: " & Error.Number & _
+              "  ModuleName: " & Error.Source & _
+              "  Description: " & Error.Description
+    This.Logger.WriteLog Message
+End Sub
+
+Private Sub App_IPresenterCallback_RenderResult(ByVal Result As Pre_PresenterResult)
+    Select Case Result.ResultType
+    Case Pre_ViewResultTypeEnum.Success
+        This.MainView.ShowSuccess Result.Message
+    Case Pre_ViewResultTypeEnum.BusinessError
+        This.MainView.NotifyBusinessError Result.Message
+    Case Pre_ViewResultTypeEnum.SystemError
+        This.MainView.NotifySystemError
+    End Select
+End Sub
+
+

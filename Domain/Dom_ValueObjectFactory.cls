@@ -2,12 +2,12 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "App_ValueObjectFactory"
+Attribute VB_Name = "Dom_ValueObjectFactory"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Factory")
+'@Folder("Domain.Factory")
 Option Explicit
 
 Public Function CreateSchoolYear(ByVal Value As Long) As Dom_SchoolYear
@@ -141,6 +141,20 @@ Public Function CreateGender(ByVal Value As Long) As Dom_Gender
     Set VO = New Dom_Gender
     VO.Initialize Value
     Set CreateGender = VO
+End Function
+
+Public Function CreateTransfer(ByVal Value As Boolean) As Dom_Transfer
+    Dim VO As Dom_Transfer
+    Set VO = New Dom_Transfer
+    VO.Initialize Value
+    Set CreateTransfer = VO
+End Function
+
+Public Function CreateRemarks(ByVal Value As String) As Dom_Remarks
+    Dim VO As Dom_Remarks
+    Set VO = New Dom_Remarks
+    VO.Initialize Value
+    Set CreateRemarks = VO
 End Function
 
 Public Function CreateSchedlueValue(ByVal Value As String) As Dom_ScheduleValue

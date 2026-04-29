@@ -7,20 +7,20 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder Infrastructure.Provider
+'@Folder("Infrastructure.QueryService")
 Option Explicit
-Implements Dom_IWorkbookPathProvider
+Implements App_IWorkbookPathProvider
 
 Private Function GetParentPath(ByVal TargetPath As String) As String
     GetParentPath = VBA.Left$(TargetPath, VBA.InStrRev(TargetPath, charBackSlash) - 1)
 End Function
 
-Private Function Dom_IWorkbookPathProvider_GetBaseFolderPath() As String
+Private Function App_IWorkbookPathProvider_GetBaseFolderPath() As String
     Dim CurrentPath As String
     CurrentPath = ThisWorkbook.Path
     Dim ParentPath As String
     ParentPath = GetParentPath(CurrentPath)
     Dim GrandParentPath As String
     GrandParentPath = GetParentPath(ParentPath)
-    Dom_IWorkbookPathProvider_GetBaseFolderPath = GrandParentPath & charBackSlash
+    App_IWorkbookPathProvider_GetBaseFolderPath = GrandParentPath & charBackSlash
 End Function

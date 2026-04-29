@@ -30,6 +30,5 @@ Public Function ToKey() As String
 End Function
 
 Public Function Equals(ByVal Other As Dom_ClassNo) As Boolean
-    If This.Value <> Other.Value Then Exit Function
-    Equals = True
+    Equals = (This.Value = Other.Value)
 End Function

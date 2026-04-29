@@ -1,5 +1,5 @@
 Attribute VB_Name = "App_ArrayUtility"
-'@Folder("Application.Utility")
+'@Folder("Application.Service")
 Option Explicit
 
 Public Function GetHeaderRow(ByRef Source() As String) As String()

@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Facade")
+'@Folder("Domain.Service")
 Option Explicit
 
 Private Type Member
@@ -50,12 +50,12 @@ Public Property Get SpecialStreamClassCount() As Long
     SpecialStreamClassCount = This.SpecialStreamCatalog.Count
 End Property
 
-Public Function ResolveSubject(ByVal Name As String) As Dom_Subject
-    Set ResolveSubject = This.SubjectCatalog.Resolve(Name)
+Public Function SubjectByName(ByVal Name As String) As Dom_Subject
+    Set SubjectByName = This.SubjectCatalog.FindByName(Name)
 End Function
 
-Public Function SubjectIndexOf(ByVal Index As Long) As Dom_Subject
-    SubjectIndexOf = This.SubjectCatalog.IndexOf(Index)
+Public Function SubjectByIndex(ByVal Index As Long) As Dom_Subject
+    SubjectByIndex = This.SubjectCatalog.FindByIndex(Index)
 End Function
 
 Public Function SubjectNameOf(ByVal Index As Long) As String

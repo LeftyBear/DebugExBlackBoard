@@ -18,10 +18,19 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal DateID As Dom_DateID, ByVal ClassHours As VBA.Collection, ByVal TimeTables As VBA.Collection)
-    Set This.DateID = DateID
-    Set This.ClassHours = ClassHours
-    Set This.TimeTables = TimeTables
+Private Sub Class_Initialize()
+    Set This.ClassHours = New VBA.Collection
+    Set This.TimeTables = New VBA.Collection
+End Sub
+
+Public Sub AddClassHour(ByVal Entity As Dom_ClassHour)
+    If This.DateID Is Nothing Then Set This.DateID = Entity.DateID
+    This.ClassHours.Add Entity
+End Sub
+
+Public Sub AddTimeTable(ByVal Entity As Dom_TimeTable)
+    If This.DateID Is Nothing Then Set This.DateID = Entity.DateID
+    This.TimeTables.Add Entity
 End Sub
 
 Public Sub UpdateClassHourValue(ByVal ID As Dom_ClassHourID, ByVal NewValue As Long)

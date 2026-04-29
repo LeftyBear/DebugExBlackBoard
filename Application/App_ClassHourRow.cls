@@ -13,5 +13,6 @@ Option Explicit
 Public NormDate As Date
 Public TypeCode As Long
 Public Subject  As String
+Public Period   As Long
 Public Grade    As Long
 Public Value    As Long

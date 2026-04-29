@@ -7,17 +7,17 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Formatter")
+'@Folder("Application.UseCase")
 Option Explicit
 
 Private Type Member
     Service As App_TimeTableService
-    Factory As App_ValueObjectFactory
+    Factory As Dom_ValueObjectFactory
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Service As App_TimeTableService, ByVal Factory As App_ValueObjectFactory)
+Public Sub Initialize(ByVal Service As App_TimeTableService, ByVal Factory As Dom_ValueObjectFactory)
     Set This.Service = Service
     Set This.Factory = Factory
 End Sub

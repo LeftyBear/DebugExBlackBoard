@@ -1,5 +1,5 @@
 Attribute VB_Name = "App_ErrorEnum"
-'@Folder("Application.Enum")
+'@Folder("Application.ValueObject")
 Option Explicit
 Option Private Module
 

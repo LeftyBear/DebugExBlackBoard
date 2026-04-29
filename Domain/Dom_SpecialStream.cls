@@ -34,5 +34,6 @@ End Property
 
 Public Function Equals(ByVal Other As Dom_SpecialStream) As Boolean
     If This.Index <> Other.Index Then Exit Function
+    If This.Name <> Other.Name Then Exit Function
     Equals = True
 End Function

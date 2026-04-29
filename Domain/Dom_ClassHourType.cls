@@ -26,15 +26,13 @@ Public Property Get Value() As Long
 End Property
 
 Public Function ToKey() As String
-    Select Case This.Value
-    Case Dom_ClassHourTypeEnum.Plan
+    If This.Value = Dom_ClassHourTypeEnum.Plan Then
         ToKey = jpnKeikaku
-    Case Dom_ClassHourTypeEnum.Execution
+    ElseIf This.Value = Dom_ClassHourTypeEnum.Execution Then
         ToKey = jpnJisshi
-    End Select
+    End If
 End Function
 
 Public Function Equals(ByVal Other As Dom_ClassHourType) As Boolean
-    If This.Value <> Other.Value Then Exit Function
-    Equals = True
+    Equals = (This.Value = Other.Value)
 End Function

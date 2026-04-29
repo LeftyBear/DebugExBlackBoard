@@ -7,12 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Formatter")
+'@Folder("Application.Usecase")
 Option Explicit
 
 Private Type Member
     Service As App_EnrollmentService
-    Factory As App_ValueObjectFactory
+    Factory As Dom_ValueObjectFactory
 End Type
 
 Private This As Member
@@ -25,7 +25,7 @@ Private Enum C
     TotalColumn
 End Enum
 
-Public Sub Initialize(ByVal Service As App_EnrollmentService, ByVal Factory As App_ValueObjectFactory)
+Public Sub Initialize(ByVal Service As App_EnrollmentService, ByVal Factory As Dom_ValueObjectFactory)
     Set This.Service = Service
     Set This.Factory = Factory
 End Sub

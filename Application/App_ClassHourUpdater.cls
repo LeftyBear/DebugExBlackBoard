@@ -11,12 +11,12 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Repository As App_ClassHourRepository
+    Repository As Dom_IClassHourRepository
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Repository As App_ClassHourRepository)
+Public Sub Initialize(ByVal Repository As Dom_IClassHourRepository)
     Set This.Repository = Repository
 End Sub
 

@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Factory")
+'@Folder("Application.Factory")
 Option Explicit
 
 Public Function Create(ByVal Rows As VBA.Collection) As Dom_ScheduleYearAggregate

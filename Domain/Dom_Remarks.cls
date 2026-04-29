@@ -11,25 +11,19 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    DateID  As Dom_DateID
-    Value   As String
+    Value As String
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal DateID As Dom_DateID, ByVal Value As String)
-    Set This.DateID = DateID
+Public Sub Initialize(ByVal Value As String)
     This.Value = Value
 End Sub
-
-Friend Sub ChangeValueInternal(ByVal NewValue As String)
-    This.Value = NewValue
-End Sub
-
-Public Property Get DateID() As Dom_DateID
-    DateID = This.DateID
-End Property
 
 Public Property Get Value() As String
     Value = This.Value
 End Property
+
+Public Function Equals(ByVal Other As Dom_Remarks) As Boolean
+    Equals = (This.Value = Other.Value)
+End Function

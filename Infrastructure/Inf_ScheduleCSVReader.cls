@@ -7,21 +7,21 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Infrastructure.Reader"
+'@Folder("Infrastructure.QueryService")
 Option Explicit
-Implements Dom_IScheduleReader
+Implements App_IScheduleReader
 Private Type Member
-    Repository As Inf_CSVReader
+    Reader As Inf_CSVReader
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Repository As Inf_CSVReader)
-    Set This.Repository = Repository
+Public Sub Initialize(ByVal Reader As Inf_CSVReader)
+    Set This.Reader = Reader
 End Sub
 
-Private Function Dom_IScheduleReader_Load(ByVal FilePath As String) As String()
+Private Function App_IScheduleReader_Load(ByVal FilePath As String) As String()
     Dim RawRows() As String
-    RawRows = This.Repository.Load(FilePath)
-    Dom_IScheduleReader_Load = RawRows
+    RawRows = This.Reader.Load(FilePath)
+    App_IScheduleReader_Load = RawRows
 End Function

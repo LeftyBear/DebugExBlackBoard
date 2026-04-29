@@ -1,5 +1,5 @@
 Attribute VB_Name = "App_NumericUtility"
-'@Folder("Application.Utility")
+'@Folder("Application.Service")
 Option Explicit
 Option Private Module
 

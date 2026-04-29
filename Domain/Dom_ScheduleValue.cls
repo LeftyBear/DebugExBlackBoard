@@ -25,6 +25,5 @@ Public Property Get Value() As Long
 End Property
 
 Public Function Equals(ByVal Other As Dom_ScheduleValue) As Boolean
-    If Other Is Nothing Then Exit Function
     Equals = (This.Value = Other.Value)
 End Function

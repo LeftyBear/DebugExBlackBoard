@@ -32,6 +32,5 @@ Public Function Add(ByVal Other As Dom_TimeTableValue) As Dom_TimeTableValue
 End Function
 
 Public Function Equals(ByVal Other As Dom_TimeTableValue) As Boolean
-    If Other Is Nothing Then Exit Function
     Equals = (This.Value = Other.Value)
 End Function

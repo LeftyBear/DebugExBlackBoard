@@ -7,16 +7,16 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Factory")
+'@Folder("Application.Factory")
 Option Explicit
 
 Private Type Member
-    Factory As App_ValueObjectFactory
+    Factory As Dom_ValueObjectFactory
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Factory As App_ValueObjectFactory)
+Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
     Set This.Factory = Factory
 End Sub
 

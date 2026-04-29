@@ -7,14 +7,13 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Application.Selector"
+'@Folder "Application.Service"
 Option Explicit
 
 Public Function SelectLogger(ByVal EnvironmentType As Inf_EnvironmentTypeEnum, ByVal FileLogger As Inf_FileLogger, ByVal DebugLogger As Inf_DebugLogger) As App_ILogger
-    Select Case EnvironmentType
-    Case Inf_EnvironmentTypeEnum.ReleaseMode
+    If EnvironmentType = Inf_EnvironmentTypeEnum.ReleaseMode Then
         Set SelectLogger = FileLogger
-    Case Else
+    ElseIf EnvironmentType = Inf_EnvironmentTypeEnum.DebugMode Then
         Set SelectLogger = DebugLogger
-    End Select
+    End If
 End Function

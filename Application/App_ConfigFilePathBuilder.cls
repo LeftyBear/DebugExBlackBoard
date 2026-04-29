@@ -7,17 +7,17 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.Builder")
+'@Folder("Application.Service")
 Option Explicit
 
 Private Type Member
     Resolver As Dom_ConfigFileNameResolver
-    Provider As Dom_IWorkbookPathProvider
+    Provider As App_IWorkbookPathProvider
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Resolver As Dom_ConfigFileNameResolver, ByVal Provider As Dom_IWorkbookPathProvider)
+Public Sub Initialize(ByVal Resolver As Dom_ConfigFileNameResolver, ByVal Provider As App_IWorkbookPathProvider)
     Set This.Resolver = Resolver
     Set This.Provider = Provider
 End Sub

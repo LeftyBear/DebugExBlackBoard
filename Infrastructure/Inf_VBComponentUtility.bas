@@ -1,5 +1,5 @@
 Attribute VB_Name = "Inf_VBComponentUtility"
-'@Folder("Infrastructure.Utility")
+'@Folder("Infrastructure.Service")
 Option Explicit
 Option Private Module
 

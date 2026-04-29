@@ -1,5 +1,5 @@
 Attribute VB_Name = "Dom_ErrorEnum"
-'@Folder("Domain.Enum")
+'@Folder("Domain.ValueObject")
 Option Explicit
 Option Private Module
 
@@ -29,4 +29,3 @@ Public Enum Dom_ErrNum
     DomErrNullString
     DomErrUnmatch
 End Enum
-

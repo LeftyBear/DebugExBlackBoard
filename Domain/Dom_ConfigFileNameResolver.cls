@@ -7,18 +7,17 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.Resolver")
+'@Folder("Domain.Service")
 Option Explicit
 
 Public Function Resolve(ByVal StructureName As Dom_StructureTypeEnum) As String
-    Select Case StructureName
-    Case Dom_StructureTypeEnum.SchoolEvent
+    If StructureName = Dom_StructureTypeEnum.SchoolEvent Then
         Resolve = "SchoolEventCatalog.csv"
-    Case Dom_StructureTypeEnum.SpecialStream
+    ElseIf StructureName = Dom_StructureTypeEnum.SpecialStream Then
         Resolve = "SpecialStreamCatalog.csv"
-    Case Dom_StructureTypeEnum.Subject
+    ElseIf StructureName = Dom_StructureTypeEnum.Subject Then
         Resolve = "SubjectCatalog.csv"
-    Case Dom_StructureTypeEnum.UpperValues
+    ElseIf StructureName = Dom_StructureTypeEnum.UpperValues Then
         Resolve = "UpperValue.csv"
-    End Select
+    End If
 End Function

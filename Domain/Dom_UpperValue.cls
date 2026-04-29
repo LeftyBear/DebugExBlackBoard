@@ -40,8 +40,8 @@ Public Property Get PeriodCount() As Long
 End Property
 
 Public Function Equals(ByVal Other As Dom_UpperValue) As Boolean
-    If Other Is Nothing Then Exit Function
-    Equals = (This.MainStreamGradeCount = Other.MainStreamGradeCount)
-    Equals = (This.MainStreamClassCount = Other.MainStreamClassCount)
-    Equals = (This.PeriodCount = Other.PeriodCount)
+    If This.MainStreamGradeCount <> Other.MainStreamGradeCount Then Exit Function
+    If This.MainStreamClassCount <> Other.MainStreamClassCount Then Exit Function
+    If This.PeriodCount <> Other.PeriodCount Then Exit Function
+    Equals = True
 End Function

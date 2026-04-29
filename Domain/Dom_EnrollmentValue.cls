@@ -33,6 +33,5 @@ Public Function Add(ByVal Other As Dom_EnrollmentValue) As Dom_EnrollmentValue
 End Function
 
 Public Function Equals(ByVal Other As Dom_EnrollmentValue) As Boolean
-    If Other Is Nothing Then Exit Function
     Equals = (This.Value = Other.Value)
 End Function

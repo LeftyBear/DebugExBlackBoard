@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.Parser")
+'@Folder("Infrastructure.Service")
 Option Explicit
 
 Private Enum ParserState

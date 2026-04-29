@@ -10,7 +10,10 @@ Attribute VB_Exposed = False
 '@Folder("Application.DTO")
 Option Explicit
 
-Public TypeCode As Long
-Public Grade    As Long
-Public ClassNo  As Long
-Public Gender   As Long
+Public ColDate      As String
+Public TypeCode     As Long
+Public Grade        As Long
+Public ClassNo      As Long
+Public Gender       As Long
+Public ColTransfer  As String
+Public ColRemarks   As String

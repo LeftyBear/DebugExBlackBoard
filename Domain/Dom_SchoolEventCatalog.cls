@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Catalog")
+'@Folder("Domain.Service")
 Option Explicit
 
 Private Type Member
@@ -32,18 +32,18 @@ Public Function Exists(ByVal Key As String) As Boolean
     Exists = This.Catalog.Exists(Key)
 End Function
 
-Public Function Resolve(ByVal Key As String) As Dom_SchoolEvent
-    If Not Me.Exists(Key) Then Err.Raise DomErrNotExistsItem, "Dom_SchoolEventCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録キー: " & Key
-    Set Resolve = This.Catalog.Item(Key)
+Public Function Item(ByVal Key As String) As Dom_SchoolEvent
+    If Not This.Catalog.Exists(Key) Then Err.Raise DomErrNotExistsItem, "Dom_SchoolEventCatalog", "存在しないアイテムを取得しようとしました。: " & vbCrLf & "未登録キー: " & Key
+    Set Item = This.Catalog.Item(Key)
 End Function
 
 Public Function Names() As String()
     Dim Result() As String
     ReDim Result(This.Catalog.Count - 1)
-    Dim Target As Variant
-    For Each Target In This.Catalog.Keys
+    Dim Key As Variant
+    For Each Key In This.Catalog.Keys
         Dim i As Long
-        Result(i) = Target
+        Result(i) = Key
         i = i + 1
     Next
     Names = Result

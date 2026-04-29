@@ -7,19 +7,19 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Infrastructure.Reader"
+'@Folder("Infrastructure.QueryService")
 Option Explicit
-Implements Dom_IConfigReader
+Implements App_IConfigReader
 Private Type Member
-    Repository As Inf_CSVReader
+    Reader As Inf_CSVReader
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Repository As Inf_CSVReader)
-    Set This.Repository = Repository
+Public Sub Initialize(ByVal Reader As Inf_CSVReader)
+    Set This.Reader = Reader
 End Sub
 
-Private Function Dom_IConfigReader_Load(ByVal FilePath As String) As String()
-    Dom_IConfigReader_Load = This.Repository.Load(FilePath)
+Private Function App_IConfigReader_Load(ByVal FilePath As String) As String()
+    App_IConfigReader_Load = This.Reader.Load(FilePath)
 End Function

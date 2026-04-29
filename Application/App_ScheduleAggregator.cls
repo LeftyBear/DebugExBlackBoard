@@ -2,16 +2,16 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "App_AggregateSchedule"
+Attribute VB_Name = "App_ScheduleAggregator"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.UseCase")
+'@Folder("Application.Service")
 Option Explicit
 
 Private Type Member
-    Reader      As Dom_IScheduleReader
+    Reader      As App_IScheduleReader
     Builder     As App_EntityFilePathBuilder
     Resolver    As App_ScheduleRowResolver
     Factory     As App_ScheduleYearAggFactory
@@ -19,7 +19,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Reader As Dom_IScheduleReader, ByVal Builder As App_EntityFilePathBuilder, ByVal Resolver As App_ScheduleRowResolver, ByVal Factory As App_ScheduleYearAggFactory)
+Public Sub Initialize(ByVal Reader As App_IScheduleReader, ByVal Builder As App_EntityFilePathBuilder, ByVal Resolver As App_ScheduleRowResolver, ByVal Factory As App_ScheduleYearAggFactory)
     Set This.Reader = Reader
     Set This.Builder = Builder
     Set This.Resolver = Resolver
@@ -32,9 +32,9 @@ Public Function Execute(ByVal SchoolYear As Dom_SchoolYear, ByVal Structure As D
     If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function
     Dim RawRows() As String
     RawRows = This.Reader.Load(FilePath)
-    If App_ArrayUtility.IsEmpty(RawRows) Then Err.Raise AppErrEmptyArray, "App_AggregateSchedule", "RawRows is empty."
+    If App_ArrayUtility.IsEmpty(RawRows) Then Err.Raise AppErrEmptyArray, "App_ScheduleAggregator", "RawRows is empty."
     Dim Rows As VBA.Collection
     Set Rows = This.Resolver.Resolve(RawRows)
-    If Rows.Count = 0 Then Err.Raise AppErrNothingItem, "App_AggregateSchedule", "Rows item is nothing."
+    If Rows.Count = 0 Then Err.Raise AppErrNothingItem, "App_ScheduleAggregator", "Rows item is nothing."
     Set Execute = This.Factory.Create(Rows)
 End Function

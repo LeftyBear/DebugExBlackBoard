@@ -7,21 +7,21 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Infrastructure.Reader"
+'@Folder("Infrastructure.QueryService")
 Option Explicit
-Implements Dom_IEnrollmentReader
+Implements App_IEnrollmentReader
 Private Type Member
-    Repository As Inf_CSVReader
+    Reader As Inf_CSVReader
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Repository As Inf_CSVReader)
-    Set This.Repository = Repository
+Public Sub Initialize(ByVal Reader As Inf_CSVReader)
+    Set This.Reader = Reader
 End Sub
 
-Private Function Dom_IEnrollmentReader_Load(ByVal FilePath As String) As String()
+Private Function App_IEnrollmentReader_Load(ByVal FilePath As String) As String()
     Dim RawRows() As String
-    RawRows = This.Repository.Load(FilePath)
-    Dom_IEnrollmentReader_Load = RawRows
+    RawRows = This.Reader.Load(FilePath)
+    App_IEnrollmentReader_Load = RawRows
 End Function
