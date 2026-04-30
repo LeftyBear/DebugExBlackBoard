@@ -2,16 +2,15 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Pre_Presenter"
+Attribute VB_Name = "Pre_CalenderPresenter"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Presentation.ViewModel")
 Option Explicit
-Implements App_IPresenterCallback
+Implements Pre_IPresenterCallback
 Private Type Member
-    CurrentYear As Dom_SchoolYear
     Logger      As App_ILogger
     Structure   As App_SchoolStructureAggregator
     ClassHour   As App_ClassHourAggregator
@@ -20,8 +19,9 @@ Private Type Member
     Factory     As Dom_ValueObjectFactory
     Builder     As App_ViewDTOBuilder
     CurrentDTO  As App_ViewDTO
-    MainView    As App_IMainView
+    MainView    As Pre_IMainView
     Base        As Pre_BasePresenter
+    CurrentYear As Long
 End Type
 
 Private This As Member
@@ -37,14 +37,14 @@ Public Sub Initialize(ByVal Logger As App_ILogger, ByVal Structure As App_School
     Set This.Base = Base
 End Sub
 
-Public Sub AttachView(ByVal MainView As App_IMainView)
+Public Sub AttachView(ByVal MainView As Pre_IMainView)
     Set This.MainView = MainView
 End Sub
 
-Public Sub LoadAsync(ByVal SelectedDate As Date)
+Public Sub LoadAsync(ByVal TargetDate As Date)
     This.MainView.ShowLoading
     DoEvents
-    LoadByDate SelectedDate
+    LoadByDate TargetDate
     This.MainView.HideLoading
 End Sub
 
@@ -52,25 +52,23 @@ Public Sub Excute()
     This.Base.Execute Me
 End Sub
 
-Private Sub LoadByDate(ByVal SelectedDate As Date)
-    Dim SchoolYear As Long
-    SchoolYear = App_DateUtility.GetSchoolYear(SelectedDate)
-    Dim NewYear As Dom_SchoolYear
-    Set NewYear = This.Factory.CreateSchoolYear(SchoolYear)
-    If This.CurrentYear.Equals(NewYear) Then Exit Sub
+Private Sub LoadByDate(ByVal TargetDate As Date)
+    Dim NewYear As Long
+    NewYear = App_DateUtility.GetSchoolYear(TargetDate)
+    If This.CurrentYear = NewYear Then Exit Sub
     Dim ClassHour As Dom_ClassHourYearAggregate
     Set ClassHour = This.ClassHour.Execute(NewYear, This.Structure)
     Dim Enrollment As Dom_EnrollmentYearAggregate
     Set Enrollment = This.Enrollment.Execute(NewYear)
     Dim Schedule As Dom_ScheduleYearAggregate
     Set Schedule = This.Schedule.Execute(NewYear, This.Structure)
-    Dim TargetDate As Dom_DateID
-    Set TargetDate = This.Factory.CreateDateID(SelectedDate)
+    Dim Index As Long
+    Index = App_DateUtility.DiffApr1st(TargetDate)
     Dim NewDTO As App_ViewDTO
-    Set NewDTO = This.Builder.Build(TargetDate, ClassHour, Enrollment, Schedule, This.Structure)
+    Set NewDTO = This.Builder.Build(Index, ClassHour, Enrollment, Schedule, This.Structure)
     RenderDiff This.CurrentDTO, NewDTO
     Set This.CurrentDTO = NewDTO
-    Set This.CurrentYear = NewYear
+    This.CurrentYear = NewYear
 End Sub
 
 Private Sub RenderDiff(ByVal OldDTO As App_ViewDTO, ByVal NewDTO As App_ViewDTO)
@@ -108,11 +106,11 @@ ErrHandle:
     IsSameArray = False
 End Function
 
-Private Sub App_IPresenterCallback_ExecuteCore()
+Private Sub Pre_IPresenterCallback_ExecuteCore()
     
 End Sub
 
-Private Sub App_IPresenterCallback_LogSystemError(ByVal Error As ErrObject)
+Private Sub Pre_IPresenterCallback_LogSystemError(ByVal Error As ErrObject)
     Dim Message As String
     Message = "ErrorNumber: " & Error.Number & _
               "  ModuleName: " & Error.Source & _
@@ -120,15 +118,12 @@ Private Sub App_IPresenterCallback_LogSystemError(ByVal Error As ErrObject)
     This.Logger.WriteLog Message
 End Sub
 
-Private Sub App_IPresenterCallback_RenderResult(ByVal Result As Pre_PresenterResult)
-    Select Case Result.ResultType
-    Case Pre_ViewResultTypeEnum.Success
+Private Sub Pre_IPresenterCallback_RenderResult(ByVal Result As Pre_PresenterResult)
+    If Result.TypeCode = Pre_ViewResultTypePolicy.Success Then
         This.MainView.ShowSuccess Result.Message
-    Case Pre_ViewResultTypeEnum.BusinessError
+    ElseIf Result.TypeCode = Pre_ViewResultTypePolicy.BusinessError Then
         This.MainView.NotifyBusinessError Result.Message
-    Case Pre_ViewResultTypeEnum.SystemError
+    ElseIf Result.TypeCode = Pre_ViewResultTypePolicy.SystemError Then
         This.MainView.NotifySystemError
-    End Select
+    End If
 End Sub
-
-

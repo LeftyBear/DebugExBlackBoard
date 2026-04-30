@@ -20,7 +20,7 @@ Public Sub Initialize(ByVal Factory As Pre_PresenterResultFactory)
     Set This.Factory = Factory
 End Sub
 
-Public Sub Execute(ByVal Callback As App_IPresenterCallback)
+Public Sub Execute(ByVal Callback As Pre_IPresenterCallback)
     On Error GoTo ErrHandler
     Dim Factory As New Pre_PresenterResultFactory
     Callback.ExecuteCore
@@ -28,7 +28,7 @@ Public Sub Execute(ByVal Callback As App_IPresenterCallback)
     Set Result = This.Factory.CreateSuccess
     GoTo Finally
 ErrHandler:
-    If Pre_ErrorUtility.IsDomainError(Err.Number) Or Pre_ErrorUtility.IsInfrastructureError(Err.Number) Then
+    If ErrorPolicy.IsDomainError(Err.Number) Or ErrorPolicy.IsInfrastructureError(Err.Number) Then
         Dim Message As String
         Message = "î‘çÜ: " & Err.Number & vbCrLf & _
                   "èÍèä: " & Err.Source & vbCrLf & _

@@ -35,7 +35,8 @@ Public Function Create(ByVal Row As App_EnrollmentRow) As Dom_Enrollment
         Dim Remarks As Dom_Remarks
         Set Remarks = This.ValueObjectFactory.CreateRemarks(Row.RawRemarks)
     End If
-    If ID Is Nothing And Transfer Is Nothing And Remarks Is Nothing Then Exit Function
+    If ID Is Nothing And Transfer Is Nothing Then Exit Function
+    If ID Is Nothing And Remarks Is Nothing Then Exit Function
     Dim Entity As Dom_Enrollment
     Set Entity = New Dom_Enrollment
     Entity.Initialize DateID, ID, Value, Transfer, Remarks

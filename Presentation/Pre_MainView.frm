@@ -15,29 +15,29 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '@Folder "Application.View"
 Option Explicit
-Implements App_IMainView
+Implements Pre_IMainView
 Private Type Member
-    ClassHourController As Pre_ClassHourController
+    Calender As Pre_CalenderController
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal ClassHourController As Pre_ClassHourController)
-    Set This.ClassHourController = ClassHourController
+Public Sub Initialize(ByVal Calender As Pre_CalenderController)
+    Set This.Calender = Calender
 End Sub
 
-Private Sub DateChanged(ByVal SelectedDate As Date)
-    This.ClassHourController.ChangeDate SelectedDate
+Public Sub DateChanged(ByVal SelectedDate As Date)
+    This.Calender.ChangeDate SelectedDate
 End Sub
 
-Private Sub SetGridValue(ByVal Kind As String, ByVal Value As Variant, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long)
+Public Sub SetGridValue(ByVal Kind As String, ByVal Value As Variant, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long)
     Dim Cell As Object
     Set Cell = ResolveGridControl(Kind, Grade, ClassNo)
     If Cell Is Nothing Then Exit Sub
     Cell.Text = CStr(Value)
 End Sub
 
-Private Function GetGridLongValue(ByVal Kind As String, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long) As Long
+Public Function GetGridLongValue(ByVal Kind As String, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long) As Long
     Dim TextValue As String
     TextValue = GetTextFromGrid(Kind, Grade, ClassNo)
     If TextValue = vbNullString Then
@@ -47,7 +47,7 @@ Private Function GetGridLongValue(ByVal Kind As String, Optional ByVal Grade As 
     GetGridLongValue = CLng(TextValue)
 End Function
 
-Private Function GetGridStringValue(ByVal Kind As String, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long) As String
+Public Function GetGridStringValue(ByVal Kind As String, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long) As String
     GetGridStringValue = GetTextFromGrid(Kind, Grade, ClassNo)
 End Function
 
@@ -75,52 +75,52 @@ Private Function BuildGridControlName(ByVal Kind As String, Optional ByVal Grade
     BuildGridControlName = VBA.Join(Cells, charUnderScore)
 End Function
 
-Private Sub App_IMainView_HideLoading()
+Private Sub Pre_IMainView_HideLoading()
     Application.StatusBar = vbNullString
 End Sub
 
-Private Sub App_IMainView_NotifyBusinessError(ByVal Message As String)
+Private Sub Pre_IMainView_NotifyBusinessError(ByVal Message As String)
     MsgBox Message, vbCritical, "業務エラー"
 End Sub
 
-Private Sub App_IMainView_NotifySystemError()
+Private Sub Pre_IMainView_NotifySystemError()
     MsgBox "予期しないエラーが発生したのでログに書き出しました。", vbCritical, "システムエラー"
 End Sub
 
-Private Sub App_IMainView_Render(ByVal ViewModel As App_ViewDTO)
-    App_IMainView_RenderEnrollment ViewModel.EnrollmentTable
-    App_IMainView_RenderClassHourPlan ViewModel.ClassHourPlanTable
-    App_IMainView_RenderClassHourExecution ViewModel.ClassHourExecutionTable
-    App_IMainView_RenderTimeTablePlan ViewModel.TimeTablePlanTable
-    App_IMainView_RenderTimeTableExecution ViewModel.TimeTableExecutionTable
+Private Sub Pre_IMainView_Render(ByVal ViewModel As App_ViewDTO)
+    Pre_IMainView_RenderEnrollment ViewModel.EnrollmentTable
+    Pre_IMainView_RenderClassHourPlan ViewModel.ClassHourPlanTable
+    Pre_IMainView_RenderClassHourExecution ViewModel.ClassHourExecutionTable
+    Pre_IMainView_RenderTimeTablePlan ViewModel.TimeTablePlanTable
+    Pre_IMainView_RenderTimeTableExecution ViewModel.TimeTableExecutionTable
 End Sub
 
-Private Sub App_IMainView_RenderClassHourExecution(Table() As Variant)
-
-End Sub
-
-Private Sub App_IMainView_RenderClassHourPlan(Table() As Variant)
+Private Sub Pre_IMainView_RenderClassHourExecution(Table() As Variant)
 
 End Sub
 
-Private Sub App_IMainView_RenderEnrollment(Table() As Variant)
+Private Sub Pre_IMainView_RenderClassHourPlan(Table() As Variant)
 
 End Sub
 
-Private Sub App_IMainView_RenderTimeTableExecution(Table() As Variant)
+Private Sub Pre_IMainView_RenderEnrollment(Table() As Variant)
 
 End Sub
 
-Private Sub App_IMainView_RenderTimeTablePlan(Table() As Variant)
+Private Sub Pre_IMainView_RenderTimeTableExecution(Table() As Variant)
 
 End Sub
 
-Private Sub App_IMainView_ShowLoading()
+Private Sub Pre_IMainView_RenderTimeTablePlan(Table() As Variant)
+
+End Sub
+
+Private Sub Pre_IMainView_ShowLoading()
     Application.StatusBar = "Loading..."
     DoEvents
 End Sub
 
-Private Sub App_IMainView_ShowSuccess(ByVal Message As String)
+Private Sub Pre_IMainView_ShowSuccess(ByVal Message As String)
     If Message = vbNullString Then Exit Sub
     MsgBox Message, vbInformation, "処理完了"
 End Sub

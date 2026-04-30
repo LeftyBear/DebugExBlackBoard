@@ -20,7 +20,7 @@ Public Sub Initialize(ByVal Filter As App_ClassHourFilter)
     Set This.Filter = Filter
 End Sub
 
-Public Function SumHours(ByVal Aggregate As Dom_ClassHourAggregate, ByVal Condition As App_ClassHourFilterCondition) As Dom_ClassHourValue
+Public Function SumOfOneDay(ByVal Aggregate As Dom_ClassHourAggregate, ByVal Condition As App_ClassHourFilterCondition) As Dom_ClassHourValue
     Dim Total As Dom_ClassHourValue
     Set Total = New Dom_ClassHourValue
     Total.Initialize 0
@@ -32,5 +32,5 @@ Public Function SumHours(ByVal Aggregate As Dom_ClassHourAggregate, ByVal Condit
         Set ClassHour = ClassHours.Item(i)
         Set Total = Total.Add(ClassHour.Value)
     Next
-    Set SumHours = Total
+    Set SumOfOneDay = Total
 End Function

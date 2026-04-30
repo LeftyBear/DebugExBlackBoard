@@ -7,24 +7,24 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Usecase")
+'@Folder("Application.Service")
 Option Explicit
 
 Private Type Member
-    Service As App_ClassHourService
-    Factory As Dom_ValueObjectFactory
+    Calculator  As App_ClassHourSummaryCalculator
+    Factory     As Dom_ValueObjectFactory
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Service As App_ClassHourService, ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Service = Service
+Public Sub Initialize(ByVal Calculator As App_ClassHourSummaryCalculator, ByVal Factory As Dom_ValueObjectFactory)
+    Set This.Calculator = Calculator
     Set This.Factory = Factory
 End Sub
 
-Public Function Format(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal Aggregate As Dom_ClassHourYearAggregate, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Structure As Dom_SchoolStructure) As Variant()
+Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_ClassHourYearAggregate, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Structure As Dom_SchoolStructure) As Variant()
     Dim ClassHourTable() As Long
-    ClassHourTable = ToClassHourTable(ClassHourTypeEnum, Aggregate, BeginIndex, EndIndex, Structure)
+    ClassHourTable = ToClassHourTable(TypeCode, Aggregate, BeginIndex, EndIndex, Structure)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(ClassHourTable, 1) + 1, 1 To UBound(ClassHourTable, 2) + 1)
     Dim C As Long
@@ -50,14 +50,14 @@ Public Function Format(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal A
     Format = OutputTable
 End Function
 
-Private Function ToClassHourTable(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal Aggregate As Dom_ClassHourYearAggregate, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Structure As Dom_SchoolStructure) As Long()
+Private Function ToClassHourTable(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_ClassHourYearAggregate, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Structure As Dom_SchoolStructure) As Long()
     Dim Table() As Long
     ReDim Table(1 To Structure.SubjectCount + 1, 1 To Structure.MainStreamGradeCount)
     If Aggregate Is Nothing Then GoTo Finalize
     Dim Total() As Long
     ReDim Total(1 To Structure.MainStreamGradeCount)
     Dim ClassHourType As Dom_ClassHourType
-    Set ClassHourType = This.Factory.CreateClassHourType(ClassHourTypeEnum)
+    Set ClassHourType = This.Factory.CreateClassHourType(TypeCode)
     Dim G As Long
     For G = 1 To Structure.MainStreamGradeCount
         Dim Grade As Dom_Grade
@@ -69,7 +69,7 @@ Private Function ToClassHourTable(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEn
             Dim Condition As App_ClassHourFilterCondition
             Set Condition = This.Factory.CreateClassHourFilterCondition(ClassHourType, Subject, Grade)
             Dim Value As Long
-            Value = This.Service.SumValue(Aggregate, BeginIndex, EndIndex, Condition)
+            Value = This.Calculator.SumOf(Aggregate, BeginIndex, EndIndex, Condition)
             Table(i, G) = Value
             Total(G) = Total(G) + Value
         Next

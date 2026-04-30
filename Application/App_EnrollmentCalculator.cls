@@ -20,7 +20,7 @@ Public Sub Initialize(ByVal Filter As App_EnrollmentFilter)
     Set This.Filter = Filter
 End Sub
 
-Public Function SumClass(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Condition As App_EnrollmentFilterCondition) As Dom_EnrollmentValue
+Public Function SumClassOfOneDay(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Condition As App_EnrollmentFilterCondition) As Dom_EnrollmentValue
     Dim Total As Dom_EnrollmentValue
     Set Total = New Dom_EnrollmentValue
     Total.Initialize 0
@@ -32,10 +32,10 @@ Public Function SumClass(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Condi
         Set Enrollment = Entities.Item(i)
         Set Total = Total.Add(Enrollment)
     Next
-    Set SumClass = Total
+    Set SumClassOfOneDay = Total
 End Function
 
-Public Function SumGender(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Condition As App_EnrollmentFilterCondition) As Dom_EnrollmentValue
+Public Function SumGenderOfOneDay(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Condition As App_EnrollmentFilterCondition) As Dom_EnrollmentValue
     Dim Total As Dom_EnrollmentValue
     Set Total = New Dom_EnrollmentValue
     Total.Initialize 0
@@ -47,5 +47,5 @@ Public Function SumGender(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Cond
         Set Enrollment = Entities.Item(i)
         Set Total = Total.Add(Enrollment)
     Next
-    Set SumGender = Total
+    Set SumGenderOfOneDay = Total
 End Function

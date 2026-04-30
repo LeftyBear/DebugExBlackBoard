@@ -9,21 +9,14 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Infrastructure.QueryService")
 Option Explicit
+Implements App_ICSVReader
 
-Private Type Member
-    Reader  As Inf_TextStreamReader
-    Parser  As Inf_CSVRFCParser
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Reader As Inf_TextStreamReader, ByVal Parser As Inf_CSVRFCParser)
-    Set This.Reader = Reader
-    Set This.Parser = Parser
-End Sub
-
-Public Function Load(ByVal FilePath As String) As String()
+Private Function App_ICSVReader_Load(ByVal FilePath As String) As String()
+    Dim Reader As Inf_TextStreamReader
+    Set Reader = New Inf_TextStreamReader
     Dim TextData As String
-    TextData = This.Reader.ReadAll(FilePath)
-    Load = This.Parser.Parse(TextData)
+    TextData = Reader.ReadAll(FilePath)
+    Dim Parser As Inf_CSVRFCParser
+    Set Parser = New Inf_CSVRFCParser
+    App_ICSVReader_Load = Parser.Parse(TextData)
 End Function

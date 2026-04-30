@@ -10,20 +10,12 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service")
 Option Explicit
 
-Private Type Member
-    Resolver As Dom_ConfigFileNameResolver
-    Provider As App_IWorkbookPathProvider
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Resolver As Dom_ConfigFileNameResolver, ByVal Provider As App_IWorkbookPathProvider)
-    Set This.Resolver = Resolver
-    Set This.Provider = Provider
-End Sub
-
-Public Function Builed(ByVal StructureName As Dom_StructureTypeEnum) As String
+Public Function Builed(ByVal TypeCode As Dom_StructureTypePolicy) As String
+    Dim Provider As Inf_WorkbookPathProvider
+    Set Provider = New Inf_WorkbookPathProvider
+    Dim Resolver As Dom_ConfigFileNameResolver
+    Set Resolver = New Dom_ConfigFileNameResolver
     Dim FileName As String
-    FileName = This.Resolver.Resolve(StructureName)
-    Builed = This.Provider.GetBaseFolderPath & "root\Config\" & FileName
+    FileName = Resolver.Resolve(TypeCode)
+    Builed = Inf_StringUtility.BuildToPath(Provider.GetBaseFolderPath, "root", "Config", FileName)
 End Function

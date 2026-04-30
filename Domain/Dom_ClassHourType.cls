@@ -26,9 +26,9 @@ Public Property Get Value() As Long
 End Property
 
 Public Function ToKey() As String
-    If This.Value = Dom_ClassHourTypeEnum.Plan Then
+    If This.Value = Dom_ClassHourTypePolicy.Plan Then
         ToKey = jpnKeikaku
-    ElseIf This.Value = Dom_ClassHourTypeEnum.Execution Then
+    ElseIf This.Value = Dom_ClassHourTypePolicy.Execution Then
         ToKey = jpnJisshi
     End If
 End Function

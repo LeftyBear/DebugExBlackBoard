@@ -10,13 +10,6 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Factory")
 Option Explicit
 
-Public Function CreateSchoolYear(ByVal Value As Long) As Dom_SchoolYear
-    Dim VO As Dom_SchoolYear
-    Set VO = New Dom_SchoolYear
-    VO.Initialize Value
-    Set CreateSchoolYear = VO
-End Function
-
 Public Function CreateDateID(ByVal Value As Date) As Dom_DateID
     Dim VO As Dom_DateID
     Set VO = New Dom_DateID
@@ -157,11 +150,18 @@ Public Function CreateRemarks(ByVal Value As String) As Dom_Remarks
     Set CreateRemarks = VO
 End Function
 
-Public Function CreateSchedlueValue(ByVal Value As String) As Dom_ScheduleValue
+Public Function CreateScheduleID(ByVal Value As String) As Dom_ScheduleID
+    Dim VO As Dom_ScheduleID
+    Set VO = New Dom_ScheduleID
+    VO.Initialize Value
+    Set CreateScheduleID = VO
+End Function
+
+Public Function CreateScheduleValue(ByVal Value As String) As Dom_ScheduleValue
     Dim VO As Dom_ScheduleValue
     Set VO = New Dom_ScheduleValue
     VO.Initialize Value
-    Set CreateSchedlueValue = VO
+    Set CreateScheduleValue = VO
 End Function
 
 Public Function CreateSchoolEvent(ByVal Index As Long, ByVal Name As String) As Dom_SchoolEvent

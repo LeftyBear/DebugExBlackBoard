@@ -1,4 +1,4 @@
-Attribute VB_Name = "App_Function"
+Attribute VB_Name = "App_Utility"
 '@Folder "Application.Service"
 Option Explicit
 Option Private Module

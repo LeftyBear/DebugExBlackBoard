@@ -10,20 +10,12 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service")
 Option Explicit
 
-Private Type Member
-    Resolver As Dom_EntityFileNameResolver
-    Provider As App_IWorkbookPathProvider
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Resolver As Dom_EntityFileNameResolver, ByVal Provider As App_IWorkbookPathProvider)
-    Set This.Resolver = Resolver
-    Set This.Provider = Provider
-End Sub
-
-Public Function Builed(ByVal EntityName As Dom_EntityTypeEnum, ByVal SchoolYear As Dom_SchoolYear) As String
+Public Function Builed(ByVal TypeCode As Dom_EntityTypePolicy, ByVal SchoolYear As Long) As String
+    Dim Provider As Inf_WorkbookPathProvider
+    Set Provider = New Inf_WorkbookPathProvider
+    Dim Resolver As Dom_EntityFileNameResolver
+    Set Resolver = New Dom_EntityFileNameResolver
     Dim FileName As String
-    FileName = This.Resolver.Resolve(EntityName, SchoolYear)
-    Builed = This.Provider.GetBaseFolderPath & "root\data\schoolyears\" & SchoolYear.ToKey & charBackSlash & FileName
+    FileName = Resolver.Resolve(TypeCode, SchoolYear)
+    Builed = Inf_StringUtility.BuildToPath(Provider.GetBaseFolderPath, "root", "data", "schoolyears", SchoolYear, FileName)
 End Function

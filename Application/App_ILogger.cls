@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Application.Interface"
+'@Folder "Application.QueryServiceInterface"
 Option Explicit
 
 Public Sub WriteLog(ByVal Message As String)

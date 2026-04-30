@@ -7,12 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Usecase")
+'@Folder("Application.Service")
 Option Explicit
 
 Private Type Member
-    Service As App_EnrollmentService
-    Factory As Dom_ValueObjectFactory
+    Calculator  As App_EnrollmentSummaryCalculator
+    Factory     As Dom_ValueObjectFactory
 End Type
 
 Private This As Member
@@ -25,8 +25,8 @@ Private Enum C
     TotalColumn
 End Enum
 
-Public Sub Initialize(ByVal Service As App_EnrollmentService, ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Service = Service
+Public Sub Initialize(ByVal Calculator As App_EnrollmentSummaryCalculator, ByVal Factory As Dom_ValueObjectFactory)
+    Set This.Calculator = Calculator
     Set This.Factory = Factory
 End Sub
 
@@ -92,7 +92,7 @@ Public Function Format(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Structu
     Format = OutputTable
 End Function
 
-Private Function ToTable(ByVal StreamTypeNum As Dom_StreamTypeEnum, ByVal Aggregate As Dom_EnrollmentAggregate, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
+Private Function ToTable(ByVal TypeCode As Dom_StreamTypePolicy, ByVal Aggregate As Dom_EnrollmentAggregate, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
     '@Ignore MultipleDeclarations
     Dim Table() As Long, MaleTotal() As Long, FemaleTotal() As Long, ClassTotal() As Long
     ReDim Table(1 To GradeCount * ClassCount + GradeCount, 1 To C.TotalColumn)
@@ -101,7 +101,7 @@ Private Function ToTable(ByVal StreamTypeNum As Dom_StreamTypeEnum, ByVal Aggreg
     ReDim FemaleTotal(0 To GradeCount)
     ReDim ClassTotal(0 To GradeCount, 1 To ClassCount)
     Dim StreamType As Dom_StreamType
-    Set StreamType = This.Factory.CreateStreamType(StreamTypeNum)
+    Set StreamType = This.Factory.CreateStreamType(TypeCode)
     Dim R As Long
     R = 1
     Dim G As Long
@@ -113,14 +113,14 @@ Private Function ToTable(ByVal StreamTypeNum As Dom_StreamTypeEnum, ByVal Aggreg
             Dim ClassNo As Dom_ClassNo
             Set ClassNo = This.Factory.CreateClassNo(No)
             Dim GenderNo As Long
-            For GenderNo = Dom_GenderTypeEnum.Male To Dom_GenderTypeEnum.Female
+            For GenderNo = Dom_GenderTypePolicy.Male To Dom_GenderTypePolicy.Female
                 Dim Gender As Dom_Gender
                 Set Gender = This.Factory.CreateGender(GenderNo)
                 Dim Condition As App_EnrollmentFilterCondition
                 Set Condition = This.Factory.CreateEnrollmentFilterCondition(StreamType, Grade, ClassNo, Gender)
                 Dim Value As Long
-                Value = This.Service.GetMainClassTotal(Aggregate, Condition)
-                If Gender = Dom_GenderTypeEnum.Male Then
+                Value = This.Calculator.SumClassOf(Aggregate, Condition)
+                If Gender = Dom_GenderTypePolicy.Male Then
                     MaleTotal(G) = MaleTotal(G) + Value
                     Table(R, C.MaleColumn) = Value
                 Else

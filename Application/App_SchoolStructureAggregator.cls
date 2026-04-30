@@ -11,7 +11,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Reader                      As App_IConfigReader
+    Reader                      As App_ICSVReader
     Builder                     As App_ConfigFilePathBuilder
     UpperValueFactory           As App_UpperValueFactory
     SpecialStreamCatalogFactory As App_SpecialStreamCatalogFactory
@@ -21,7 +21,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Reader As App_IConfigReader, ByVal Builder As App_ConfigFilePathBuilder, ByVal UpperValueFactory As App_UpperValueFactory, ByVal SpecialStreamCatalogFactory As App_SpecialStreamCatalogFactory, ByVal SubjectCatalogFactory As App_SubjectCatalogFactory, ByVal SchoolEventCatalogFactory As App_SchoolEventCatalogFactory)
+Public Sub Initialize(ByVal Reader As App_ICSVReader, ByVal Builder As App_ConfigFilePathBuilder, ByVal UpperValueFactory As App_UpperValueFactory, ByVal SpecialStreamCatalogFactory As App_SpecialStreamCatalogFactory, ByVal SubjectCatalogFactory As App_SubjectCatalogFactory, ByVal SchoolEventCatalogFactory As App_SchoolEventCatalogFactory)
     Set This.Reader = Reader
     Set This.Builder = Builder
     Set This.UpperValueFactory = UpperValueFactory

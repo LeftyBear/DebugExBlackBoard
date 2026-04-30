@@ -22,9 +22,9 @@ Public Sub Initialize(ByVal Service As App_TimeTableService, ByVal Factory As Do
     Set This.Factory = Factory
 End Sub
 
-Public Function Format(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal Aggregate As Dom_ClassHourAggregate, ByVal Structure As Dom_SchoolStructure) As Variant()
+Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_ClassHourAggregate, ByVal Structure As Dom_SchoolStructure) As Variant()
     Dim TimeTable() As String
-    TimeTable = ToTimeTable(ClassHourTypeEnum, Aggregate, Structure)
+    TimeTable = ToTimeTable(TypeCode, Aggregate, Structure)
     Dim Total() As Long
     ReDim Total(Structure.MainStreamGradeCount)
     Dim OutputTable() As Variant
@@ -55,12 +55,12 @@ Public Function Format(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal A
     Format = OutputTable
 End Function
 
-Private Function ToTimeTable(ByVal ClassHourTypeEnum As Dom_ClassHourTypeEnum, ByVal Aggregate As Dom_ClassHourAggregate, ByVal Structure As Dom_SchoolStructure) As String()
+Private Function ToTimeTable(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_ClassHourAggregate, ByVal Structure As Dom_SchoolStructure) As String()
     Dim Table() As String
     ReDim Table(1 To Structure.PeriodCount, 1 To Structure.MainStreamGradeCount)
     If Aggregate Is Nothing Then GoTo Finalize
     Dim ClassHourType As Dom_ClassHourType
-    Set ClassHourType = This.Factory.CreateClassHourType(ClassHourTypeEnum)
+    Set ClassHourType = This.Factory.CreateClassHourType(TypeCode)
     Dim G As Long
     For G = 1 To Structure.MainStreamGradeCount
         Dim Grade As Dom_Grade

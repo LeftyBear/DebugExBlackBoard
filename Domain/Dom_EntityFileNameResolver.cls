@@ -10,12 +10,12 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Service")
 Option Explicit
 
-Public Function Resolve(ByVal EntityName As Dom_EntityTypeEnum, ByVal SchoolYear As Dom_SchoolYear) As String
-    If EntityName = Dom_EntityTypeEnum.ClassHour Then
-        Resolve = "ClassHour" & SchoolYear.ToKey & ".csv"
-    ElseIf EntityName = Dom_EntityTypeEnum.Enrollment Then
-        Resolve = "Enrollment" & SchoolYear.ToKey & ".csv"
-    ElseIf EntityName = Dom_EntityTypeEnum.Schedule Then
-        Resolve = "Schedule" & SchoolYear.ToKey & ".csv"
+Public Function Resolve(ByVal TypeCode As Dom_EntityTypePolicy, ByVal SchoolYear As Long) As String
+    If TypeCode = Dom_EntityTypePolicy.ClassHour Then
+        Resolve = "ClassHour" & SchoolYear & ".csv"
+    ElseIf TypeCode = Dom_EntityTypePolicy.Enrollment Then
+        Resolve = "Enrollment" & SchoolYear & ".csv"
+    ElseIf TypeCode = Dom_EntityTypePolicy.Schedule Then
+        Resolve = "Schedule" & SchoolYear & ".csv"
     End If
 End Function

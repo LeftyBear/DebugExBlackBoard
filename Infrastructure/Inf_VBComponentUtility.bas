@@ -9,7 +9,7 @@ Private Const CtMsForm As Long = 3
 Private Const RootPath As String = "C:\Users\biz\Documents\GitHub\DebugExBlackBoard"
 
 Public Sub ExportAllModules()
-    If Inf_EnvironmentUtility.GetEnvironmentType = ReleaseMode Then Exit Sub
+    If Inf_TypePolicy.GetEnvironmentTypeCode = ReleaseMode Then Exit Sub
     Dim Component As Object
     For Each Component In ThisWorkbook.VBProject.VBComponents
         If IsExportTarget(Component) Then ExportComponent RootPath, Component
@@ -28,7 +28,7 @@ Private Sub CleanupFolder(ByVal FolderPath As String)
     If VBA.Len(VBA.Dir(FolderPath, vbDirectory)) = 0 Then Exit Sub
     Dim FileName As String
     FileName = VBA.Dir(FolderPath & "*.*")
-    Do While VBA.Len(FileName) > 0
+    Do While 0 < VBA.Len(FileName)
         If FileName <> ".gitkeep" Then
             If Not IsModuleStillExists(RemoveExtension(FileName)) Then VBA.Kill FolderPath & FileName
         End If
@@ -37,11 +37,12 @@ Private Sub CleanupFolder(ByVal FolderPath As String)
 End Sub
 
 Private Sub CleanupUnusedFiles(ByVal RootPath As String)
+    CleanupFolder RootPath & "\CompositionRoot\"
+    CleanupFolder RootPath & "\Policy\"
     CleanupFolder RootPath & "\Domain\"
     CleanupFolder RootPath & "\Application\"
     CleanupFolder RootPath & "\Presentation\"
     CleanupFolder RootPath & "\Infrastructure\"
-    CleanupFolder RootPath & "\Utility\"
 End Sub
 
 Private Function HasLayerPrefix(ByVal ModuleName As String) As Boolean
@@ -49,7 +50,8 @@ Private Function HasLayerPrefix(ByVal ModuleName As String) As Boolean
     If VBA.Left$(ModuleName, 4) = "App_" Then HasLayerPrefix = True
     If VBA.Left$(ModuleName, 4) = "Pre_" Then HasLayerPrefix = True
     If VBA.Left$(ModuleName, 4) = "Inf_" Then HasLayerPrefix = True
-    If VBA.Left$(ModuleName, 5) = "Util_" Then HasLayerPrefix = True
+    If VBA.Left$(ModuleName, 5) = "Compo" Then HasLayerPrefix = True
+    If VBA.Right$(ModuleName, 6) = "Policy" Then HasLayerPrefix = True
 End Function
 
 Private Function IsExportTarget(ByVal Component As Object) As Boolean
@@ -89,7 +91,9 @@ Private Function ResolveExportPath(ByVal RootPath As String, ByVal Component As 
 End Function
 
 Private Function ResolveLayerFolder(ByVal RootPath As String, ByVal ModuleName As String) As String
-    If ModuleName Like "Dom_*" Then
+    If ModuleName Like "Compo*" Then
+        ResolveLayerFolder = RootPath & "\CompositionRoot\"
+    ElseIf ModuleName Like "Dom_*" Then
         ResolveLayerFolder = RootPath & "\Domain\"
     ElseIf ModuleName Like "App_*" Then
         ResolveLayerFolder = RootPath & "\Application\"
@@ -97,8 +101,8 @@ Private Function ResolveLayerFolder(ByVal RootPath As String, ByVal ModuleName A
         ResolveLayerFolder = RootPath & "\Presentation\"
     ElseIf ModuleName Like "Inf_*" Then
         ResolveLayerFolder = RootPath & "\Infrastructure\"
-    ElseIf ModuleName Like "Util_*" Then
-        ResolveLayerFolder = RootPath & "\Utility\"
+    ElseIf ModuleName Like "*Policy" Then
+        ResolveLayerFolder = RootPath & "\Policy\"
     Else
         Err.Raise InfErrNotFoundLayerPrefix, "Util_VBComponent", "Layer prefix not found: " & ModuleName
     End If

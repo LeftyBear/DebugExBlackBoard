@@ -11,19 +11,19 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    ResultType  As Pre_ViewResultTypeEnum
+    TypeCode    As Pre_ViewResultTypePolicy
     Message     As String
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal ResultType As Pre_ViewResultTypeEnum, ByVal Message As String)
-    This.ResultType = ResultType
+Public Sub Initialize(ByVal TypeCode As Pre_ViewResultTypePolicy, ByVal Message As String)
+    This.TypeCode = TypeCode
     This.Message = Message
 End Sub
 
-Public Property Get ResultType() As Pre_ViewResultTypeEnum
-    ResultType = This.ResultType
+Public Property Get TypeCode() As Pre_ViewResultTypePolicy
+    TypeCode = This.TypeCode
 End Property
 
 Public Property Get Message() As String

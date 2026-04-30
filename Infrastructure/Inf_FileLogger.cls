@@ -10,21 +10,16 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.QueryService")
 Option Explicit
 Implements App_ILogger
-Private Type Member
-    FilePath As String
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal FilePath As String)
-    This.FilePath = FilePath
-End Sub
 
 Private Sub App_ILogger_WriteLog(ByVal Message As String)
+    Dim Provider As Inf_WorkbookPathProvider
+    Set Provider = New Inf_WorkbookPathProvider
+    Dim FilePath As String
+    FilePath = Provider.GetBaseFolderPath
     '@Ignore IntegerDataType
     Dim FileNo As Integer
     FileNo = VBA.FreeFile
-    Open This.FilePath For Append As #FileNo
+    Open FilePath For Append As #FileNo
     Print #FileNo, Now & charHalfSpace & Message
     Close #FileNo
 End Sub

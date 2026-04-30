@@ -10,14 +10,14 @@ Attribute VB_Exposed = False
 '@Folder("Domain.Service")
 Option Explicit
 
-Public Function Resolve(ByVal StructureName As Dom_StructureTypeEnum) As String
-    If StructureName = Dom_StructureTypeEnum.SchoolEvent Then
+Public Function Resolve(ByVal TypeCode As Dom_StructureTypePolicy) As String
+    If TypeCode = Dom_StructureTypePolicy.SchoolEvent Then
         Resolve = "SchoolEventCatalog.csv"
-    ElseIf StructureName = Dom_StructureTypeEnum.SpecialStream Then
+    ElseIf TypeCode = Dom_StructureTypePolicy.SpecialStream Then
         Resolve = "SpecialStreamCatalog.csv"
-    ElseIf StructureName = Dom_StructureTypeEnum.Subject Then
+    ElseIf TypeCode = Dom_StructureTypePolicy.Subject Then
         Resolve = "SubjectCatalog.csv"
-    ElseIf StructureName = Dom_StructureTypeEnum.UpperValues Then
+    ElseIf TypeCode = Dom_StructureTypePolicy.UpperValues Then
         Resolve = "UpperValue.csv"
     End If
 End Function

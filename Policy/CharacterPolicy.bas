@@ -1,6 +1,6 @@
-Attribute VB_Name = "Dom_Const"
+Attribute VB_Name = "CharacterPolicy"
 '@IgnoreModule ConstantNotUsed
-'@Folder("Domain.ValueObject")
+'@Folder("Policy")
 Option Explicit
 Option Private Module
 

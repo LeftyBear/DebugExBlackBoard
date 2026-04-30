@@ -10,10 +10,10 @@ Attribute VB_Exposed = False
 '@Folder "Application.Service"
 Option Explicit
 
-Public Function SelectLogger(ByVal EnvironmentType As Inf_EnvironmentTypeEnum, ByVal FileLogger As Inf_FileLogger, ByVal DebugLogger As Inf_DebugLogger) As App_ILogger
-    If EnvironmentType = Inf_EnvironmentTypeEnum.ReleaseMode Then
+Public Function SelectLogger(ByVal TypeCode As Inf_EnvironmentTypePolicy, ByVal FileLogger As Inf_FileLogger, ByVal DebugLogger As Inf_DebugLogger) As App_ILogger
+    If TypeCode = Inf_EnvironmentTypePolicy.ReleaseMode Then
         Set SelectLogger = FileLogger
-    ElseIf EnvironmentType = Inf_EnvironmentTypeEnum.DebugMode Then
+    ElseIf TypeCode = Inf_EnvironmentTypePolicy.DebugMode Then
         Set SelectLogger = DebugLogger
     End If
 End Function

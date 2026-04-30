@@ -47,9 +47,9 @@ Private Function ParseColumnMeta(ByVal ColumnName As String) As App_ClassHourCol
             Meta.ColDate = Part
         End If
         If 0 < VBA.InStr(1, Part, jpnKeikaku) Then
-            Meta.TypeCode = Dom_ClassHourTypeEnum.Plan
+            Meta.TypeCode = Dom_ClassHourTypePolicy.Plan
         ElseIf 0 < VBA.InStr(1, Part, jpnJisshi) Then
-            Meta.TypeCode = Dom_ClassHourTypeEnum.Execution
+            Meta.TypeCode = Dom_ClassHourTypePolicy.Execution
         End If
         If This.Structure.IsSubject(Part) Then
             Meta.Subject = Part

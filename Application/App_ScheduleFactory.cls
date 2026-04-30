@@ -25,7 +25,7 @@ Public Function Create(ByVal ID As Dom_ScheduleID, ByVal RawText As String) As D
     Dim DateID As Dom_EnrollmentID
     Set DateID = This.Factory.CreateDateID(Date)
     Dim ScheduleValue As Dom_ScheduleValue
-    Set ScheduleValue = This.Factory.CreateSchedlueValue(RawText)
+    Set ScheduleValue = This.Factory.CreateScheduleValue(RawText)
     Dim Result As Dom_Schedule
     Set Result = New Dom_Schedule
     Result.Initialize DateID, ID, ScheduleValue

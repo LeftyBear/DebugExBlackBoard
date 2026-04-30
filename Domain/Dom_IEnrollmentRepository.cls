@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Interface")
+'@Folder("Domain.RepositoryInterface")
 Option Explicit
 
 Public Sub Add(ByVal Item As Dom_EnrollmentAggregate)

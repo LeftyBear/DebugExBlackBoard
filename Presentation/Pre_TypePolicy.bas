@@ -1,9 +1,9 @@
-Attribute VB_Name = "Pre_TypeEnum"
+Attribute VB_Name = "Pre_TypePolicy"
 '@Folder("Presentation.ValueObject")
 Option Explicit
 Option Private Module
 
-Public Enum Pre_ViewResultTypeEnum
+Public Enum Pre_ViewResultTypePolicy
     Success
     BusinessError
     SystemError

@@ -37,10 +37,10 @@ Private Function ParseColumnMeta(ByVal ColumnName As String) As App_EnrollmentCo
             Meta.ColDate = Part
         End If
         If 0 < VBA.InStr(1, Part, jpnTokushi) Then
-            Meta.TypeCode = Dom_StreamTypeEnum.Special
+            Meta.TypeCode = Dom_StreamTypePolicy.Special
             Meta.Grade = 1
         ElseIf 0 < VBA.InStr(1, Part, jpnNen) Then
-            Meta.TypeCode = Dom_StreamTypeEnum.Main
+            Meta.TypeCode = Dom_StreamTypePolicy.Main
             Dim GradeString As String
             GradeString = VBA.Replace(Part, jpnNen, vbNullString)
             Meta.Grade = App_NumericUtility.ExtractNumber(GradeString)
@@ -49,9 +49,9 @@ Private Function ParseColumnMeta(ByVal ColumnName As String) As App_EnrollmentCo
             ClassNoString = VBA.Replace(Part, jpnKumi, vbNullString)
             Meta.ClassNo = App_NumericUtility.ExtractNumber(ClassNoString)
         ElseIf 0 < VBA.InStr(1, Part, jpnOtoko) Then
-            Meta.Gender = Dom_GenderTypeEnum.Male
+            Meta.Gender = Dom_GenderTypePolicy.Male
         ElseIf 0 < VBA.InStr(1, Part, jpnOnna) Then
-            Meta.Gender = Dom_GenderTypeEnum.Female
+            Meta.Gender = Dom_GenderTypePolicy.Female
         End If
         If 0 < VBA.InStr(1, Part, jpnIdou) Then
             Meta.ColTransfer = Part

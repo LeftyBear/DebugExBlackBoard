@@ -48,9 +48,9 @@ Public Function Equals(ByVal Other As Dom_ClassHourID) As Boolean
 End Function
 
 Public Function IsPlan() As Boolean
-    IsPlan = (This.ClassHourType.Value = Dom_ClassHourTypeEnum.Plan)
+    IsPlan = (This.ClassHourType.Value = Dom_ClassHourTypePolicy.Plan)
 End Function
 
 Public Function IsExecution() As Boolean
-    IsExecution = (This.ClassHourType.Value = Dom_ClassHourTypeEnum.Execution)
+    IsExecution = (This.ClassHourType.Value = Dom_ClassHourTypePolicy.Execution)
 End Function

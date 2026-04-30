@@ -25,6 +25,10 @@ Public Function Value() As String
     Value = This.Value
 End Function
 
+Public Function ToKey() As String
+    ToKey = This.Value
+End Function
+
 Public Function Equals(ByVal Other As Dom_ScheduleID) As Boolean
     Equals = (This.Value = Other.Value)
 End Function

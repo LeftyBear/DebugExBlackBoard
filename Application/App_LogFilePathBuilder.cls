@@ -10,16 +10,8 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service")
 Option Explicit
 
-Private Type Member
-    Provider As App_IWorkbookPathProvider
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Provider As App_IWorkbookPathProvider)
-    Set This.Provider = Provider
-End Sub
-
-Public Function BuiledPath() As String
-    BuiledPath = This.Provider.GetBaseFolderPath & "root\data\errorlog\error.log"
+Public Function Builed() As String
+    Dim Provider As Inf_WorkbookPathProvider
+    Set Provider = New Inf_WorkbookPathProvider
+    Builed = Inf_StringUtility.BuildToPath(Provider.GetBaseFolderPath, "root", "data", "errorlog", "error.log")
 End Function

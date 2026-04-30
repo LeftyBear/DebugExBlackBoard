@@ -11,7 +11,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Reader      As App_IClassHourReader
+    Reader      As App_ICSVReader
     Builder     As App_EntityFilePathBuilder
     ColResolver As App_ClassHourColumnResolver
     RowResolver As App_ClassHourRowResolver
@@ -20,7 +20,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Reader As App_IClassHourReader, ByVal Builder As App_EntityFilePathBuilder, ByVal ColResolver As App_ClassHourColumnResolver, ByVal RowResolver As App_ClassHourRowResolver, ByVal Factory As App_ClassHourYearAggFactory)
+Public Sub Initialize(ByVal Reader As App_ICSVReader, ByVal Builder As App_EntityFilePathBuilder, ByVal ColResolver As App_ClassHourColumnResolver, ByVal RowResolver As App_ClassHourRowResolver, ByVal Factory As App_ClassHourYearAggFactory)
     Set This.Reader = Reader
     Set This.Builder = Builder
     Set This.ColResolver = ColResolver
@@ -28,7 +28,7 @@ Public Sub Initialize(ByVal Reader As App_IClassHourReader, ByVal Builder As App
     Set This.Factory = Factory
 End Sub
 
-Public Function Execute(ByVal SchoolYear As Dom_SchoolYear, ByVal Structure As Dom_SchoolStructure) As Dom_IClassHourRepository
+Public Function Execute(ByVal SchoolYear As Long, ByVal Structure As Dom_SchoolStructure) As Dom_IClassHourRepository
     Dim FilePath As String
     FilePath = This.Builder.Builed(ClassHour, SchoolYear)
     If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function
@@ -37,6 +37,7 @@ Public Function Execute(ByVal SchoolYear As Dom_SchoolYear, ByVal Structure As D
     If App_ArrayUtility.IsEmpty(RawRows) Then Err.Raise AppErrEmptyArray, "App_ClassHourAggregator", "RawRows is empty."
     Dim HeaderRow() As String
     HeaderRow = App_ArrayUtility.GetHeaderRow(RawRows)
+    This.ColResolver.AddOn Structure
     Dim MetaMap As Scripting.Dictionary
     Set MetaMap = This.ColResolver.Resolve(HeaderRow)
     Dim Rows As VBA.Collection

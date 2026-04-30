@@ -10,18 +10,10 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.QueryService")
 Option Explicit
 
-Private Type Member
-    Stream As ADODB.Stream
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Stream As ADODB.Stream)
-    Set This.Stream = Stream
-End Sub
-
 Public Function ReadAll(ByVal FilePath As String) As String
-    With This.Stream
+    Dim Stream As ADODB.Stream
+    Set Stream = New ADODB.Stream
+    With Stream
         .Type = adTypeText
         .Charset = "Shift_JIS"
         .Open
@@ -29,5 +21,5 @@ Public Function ReadAll(ByVal FilePath As String) As String
         ReadAll = .ReadText(adReadAll)
         .Close
     End With
-    Set This.Stream = Nothing
+    Set Stream = Nothing
 End Function

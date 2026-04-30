@@ -26,9 +26,9 @@ Public Property Get Value() As Long
 End Property
 
 Public Function ToKey() As String
-    If This.Value = Dom_GenderTypeEnum.Male Then
+    If This.Value = Dom_GenderTypePolicy.Male Then
         ToKey = jpnOtoko
-    ElseIf This.Value = Dom_GenderTypeEnum.Female Then
+    ElseIf This.Value = Dom_GenderTypePolicy.Female Then
         ToKey = jpnOnna
     End If
 End Function

@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Pre_ClassHourController"
+Attribute VB_Name = "Pre_CalenderController"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -11,12 +11,12 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Presenter As Pre_Presenter
+    Presenter As Pre_CalenderPresenter
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Presenter As Pre_Presenter)
+Public Sub Initialize(ByVal Presenter As Pre_CalenderPresenter)
     Set This.Presenter = Presenter
 End Sub
 

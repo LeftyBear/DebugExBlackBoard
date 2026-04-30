@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "App_ClassHourService"
+Attribute VB_Name = "App_ClassHourSummaryCalculator"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -20,7 +20,7 @@ Public Sub Initialize(ByVal Calculator As App_ClassHourCalculator)
     Set This.Calculator = Calculator
 End Sub
 
-Public Function SumValue(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Condition As App_ClassHourFilterCondition) As Dom_ClassHourValue
+Public Function SumOf(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Condition As App_ClassHourFilterCondition) As Dom_ClassHourValue
 '    Dim BeginDate As Date
 '    BeginDate = App_DateUtility.GetMonday(InitialDate.Value)
 '    Dim BeginIndex As Long
@@ -35,8 +35,8 @@ Public Function SumValue(ByVal Yearly As Dom_ClassHourYearAggregate, ByVal Begin
     Dim Index As Long
     For Index = BeginIndex To EndIndex
         Dim Value As Dom_ClassHourValue
-        Set Value = This.Calculator.SumHours(Yearly.Item(Index), Condition)
+        Set Value = This.Calculator.SumOfOneDay(Yearly.Item(Index), Condition)
         Set Total = Total.Add(Value)
     Next
-    Set SumValue = Total
+    Set SumOf = Total
 End Function

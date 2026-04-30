@@ -11,7 +11,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Reader      As App_IEnrollmentReader
+    Reader      As App_ICSVReader
     Builder     As App_EntityFilePathBuilder
     ColResolver As App_EnrollmentColumnResolver
     RowResolver As App_EnrollmentRowResolver
@@ -20,7 +20,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Reader As App_IEnrollmentReader, ByVal Builder As App_EntityFilePathBuilder, ByVal ColResolver As App_EnrollmentColumnResolver, ByVal RowResolver As App_EnrollmentRowResolver, ByVal Factory As App_EnrollmentYearAggFactory)
+Public Sub Initialize(ByVal Reader As App_ICSVReader, ByVal Builder As App_EntityFilePathBuilder, ByVal ColResolver As App_EnrollmentColumnResolver, ByVal RowResolver As App_EnrollmentRowResolver, ByVal Factory As App_EnrollmentYearAggFactory)
     Set This.Reader = Reader
     Set This.Builder = Builder
     Set This.ColResolver = ColResolver
@@ -28,7 +28,7 @@ Public Sub Initialize(ByVal Reader As App_IEnrollmentReader, ByVal Builder As Ap
     Set This.Factory = Factory
 End Sub
 
-Public Function Execute(SchoolYear As Dom_SchoolYear) As Dom_IEnrollmentRepository
+Public Function Execute(ByVal SchoolYear As Long) As Dom_IEnrollmentRepository
     Dim FilePath As String
     FilePath = This.Builder.Builed(Enrollment, SchoolYear)
     If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function

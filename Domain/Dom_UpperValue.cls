@@ -19,9 +19,9 @@ End Type
 Private This As Member
 
 Public Sub Initialize(ByVal MainStreamGradeCount As Long, ByVal MainStreamClassCount As Long, ByVal PeriodCount As Long)
-    If MainStreamGradeCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "学年は正の数である必要があります。"
-    If MainStreamClassCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "学級は正の数である必要があります。"
-    If PeriodCount < 1 Then Err.Raise Dom_ErrNum.DomErrInvalidValue, "Dom_UpperValue", "校時は正の数である必要があります。"
+    If MainStreamGradeCount < 1 Then Err.Raise DomErrInvalidValue, "Dom_UpperValue", "学年は正の数である必要があります。"
+    If MainStreamClassCount < 1 Then Err.Raise DomErrInvalidValue, "Dom_UpperValue", "学級は正の数である必要があります。"
+    If PeriodCount < 1 Then Err.Raise DomErrInvalidValue, "Dom_UpperValue", "校時は正の数である必要があります。"
     This.MainStreamGradeCount = MainStreamGradeCount
     This.MainStreamClassCount = MainStreamClassCount
     This.PeriodCount = PeriodCount
