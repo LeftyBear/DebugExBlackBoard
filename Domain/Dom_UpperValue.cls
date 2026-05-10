@@ -27,15 +27,15 @@ Public Sub Initialize(ByVal MainStreamGradeCount As Long, ByVal MainStreamClassC
     This.PeriodCount = PeriodCount
 End Sub
 
-Public Property Get MainStreamGradeCount() As Long
+Public Property Get MainStreamGradeCount() As String
     MainStreamGradeCount = This.MainStreamGradeCount
 End Property
 
-Public Property Get MainStreamClassCount() As Long
+Public Property Get MainStreamClassCount() As String
     MainStreamClassCount = This.MainStreamClassCount
 End Property
 
-Public Property Get PeriodCount() As Long
+Public Property Get PeriodCount() As String
     PeriodCount = This.PeriodCount
 End Property
 

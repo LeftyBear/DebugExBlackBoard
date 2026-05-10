@@ -10,12 +10,17 @@ Attribute VB_Exposed = False
 '@Folder("Domain.RepositoryInterface")
 Option Explicit
 
-Public Sub Add(ByVal Item As Dom_ScheduleAggregate)
+Public Sub Add(ByVal Item As Dom_DailySchedule)
 End Sub
 
-Public Function FindByID(ByVal ID As Dom_ScheduleID) As Dom_Schedule
+Public Function FindByDate(ByVal TargetDate As Date) As Dom_DailySchedule
 End Function
 
 Public Function GetAll() As VBA.Collection
 End Function
 
+Public Function Replace(ByVal Aggregate As Dom_DailySchedule) As VBA.Collection
+End Function
+
+Public Function ReadAll(ByVal SchoolYear As Long) As VBA.Collection
+End Function

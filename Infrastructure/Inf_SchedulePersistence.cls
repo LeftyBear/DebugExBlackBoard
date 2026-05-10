@@ -1,0 +1,50 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "Inf_SchedulePersistence"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+'@Folder("Infrastructure.Persistence")
+Option Explicit
+
+Private Type Member
+    CSV As Inf_CSVPersistence
+End Type
+
+Private This As Member
+
+Public Sub Initialize(ByVal CSV As Inf_CSVPersistence)
+    Set This.CSV = CSV
+End Sub
+
+Public Function ReadAll(ByVal SchoolYear As Long) As VBA.Collection
+    Dim FilePath As String
+    FilePath = BuiledFilePath(SchoolYear)
+    Set ReadAll = This.CSV.ReadAll(FilePath)
+End Function
+
+Public Sub WriteAll(ByVal SchoolYear As Long, ByVal Rows As VBA.Collection)
+    Dim FilePath As String
+    FilePath = BuiledFilePath(SchoolYear)
+    This.CSV.WriteAll FilePath, Rows
+End Sub
+
+Public Sub Delete(ByVal SchoolYear As Long, ByVal Key As String)
+    Dim FilePath As String
+    FilePath = BuiledFilePath(SchoolYear)
+    This.CSV.Delete FilePath, Key
+End Sub
+
+Private Function BuiledFilePath(ByVal SchoolYear As Long) As String
+    Dim Provider As Inf_WorkbookPathProvider
+    Set Provider = New Inf_WorkbookPathProvider
+    Dim BaseFolderPath As String
+    BaseFolderPath = Provider.GetBaseFolderPath
+    Dim FileName As String
+    FileName = "Schedule" & CStr(SchoolYear) & ".csv"
+    BuiledFilePath = Inf_StringUtility.JoinByBackSlash(BaseFolderPath, "root", "data", "schoolyears", CStr(SchoolYear), FileName)
+End Function
+

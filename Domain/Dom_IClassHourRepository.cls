@@ -10,11 +10,17 @@ Attribute VB_Exposed = False
 '@Folder("Domain.RepositoryInterface")
 Option Explicit
 
-Public Sub Add(ByVal Item As Dom_ClassHourAggregate)
+Public Sub Add(ByVal Item As Dom_DailyClassHour)
 End Sub
 
-Public Function FindByID(ByVal ID As Dom_DateID) As Dom_ClassHourAggregate
+Public Function FindByDate(ByVal TargetDate As Date) As Dom_DailyClassHour
 End Function
 
 Public Function GetAll() As VBA.Collection
+End Function
+
+Public Function Replace(ByVal Aggregate As Dom_DailyClassHour) As VBA.Collection
+End Function
+
+Public Function ReadAll(ByVal SchoolYear As Long) As VBA.Collection
 End Function

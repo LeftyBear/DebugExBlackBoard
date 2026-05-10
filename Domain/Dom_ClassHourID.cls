@@ -37,7 +37,7 @@ Public Property Get Grade() As Dom_Grade
 End Property
 
 Public Function ToKey() As String
-    ToKey = This.ClassHourType.ToKey & charUnderScore & This.Subject.ToKey & charUnderScore & This.Grade.ToKey
+    ToKey = This.ClassHourType.ToKey & charUnderScore & This.Subject.Name & charUnderScore & This.Grade.ToKey
 End Function
 
 Public Function Equals(ByVal Other As Dom_ClassHourID) As Boolean

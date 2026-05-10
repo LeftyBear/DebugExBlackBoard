@@ -17,7 +17,7 @@ Public Function Resolve(ByVal TypeCode As Dom_StructureTypePolicy) As String
         Resolve = "SpecialStreamCatalog.csv"
     ElseIf TypeCode = Dom_StructureTypePolicy.Subject Then
         Resolve = "SubjectCatalog.csv"
-    ElseIf TypeCode = Dom_StructureTypePolicy.UpperValues Then
+    ElseIf TypeCode = Dom_StructureTypePolicy.UpperValue Then
         Resolve = "UpperValue.csv"
     End If
 End Function

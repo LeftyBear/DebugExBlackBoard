@@ -28,7 +28,7 @@ Public Function Resolve(ByRef HeaderRow() As String) As Scripting.Dictionary
         Dim ColumnName As String
         ColumnName = HeaderRow(C)
         Dim Meta As App_ClassHourColumnMeta
-        Meta = ParseColumnMeta(ColumnName)
+        Set Meta = ParseColumnMeta(ColumnName)
         Map.Add C, Meta
     Next
     Set Resolve = Map
@@ -44,25 +44,25 @@ Private Function ParseColumnMeta(ByVal ColumnName As String) As App_ClassHourCol
         Dim Part As String
         Part = Parts(i)
         If 0 < VBA.InStr(1, Part, jpnHizuke) Then
-            Meta.ColDate = Part
+            Meta.RawDate = Part
         End If
         If 0 < VBA.InStr(1, Part, jpnKeikaku) Then
             Meta.TypeCode = Dom_ClassHourTypePolicy.Plan
         ElseIf 0 < VBA.InStr(1, Part, jpnJisshi) Then
             Meta.TypeCode = Dom_ClassHourTypePolicy.Execution
         End If
-        If This.Structure.IsSubject(Part) Then
+        If This.Structure.Subject.Exists(Part) Then
             Meta.Subject = Part
         ElseIf 0 < VBA.InStr(1, Part, jpnKouji) Then
             Dim PeriodString As String
             PeriodString = VBA.Replace(Part, jpnKouji, vbNullString)
-            Meta.Period = App_NumericUtility.ExtractNumber(PeriodString)
+            Meta.Period = Inf_NumericUtility.ExtractNumber(PeriodString)
         End If
         If 0 < VBA.InStr(1, Part, jpnNen) Then
             Dim GradeString As String
             GradeString = VBA.Replace(Part, jpnNen, vbNullString)
-            Meta.Grade = App_NumericUtility.ExtractNumber(GradeString)
+            Meta.Grade = Inf_NumericUtility.ExtractNumber(GradeString)
         End If
     Next
-    ParseColumnMeta = Meta
+    Set ParseColumnMeta = Meta
 End Function

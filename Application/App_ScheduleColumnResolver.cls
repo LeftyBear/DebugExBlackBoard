@@ -28,7 +28,7 @@ Public Function Resolve(ByRef HeaderRow() As String) As Scripting.Dictionary
         Dim ColumnName As String
         ColumnName = HeaderRow(C)
         Dim Meta As App_ScheduleColumnMeta
-        Meta = ParseColumnMeta(ColumnName)
+        Set Meta = ParseColumnMeta(ColumnName)
         Map.Add C, Meta
     Next
     Set Resolve = Map
@@ -38,10 +38,10 @@ Private Function ParseColumnMeta(ByVal ColumnName As String) As App_ScheduleColu
     Dim Meta As App_ScheduleColumnMeta
     Set Meta = New App_ScheduleColumnMeta
     If 0 < VBA.InStr(1, ColumnName, jpnHizuke) Then
-        Meta.ColDate = ColumnName
+        Meta.RawDate = ColumnName
     End If
-    If This.Structure.IsSchoolEvent(ColumnName) Then
+    If This.Structure.SchoolEvent.Exsists(ColumnName) Then
         Meta.EventName = ColumnName
     End If
-    ParseColumnMeta = Meta
+    Set ParseColumnMeta = Meta
 End Function

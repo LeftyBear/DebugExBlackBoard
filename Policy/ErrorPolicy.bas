@@ -56,6 +56,8 @@ Public Enum InfErrNum
     InfErrNotFoundFile = vbObjectError + InfErr
     InfErrNotFoundLayerPrefix
     InfErrUnsupportedComponentType
+    InfErrExistsKey
+    InfErrNotExistsItem
 End Enum
 
 Public Function IsDomainError(ByVal ErrNumber As Long) As Boolean

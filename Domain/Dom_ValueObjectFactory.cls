@@ -52,13 +52,6 @@ Public Function CreateClassHourType(ByVal Value As Long) As Dom_ClassHourType
     Set CreateClassHourType = VO
 End Function
 
-Public Function CreateSubject(ByVal Index As Long, ByVal Name As String, ByVal TargetGrade As String, ByVal Mark As String) As Dom_Subject
-    Dim VO As Dom_Subject
-    Set VO = New Dom_Subject
-    VO.Initialize Index, Name, TargetGrade, Mark
-    Set CreateSubject = VO
-End Function
-
 Public Function CreatePeriod(ByVal Value As Long) As Dom_Period
     Dim VO As Dom_Period
     Set VO = New Dom_Period
@@ -80,6 +73,13 @@ Public Function CreateTimeTableValue(ByVal Value As Long) As Dom_TimeTableValue
     Set CreateTimeTableValue = VO
 End Function
 
+Public Function CreateSubjectID(ByVal Value As String) As Dom_SubjectID
+    Dim VO As Dom_SubjectID
+    Set VO = New Dom_SubjectID
+    VO.Initialize Value
+    Set CreateSubjectID = VO
+End Function
+
 Public Function CreateEnrollmentID(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender) As Dom_EnrollmentID
     Dim VO As Dom_EnrollmentID
     Set VO = New Dom_EnrollmentID
@@ -87,7 +87,7 @@ Public Function CreateEnrollmentID(ByVal StreamType As Dom_StreamType, ByVal Gra
     Set CreateEnrollmentID = VO
 End Function
 
-Public Function CreateEnrollmentFilterCondition(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, Gender As Dom_Gender) As App_EnrollmentFilterCondition
+Public Function CreateEnrollmentFilterCondition(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender) As App_EnrollmentFilterCondition
     Dim VO As App_EnrollmentFilterCondition
     Set VO = New App_EnrollmentFilterCondition
     VO.Initialize StreamType, Grade, ClassNo, Gender
@@ -99,13 +99,6 @@ Public Function CreateStreamType(ByVal Value As Long) As Dom_StreamType
     Set VO = New Dom_StreamType
     VO.Initialize Value
     Set CreateStreamType = VO
-End Function
-
-Public Function CreateSpecialStream(ByVal Index As Long, ByVal Name As String) As Dom_SpecialStream
-    Dim VO As Dom_SpecialStream
-    Set VO = New Dom_SpecialStream
-    VO.Initialize Index, Name
-    Set CreateSpecialStream = VO
 End Function
 
 Public Function CreateEnrollmentValue(ByVal Value As Long) As Dom_EnrollmentValue
@@ -164,16 +157,9 @@ Public Function CreateScheduleValue(ByVal Value As String) As Dom_ScheduleValue
     Set CreateScheduleValue = VO
 End Function
 
-Public Function CreateSchoolEvent(ByVal Index As Long, ByVal Name As String) As Dom_SchoolEvent
-    Dim VO As Dom_SchoolEvent
-    Set VO = New Dom_SchoolEvent
-    VO.Initialize Index, Name
-    Set CreateSchoolEvent = VO
-End Function
-
-Public Function CreateUpperValue(ByVal MainStreamGradeCount As Long, ByVal MainStreamClassCount As Long, ByVal PeriodCount As Long) As Dom_UpperValue
+Public Function CreateUpperValue(ByVal MainStreamGrade As Long, ByVal MainStreamClass As Long, ByVal Period As Long) As Dom_UpperValue
     Dim VO As Dom_UpperValue
     Set VO = New Dom_UpperValue
-    VO.Initialize MainStreamGradeCount, MainStreamClassCount, PeriodCount
+    VO.Initialize MainStreamGrade, MainStreamClass, Period
     Set CreateUpperValue = VO
 End Function

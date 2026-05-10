@@ -11,8 +11,8 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Calculator  As App_EnrollmentSummaryCalculator
     Factory     As Dom_ValueObjectFactory
+    Calculator  As App_EnrollmentSummaryCalculator
 End Type
 
 Private This As Member
@@ -25,16 +25,28 @@ Private Enum C
     TotalColumn
 End Enum
 
-Public Sub Initialize(ByVal Calculator As App_EnrollmentSummaryCalculator, ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Calculator = Calculator
-    Set This.Factory = Factory
+Private Sub Class_Initialize()
+    Set This.Factory = New Dom_ValueObjectFactory
+    Set This.Calculator = New App_EnrollmentSummaryCalculator
 End Sub
+'
+'Public Sub Initialize(ByVal Calculator As App_EnrollmentSummaryCalculator)
+'    Set This.Calculator = Calculator
+'End Sub
 
-Public Function Format(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Structure As Dom_SchoolStructure) As Variant()
+Public Function Format(ByVal Aggregate As Dom_DailyEnrollment, ByVal Structure As Dom_SchoolStructure) As Variant()
+    Dim MainStreamGradeCount As Long
+    MainStreamGradeCount = Structure.UpperValue.Item.MainStreamGradeCount
+    Dim MainStreamClassCount As Long
+    MainStreamClassCount = Structure.UpperValue.Item.MainStreamClassCount
+    Dim SpecialStreamGradeCount As Long
+    SpecialStreamGradeCount = 1
+    Dim SpecialStreamClassCount As Long
+    SpecialStreamClassCount = Structure.SpecialStream.Count
     Dim MainStream() As Long
-    MainStream = ToTable(Main, Aggregate, Structure.MainStreamGradeCount, Structure.MainStreamClassCount)
+    MainStream = ToTable(Main, Aggregate, MainStreamGradeCount, MainStreamClassCount)
     Dim SpecialStream() As Long
-    SpecialStream = ToTable(Special, Aggregate, Structure.SpecialStreamGradeCount, Structure.SpecialStreamClassCount)
+    SpecialStream = ToTable(Special, Aggregate, SpecialStreamGradeCount, SpecialStreamClassCount)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(MainStream) + UBound(SpecialStream) + 2, 1 To C.TotalColumn)
     OutputTable(1, C.GradeColumn) = jpnNen
@@ -45,9 +57,9 @@ Public Function Format(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Structu
     Dim R As Long
     R = 2
     Dim Grade As Long
-    For Grade = 1 To Structure.MainStreamGradeCount
+    For Grade = 1 To MainStreamGradeCount
         Dim ClassNo As Long
-        For ClassNo = 1 To Structure.MainStreamClassCount
+        For ClassNo = 1 To MainStreamClassCount
             OutputTable(R, C.GradeColumn) = Grade
             OutputTable(R, C.ClassColumn) = ClassNo
             OutputTable(R, C.MaleColumn) = MainStream(R - 1, C.MaleColumn)
@@ -66,10 +78,10 @@ Public Function Format(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Structu
         GrandFemaleTotal = GrandFemaleTotal + MainStream(R - 1, C.FemaleColumn)
         R = R + 1
     Next
-    For Grade = 1 To Structure.SpecialStreamGradeCount
-        For ClassNo = 1 To Structure.SpecialStreamClassCount
+    For Grade = 1 To SpecialStreamGradeCount
+        For ClassNo = 1 To SpecialStreamClassCount
             OutputTable(R, C.GradeColumn) = jpnTokushi
-            OutputTable(R, C.ClassColumn) = Structure.SpecialStreamClassNameOf(ClassNo)
+            OutputTable(R, C.ClassColumn) = Structure.SpecialStream.FindByIndex(ClassNo).Value
             OutputTable(R, C.MaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.MaleColumn)
             OutputTable(R, C.FemaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.FemaleColumn)
             OutputTable(R, C.TotalColumn) = SpecialStream(R - UBound(MainStream) - 1, C.TotalColumn)
@@ -92,7 +104,7 @@ Public Function Format(ByVal Aggregate As Dom_EnrollmentAggregate, ByVal Structu
     Format = OutputTable
 End Function
 
-Private Function ToTable(ByVal TypeCode As Dom_StreamTypePolicy, ByVal Aggregate As Dom_EnrollmentAggregate, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
+Private Function ToTable(ByVal TypeCode As Dom_StreamTypePolicy, ByVal Aggregate As Dom_DailyEnrollment, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
     '@Ignore MultipleDeclarations
     Dim Table() As Long, MaleTotal() As Long, FemaleTotal() As Long, ClassTotal() As Long
     ReDim Table(1 To GradeCount * ClassCount + GradeCount, 1 To C.TotalColumn)
@@ -118,16 +130,16 @@ Private Function ToTable(ByVal TypeCode As Dom_StreamTypePolicy, ByVal Aggregate
                 Set Gender = This.Factory.CreateGender(GenderNo)
                 Dim Condition As App_EnrollmentFilterCondition
                 Set Condition = This.Factory.CreateEnrollmentFilterCondition(StreamType, Grade, ClassNo, Gender)
-                Dim Value As Long
-                Value = This.Calculator.SumClassOf(Aggregate, Condition)
-                If Gender = Dom_GenderTypePolicy.Male Then
-                    MaleTotal(G) = MaleTotal(G) + Value
-                    Table(R, C.MaleColumn) = Value
+                Dim EnrollmentValue As Dom_EnrollmentValue
+                Set EnrollmentValue = This.Calculator.SumClassOf(Aggregate, Condition)
+                If Gender.Value = Dom_GenderTypePolicy.Male Then
+                    MaleTotal(G) = MaleTotal(G) + EnrollmentValue.Value
+                    Table(R, C.MaleColumn) = EnrollmentValue.Value
                 Else
-                    FemaleTotal(G) = FemaleTotal(G) + Value
-                    Table(R, C.FemaleColumn) = Value
+                    FemaleTotal(G) = FemaleTotal(G) + EnrollmentValue.Value
+                    Table(R, C.FemaleColumn) = EnrollmentValue.Value
                 End If
-                ClassTotal(G, No) = ClassTotal(G, No) + Value
+                ClassTotal(G, No) = ClassTotal(G, No) + EnrollmentValue.Value
             Next
             Table(R, C.TotalColumn) = ClassTotal(G, No)
             R = R + 1

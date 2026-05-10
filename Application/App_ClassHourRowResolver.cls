@@ -10,18 +10,20 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service")
 Option Explicit
 
-Public Function Resolve(ByRef RawRows() As String, ByVal MetaMap As Scripting.Dictionary) As VBA.Collection
+Public Function Resolve(ByVal Records As VBA.Collection, ByVal MetaMap As Scripting.Dictionary) As VBA.Collection
     Dim Result As VBA.Collection
     Set Result = New VBA.Collection
     Dim R As Long
-    For R = LBound(RawRows) + 1 To UBound(RawRows)
+    For R = 2 To Records.Count
+        Dim Rows As VBA.Collection
+        Set Rows = Records.Item(R)
         Dim C As Long
-        For C = LBound(RawRows, 2) To UBound(RawRows, 2)
+        For C = 1 To Rows.Count
             If MetaMap.Exists(C) Then
                 Dim Meta As App_ClassHourColumnMeta
                 Set Meta = MetaMap.Item(C)
                 Dim Row As App_ClassHourRow
-                Set Row = CreateRow(Meta, RawRows(R, C))
+                Set Row = CreateRow(Meta, Rows.Item(C))
                 Result.Add Row
             End If
         Next
@@ -32,7 +34,7 @@ End Function
 Private Function CreateRow(ByVal Meta As App_ClassHourColumnMeta, ByVal RawText As String) As App_ClassHourRow
     Dim Row As App_ClassHourRow
     Set Row = New App_ClassHourRow
-    If Meta.ColDate <> vbNullString Then
+    If Meta.RawDate <> vbNullString Then
         Row.NormDate = App_DateUtility.NormalizeToDate(RawText)
     End If
     If Meta.TypeCode <> 0 Then
@@ -40,7 +42,7 @@ Private Function CreateRow(ByVal Meta As App_ClassHourColumnMeta, ByVal RawText 
         Row.Subject = Meta.Subject
         Row.Period = Meta.Period
         Row.Grade = Meta.Grade
-        Row.Value = App_NumericUtility.ExtractNumber(RawText)
+        Row.Value = Inf_NumericUtility.ExtractNumber(RawText)
     End If
     Set CreateRow = Row
 End Function

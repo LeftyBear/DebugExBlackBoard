@@ -11,20 +11,24 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Calculator  As App_ClassHourSummaryCalculator
     Factory     As Dom_ValueObjectFactory
+    Calculator  As App_ClassHourSummaryCalculator
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Calculator As App_ClassHourSummaryCalculator, ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Calculator = Calculator
-    Set This.Factory = Factory
+Private Sub Class_Initialize()
+    Set This.Factory = New Dom_ValueObjectFactory
+    Set This.Calculator = New App_ClassHourSummaryCalculator
 End Sub
+'
+'Public Sub Initialize(ByVal Calculator As App_ClassHourSummaryCalculator)
+'    Set This.Calculator = Calculator
+'End Sub
 
-Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_ClassHourYearAggregate, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Structure As Dom_SchoolStructure) As Variant()
+Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal YearlyAggregate As VBA.Collection, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Structure As Dom_SchoolStructure) As Variant()
     Dim ClassHourTable() As Long
-    ClassHourTable = ToClassHourTable(TypeCode, Aggregate, BeginIndex, EndIndex, Structure)
+    ClassHourTable = ToClassHourTable(TypeCode, YearlyAggregate, BeginIndex, EndIndex, Structure)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(ClassHourTable, 1) + 1, 1 To UBound(ClassHourTable, 2) + 1)
     Dim C As Long
@@ -39,7 +43,7 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregat
     For R = 2 To UBound(ClassHourTable, 1) + 1
         For C = 1 To UBound(ClassHourTable, 2) + 1
             If R < UBound(ClassHourTable, 1) + 1 And C = 1 Then
-                OutputTable(R, C) = Structure.SubjectNameOf(R - 1)
+                OutputTable(R, C) = Structure.Subject.FindByIndex(R - 1).Name
             ElseIf R = UBound(ClassHourTable, 1) + 1 And C = 1 Then
                 OutputTable(R, C) = jpnGoukei
             Else
@@ -50,28 +54,30 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregat
     Format = OutputTable
 End Function
 
-Private Function ToClassHourTable(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_ClassHourYearAggregate, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Structure As Dom_SchoolStructure) As Long()
+Private Function ToClassHourTable(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal YearlyAggregate As VBA.Collection, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Structure As Dom_SchoolStructure) As Long()
+    Dim MainStreamGradeCount As Long
+    MainStreamGradeCount = Structure.UpperValue.Item.MainStreamGradeCount
     Dim Table() As Long
-    ReDim Table(1 To Structure.SubjectCount + 1, 1 To Structure.MainStreamGradeCount)
-    If Aggregate Is Nothing Then GoTo Finalize
+    ReDim Table(1 To Structure.Subject.Count + 1, 1 To MainStreamGradeCount)
+    If YearlyAggregate Is Nothing Then GoTo Finalize
     Dim Total() As Long
-    ReDim Total(1 To Structure.MainStreamGradeCount)
+    ReDim Total(1 To MainStreamGradeCount)
     Dim ClassHourType As Dom_ClassHourType
     Set ClassHourType = This.Factory.CreateClassHourType(TypeCode)
     Dim G As Long
-    For G = 1 To Structure.MainStreamGradeCount
+    For G = 1 To MainStreamGradeCount
         Dim Grade As Dom_Grade
         Set Grade = This.Factory.CreateGrade(G)
         Dim i As Long
-        For i = 1 To Structure.SubjectCount
+        For i = 1 To Structure.Subject.Count
             Dim Subject As Dom_Subject
-            Set Subject = Structure.SubjectByIndex(i)
+            Set Subject = Structure.Subject.FindByIndex(i)
             Dim Condition As App_ClassHourFilterCondition
             Set Condition = This.Factory.CreateClassHourFilterCondition(ClassHourType, Subject, Grade)
-            Dim Value As Long
-            Value = This.Calculator.SumOf(Aggregate, BeginIndex, EndIndex, Condition)
-            Table(i, G) = Value
-            Total(G) = Total(G) + Value
+            Dim ClassHourValue As Dom_ClassHourValue
+            Set ClassHourValue = This.Calculator.SumOf(YearlyAggregate, BeginIndex, EndIndex, Condition)
+            Table(i, G) = ClassHourValue.Value
+            Total(G) = Total(G) + ClassHourValue.Value
         Next
         Table(UBound(Table), G) = Total(G)
     Next

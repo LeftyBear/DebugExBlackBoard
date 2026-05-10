@@ -20,16 +20,20 @@ Public Sub Initialize(ByVal Repository As Dom_IClassHourRepository)
     Set This.Repository = Repository
 End Sub
 
-Public Sub UpdateClassHourValue(ByVal TargetDate As Dom_DateID, ByVal ID As Dom_ClassHourID, ByVal NewValue As Long)
-    Dim Target As Dom_ClassHourAggregate
-    Set Target = This.Repository.FindByID(TargetDate)
+Public Sub UpdateClassHourValue(ByVal TargetDate As Date, ByVal ID As Dom_ClassHourID, ByVal NewValue As Long)
+    Dim Target As Dom_DailyClassHour
+    Set Target = This.Repository.FindByDate(TargetDate)
     If Target Is Nothing Then Err.Raise DomErrNothingObject, "App_ClassHourUpdater", "Object is nothing."
     Target.UpdateClassHourValue ID, NewValue
 End Sub
 
-Public Sub UpdateTimeTableValue(ByVal TargetDate As Dom_DateID, ByVal ID As Dom_ClassHourID, ByVal NewValue As Long)
-    Dim Target As Dom_ClassHourAggregate
-    Set Target = This.Repository.FindByID(TargetDate)
+Public Sub UpdateTimeTableValue(ByVal TargetDate As Date, ByVal ID As Dom_TimeTableID, ByVal NewValue As Long)
+    Dim Target As Dom_DailyClassHour
+    Set Target = This.Repository.FindByDate(TargetDate)
     If Target Is Nothing Then Err.Raise DomErrNothingObject, "App_ClassHourUpdater", "Object is nothing."
     Target.UpdateTimeTableValue ID, NewValue
 End Sub
+
+Public Property Get Repository() As Dom_IClassHourRepository
+    Set Repository = This.Repository
+End Property

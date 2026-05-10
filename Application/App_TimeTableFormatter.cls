@@ -11,22 +11,27 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Service As App_TimeTableService
     Factory As Dom_ValueObjectFactory
+    Counter As App_TimeTableSummaryCounter
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Service As App_TimeTableService, ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Service = Service
-    Set This.Factory = Factory
+Private Sub Class_Initialize()
+    Set This.Factory = New Dom_ValueObjectFactory
+    Set This.Counter = New App_TimeTableSummaryCounter
 End Sub
+'
+'Public Sub Initialize(ByVal Counter As App_TimeTableSummaryCounter)
+'    Set This.Counter = Counter
+'    Set This.Factory = Factory
+'End Sub
 
-Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_ClassHourAggregate, ByVal Structure As Dom_SchoolStructure) As Variant()
+Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_DailyClassHour, ByVal Structure As Dom_SchoolStructure) As Variant()
     Dim TimeTable() As String
     TimeTable = ToTimeTable(TypeCode, Aggregate, Structure)
     Dim Total() As Long
-    ReDim Total(Structure.MainStreamGradeCount)
+    ReDim Total(Structure.UpperValue.Item.MainStreamGradeCount)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(TimeTable, 1) + 1, 1 To UBound(TimeTable, 2) + 1)
     Dim C As Long
@@ -41,7 +46,7 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregat
     For R = 2 To UBound(TimeTable, 1) + 1
         For C = 1 To UBound(TimeTable, 2) + 1
             If R < UBound(TimeTable, 1) + 1 And C = 1 Then
-                OutputTable(R, C) = Structure.SubjectNameOf(R - 1)
+                OutputTable(R, C) = Structure.Subject.FindByIndex(R - 1).Name
             ElseIf R < UBound(TimeTable, 1) + 1 Then
                 OutputTable(R, C) = TimeTable(R - 1, C - 1)
                 If OutputTable(R, C) <> vbNullString Then Total(C - 1) = Total(C - 1) + 1
@@ -55,23 +60,27 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregat
     Format = OutputTable
 End Function
 
-Private Function ToTimeTable(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_ClassHourAggregate, ByVal Structure As Dom_SchoolStructure) As String()
+Private Function ToTimeTable(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_DailyClassHour, ByVal Structure As Dom_SchoolStructure) As String()
+    Dim MainStreamGradeCount As Long
+    MainStreamGradeCount = Structure.UpperValue.Item.MainStreamGradeCount
+    Dim PeriodCount As Long
+    PeriodCount = Structure.UpperValue.Item.PeriodCount
     Dim Table() As String
-    ReDim Table(1 To Structure.PeriodCount, 1 To Structure.MainStreamGradeCount)
+    ReDim Table(1 To PeriodCount, 1 To MainStreamGradeCount)
     If Aggregate Is Nothing Then GoTo Finalize
     Dim ClassHourType As Dom_ClassHourType
     Set ClassHourType = This.Factory.CreateClassHourType(TypeCode)
     Dim G As Long
-    For G = 1 To Structure.MainStreamGradeCount
+    For G = 1 To MainStreamGradeCount
         Dim Grade As Dom_Grade
         Set Grade = This.Factory.CreateGrade(G)
         Dim P As Long
-        For P = 1 To Structure.PeriodCount
+        For P = 1 To PeriodCount
             Dim Period As Dom_Period
             Set Period = This.Factory.CreatePeriod(P)
             Dim Condition As App_TimeTableFilterCondition
             Set Condition = This.Factory.CreateTimeTableFilterCondition(ClassHourType, Period, Grade)
-            Table(P, G) = This.Service.CountHours(Aggregate, Condition)
+            Table(P, G) = This.Counter.CountHours(Aggregate, Condition)
         Next
     Next
 Finalize:

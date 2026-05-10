@@ -28,5 +28,5 @@ Public Enum Dom_StructureTypePolicy
     SchoolEvent = 1
     SpecialStream
     Subject
-    UpperValues
+    UpperValue
 End Enum

@@ -7,10 +7,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'@IgnoreModule EncapsulatePublicField
 '@Folder("Application.DTO")
 Option Explicit
 
-Public ColDate  As String
+Public RawDate  As String
 Public TypeCode As Long
 Public Subject  As String
 Public Period   As Long

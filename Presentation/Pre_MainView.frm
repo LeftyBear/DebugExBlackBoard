@@ -26,8 +26,10 @@ Public Sub Initialize(ByVal Calender As Pre_CalenderController)
     Set This.Calender = Calender
 End Sub
 
-Public Sub DateChanged(ByVal SelectedDate As Date)
-    This.Calender.ChangeDate SelectedDate
+Public Sub OnChangeDate(ByVal SelectedDate As Date)
+    Dim SchoolYear As Long
+    SchoolYear = App_DateUtility.GetSchoolYear(SelectedDate)
+    This.Calender.LoadOf SchoolYear
 End Sub
 
 Public Sub SetGridValue(ByVal Kind As String, ByVal Value As Variant, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long)
@@ -95,23 +97,23 @@ Private Sub Pre_IMainView_Render(ByVal ViewModel As App_ViewDTO)
     Pre_IMainView_RenderTimeTableExecution ViewModel.TimeTableExecutionTable
 End Sub
 
-Private Sub Pre_IMainView_RenderClassHourExecution(Table() As Variant)
+Private Sub Pre_IMainView_RenderClassHourExecution(ByRef Table() As Variant)
 
 End Sub
 
-Private Sub Pre_IMainView_RenderClassHourPlan(Table() As Variant)
+Private Sub Pre_IMainView_RenderClassHourPlan(ByRef Table() As Variant)
 
 End Sub
 
-Private Sub Pre_IMainView_RenderEnrollment(Table() As Variant)
+Private Sub Pre_IMainView_RenderEnrollment(ByRef Table() As Variant)
 
 End Sub
 
-Private Sub Pre_IMainView_RenderTimeTableExecution(Table() As Variant)
+Private Sub Pre_IMainView_RenderTimeTableExecution(ByRef Table() As Variant)
 
 End Sub
 
-Private Sub Pre_IMainView_RenderTimeTablePlan(Table() As Variant)
+Private Sub Pre_IMainView_RenderTimeTablePlan(ByRef Table() As Variant)
 
 End Sub
 

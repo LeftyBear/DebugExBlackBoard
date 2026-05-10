@@ -22,7 +22,7 @@ End Sub
 
 Public Function Create(ByVal ID As Dom_ScheduleID, ByVal RawText As String) As Dom_Schedule
     'TODO Date
-    Dim DateID As Dom_EnrollmentID
+    Dim DateID As Dom_DateID
     Set DateID = This.Factory.CreateDateID(Date)
     Dim ScheduleValue As Dom_ScheduleValue
     Set ScheduleValue = This.Factory.CreateScheduleValue(RawText)

@@ -7,10 +7,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.QueryService")
+'@Folder("Infrastructure.Persistence")
 Option Explicit
-Implements App_ILogger
+Implements App_ILogPersistence
 
-Private Sub App_ILogger_WriteLog(ByVal Message As String)
+Private Sub App_ILogPersistence_Log(ByVal Message As String)
     Debug.Print Now & charHalfSpace & Message
 End Sub

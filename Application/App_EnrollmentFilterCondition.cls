@@ -19,7 +19,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, Gender As Dom_Gender)
+Public Sub Initialize(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender)
     Set This.StreamType = StreamType
     Set This.Grade = Grade
     Set This.ClassNo = ClassNo
@@ -27,29 +27,33 @@ Public Sub Initialize(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Gra
 End Sub
 
 Public Property Get HasType() As Boolean
-    HasType = This.StreamType
+    If This.StreamType Is Nothing Then Exit Property
+    HasType = True
 End Property
 
 Public Property Get HasGrade() As Boolean
-    HasGrade = This.Grade
+    If This.Grade Is Nothing Then Exit Property
+    HasGrade = True
 End Property
 
 Public Property Get HasClassNo() As Boolean
-    HasClassNo = This.ClassNo
+    If This.ClassNo Is Nothing Then Exit Property
+    HasClassNo = True
 End Property
 
 Public Property Get HasGender() As Boolean
-    HasGender = This.Gender
+    If This.Gender Is Nothing Then Exit Property
+    HasGender = True
 End Property
 
-Public Function GenderMatchs(ByVal Item As Dom_ClassHour) As Boolean
+Public Function GenderMatchs(ByVal Item As Dom_Enrollment) As Boolean
     If Not MatchType(Item) Then Exit Function
     If Not MatchGrade(Item) Then Exit Function
     If Not MatchGender(Item) Then Exit Function
     GenderMatchs = True
 End Function
 
-Public Function ClassMatchs(ByVal Item As Dom_ClassHour) As Boolean
+Public Function ClassMatchs(ByVal Item As Dom_Enrollment) As Boolean
     If Not MatchType(Item) Then Exit Function
     If Not MatchGrade(Item) Then Exit Function
     If Not MatchClassNo(Item) Then Exit Function

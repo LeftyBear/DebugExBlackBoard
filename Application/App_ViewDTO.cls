@@ -12,7 +12,7 @@ Option Explicit
 
 Private Type Member
     Structure                   As Dom_SchoolStructure
-    Schedule                    As Dom_ScheduleAggregate
+    Schedule                    As Dom_DailySchedule
     EnrollmentTable()           As Variant
     ClassHourPlanTable()        As Variant
     ClassHourExecutionTable()   As Variant
@@ -26,7 +26,7 @@ Public Property Set Structure(ByVal Value As Dom_SchoolStructure)
     Set This.Structure = Value
 End Property
 
-Public Property Set Schedule(ByVal Value As Dom_ScheduleAggregate)
+Public Property Set Schedule(ByVal Value As Dom_DailySchedule)
     Set This.Schedule = Value
 End Property
 
@@ -54,7 +54,7 @@ Public Property Get Structure() As Dom_SchoolStructure
     Set Structure = This.Structure
 End Property
 
-Public Property Get Schedule() As Dom_ScheduleAggregate
+Public Property Get Schedule() As Dom_DailySchedule
     Set Schedule = This.Schedule
 End Property
 

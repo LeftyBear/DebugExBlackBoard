@@ -38,5 +38,5 @@ Public Property Get ID() As Dom_ClassHourID
 End Property
 
 Public Property Get Value() As Dom_ClassHourValue
-    Value = This.Value
+    Set Value = This.Value
 End Property

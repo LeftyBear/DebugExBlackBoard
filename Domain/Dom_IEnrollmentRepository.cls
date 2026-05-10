@@ -10,11 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Domain.RepositoryInterface")
 Option Explicit
 
-Public Sub Add(ByVal Item As Dom_EnrollmentAggregate)
+Public Sub Save(ByVal SchoolYear As Long)
 End Sub
 
-Public Function FindByID(ByVal ID As Dom_EnrollmentID) As Dom_Enrollment
-End Function
+Public Sub Replace(ByVal TargetDate As Date, ByVal NewAggregate As Dom_DailyEnrollment)
+End Sub
 
-Public Function GetAll() As VBA.Collection
+Public Function FindByDate(ByVal TargetDate As Date) As Dom_DailyEnrollment
 End Function

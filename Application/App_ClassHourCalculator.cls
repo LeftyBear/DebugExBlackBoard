@@ -16,11 +16,15 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Filter As App_ClassHourFilter)
-    Set This.Filter = Filter
+Private Sub Class_Initialize()
+    Set This.Filter = New App_ClassHourFilter
 End Sub
+'
+'Public Sub Initialize(ByVal Filter As App_ClassHourFilter)
+'    Set This.Filter = Filter
+'End Sub
 
-Public Function SumOfOneDay(ByVal Aggregate As Dom_ClassHourAggregate, ByVal Condition As App_ClassHourFilterCondition) As Dom_ClassHourValue
+Public Function SumOfOneDay(ByVal Aggregate As Dom_DailyClassHour, ByVal Condition As App_ClassHourFilterCondition) As Dom_ClassHourValue
     Dim Total As Dom_ClassHourValue
     Set Total = New Dom_ClassHourValue
     Total.Initialize 0

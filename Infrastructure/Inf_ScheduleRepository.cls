@@ -11,31 +11,51 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements Dom_IScheduleRepository
 Private Type Member
-    ItemList As Scripting.Dictionary
+    Persistence As Inf_SchedulePersistence
+    AggList     As Scripting.Dictionary
 End Type
 
 Private This As Member
 
-Private Sub Class_Initialize()
-    Set This.ItemList = New Scripting.Dictionary
+Public Sub Initialize(ByVal Persistence As Inf_SchedulePersistence)
+    Set This.Persistence = Persistence
+    Set This.AggList = New Scripting.Dictionary
 End Sub
 
-Private Sub Dom_IScheduleRepository_Add(ByVal Item As Dom_ScheduleAggregate)
-    This.ItemList.Add Item.DateID.ToKey, Item
+Private Sub Dom_IScheduleRepository_Add(ByVal Aggregate As Dom_DailySchedule)
+    This.AggList.Add Aggregate.DateID.ToKey, Aggregate
 End Sub
 
-Private Function Dom_IScheduleRepository_FindByID(ByVal ID As Dom_ScheduleID) As Dom_Schedule
-    If This.ItemList.Exists(ID.ToKey) Then
-        Set Dom_IScheduleRepository_FindByID = This.ItemList.Item(ID.ToKey)
+Private Function Dom_IScheduleRepository_FindByDate(ByVal TargetDate As Date) As Dom_DailySchedule
+    If This.AggList.Exists(CStr(TargetDate)) Then
+        Set Dom_IScheduleRepository_FindByDate = This.AggList.Item(CStr(TargetDate))
     End If
 End Function
 
 Private Function Dom_IScheduleRepository_GetAll() As VBA.Collection
     Dim Result As VBA.Collection
     Set Result = New VBA.Collection
-    Dim Target As Variant
-    For Each Target In This.ItemList.Items
-        Result.Add Target
+    Dim Aggregate As Dom_DailySchedule
+    For Each Aggregate In This.AggList.Items
+        Result.Add Aggregate
     Next
     Set Dom_IScheduleRepository_GetAll = Result
+End Function
+
+Private Function Dom_IScheduleRepository_ReadAll(ByVal SchoolYear As Long) As VBA.Collection
+    Set Dom_IScheduleRepository_ReadAll = This.Persistence.ReadAll(SchoolYear)
+End Function
+
+Private Function Dom_IScheduleRepository_Replace(ByVal NewAggregate As Dom_DailySchedule) As VBA.Collection
+    Dim Rows As VBA.Collection
+    Set Rows = Dom_IScheduleRepository_GetAll
+    Dim i As Long
+    For i = 1 To Rows.Count
+        Dim OldAggregate As Dom_DailySchedule
+        Set OldAggregate = Rows.Item(i)
+        If OldAggregate.DateID.Equals(NewAggregate.DateID) Then
+            Set Rows.Item(i) = NewAggregate
+        End If
+    Next
+    Set Dom_IScheduleRepository_Replace = Rows
 End Function

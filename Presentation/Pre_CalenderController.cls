@@ -11,15 +11,26 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Presenter As Pre_CalenderPresenter
+    Calender    As Pre_CalenderPresenter
+    Schedule    As Pre_SchedulePresenter
+    CurrentYear As Long
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Presenter As Pre_CalenderPresenter)
-    Set This.Presenter = Presenter
+Public Sub Initialize(ByVal Calender As Pre_CalenderPresenter, ByVal Schedule As Pre_SchedulePresenter)
+    Set This.Calender = Calender
+    Set This.Schedule = Schedule
 End Sub
 
-Public Sub ChangeDate(ByVal SelectedDate As Date)
-    This.Presenter.LoadAsync SelectedDate
+Public Sub LoadOf(ByVal SchoolYear As Long)
+    If This.CurrentYear = SchoolYear Then Exit Sub
+    This.Calender.LoadClassHourAsync SchoolYear
+    This.CurrentYear = SchoolYear
+    Dim Index As Long
+    Dim ClassHour As VBA.Collection
+    Dim Enrollment As VBA.Collection
+    Dim Schedule As VBA.Collection
+    Dim Structure As Dom_SchoolStructure
+    This.Schedule.Show Index, ClassHour, Enrollment, Schedule, Structure
 End Sub

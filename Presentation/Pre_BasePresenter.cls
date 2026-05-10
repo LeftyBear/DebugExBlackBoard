@@ -22,7 +22,6 @@ End Sub
 
 Public Sub Execute(ByVal Callback As Pre_IPresenterCallback)
     On Error GoTo ErrHandler
-    Dim Factory As New Pre_PresenterResultFactory
     Callback.ExecuteCore
     Dim Result As Pre_PresenterResult
     Set Result = This.Factory.CreateSuccess

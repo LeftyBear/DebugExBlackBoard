@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service")
 Option Explicit
 
-Public Function FilterByGrade(ByVal Aggregate As Dom_ClassHourAggregate, ByVal Condition As App_TimeTableFilterCondition) As VBA.Collection
+Public Function FilterByGrade(ByVal Aggregate As Dom_DailyClassHour, ByVal Condition As App_TimeTableFilterCondition) As VBA.Collection
     Dim Result As VBA.Collection
     Set Result = New VBA.Collection
     Dim i As Long
@@ -24,7 +24,7 @@ Public Function FilterByGrade(ByVal Aggregate As Dom_ClassHourAggregate, ByVal C
     Set FilterByGrade = Result
 End Function
 
-Public Function FilterByPeriod(ByVal Aggregate As Dom_ClassHourAggregate, ByVal Condition As App_TimeTableFilterCondition) As VBA.Collection
+Public Function FilterByPeriod(ByVal Aggregate As Dom_DailyClassHour, ByVal Condition As App_TimeTableFilterCondition) As VBA.Collection
     Dim Result As VBA.Collection
     Set Result = New VBA.Collection
     Dim i As Long

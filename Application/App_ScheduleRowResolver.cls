@@ -10,18 +10,20 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service")
 Option Explicit
 
-Public Function Resolve(ByRef RawRows() As String, ByVal MetaMap As Scripting.Dictionary) As VBA.Collection
+Public Function Resolve(ByVal Records As VBA.Collection, ByVal MetaMap As Scripting.Dictionary) As VBA.Collection
     Dim Result As VBA.Collection
     Set Result = New VBA.Collection
     Dim R As Long
-    For R = LBound(RawRows) + 1 To UBound(RawRows)
+    For R = 2 To Records.Count
+        Dim Rows As VBA.Collection
+        Set Rows = Records.Item(R)
         Dim C As Long
-        For C = LBound(RawRows, 2) To UBound(RawRows, 2)
+        For C = 1 To Rows.Count
             If MetaMap.Exists(C) Then
                 Dim Meta As App_ScheduleColumnMeta
                 Set Meta = MetaMap.Item(C)
                 Dim Row As App_ScheduleRow
-                Set Row = CreateRow(Meta, RawRows(R, C))
+                Set Row = CreateRow(Meta, Rows.Item(C))
                 Result.Add Row
             End If
         Next
@@ -32,7 +34,7 @@ End Function
 Private Function CreateRow(ByVal Meta As App_ScheduleColumnMeta, ByVal RawText As String) As App_ScheduleRow
     Dim Row As App_ScheduleRow
     Set Row = New App_ScheduleRow
-    If Meta.ColDate <> vbNullString Then
+    If Meta.RawDate <> vbNullString Then
         Row.NormDate = App_DateUtility.NormalizeToDate(RawText)
     End If
     If Meta.EventName <> vbNullString Then

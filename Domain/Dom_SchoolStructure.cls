@@ -11,77 +11,34 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    UpperValue              As Dom_UpperValue
-    SpecialStreamCatalog    As Dom_SpecialStreamCatalog
-    SubjectCatalog          As Dom_SubjectCatalog
-    SchoolEventCatalog      As Dom_SchoolEventCatalog
+    SchoolEvent     As Dom_ISchoolEventRepository
+    SpecialStream   As Dom_ISpecialStreamRepository
+    Subject         As Dom_ISubjectRepository
+    UpperValue      As Dom_IUpperValueRepository
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal UpperValue As Dom_UpperValue, ByVal SpecialStreamCatalog As Dom_SpecialStreamCatalog, ByVal SubjectCatalog As Dom_SubjectCatalog, ByVal SchoolEventCatalog As Dom_SchoolEventCatalog)
+Public Sub Initialize(ByVal SchoolEvent As Dom_ISchoolEventRepository, ByVal SpecialStream As Dom_ISpecialStreamRepository, ByVal Subject As Dom_ISubjectRepository, ByVal UpperValue As Dom_IUpperValueRepository)
+    Set This.SchoolEvent = SchoolEvent
+    Set This.SpecialStream = SpecialStream
+    Set This.Subject = Subject
     Set This.UpperValue = UpperValue
-    Set This.SpecialStreamCatalog = SpecialStreamCatalog
-    Set This.SubjectCatalog = SubjectCatalog
-    Set This.SchoolEventCatalog = SchoolEventCatalog
 End Sub
 
-Public Property Get MainStreamGradeCount() As Long
-    MainStreamGradeCount = This.UpperValue.MainStreamGradeCount
+Property Get SchoolEvent() As Dom_ISchoolEventRepository
+    Set SchoolEvent = This.SchoolEvent
 End Property
 
-Public Property Get MainStreamClassCount() As Long
-    MainStreamClassCount = This.UpperValue.MainStreamClassCount
+Property Get SpecialStream() As Dom_ISpecialStreamRepository
+    Set SpecialStream = This.SpecialStream
 End Property
 
-Public Function ResolveSpecialStream(ByVal Name As String) As Dom_SpecialStream
-    Set ResolveSpecialStream = This.SpecialStreamCatalog.Item(Name)
-End Function
-
-Public Function SpecialStreamClassNameOf(ByVal Index As Long) As String
-    SpecialStreamClassNameOf = This.SubjectCatalog.NameOf(Index)
-End Function
-
-Public Property Get SpecialStreamGradeCount() As Long
-    SpecialStreamGradeCount = 1
+Property Get Subject() As Dom_ISubjectRepository
+    Set Subject = This.Subject
 End Property
 
-Public Property Get SpecialStreamClassCount() As Long
-    SpecialStreamClassCount = This.SpecialStreamCatalog.Count
+Property Get UpperValue() As Dom_IUpperValueRepository
+    Set UpperValue = This.UpperValue
 End Property
 
-Public Function SubjectByName(ByVal Name As String) As Dom_Subject
-    Set SubjectByName = This.SubjectCatalog.FindByName(Name)
-End Function
-
-Public Function SubjectByIndex(ByVal Index As Long) As Dom_Subject
-    SubjectByIndex = This.SubjectCatalog.FindByIndex(Index)
-End Function
-
-Public Function SubjectNameOf(ByVal Index As Long) As String
-    SubjectNameOf = This.SubjectCatalog.NameOf(Index)
-End Function
-
-Public Function SubjectCount() As Long
-    SubjectCount = This.SubjectCatalog.Count
-End Function
-
-Public Function SubjectNames() As String()
-    SubjectNames = This.SubjectCatalog.Names
-End Function
-
-Public Function IsSubject(ByVal Name As String) As Boolean
-    IsSubject = This.SubjectCatalog.Exists(Name)
-End Function
-
-Public Function IsSchoolEvent(ByVal Name As String) As Boolean
-    IsSchoolEvent = This.SchoolEventCatalog.Exists(Name)
-End Function
-
-Public Property Get PeriodCount() As Long
-    PeriodCount = This.UpperValue.PeriodCount
-End Property
-
-Public Function SchoolEventNames() As String()
-    SchoolEventNames = This.SchoolEventCatalog.Names
-End Function

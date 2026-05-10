@@ -16,11 +16,15 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Filter As App_TimeTableFilter)
-    Set This.Filter = Filter
+Private Sub Class_Initialize()
+    Set This.Filter = New App_TimeTableFilter
 End Sub
+'
+'Public Sub Initialize(ByVal Filter As App_TimeTableFilter)
+'    Set This.Filter = Filter
+'End Sub
 
-Public Function Count(ByVal Aggregate As Dom_ClassHourAggregate, ByVal Condition As App_TimeTableFilterCondition) As Long
+Public Function Count(ByVal Aggregate As Dom_DailyClassHour, ByVal Condition As App_TimeTableFilterCondition) As Long
     Dim TimeTables As VBA.Collection
     Set TimeTables = This.Filter.FilterByGrade(Aggregate, Condition)
     Dim i As Long
