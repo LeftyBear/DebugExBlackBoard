@@ -11,13 +11,3 @@ Public Function JoinByBackSlash(ParamArray Strings() As Variant) As String
     Next
     JoinByBackSlash = VBA.Join(Strings, charBackSlash)
 End Function
-
-Public Function GetHeaderRow(ByVal Rows As VBA.Collection) As String()
-    Dim Result() As String
-    ReDim Result(0 To Rows.Count - 1)
-    Dim C As Long
-    For C = 0 To Rows.Count - 1
-        Result(C) = Rows.Item(C + 1)
-    Next
-    GetHeaderRow = Result
-End Function

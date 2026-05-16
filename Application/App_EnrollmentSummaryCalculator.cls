@@ -24,10 +24,10 @@ End Sub
 '    Set This.Calculator = Calculator
 'End Sub
 
-Public Function SumClassOf(ByVal Aggregate As Dom_DailyEnrollment, ByVal Condition As App_EnrollmentFilterCondition) As Dom_EnrollmentValue
+Public Function SumClassOf(ByVal Aggregate As Dom_DailyEnrollment, ByVal Condition As App_EnrollmentIDCondition) As Dom_EnrollmentValue
     Set SumClassOf = This.Calculator.SumClassOfOneDay(Aggregate, Condition)
 End Function
 
-Public Function SumGenderOf(ByVal Aggregate As Dom_DailyEnrollment, ByVal Condition As App_EnrollmentFilterCondition) As Dom_EnrollmentValue
+Public Function SumGenderOf(ByVal Aggregate As Dom_DailyEnrollment, ByVal Condition As App_EnrollmentIDCondition) As Dom_EnrollmentValue
     Set SumGenderOf = This.Calculator.SumGenderOfOneDay(Aggregate, Condition)
 End Function

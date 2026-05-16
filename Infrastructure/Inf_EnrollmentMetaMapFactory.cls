@@ -13,11 +13,11 @@ Option Explicit
 Public Function Create(ByVal HeaderRows As VBA.Collection) As Inf_EnrollmentMetaMap
     Dim Result As Inf_EnrollmentMetaMap
     Set Result = New Inf_EnrollmentMetaMap
-    Dim i As Long
-    For i = 1 To HeaderRows.Count
+    Dim C As Long
+    For C = 1 To HeaderRows.Count
         Dim Meta As Inf_EnrollmentColumnMeta
-        Set Meta = CreateMeta(HeaderRows.Item(i))
-        Result.Add i, Meta
+        Set Meta = CreateMeta(HeaderRows.Item(C))
+        Result.Add C, Meta
     Next
     Set Create = Result
 End Function

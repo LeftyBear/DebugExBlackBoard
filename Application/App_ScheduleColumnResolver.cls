@@ -20,13 +20,13 @@ Public Sub AddOn(ByVal Structure As Dom_SchoolStructure)
     Set This.Structure = Structure
 End Sub
 
-Public Function Resolve(ByRef HeaderRow() As String) As Scripting.Dictionary
+Public Function Resolve(ByVal Headers As VBA.Collection) As Scripting.Dictionary
     Dim Map As Scripting.Dictionary
     Set Map = New Scripting.Dictionary
     Dim C As Long
-    For C = LBound(HeaderRow) To UBound(HeaderRow)
+    For C = 1 To Headers.Count
         Dim ColumnName As String
-        ColumnName = HeaderRow(C)
+        ColumnName = Headers.Item(C)
         Dim Meta As App_ScheduleColumnMeta
         Set Meta = ParseColumnMeta(ColumnName)
         Map.Add C, Meta

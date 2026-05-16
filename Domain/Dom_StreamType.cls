@@ -10,6 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Domain.ValueObject")
 Option Explicit
 
+Public Enum Dom_StreamTypePolicy
+    Main = 1
+    Special
+End Enum
+
 Private Type Member
     Value As Long
 End Type
@@ -21,10 +26,14 @@ Public Sub Initialize(ByVal Value As Long)
     This.Value = Value
 End Sub
 
-Public Property Get Value() As Long
-    Value = This.Value
-End Property
+Public Function IsMain() As Boolean
+    IsMain = (This.Value = Main)
+End Function
+
+Public Function IsSpecial() As Boolean
+    IsSpecial = (This.Value = Special)
+End Function
 
 Public Function Equals(ByVal Other As Dom_StreamType) As Boolean
-    Equals = (This.Value = Other.Value)
+    Equals = (Me.IsMain = Other.IsMain)
 End Function

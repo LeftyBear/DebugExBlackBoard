@@ -11,8 +11,8 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.DTO")
 Option Explicit
 
-Public NormDate As Date
-Public RawID    As String
-Public Value    As Long
-Public Transfer As String
-Public Remarks  As String
+Public NormDate     As Date
+Public RawID        As String
+Public Value        As Long
+Public RawTransfer  As String
+Public Remarks      As String

@@ -20,10 +20,10 @@ Public Sub Initialize(ByVal Value As Boolean)
     This.Value = Value
 End Sub
 
-Public Property Get Value() As Boolean
-    Value = This.Value
+Public Property Get IsTrue() As Boolean
+    IsTrue = This.Value
 End Property
 
 Public Function Equals(ByVal Other As Dom_Transfer) As Boolean
-    Equals = (This.Value = Other.Value)
+    Equals = (Me.IsTrue = Other.IsTrue)
 End Function

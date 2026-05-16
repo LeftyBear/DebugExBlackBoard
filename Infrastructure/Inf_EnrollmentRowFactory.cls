@@ -19,7 +19,7 @@ Public Function Create(ByVal Meta As Inf_EnrollmentColumnMeta, ByVal RawText As 
         Row.RawID = Meta.RawID
         Row.Value = Inf_NumericUtility.ExtractNumber(RawText)
     ElseIf Meta.RawTransfer <> vbNullString Then
-        Row.Transfer = RawText
+        Row.RawTransfer = RawText
     ElseIf Meta.RawRemarks <> vbNullString Then
         Row.Remarks = RawText
     End If

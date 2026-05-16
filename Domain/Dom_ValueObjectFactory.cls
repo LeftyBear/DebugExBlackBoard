@@ -73,6 +73,13 @@ Public Function CreateTimeTableValue(ByVal Value As Long) As Dom_TimeTableValue
     Set CreateTimeTableValue = VO
 End Function
 
+Public Function CreateSubject(ByVal Value As String) As Dom_SubjectNew
+    Dim VO As Dom_SubjectNew
+    Set VO = New Dom_SubjectNew
+    VO.Initialize Value
+    Set CreateSubject = VO
+End Function
+
 Public Function CreateSubjectID(ByVal Value As String) As Dom_SubjectID
     Dim VO As Dom_SubjectID
     Set VO = New Dom_SubjectID
@@ -87,9 +94,9 @@ Public Function CreateEnrollmentID(ByVal StreamType As Dom_StreamType, ByVal Gra
     Set CreateEnrollmentID = VO
 End Function
 
-Public Function CreateEnrollmentFilterCondition(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender) As App_EnrollmentFilterCondition
-    Dim VO As App_EnrollmentFilterCondition
-    Set VO = New App_EnrollmentFilterCondition
+Public Function CreateEnrollmentFilterCondition(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender) As App_EnrollmentIDCondition
+    Dim VO As App_EnrollmentIDCondition
+    Set VO = New App_EnrollmentIDCondition
     VO.Initialize StreamType, Grade, ClassNo, Gender
     Set CreateEnrollmentFilterCondition = VO
 End Function

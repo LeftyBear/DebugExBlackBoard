@@ -25,10 +25,6 @@ Public Property Get Value() As Long
     Value = This.Value
 End Property
 
-Public Function ToKey() As String
-    ToKey = CStr(This.Value) & jpnNen
-End Function
-
 Public Function Equals(ByVal Other As Dom_Grade) As Boolean
     Equals = (This.Value = Other.Value)
 End Function

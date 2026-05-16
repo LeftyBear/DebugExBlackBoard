@@ -41,4 +41,3 @@ End Property
 Property Get UpperValue() As Dom_IUpperValueRepository
     Set UpperValue = This.UpperValue
 End Property
-

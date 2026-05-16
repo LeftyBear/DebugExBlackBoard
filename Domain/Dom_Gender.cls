@@ -10,6 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Domain.ValueObject")
 Option Explicit
 
+Public Enum Dom_GenderTypePolicy
+    Male = 1
+    Female
+End Enum
+
 Private Type Member
     Value As Long
 End Type
@@ -25,12 +30,12 @@ Public Property Get Value() As Long
     Value = This.Value
 End Property
 
-Public Function ToKey() As String
-    If This.Value = Dom_GenderTypePolicy.Male Then
-        ToKey = jpnOtoko
-    ElseIf This.Value = Dom_GenderTypePolicy.Female Then
-        ToKey = jpnOnna
-    End If
+Public Function IsMale() As Boolean
+    IsMale = (This.Value = Male)
+End Function
+
+Public Function IsFemale() As Boolean
+    IsFemale = (This.Value = Female)
 End Function
 
 Public Function Equals(ByVal Other As Dom_Gender) As Boolean

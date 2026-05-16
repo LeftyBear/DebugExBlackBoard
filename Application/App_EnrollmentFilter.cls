@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service")
 Option Explicit
 
-Public Function FilterByGender(ByVal Aggregate As Dom_DailyEnrollment, ByVal Condition As App_EnrollmentFilterCondition) As VBA.Collection
+Public Function FilterByGender(ByVal Aggregate As Dom_DailyEnrollment, ByVal Condition As App_EnrollmentIDCondition) As VBA.Collection
     Dim Result As VBA.Collection
     Set Result = New VBA.Collection
     Dim i As Long
@@ -24,7 +24,7 @@ Public Function FilterByGender(ByVal Aggregate As Dom_DailyEnrollment, ByVal Con
     Set FilterByGender = Result
 End Function
 
-Public Function FilterByClass(ByVal Aggregate As Dom_DailyEnrollment, ByVal Condition As App_EnrollmentFilterCondition) As VBA.Collection
+Public Function FilterByClass(ByVal Aggregate As Dom_DailyEnrollment, ByVal Condition As App_EnrollmentIDCondition) As VBA.Collection
     Dim Result As VBA.Collection
     Set Result = New VBA.Collection
     Dim i As Long

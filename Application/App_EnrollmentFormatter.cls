@@ -128,7 +128,7 @@ Private Function ToTable(ByVal TypeCode As Dom_StreamTypePolicy, ByVal Aggregate
             For GenderNo = Dom_GenderTypePolicy.Male To Dom_GenderTypePolicy.Female
                 Dim Gender As Dom_Gender
                 Set Gender = This.Factory.CreateGender(GenderNo)
-                Dim Condition As App_EnrollmentFilterCondition
+                Dim Condition As App_EnrollmentIDCondition
                 Set Condition = This.Factory.CreateEnrollmentFilterCondition(StreamType, Grade, ClassNo, Gender)
                 Dim EnrollmentValue As Dom_EnrollmentValue
                 Set EnrollmentValue = This.Calculator.SumClassOf(Aggregate, Condition)

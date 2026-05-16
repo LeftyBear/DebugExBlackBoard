@@ -37,7 +37,13 @@ Public Property Get Grade() As Dom_Grade
 End Property
 
 Public Function ToKey() As String
-    ToKey = This.ClassHourType.ToKey & charUnderScore & This.Period.ToKey & charUnderScore & This.Grade.ToKey
+    Dim ClassHourTypeMapper As Inf_ClassHourTypeMapper
+    Set ClassHourTypeMapper = New Inf_ClassHourTypeMapper
+    Dim PeriodMapper As Inf_PeriodMapper
+    Set PeriodMapper = New Inf_PeriodMapper
+    Dim GradeMapper As Inf_GradeMapper
+    Set GradeMapper = New Inf_GradeMapper
+    ToKey = ClassHourTypeMapper.ToRaw(This.ClassHourType) & charUnderScore & PeriodMapper.ToRaw(This.Period) & charUnderScore & GradeMapper.ToRaw(This.Grade)
 End Function
 
 Public Function Equals(ByVal Other As Dom_TimeTableID) As Boolean

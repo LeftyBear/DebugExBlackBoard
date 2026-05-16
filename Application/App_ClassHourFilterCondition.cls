@@ -11,21 +11,21 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    ClassHourType   As Dom_ClassHourType
-    Subject         As Dom_Subject
-    Grade           As Dom_Grade
+    TypeCode    As Dom_ClassHourType
+    Subject     As Dom_Subject
+    Grade       As Dom_Grade
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade)
-    Set This.ClassHourType = ClassHourType
+Public Sub Initialize(ByVal TypeCode As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade)
+    Set This.TypeCode = TypeCode
     Set This.Subject = Subject
     Set This.Grade = Grade
 End Sub
 
 Public Property Get HasType() As Boolean
-    If Not This.ClassHourType Is Nothing Then HasType = True
+    If Not This.TypeCode Is Nothing Then HasType = True
 End Property
 
 Public Property Get HasSubject() As Boolean
@@ -50,7 +50,7 @@ End Function
 
 Private Function MatchClassHourType(ByVal Item As Dom_ClassHour) As Boolean
     If Not Me.HasType Then Exit Function
-    If Not This.ClassHourType.Equals(Item.ID.ClassHourType) Then Exit Function
+    If Not This.TypeCode.Equals(Item.ID.TypeCode) Then Exit Function
     MatchClassHourType = True
 End Function
 

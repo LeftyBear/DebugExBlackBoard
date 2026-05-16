@@ -27,6 +27,7 @@ Public Function ReadAll(ByVal SchoolYear As Long) As Inf_EnrollmentRows
     Dim RawRows As Inf_RawRows
     Set RawRows = This.CSV.ReadAll(FilePath)
     Dim Factory As Inf_EnrollmentRowsFactory
+    Set Factory = New Inf_EnrollmentRowsFactory
     Set ReadAll = Factory.Create(RawRows)
 End Function
 
@@ -37,8 +38,8 @@ Public Sub WriteAll(ByVal SchoolYear As Long, ByVal Rows As Inf_EnrollmentRows)
     Set Header = GetHeader(FilePath)
     Dim Body As VBA.Collection
     Set Body = GroupByDate(Rows)
-    Dim RawRows As VBA.Collection
-    Set RawRows = BuiledRawRows(Header, Body)
+    Dim RawRows As Inf_RawRows
+    Set RawRows = BuiledRows(Header, Body)
     This.CSV.WriteAll FilePath, RawRows
 End Sub
 
@@ -55,10 +56,10 @@ Private Function GetHeader(ByVal FilePath As String) As VBA.Collection
 End Function
 
 Private Function GroupByDate(ByVal Rows As Inf_EnrollmentRows) As VBA.Collection
-    Dim Records As VBA.Collection
-    Set Records = New VBA.Collection
     Dim CurrentDate As Date
     CurrentDate = Rows.Item(1).NormDate
+    Dim Records As VBA.Collection
+    Set Records = New VBA.Collection
     Dim Fields As VBA.Collection
     Set Fields = New VBA.Collection
     Dim i As Long
@@ -69,8 +70,8 @@ Private Function GroupByDate(ByVal Rows As Inf_EnrollmentRows) As VBA.Collection
             Fields.Add CStr(Row.NormDate)
         ElseIf Row.RawID <> vbNullString Then
             Fields.Add CStr(Row.Value)
-        ElseIf Row.Transfer <> vbNullString Then
-            Fields.Add Row.Transfer
+        ElseIf Row.RawTransfer <> vbNullString Then
+            Fields.Add Row.RawTransfer
         ElseIf Row.Remarks <> vbNullString Then
             Fields.Add Row.Remarks
         End If
@@ -83,21 +84,20 @@ Private Function GroupByDate(ByVal Rows As Inf_EnrollmentRows) As VBA.Collection
     Set GroupByDate = Records
 End Function
 
-Private Function BuiledRawRows(ByVal Header As VBA.Collection, ByVal Body As VBA.Collection) As VBA.Collection
-    Dim Result As VBA.Collection
-    Set Result = New VBA.Collection
-    Dim Headers As VBA.Collection
-    Set Headers = New VBA.Collection
+Private Function BuiledRows(ByVal Header As VBA.Collection, ByVal Body As VBA.Collection) As Inf_RawRows
+    Dim Result As Inf_RawRows
+    Set Result = New Inf_RawRows
     Dim C As Long
     For C = 1 To Header.Count
-        Headers.Add Header.Item(C)
+        Result.AddFiled Header.Item(C)
     Next
-    Result.Add Headers
+    Result.AddRecord Result.Fields
+    Result.InitializeFileds
     Dim R As Long
     For R = 1 To Body.Count
-        Result.Add Body.Item(R)
+        Result.AddRecord Body.Item(R)
     Next
-    Set BuiledRawRows = Result
+    Set BuiledRows = Result
 End Function
 
 Private Function BuiledFilePath(ByVal SchoolYear As Long) As String

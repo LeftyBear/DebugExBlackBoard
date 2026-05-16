@@ -43,15 +43,21 @@ Public Property Get Grade() As Dom_Grade
 End Property
 
 Public Function ToKey() As String
-    If This.StreamType.Value = Dom_StreamTypePolicy.Main Then
-        ToKey = This.Grade.ToKey & charUnderScore & This.ClassNo.ToKey & charUnderScore & This.Gender.ToKey
-    ElseIf This.StreamType.Value = Dom_StreamTypePolicy.Special Then
-        ToKey = jpnTokushi & charUnderScore & This.ClassNo.ToKey & charUnderScore & This.Gender.ToKey
+    If This.StreamType Is Nothing Then Exit Function
+    Dim StreamTypeMapper As New Inf_StreamTypeMapper
+    Dim GradeMapper As New Inf_GradeMapper
+    Dim ClassNoMapper As New Inf_ClassNoMapper
+    Dim GenderMapper As New Inf_GenderMapper
+    If This.StreamType.IsMain Then
+        ToKey = GradeMapper.ToRaw(This.Grade) & charUnderScore & ClassNoMapper.ToRaw(This.ClassNo) & charUnderScore & GenderMapper.ToRaw(This.Gender)
+    ElseIf This.StreamType.IsSpecial Then
+        ToKey = StreamTypeMapper.ToRaw(This.StreamType) & charUnderScore & ClassNoMapper.ToRaw(This.ClassNo) & charUnderScore & GenderMapper.ToRaw(This.Gender)
     End If
 End Function
 
 Public Function Equals(ByVal Other As Dom_EnrollmentID) As Boolean
     If Other Is Nothing Then Exit Function
+    If This.StreamType Is Nothing Then Exit Function
     If Not This.StreamType.Equals(Other.StreamType) Then Exit Function
     If Not This.Grade.Equals(Other.Grade) Then Exit Function
     If Not This.ClassNo.Equals(Other.ClassNo) Then Exit Function
@@ -59,10 +65,12 @@ Public Function Equals(ByVal Other As Dom_EnrollmentID) As Boolean
     Equals = True
 End Function
 
-Public Function IsMainStream() As Boolean
-    IsMainStream = (This.StreamType.Value = Dom_StreamTypePolicy.Main)
+Public Function IsMain() As Boolean
+    If This.StreamType Is Nothing Then Exit Function
+    IsMain = This.StreamType.IsMain
 End Function
 
-Public Function IsSpecialStream() As Boolean
-    IsSpecialStream = (This.StreamType.Value = Dom_StreamTypePolicy.Special)
+Public Function IsSpecial() As Boolean
+    If This.StreamType Is Nothing Then Exit Function
+    IsSpecial = This.StreamType.IsSpecial
 End Function

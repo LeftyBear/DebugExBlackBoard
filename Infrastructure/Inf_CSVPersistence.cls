@@ -21,26 +21,25 @@ Public Function ReadAll(ByVal FilePath As String) As Inf_RawRows
     Set Reader = New Inf_TextStreamReader
     Dim TextData As String
     TextData = Reader.ReadAll(FilePath)
-    Set ReadAll = ParsedCSV(TextData)
+    Set ReadAll = ParseCSV(TextData)
 End Function
 
-Public Sub WriteAll(ByVal FilePath As String, ByVal Rows As VBA.Collection)
+Public Sub WriteAll(ByVal FilePath As String, ByVal RawRows As Inf_RawRows)
     Dim TempPath As String
     TempPath = FilePath & ".tmp"
     Dim Lines As VBA.Collection
-    Set Lines = BuildLine(Rows)
+    Set Lines = BuildLine(RawRows)
     WriteAllLines TempPath, Lines
     If 0 < VBA.Len(VBA.Dir(FilePath)) Then VBA.Kill FilePath
-    'TODO
     Name TempPath As FilePath
 End Sub
 
 Public Sub Delete(ByVal FilePath As String, ByVal DateKey As String)
-    Dim Rows As VBA.Collection
+    Dim Rows As Inf_RawRows
     Set Rows = Me.ReadAll(FilePath)
     Dim i As Long
-    For i = Rows.Count To 1 Step -1
-        If ExtractKey(Rows.Item(i)) = DateKey Then
+    For i = Rows.RecordsCount To 1 Step -1
+        If Rows.GetField(i, 1) = DateKey Then
             Rows.Remove i
             Exit For
         End If
@@ -48,32 +47,33 @@ Public Sub Delete(ByVal FilePath As String, ByVal DateKey As String)
     Me.WriteAll FilePath, Rows
 End Sub
 
-Private Function BuildLine(ByVal Rows As VBA.Collection) As VBA.Collection
+Private Function BuildLine(ByVal RawRows As Inf_RawRows) As VBA.Collection
     Dim Result As VBA.Collection
     Set Result = New VBA.Collection
-    Dim i As Long
-    For i = 1 To Rows.Count
+    Dim R As Long
+    For R = 1 To RawRows.RecordsCount
+        Dim Fields() As Variant
+        ReDim Fields(RawRows.FieldsCount - 1)
+        Dim C As Long
+        For C = 1 To RawRows.FieldsCount
+            Dim Field As String
+            Field = EscapeCSV(RawRows.GetField(R, C))
+            Fields(C - 1) = Field
+        Next
         Dim Line As String
-        Line = EscapedCSV(Rows.Item(i))
+        Line = VBA.Join(Fields, charComma)
         Result.Add Line
     Next
     Set BuildLine = Result
 End Function
 
-Private Function EscapedCSV(ByVal Part As String) As String
+Private Function EscapeCSV(ByVal Part As String) As String
     If 0 < VBA.InStr(1, Part, charDoubleQuotation) Then
-        EscapedCSV = VBA.Replace(Part, charDoubleQuotation, charEscapeDoubleQuotation)
+        EscapeCSV = VBA.Replace(Part, charDoubleQuotation, charEscapeDoubleQuotation)
     End If
     If 0 < VBA.InStr(1, Part, charComma) Or 0 < VBA.InStr(1, Part, charDoubleQuotation) Or 0 < VBA.InStr(1, Part, vbCrLf) Then
-        EscapedCSV = charDoubleQuotation & Part & charDoubleQuotation
+        EscapeCSV = charDoubleQuotation & Part & charDoubleQuotation
     End If
-End Function
-
-Private Function ExtractKey(ByVal Line As String) As Variant
-    Const DateColumns = 1
-    Dim Parts() As String
-    Parts = VBA.Split(Line, charComma)
-    ExtractKey = Parts(DateColumns)
 End Function
 
 Private Sub WriteAllLines(ByVal FilePath As String, ByVal Lines As VBA.Collection)
@@ -88,9 +88,9 @@ Private Sub WriteAllLines(ByVal FilePath As String, ByVal Lines As VBA.Collectio
     Close #FileNo
 End Sub
 
-Private Function ParsedCSV(ByVal TextData As String) As Inf_RawRows
-    Dim RawRows As Inf_RawRows
-    Set RawRows = New Inf_RawRows
+Private Function ParseCSV(ByVal TextData As String) As Inf_RawRows
+    Dim Result As Inf_RawRows
+    Set Result = New Inf_RawRows
     Dim State As ParserState
     State = OutsideField
     Dim Buffer As String
@@ -106,16 +106,17 @@ Private Function ParsedCSV(ByVal TextData As String) As Inf_RawRows
             NextChar = vbNullString
         End If
         Select Case State
-        Case OutsideField:      TryAddRecord RawRows, State, Buffer, i, Char, NextChar
-        Case InsideField:       AddRecord RawRows, State, Buffer, i, Char, NextChar
+        Case OutsideField:      TryAddRecord Result, State, Buffer, i, Char, NextChar
+        Case InsideField:       AddRecord Result, State, Buffer, i, Char, NextChar
         Case InsideQuotedField: EscapeDoubleQuotation State, Buffer, i, Char, NextChar
         End Select
     Next
     If VBA.Trim$(Buffer) <> vbNullString Then
-        RawRows.AddFiled Buffer
-        RawRows.AddRecord RawRows.Fields
+        Result.AddFiled Buffer
+        Result.AddRecord Result.Fields
+        Result.InitializeFileds
     End If
-    Set ParsedCSV = RawRows
+    Set ParseCSV = Result
 End Function
 
 Private Sub TryAddRecord(ByRef RawRows As Inf_RawRows, ByRef State As ParserState, ByRef Buffer As String, ByRef i As Long, ByRef Char As String, ByRef NextChar As String)

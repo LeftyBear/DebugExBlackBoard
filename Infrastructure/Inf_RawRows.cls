@@ -33,6 +33,10 @@ Public Sub AddRecord(ByVal Fields As VBA.Collection)
     This.Records.Add Fields
 End Sub
 
+Public Sub Remove(ByVal Index As Long)
+    This.Records.Remove Index
+End Sub
+
 Public Property Get Fields() As VBA.Collection
     Set Fields = This.Fields
 End Property

@@ -11,13 +11,13 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public Function Build(ByVal Records As VBA.Collection, ByVal Structure As Dom_SchoolStructure) As VBA.Collection
-    Dim HeaderRow() As String
-    HeaderRow = Inf_StringUtility.GetHeaderRow(Records)
+    Dim Headers As VBA.Collection
+    Set Headers = Records.Item(1)
     Dim Column As App_ClassHourColumnResolver
     Set Column = New App_ClassHourColumnResolver
     Column.AddOn Structure
     Dim MetaMap As Scripting.Dictionary
-    Set MetaMap = Column.Resolve(HeaderRow)
+    Set MetaMap = Column.Resolve(Headers)
     Dim Row As App_ClassHourRowResolver
     Set Row = New App_ClassHourRowResolver
     Set Build = Row.Resolve(Records, MetaMap)

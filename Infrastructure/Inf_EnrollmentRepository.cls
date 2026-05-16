@@ -102,11 +102,11 @@ Private Sub ReplaceRow(ByRef Rows As Inf_EnrollmentRows, ByVal Daily As Dom_Dail
             Dim Entry As Dom_Enrollment
             Set Entry = Daily.Item(j)
             If Entry.ID.ToKey = Row.RawID Then
-                Row.Value = Entry.Value
+                Row.Value = Entry.Value.Value
             ElseIf Entry.HasTransfer Then
-                Row.Transfer = CStr(Entry.Transfer)
+                Row.RawTransfer = CStr(Entry.Transfer.IsTrue)
             ElseIf Entry.HasRemarks Then
-                Row.Remarks = Entry.Remarks
+                Row.Remarks = Entry.Remarks.Value
             End If
         Next
     Next
