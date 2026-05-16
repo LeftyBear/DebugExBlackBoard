@@ -22,12 +22,12 @@ End Sub
 Public Function Create(ByVal Rows As Inf_EnrollmentRows) As Dom_YearlyEnrollment
     Dim Result As Dom_YearlyEnrollment
     Set Result = New Dom_YearlyEnrollment
-    Dim RowList As Scripting.Dictionary
-    Set RowList = GroupByDate(Rows)
+    Dim DateIndex As Scripting.Dictionary
+    Set DateIndex = GroupByDate(Rows)
     Dim Key As Variant
-    For Each Key In RowList.Keys
+    For Each Key In DateIndex.Keys
         Dim Daily As Dom_DailyEnrollment
-        Set Daily = CreateDaily(CDate(Key), RowList.Item(Key))
+        Set Daily = CreateDaily(CDate(Key), DateIndex.Item(Key))
         Result.Add Daily
     Next
     Set Create = Result

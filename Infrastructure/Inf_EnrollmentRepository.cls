@@ -13,7 +13,7 @@ Implements Dom_IEnrollmentRepository
 Private Type Member
     Persistence As Inf_EnrollmentPersistence
     AggList     As Scripting.Dictionary
-    ChangedDate As VBA.Collection
+    DateCache   As VBA.Collection
 End Type
 
 Private This As Member
@@ -24,7 +24,7 @@ End Sub
 
 Private Sub EnsureLoaded(ByVal SchoolYear As Long)
     If Not This.AggList Is Nothing Then Exit Sub
-    Set This.ChangedDate = New VBA.Collection
+    Set This.DateCache = New VBA.Collection
     Dim Rows As Inf_EnrollmentRows
     Set Rows = This.Persistence.ReadAll(SchoolYear)
     Dim Factory As Inf_YearlyEnrollmentFactory
@@ -60,7 +60,7 @@ Private Sub Dom_IEnrollmentRepository_Replace(ByVal TargetDate As Date, ByVal Ne
     SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
     EnsureLoaded SchoolYear
     Set This.AggList.Item(CStr(TargetDate)) = NewAggregate
-    This.ChangedDate.Add TargetDate
+    This.DateCache.Add TargetDate
 End Sub
 
 Private Sub Dom_IEnrollmentRepository_Save(ByVal SchoolYear As Long)
@@ -73,9 +73,9 @@ End Sub
 
 Private Sub ReplaceByDaily(ByRef Rows As Inf_EnrollmentRows)
     Dim i As Long
-    For i = 1 To This.ChangedDate.Count
+    For i = 1 To This.DateCache.Count
         Dim TargetDate As Date
-        TargetDate = This.ChangedDate.Item(i)
+        TargetDate = This.DateCache.Item(i)
         Dim Daily As Dom_DailyEnrollment
         Set Daily = This.AggList.Item(CStr(TargetDate))
         ReplaceRow Rows, Daily

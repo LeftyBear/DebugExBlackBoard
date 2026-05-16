@@ -10,19 +10,37 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Mapper")
 Option Explicit
 
+Private Type Member
+    Factory         As Dom_ValueObjectFactory
+    TypeMapper      As Inf_StreamTypeMapper
+    GradeMapper     As Inf_GradeMapper
+    ClassNoMapper   As Inf_ClassNoMapper
+    GenderMapper    As Inf_GenderMapper
+End Type
+
+Private This As Member
+
+Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
+    Set This.Factory = Factory
+    Set This.TypeMapper = New Inf_StreamTypeMapper
+    Set This.GradeMapper = New Inf_GradeMapper
+    Set This.ClassNoMapper = New Inf_ClassNoMapper
+    Set This.GenderMapper = New Inf_GenderMapper
+    This.TypeMapper.Initialize This.Factory
+    This.GradeMapper.Initialize This.Factory
+    This.ClassNoMapper.Initialize This.Factory
+    This.GenderMapper.Initialize This.Factory
+End Sub
+
 Public Function ToRaw(ByVal ID As Dom_EnrollmentID) As String
-    Dim TypeMapper As New Inf_StreamTypeMapper
     Dim TypeCode As String
-    TypeCode = TypeMapper.ToRaw(ID.StreamType)
-    Dim GradeMapper As New Inf_GradeMapper
+    TypeCode = This.TypeMapper.ToRaw(ID.StreamType)
     Dim Grade As String
-    Grade = GradeMapper.ToRaw(ID.Grade)
-    Dim ClassNoMapper As New Inf_ClassNoMapper
+    Grade = This.GradeMapper.ToRaw(ID.Grade)
     Dim ClassNo As String
-    ClassNo = ClassNoMapper.ToRaw(ID.ClassNo)
-    Dim GenderMapper As New Inf_GenderMapper
+    ClassNo = This.ClassNoMapper.ToRaw(ID.ClassNo)
     Dim Gender As String
-    Gender = GenderMapper.ToRaw(ID.Gender)
+    Gender = This.GenderMapper.ToRaw(ID.Gender)
     If ID.IsMain Then
         ToRaw = Grade & charUnderScore & ClassNo & charUnderScore & Gender
     ElseIf ID.IsSpecial Then
@@ -39,22 +57,17 @@ Public Function ToDomain(ByVal Raw As String) As Dom_EnrollmentID
         Dim Part As String
         Part = Parts(i)
         If 0 < VBA.InStr(1, Part, jpnTokushi) Or 0 < VBA.InStr(1, Part, jpnNen) Then
-            Dim TypeMapper As New Inf_StreamTypeMapper
             Dim StreamType As Dom_StreamType
-            Set StreamType = TypeMapper.ToDomain(Part)
-            Dim GradeMapper As New Inf_GradeMapper
+            Set StreamType = This.TypeMapper.ToDomain(Part)
             Dim Grade As Dom_Grade
-            Set Grade = GradeMapper.ToDomain(Part)
+            Set Grade = This.GradeMapper.ToDomain(Part)
         ElseIf 0 < VBA.InStr(1, Part, jpnKumi) Then
-            Dim ClassNoMapper As New Inf_ClassNoMapper
             Dim ClassNo As Dom_ClassNo
-            Set ClassNo = ClassNoMapper.ToDomain(Part)
+            Set ClassNo = This.ClassNoMapper.ToDomain(Part)
         ElseIf 0 < VBA.InStr(1, Part, jpnOtoko) Or 0 < VBA.InStr(1, Part, jpnOnna) Then
-            Dim GenderMapper As New Inf_GenderMapper
             Dim Gender As Dom_Gender
-            Set Gender = GenderMapper.ToDomain(Part)
+            Set Gender = This.GenderMapper.ToDomain(Part)
         End If
     Next
-    Dim Factory As New Dom_ValueObjectFactory
-    Set ToDomain = Factory.CreateEnrollmentID(StreamType, Grade, ClassNo, Gender)
+    Set ToDomain = This.Factory.CreateEnrollmentID(StreamType, Grade, ClassNo, Gender)
 End Function

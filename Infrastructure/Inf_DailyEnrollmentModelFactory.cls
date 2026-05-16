@@ -10,17 +10,34 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Factory")
 Option Explicit
 
+Private Type Member
+    TypeMapper      As Inf_StreamTypeMapper
+    GradeMapper     As Inf_GradeMapper
+    ClassNoMapper   As Inf_ClassNoMapper
+    GenderMapper    As Inf_GenderMapper
+    TransferMapper  As Inf_TransferMapper
+End Type
+
+Private This As Member
+
+Private Sub Class_Initialize()
+    Set This.TypeMapper = New Inf_StreamTypeMapper
+    Set This.GradeMapper = New Inf_GradeMapper
+    Set This.ClassNoMapper = New Inf_ClassNoMapper
+    Set This.GenderMapper = New Inf_GenderMapper
+    Set This.TransferMapper = New Inf_TransferMapper
+    Dim Factory As Dom_ValueObjectFactory
+    Set Factory = New Dom_ValueObjectFactory
+    This.TypeMapper.Initialize Factory
+    This.GradeMapper.Initialize Factory
+    This.ClassNoMapper.Initialize Factory
+    This.GenderMapper.Initialize Factory
+    This.TransferMapper.Initialize Factory
+End Sub
+
 Public Function Create(ByVal DailyRows As Inf_EnrollmentRows) As App_EnrollmentReadModels
     Dim Result As App_EnrollmentReadModels
     Set Result = New App_EnrollmentReadModels
-    Dim TypeMapper As Inf_StreamTypeMapper
-    Set TypeMapper = New Inf_StreamTypeMapper
-    Dim GradeMapper As Inf_GradeMapper
-    Set GradeMapper = New Inf_GradeMapper
-    Dim ClassNoMapper As Inf_ClassNoMapper
-    Set ClassNoMapper = New Inf_ClassNoMapper
-    Dim GenderMapper As Inf_GenderMapper
-    Set GenderMapper = New Inf_GenderMapper
     Dim i As Long
     For i = 1 To DailyRows.Count
         Dim Row As Inf_EnrollmentRow
@@ -28,83 +45,29 @@ Public Function Create(ByVal DailyRows As Inf_EnrollmentRows) As App_EnrollmentR
         Dim Model As App_EnrollmentReadModel
         Set Model = New App_EnrollmentReadModel
         If Row.RawID <> vbNullString Then
-            Model.TypeCode = TypeMapper.ToDomain(Row.RawID)
-            Model.Grade = ParseGrade(Row.RawID)
-            Model.ClassNo = ParseClassNo(Row.RawID)
-            Model.Gender = ParseGender(Row.RawID)
+            Dim Parts() As String
+            Parts = VBA.Split(Row.RawID, charUnderScore)
+            Dim j As Long
+            For j = 0 To UBound(Parts)
+                Dim Part As String
+                Part = Parts(j)
+                If 0 < VBA.InStr(1, Part, jpnTokushi) Then
+                    Model.TypeCode = This.TypeMapper.ToModel(Part)
+                ElseIf 0 < VBA.InStr(1, Part, jpnNen) Then
+                    Model.Grade = This.GradeMapper.ToModel(Part)
+                ElseIf 0 < VBA.InStr(1, Part, jpnKumi) Then
+                    Model.ClassNo = This.ClassNoMapper.ToModel(Part)
+                ElseIf 0 < VBA.InStr(1, Part, jpnOtoko) Or 0 < VBA.InStr(1, Part, jpnOnna) Then
+                    Model.Gender = This.GenderMapper.ToModel(Part)
+                End If
+            Next
             Model.Value = Row.Value
         ElseIf Row.RawTransfer <> vbNullString Then
-            Model.Transfer = App_BooleanUtility.NormalizeToBoolean(Row.RawTransfer)
+            Model.Transfer = This.TransferMapper.ToModel(Row.RawTransfer)
         ElseIf Row.Remarks <> vbNullString Then
             Model.Remarks = Row.Remarks
         End If
         Result.Add Model
     Next
     Set Create = Result
-End Function
-
-Private Function ParseTypeCode(ByVal RawID As String) As Long
-    Dim Parts() As String
-    Parts = VBA.Split(RawID, charUnderScore)
-    Dim i As Long
-    For i = 0 To UBound(Parts)
-        Dim Part As String
-        Part = Parts(i)
-        If 0 < VBA.InStr(1, Part, jpnNen) Then
-            ParseTypeCode = Dom_StreamTypePolicy.Main: Exit Function
-        ElseIf 0 < VBA.InStr(1, Part, jpnTokushi) Then
-            ParseTypeCode = Dom_StreamTypePolicy.Special: Exit Function
-        End If
-    Next
-End Function
-
-Private Function ParseGrade(ByVal RawID As String) As Long
-    Dim Parts() As String
-    Parts = VBA.Split(RawID, charUnderScore)
-    Dim i As Long
-    For i = 0 To UBound(Parts)
-        Dim Part As String
-        Part = Parts(i)
-        If 0 < VBA.InStr(1, Part, jpnNen) Then
-            Dim Buffer As String
-            Buffer = VBA.Replace(Part, jpnNen, vbNullString)
-            ParseGrade = Inf_NumericUtility.ExtractNumber(Buffer): Exit Function
-        ElseIf 0 < VBA.InStr(1, Part, jpnTokushi) Then
-            ParseGrade = 1: Exit Function
-        End If
-    Next
-End Function
-
-Private Function ParseClassNo(ByVal RawID As String) As Long
-    Dim Parts() As String
-    Parts = VBA.Split(RawID, charUnderScore)
-    Dim i As Long
-    For i = 0 To UBound(Parts)
-        Dim Part As String
-        Part = Parts(i)
-        If 0 < VBA.InStr(1, Part, jpnKumi) Then
-            Dim Buffer As String
-            Buffer = VBA.Replace(Part, jpnKumi, vbNullString)
-            ParseClassNo = Inf_NumericUtility.ExtractNumber(Buffer): Exit Function
-        End If
-    Next
-End Function
-
-Private Function ParseGender(ByVal RawID As String) As Long
-    Dim Parts() As String
-    Parts = VBA.Split(RawID, charUnderScore)
-    Dim i As Long
-    For i = 0 To UBound(Parts)
-        Dim Part As String
-        Part = Parts(i)
-        If 0 < VBA.InStr(1, Part, jpnOtoko) Then
-            ParseGender = Dom_GenderTypePolicy.Male: Exit Function
-        ElseIf 0 < VBA.InStr(1, Part, jpnOnna) Then
-            ParseGender = Dom_GenderTypePolicy.Female: Exit Function
-        End If
-    Next
-End Function
-
-Private Function ParseTransfer(ByVal RawTransfer As String) As Boolean
-    ParseTransfer = App_BooleanUtility.NormalizeToBoolean(RawTransfer)
 End Function

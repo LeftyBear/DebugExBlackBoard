@@ -1,31 +1,88 @@
 Attribute VB_Name = "Inf_VBComponentUtility"
 '@Folder("Infrastructure.Service")
 Option Explicit
-Option Private Module
 
-Private Const CtStdModule As Long = 1
+Private Const CtStdModule   As Long = 1
 Private Const CtClassModule As Long = 2
-Private Const CtMsForm As Long = 3
-Private Const RootPath As String = "C:\Users\biz\Documents\GitHub\DebugExBlackBoard"
+Private Const CtMsForm      As Long = 3
+Private Const RootPath      As String = "C:\Users\biz\Documents\GitHub\DebugExBlackBoard\"
 
-Public Sub ExportAllModules()
-    If Inf_TypePolicy.GetEnvironmentTypeCode = ReleaseMode Then Exit Sub
-    Dim Component As Object
-    For Each Component In ThisWorkbook.VBProject.VBComponents
-        If IsExportTarget(Component) Then ExportComponent RootPath, Component
-    Next
-    CleanupUnusedFiles RootPath
+Public Sub ImportAllModules()
+Attribute ImportAllModules.VB_ProcData.VB_Invoke_Func = "L\n14"
+    TraverseFolders RootPath
 End Sub
 
-Private Sub ExportComponent(ByVal RootPath As String, ByVal Component As Object)
+Private Sub TraverseFolders(ByVal FolderPath As String)
+    Dim FileName As String
+    FileName = VBA.Dir(FolderPath & "*.*")
+    Do While FileName <> vbNullString
+        If FileName <> "." And FileName <> ".." Then ImportComponent FolderPath, FileName
+        FileName = VBA.Dir()
+    Loop
+    Dim FolderName As String
+    FolderName = VBA.Dir(FolderPath, vbDirectory)
+    Do While FolderName <> vbNullString
+        If FolderName <> "." And FolderName <> ".." Then
+            If (VBA.GetAttr(FolderPath & FolderName) And vbDirectory) = vbDirectory Then
+                Dim i As Long
+                i = i + 1
+                Dim SubFolders() As String
+                ReDim Preserve SubFolders(i)
+                SubFolders(i) = FolderPath & FolderName & charBackSlash
+            End If
+        End If
+        FolderName = VBA.Dir()
+    Loop
+    If 0 < i Then
+        For i = 1 To i
+            TraverseFolders SubFolders(i)
+        Next
+    End If
+End Sub
+
+Public Sub ExportAllModules()
+    If Inf_Environment.GetEnvironmentTypeCode = ReleaseMode Then Exit Sub
+    Dim Component As Object
+    For Each Component In ThisWorkbook.VBProject.VBComponents
+        If IsExportTarget(Component) Then ExportComponent Component
+    Next
+    CleanupUnusedComponents RootPath
+End Sub
+
+Private Sub ImportComponent(ByVal FolderPath As String, ByVal FileName As String)
+    If Not IsImportTarget(FileName) Then Exit Sub
+    Dim ComponentName As String
+    ComponentName = VBA.Left$(FileName, VBA.InStrRev(FileName, charPeriod) - 1)
+    Dim Component As Object
+    Set Component = ThisWorkbook.VBProject.VBComponents.Item(ComponentName)
+    If Not Component Is Nothing Then
+        On Error Resume Next
+        ThisWorkbook.VBProject.VBComponents.Remove Component
+        On Error GoTo 0
+        Set Component = Nothing
+        DoEvents
+    End If
+    ThisWorkbook.VBProject.VBComponents.Import FolderPath & FileName
+End Sub
+
+Private Sub ExportComponent(ByVal Component As Object)
     Dim FilePath As String
-    FilePath = ResolveExportPath(RootPath, Component)
-    If 0 < VBA.Len(VBA.Dir(FilePath)) Then VBA.Kill FilePath
+    FilePath = ResolveFilePath(Component)
+    If VBA.Dir(FilePath) <> vbNullString Then VBA.Kill FilePath
     Component.Export FilePath
 End Sub
 
+Private Sub CleanupUnusedComponents(ByVal RootPath As String)
+    CleanupFolder RootPath & "CompositionRoot\"
+    CleanupFolder RootPath & "Policy\"
+    CleanupFolder RootPath & "Domain\"
+    CleanupFolder RootPath & "Application\"
+    CleanupFolder RootPath & "Presentation\"
+    CleanupFolder RootPath & "Infrastructure\"
+End Sub
+
 Private Sub CleanupFolder(ByVal FolderPath As String)
-    If VBA.Len(VBA.Dir(FolderPath, vbDirectory)) = 0 Then Exit Sub
+    If VBA.Dir(FolderPath, vbDirectory) <> vbNullString Then Exit Sub
     Dim FileName As String
     FileName = VBA.Dir(FolderPath & "*.*")
     Do While 0 < VBA.Len(FileName)
@@ -36,22 +93,16 @@ Private Sub CleanupFolder(ByVal FolderPath As String)
     Loop
 End Sub
 
-Private Sub CleanupUnusedFiles(ByVal RootPath As String)
-    CleanupFolder RootPath & "\CompositionRoot\"
-    CleanupFolder RootPath & "\Policy\"
-    CleanupFolder RootPath & "\Domain\"
-    CleanupFolder RootPath & "\Application\"
-    CleanupFolder RootPath & "\Presentation\"
-    CleanupFolder RootPath & "\Infrastructure\"
-End Sub
+Private Function RemoveExtension(ByVal FileName As String) As String
+    RemoveExtension = VBA.Left$(FileName, VBA.InStrRev(FileName, charPeriod) - 1)
+End Function
 
-Private Function HasLayerPrefix(ByVal ModuleName As String) As Boolean
-    If VBA.Left$(ModuleName, 4) = "Dom_" Then HasLayerPrefix = True
-    If VBA.Left$(ModuleName, 4) = "App_" Then HasLayerPrefix = True
-    If VBA.Left$(ModuleName, 4) = "Pre_" Then HasLayerPrefix = True
-    If VBA.Left$(ModuleName, 4) = "Inf_" Then HasLayerPrefix = True
-    If VBA.Left$(ModuleName, 5) = "Compo" Then HasLayerPrefix = True
-    If VBA.Right$(ModuleName, 6) = "Policy" Then HasLayerPrefix = True
+Private Function IsImportTarget(ByVal FileName As String) As Boolean
+    Dim Extension As String
+    Extension = VBA.Mid$(FileName, VBA.InStrRev(FileName, charPeriod))
+    Select Case VBA.LCase$(Extension)
+    Case ".bas", ".cls", ".frm": IsImportTarget = True
+    End Select
 End Function
 
 Private Function IsExportTarget(ByVal Component As Object) As Boolean
@@ -71,38 +122,43 @@ Private Function IsModuleStillExists(ByVal ModuleName As String) As Boolean
     Next
 End Function
 
-Private Function RemoveExtension(ByVal FileName As String) As String
-    RemoveExtension = VBA.Left$(FileName, VBA.InStrRev(FileName, charPeriod) - 1)
+Private Function HasLayerPrefix(ByVal ModuleName As String) As Boolean
+    If VBA.Left$(ModuleName, 4) = "Dom_" Then HasLayerPrefix = True
+    If VBA.Left$(ModuleName, 4) = "App_" Then HasLayerPrefix = True
+    If VBA.Left$(ModuleName, 4) = "Pre_" Then HasLayerPrefix = True
+    If VBA.Left$(ModuleName, 4) = "Inf_" Then HasLayerPrefix = True
+    If VBA.Left$(ModuleName, 5) = "Compo" Then HasLayerPrefix = True
+    If VBA.Right$(ModuleName, 6) = "Policy" Then HasLayerPrefix = True
 End Function
 
-Private Function ResolveExportPath(ByVal RootPath As String, ByVal Component As Object) As String
+Private Function ResolveFilePath(ByVal Component As Object) As String
     Dim LayerFolder As String
-    LayerFolder = ResolveLayerFolder(RootPath, Component.Name)
+    LayerFolder = ResolveLayerFolder(Component.Name)
     Select Case Component.Type
     Case CtStdModule
-        ResolveExportPath = LayerFolder & Component.Name & ".bas"
+        ResolveFilePath = LayerFolder & Component.Name & ".bas"
     Case CtClassModule
-        ResolveExportPath = LayerFolder & Component.Name & ".cls"
+        ResolveFilePath = LayerFolder & Component.Name & ".cls"
     Case CtMsForm
-        ResolveExportPath = LayerFolder & Component.Name & ".frm"
+        ResolveFilePath = LayerFolder & Component.Name & ".frm"
     Case Else
         Err.Raise InfErrUnsupportedComponentType, "Util_VBComponent", "Unsupported component type."
     End Select
 End Function
 
-Private Function ResolveLayerFolder(ByVal RootPath As String, ByVal ModuleName As String) As String
+Private Function ResolveLayerFolder(ByVal ModuleName As String) As String
     If ModuleName Like "Compo*" Then
-        ResolveLayerFolder = RootPath & "\CompositionRoot\"
+        ResolveLayerFolder = RootPath & "CompositionRoot\"
     ElseIf ModuleName Like "Dom_*" Then
-        ResolveLayerFolder = RootPath & "\Domain\"
+        ResolveLayerFolder = RootPath & "Domain\"
     ElseIf ModuleName Like "App_*" Then
-        ResolveLayerFolder = RootPath & "\Application\"
+        ResolveLayerFolder = RootPath & "Application\"
     ElseIf ModuleName Like "Pre_*" Then
-        ResolveLayerFolder = RootPath & "\Presentation\"
+        ResolveLayerFolder = RootPath & "Presentation\"
     ElseIf ModuleName Like "Inf_*" Then
-        ResolveLayerFolder = RootPath & "\Infrastructure\"
+        ResolveLayerFolder = RootPath & "Infrastructure\"
     ElseIf ModuleName Like "*Policy" Then
-        ResolveLayerFolder = RootPath & "\Policy\"
+        ResolveLayerFolder = RootPath & "Policy\"
     Else
         Err.Raise InfErrNotFoundLayerPrefix, "Util_VBComponent", "Layer prefix not found: " & ModuleName
     End If

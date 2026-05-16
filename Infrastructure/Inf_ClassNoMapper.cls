@@ -10,18 +10,34 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Mapper")
 Option Explicit
 
+Private Type Member
+    Factory As Dom_ValueObjectFactory
+End Type
+
+Private This As Member
+
+Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
+    Set This.Factory = Factory
+End Sub
+
 Public Function ToRaw(ByVal ClassNo As Dom_ClassNo) As String
     ToRaw = CStr(ClassNo.Value) & jpnKumi
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_ClassNo
-    Dim ClassNo As Long
     If 0 < VBA.InStr(1, Raw, jpnKumi) Then
-        Dim Buffer As String
-        Buffer = VBA.Replace(Raw, jpnKumi, vbNullString)
-        ClassNo = Inf_NumericUtility.ExtractNumber(Buffer)
+        Dim ClassNo As String
+        ClassNo = GetClassNo(Raw)
     End If
-    Dim Factory As Dom_ValueObjectFactory
-    Set Factory = New Dom_ValueObjectFactory
-    Set ToDomain = Factory.CreateClassNo(ClassNo)
+    Set ToDomain = This.Factory.CreateClassNo(ClassNo)
+End Function
+
+Public Function ToModel(ByVal Raw As String) As Long
+    ToModel = GetClassNo(Raw)
+End Function
+
+Private Function GetClassNo(ByVal RawGrade As String) As Long
+    Dim Buffer As String
+    Buffer = VBA.Replace(RawGrade, jpnKumi, vbNullString)
+    GetClassNo = Inf_NumericUtility.ExtractNumber(Buffer)
 End Function

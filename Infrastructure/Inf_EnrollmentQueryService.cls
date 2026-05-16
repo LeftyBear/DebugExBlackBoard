@@ -56,6 +56,7 @@ Private Function App_IEnrollmentQueryService_GetByDate(ByVal TargetDate As Date)
     If This.DateIndex.Exists(CStr(TargetDate)) Then Exit Function
     Dim DailyRows As Inf_EnrollmentRows
     Set DailyRows = This.DateIndex.Item(CStr(TargetDate))
-    Dim Factory As New Inf_DailyEnrollmentModelFactory
+    Dim Factory As Inf_DailyEnrollmentModelFactory
+    Set Factory = New Inf_DailyEnrollmentModelFactory
     Set App_IEnrollmentQueryService_GetByDate = Factory.Create(DailyRows)
 End Function

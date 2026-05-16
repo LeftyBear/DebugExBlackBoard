@@ -10,6 +10,16 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Mapper")
 Option Explicit
 
+Private Type Member
+    Factory As Dom_ValueObjectFactory
+End Type
+
+Private This As Member
+
+Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
+    Set This.Factory = Factory
+End Sub
+
 Public Function ToRaw(ByVal Gender As Dom_Gender) As String
     If Gender.IsMale Then
         ToRaw = jpnOtoko
@@ -25,7 +35,13 @@ Public Function ToDomain(ByVal Raw As String) As Dom_Gender
     ElseIf 0 < VBA.InStr(1, Raw, jpnOnna) Then
         Gender = Dom_GenderTypePolicy.Female
     End If
-    Dim Factory As Dom_ValueObjectFactory
-    Set Factory = New Dom_ValueObjectFactory
-    Set ToDomain = Factory.CreateGender(Gender)
+    Set ToDomain = This.Factory.CreateGender(Gender)
+End Function
+
+Public Function ToModel(ByVal Raw As String) As String
+    If 0 < VBA.InStr(1, Raw, jpnOtoko) Then
+        ToModel = "Male"
+    ElseIf 0 < VBA.InStr(1, Raw, jpnOnna) Then
+        ToModel = "Female"
+    End If
 End Function

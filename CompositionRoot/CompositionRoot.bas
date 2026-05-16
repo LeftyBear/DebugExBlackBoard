@@ -54,7 +54,7 @@ End Function
 Private Function CreateLogger(ByVal LogFilePath As String) As App_ILogPersistence
     Dim Result As App_ILogPersistence
     Dim TypeCode As Inf_EnvironmentTypePolicy
-    TypeCode = Inf_TypePolicy.GetEnvironmentTypeCode
+    TypeCode = Inf_Environment.GetEnvironmentTypeCode
     If TypeCode = Inf_EnvironmentTypePolicy.ReleaseMode Then
         Dim Persistence As Inf_LogPersistence
         Set Persistence = New Inf_LogPersistence

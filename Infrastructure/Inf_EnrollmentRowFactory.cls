@@ -10,18 +10,22 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Factory")
 Option Explicit
 
-Public Function Create(ByVal Meta As Inf_EnrollmentColumnMeta, ByVal RawText As String) As Inf_EnrollmentRow
-    Dim Row As Inf_EnrollmentRow
-    Set Row = New Inf_EnrollmentRow
-    If Meta.RawDate <> vbNullString Then
-        Row.NormDate = Inf_DateUtility.NormalizeToDate(RawText)
-    ElseIf Meta.RawID <> vbNullString Then
-        Row.RawID = Meta.RawID
-        Row.Value = Inf_NumericUtility.ExtractNumber(RawText)
-    ElseIf Meta.RawTransfer <> vbNullString Then
-        Row.RawTransfer = RawText
-    ElseIf Meta.RawRemarks <> vbNullString Then
-        Row.Remarks = RawText
+Public Function Create(ByVal Column As Inf_EnrollmentColumn, ByVal RawText As String) As Inf_EnrollmentRow
+    Dim Result As Inf_EnrollmentRow
+    Set Result = New Inf_EnrollmentRow
+    If Column.RawDate <> vbNullString Then
+        Result.NormDate = Inf_DateUtility.NormalizeToDate(RawText)
+    ElseIf Column.RawID <> vbNullString Then
+        Dim Parts() As String
+        Parts = VBA.Split(Column.RawID, charUnderScore)
+        If UBound(Parts) = 2 Then
+            Result.RawID = Column.RawID
+            Result.Value = Inf_NumericUtility.ExtractNumber(RawText)
+        End If
+    ElseIf Column.RawTransfer <> vbNullString Then
+        Result.RawTransfer = RawText
+    ElseIf Column.RawRemarks <> vbNullString Then
+        Result.Remarks = RawText
     End If
-    Set Create = Row
+    Set Create = Result
 End Function
