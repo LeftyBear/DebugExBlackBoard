@@ -7,16 +7,44 @@ Private Const CtClassModule As Long = 2
 Private Const CtMsForm      As Long = 3
 Private Const RootPath      As String = "C:\Users\biz\Documents\GitHub\DebugExBlackBoard\"
 
-Public Sub ImportAllModules()
-Attribute ImportAllModules.VB_ProcData.VB_Invoke_Func = "L\n14"
-    TraverseFolders RootPath
+Public Sub BuildAddin()
+    Dim FilePath As String
+    FilePath = ThisWorkbook.Path & charBackSlash & "test_" & VBA.Format$(Now, "yyyymmddhhnnss") & ".xlam"
+    Dim AddinWorkbook As Excel.Workbook
+    Set AddinWorkbook = CreateAddinWorkbook(FilePath)
+    ImportAllComponents AddinWorkbook.VBProject, RootPath
+    Application.DisplayAlerts = False
+    AddinWorkbook.SaveAs FileName:=FilePath, FileFormat:=xlOpenXMLAddIn
+    Application.DisplayAlerts = True
+    AddinWorkbook.Close SaveChanges:=False
 End Sub
 
-Private Sub TraverseFolders(ByVal FolderPath As String)
+Public Sub ExportAllModules()
+    If Inf_Environment.GetEnvironmentTypeCode = ReleaseMode Then Exit Sub
+    Dim Component As Object
+    For Each Component In ThisWorkbook.VBProject.VBComponents
+        If IsExportTarget(Component) Then ExportComponent Component
+    Next
+    CleanupUnusedComponents RootPath
+End Sub
+
+Private Sub RemoveExtraSheets(ByVal Workbook As Excel.Workbook)
+    Application.DisplayAlerts = False
+    Do While 1 < Workbook.Worksheets.Count
+        Workbook.Worksheets(Workbook.Worksheets.Count).Delete
+    Loop
+    Application.DisplayAlerts = True
+End Sub
+
+Private Sub ImportAllComponents(ByVal Project As Object, ByVal FolderPath As String)
+    TraverseFolders Project, FolderPath
+End Sub
+
+Private Sub TraverseFolders(ByVal Project As Object, ByVal FolderPath As String)
     Dim FileName As String
     FileName = VBA.Dir(FolderPath & "*.*")
     Do While FileName <> vbNullString
-        If FileName <> "." And FileName <> ".." Then ImportComponent FolderPath, FileName
+        If FileName <> "." And FileName <> ".." Then ImportComponent Project, FolderPath, FileName
         FileName = VBA.Dir()
     Loop
     Dim FolderName As String
@@ -35,34 +63,14 @@ Private Sub TraverseFolders(ByVal FolderPath As String)
     Loop
     If 0 < i Then
         For i = 1 To i
-            TraverseFolders SubFolders(i)
+            TraverseFolders Project, SubFolders(i)
         Next
     End If
 End Sub
 
-Public Sub ExportAllModules()
-    If Inf_Environment.GetEnvironmentTypeCode = ReleaseMode Then Exit Sub
-    Dim Component As Object
-    For Each Component In ThisWorkbook.VBProject.VBComponents
-        If IsExportTarget(Component) Then ExportComponent Component
-    Next
-    CleanupUnusedComponents RootPath
-End Sub
-
-Private Sub ImportComponent(ByVal FolderPath As String, ByVal FileName As String)
+Private Sub ImportComponent(ByVal Project As Object, ByVal FolderPath As String, ByVal FileName As String)
     If Not IsImportTarget(FileName) Then Exit Sub
-    Dim ComponentName As String
-    ComponentName = VBA.Left$(FileName, VBA.InStrRev(FileName, charPeriod) - 1)
-    Dim Component As Object
-    Set Component = ThisWorkbook.VBProject.VBComponents.Item(ComponentName)
-    If Not Component Is Nothing Then
-        On Error Resume Next
-        ThisWorkbook.VBProject.VBComponents.Remove Component
-        On Error GoTo 0
-        Set Component = Nothing
-        DoEvents
-    End If
-    ThisWorkbook.VBProject.VBComponents.Import FolderPath & FileName
+    Project.VBComponents.Import FolderPath & FileName
 End Sub
 
 Private Sub ExportComponent(ByVal Component As Object)
@@ -92,6 +100,16 @@ Private Sub CleanupFolder(ByVal FolderPath As String)
         FileName = VBA.Dir
     Loop
 End Sub
+
+Private Function CreateAddinWorkbook(ByVal FilePath As String) As Excel.Workbook
+    Dim Workbook As Excel.Workbook
+    Set Workbook = Application.Workbooks.Add(xlWBATWorksheet)
+    RemoveExtraSheets Workbook
+    Application.DisplayAlerts = False
+    Workbook.SaveAs FileName:=FilePath, FileFormat:=xlOpenXMLAddIn
+    Application.DisplayAlerts = True
+    Set CreateAddinWorkbook = Workbook
+End Function
 
 Private Function RemoveExtension(ByVal FileName As String) As String
     RemoveExtension = VBA.Left$(FileName, VBA.InStrRev(FileName, charPeriod) - 1)
@@ -131,21 +149,6 @@ Private Function HasLayerPrefix(ByVal ModuleName As String) As Boolean
     If VBA.Right$(ModuleName, 6) = "Policy" Then HasLayerPrefix = True
 End Function
 
-Private Function ResolveFilePath(ByVal Component As Object) As String
-    Dim LayerFolder As String
-    LayerFolder = ResolveLayerFolder(Component.Name)
-    Select Case Component.Type
-    Case CtStdModule
-        ResolveFilePath = LayerFolder & Component.Name & ".bas"
-    Case CtClassModule
-        ResolveFilePath = LayerFolder & Component.Name & ".cls"
-    Case CtMsForm
-        ResolveFilePath = LayerFolder & Component.Name & ".frm"
-    Case Else
-        Err.Raise InfErrUnsupportedComponentType, "Util_VBComponent", "Unsupported component type."
-    End Select
-End Function
-
 Private Function ResolveLayerFolder(ByVal ModuleName As String) As String
     If ModuleName Like "Compo*" Then
         ResolveLayerFolder = RootPath & "CompositionRoot\"
@@ -162,4 +165,19 @@ Private Function ResolveLayerFolder(ByVal ModuleName As String) As String
     Else
         Err.Raise InfErrNotFoundLayerPrefix, "Util_VBComponent", "Layer prefix not found: " & ModuleName
     End If
+End Function
+
+Private Function ResolveFilePath(ByVal Component As Object) As String
+    Dim LayerFolder As String
+    LayerFolder = ResolveLayerFolder(Component.Name)
+    Select Case Component.Type
+    Case CtStdModule
+        ResolveFilePath = LayerFolder & Component.Name & ".bas"
+    Case CtClassModule
+        ResolveFilePath = LayerFolder & Component.Name & ".cls"
+    Case CtMsForm
+        ResolveFilePath = LayerFolder & Component.Name & ".frm"
+    Case Else
+        Err.Raise InfErrUnsupportedComponentType, "Util_VBComponent", "Unsupported component type."
+    End Select
 End Function

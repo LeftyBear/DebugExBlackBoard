@@ -10,11 +10,5 @@ Attribute VB_Exposed = False
 '@Folder "Application.QueryServiceInterface"
 Option Explicit
 
-Public Function GetByDate(ByVal TargetDate As Date) As VBA.Collection
-End Function
-
-Public Function GetSubjectTotal(ByVal TargetDate As Date, ByVal TypeCode As Dom_StreamType, ByVal Grade As Long, ByVal Subject As String) As Long
-End Function
-
-Public Function GetHoursCount(ByVal TargetDate As Date, ByVal TypeCode As Dom_StreamType, ByVal Grade As Long) As Long
+Public Function GetByDate(ByVal TargetDate As Date) As App_ClassHourReadModels
 End Function

@@ -20,7 +20,7 @@ Public Function Resolve(ByVal Records As VBA.Collection, ByVal MetaMap As Script
         Dim C As Long
         For C = 1 To Rows.Count
             If MetaMap.Exists(C) Then
-                Dim Meta As App_ClassHourColumnMeta
+                Dim Meta As App_ClassHourColumn
                 Set Meta = MetaMap.Item(C)
                 Dim Row As App_ClassHourRow
                 Set Row = CreateRow(Meta, Rows.Item(C))
@@ -31,7 +31,7 @@ Public Function Resolve(ByVal Records As VBA.Collection, ByVal MetaMap As Script
     Set Resolve = Result
 End Function
 
-Private Function CreateRow(ByVal Meta As App_ClassHourColumnMeta, ByVal RawText As String) As App_ClassHourRow
+Private Function CreateRow(ByVal Meta As App_ClassHourColumn, ByVal RawText As String) As App_ClassHourRow
     Dim Row As App_ClassHourRow
     Set Row = New App_ClassHourRow
     If Meta.RawDate <> vbNullString Then

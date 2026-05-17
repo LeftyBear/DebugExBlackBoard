@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Inf_EnrollmentMetaMap"
+Attribute VB_Name = "Inf_ScheduleHeaderMap"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -10,27 +10,27 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.DTO")
 Option Explicit
 Private Type Member
-    MetaList As Scripting.Dictionary
+    MapList As Scripting.Dictionary
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.MetaList = New Scripting.Dictionary
+    Set This.MapList = New Scripting.Dictionary
 End Sub
 
-Public Sub Add(ByVal Key As String, ByVal Meta As Inf_EnrollmentColumnMeta)
-    This.MetaList.Add Key, Meta
+Public Sub Add(ByVal Key As String, ByVal Column As Inf_ScheduleColumn)
+    This.MapList.Add Key, Column
 End Sub
 
 Public Function Count() As Long
-    Count = This.MetaList.Count
+    Count = This.MapList.Count
 End Function
 
 Public Function Exists(ByVal Key As String) As Boolean
-    Exists = This.MetaList.Exists(Key)
+    Exists = This.MapList.Exists(Key)
 End Function
 
-Public Function Item(ByVal Key As String) As Inf_EnrollmentColumnMeta
-    Set Item = This.MetaList.Item(Key)
+Public Function Item(ByVal Key As String) As Inf_ScheduleColumn
+    Set Item = This.MapList.Item(Key)
 End Function

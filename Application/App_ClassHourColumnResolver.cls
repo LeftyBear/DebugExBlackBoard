@@ -27,16 +27,16 @@ Public Function Resolve(ByVal Headers As VBA.Collection) As Scripting.Dictionary
     For C = 1 To Headers.Count
         Dim ColumnName As String
         ColumnName = Headers.Item(C)
-        Dim Meta As App_ClassHourColumnMeta
+        Dim Meta As App_ClassHourColumn
         Set Meta = ParseColumnMeta(ColumnName)
         Map.Add C, Meta
     Next
     Set Resolve = Map
 End Function
 
-Private Function ParseColumnMeta(ByVal ColumnName As String) As App_ClassHourColumnMeta
-    Dim Meta As App_ClassHourColumnMeta
-    Set Meta = New App_ClassHourColumnMeta
+Private Function ParseColumnMeta(ByVal ColumnName As String) As App_ClassHourColumn
+    Dim Meta As App_ClassHourColumn
+    Set Meta = New App_ClassHourColumn
     Dim Parts() As String
     Parts = VBA.Split(ColumnName, charUnderScore)
     Dim i As Long
