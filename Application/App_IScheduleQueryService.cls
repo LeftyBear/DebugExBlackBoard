@@ -10,5 +10,5 @@ Attribute VB_Exposed = False
 '@Folder "Application.QueryServiceInterface"
 Option Explicit
 
-Public Function GetByDate(ByVal TargetDate As Date) As VBA.Collection
+Public Function GetByDate(ByVal TargetDate As Date) As App_ScheduleReadModels
 End Function
