@@ -32,16 +32,18 @@ Private Sub EnsureLoaded()
 End Sub
 
 Private Sub BuildNameIndex(ByVal RawRows As Inf_RawRows)
+    Dim Factory As Inf_SchoolEventRowFactory
+    Set Factory = New Inf_SchoolEventRowFactory
     Dim R As Long
     For R = 2 To RawRows.RecordsCount
         Dim C As Long
         For C = 1 To RawRows.FieldsCount
-            If RawRows.GetField(1, C) = jpnIbentoMei Then
-                Dim Entry As Dom_SchoolEvent
-                Set Entry = New Dom_SchoolEvent
-                Entry.Initialize RawRows.GetField(R, C)
-                This.NameIndex.Add Entry.Value, Entry
-            End If
+            Dim Row as Inf_SchoolEventRow
+            Set Row = Factory.Create(RawRows.GetField(1, C),RawRows.GetField(R, C))
+            Dim Entry As Dom_SchoolEvent
+            Set Entry = New Dom_SchoolEvent
+            Entry.Initialize Row.Name
+            This.NameIndex.Add Entry.Value, Entry
         Next
     Next
 End Sub

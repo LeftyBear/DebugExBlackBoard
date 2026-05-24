@@ -10,10 +10,12 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Factory")
 Option Explicit
 
+Private Const EVENT_NAME As String = "ƒCƒxƒ“ƒg–¼"
+
 Public Function Create(ByVal Header As String, ByVal RawText As String) As Inf_SchoolEventRow
     Dim Result As Inf_SchoolEventRow
     Set Result = New Inf_SchoolEventRow
-    If Header = jpnIbentoMei Then
+    If Header = EVENT_NAME Then
         Result.Name = RawText
     End If
     Set Create = Result

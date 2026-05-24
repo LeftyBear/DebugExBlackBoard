@@ -30,16 +30,15 @@ Private Sub EnsureLoaded()
 End Sub
 
 Private Sub BuildRow(ByVal RawRows As Inf_RawRows)
+    Dim Factory As Inf_SpecialStreamRowFactory
+    Set Factory = New Inf_SpecialStreamRowFactory
     Dim R As Long
     For R = 2 To RawRows.RecordsCount
         Dim C As Long
         For C = 1 To RawRows.FieldsCount
-            If RawRows.GetField(1, C) = jpnTokushiMei Then
-                Dim Row As Inf_SpecialStreamRow
-                Set Row = New Inf_SpecialStreamRow
-                Row.Name = RawRows.GetField(R, C)
-                This.Rows.Add Row
-            End If
+            Dim Row As Inf_SpecialStreamRow
+            Set Row = Factory.Create(RawRows.GetField(1, C), RawRows.GetField(R, C))
+            This.Rows.Add Row
         Next
     Next
 End Sub
