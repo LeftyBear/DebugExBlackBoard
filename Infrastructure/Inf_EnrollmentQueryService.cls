@@ -20,11 +20,11 @@ Private Const DateColumns As Long = 1
 
 Public Sub Initialize(ByVal Persistence As Inf_EnrollmentPersistence)
     Set This.Persistence = Persistence
-    Set This.DateIndex = New Scripting.Dictionary
 End Sub
 
 Private Sub EnsureLoaded(ByVal TargetDate As Date)
     If This.DateIndex Is Nothing Then
+        Set This.DateIndex = New Scripting.Dictionary
         BuildDateIndex TargetDate
     Else
         If Not This.DateIndex.Exists(CStr(TargetDate)) Then

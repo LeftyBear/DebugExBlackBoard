@@ -24,25 +24,11 @@ Public Function CreateClassHourID(ByVal ClassHourType As Dom_ClassHourType, ByVa
     Set CreateClassHourID = VO
 End Function
 
-Public Function CreateClassHourFilterCondition(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade) As App_ClassHourFilterCondition
-    Dim VO As App_ClassHourFilterCondition
-    Set VO = New App_ClassHourFilterCondition
-    VO.Initialize ClassHourType, Subject, Grade
-    Set CreateClassHourFilterCondition = VO
-End Function
-
 Public Function CreateTimeTableID(ByVal ClassHourType As Dom_ClassHourType, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_TimeTableID
     Dim VO As Dom_TimeTableID
     Set VO = New Dom_TimeTableID
     VO.Initialize ClassHourType, Period, Grade
     Set CreateTimeTableID = VO
-End Function
-
-Public Function CreateTimeTableFilterCondition(ByVal ClassHourType As Dom_ClassHourType, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As App_TimeTableFilterCondition
-    Dim VO As App_TimeTableFilterCondition
-    Set VO = New App_TimeTableFilterCondition
-    VO.Initialize ClassHourType, Period, Grade
-    Set CreateTimeTableFilterCondition = VO
 End Function
 
 Public Function CreateClassHourType(ByVal Value As Long) As Dom_ClassHourType
@@ -73,18 +59,25 @@ Public Function CreateTimeTableValue(ByVal Value As Long) As Dom_TimeTableValue
     Set CreateTimeTableValue = VO
 End Function
 
-Public Function CreateSubject(ByVal Value As String) As Dom_SubjectNew
-    Dim VO As Dom_SubjectNew
-    Set VO = New Dom_SubjectNew
+Public Function CreateSubjectName(ByVal Value As String) As Dom_SubjectName
+    Dim VO As Dom_SubjectName
+    Set VO = New Dom_SubjectName
     VO.Initialize Value
-    Set CreateSubject = VO
+    Set CreateSubjectName = VO
 End Function
 
-Public Function CreateSubjectID(ByVal Value As String) As Dom_SubjectID
-    Dim VO As Dom_SubjectID
-    Set VO = New Dom_SubjectID
+Public Function CreateSubjectTargetGrade(ByVal Value As String) As Dom_SubjectTargetGrade
+    Dim VO As Dom_SubjectTargetGrade
+    Set VO = New Dom_SubjectTargetGrade
     VO.Initialize Value
-    Set CreateSubjectID = VO
+    Set CreateSubjectTargetGrade = VO
+End Function
+
+Public Function CreateSubjectMark(ByVal Value As String) As Dom_SubjectMark
+    Dim VO As Dom_SubjectMark
+    Set VO = New Dom_SubjectMark
+    VO.Initialize Value
+    Set CreateSubjectMark = VO
 End Function
 
 Public Function CreateEnrollmentID(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender) As Dom_EnrollmentID
@@ -92,13 +85,6 @@ Public Function CreateEnrollmentID(ByVal StreamType As Dom_StreamType, ByVal Gra
     Set VO = New Dom_EnrollmentID
     VO.Initialize StreamType, Grade, ClassNo, Gender
     Set CreateEnrollmentID = VO
-End Function
-
-Public Function CreateEnrollmentFilterCondition(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender) As App_EnrollmentIDCondition
-    Dim VO As App_EnrollmentIDCondition
-    Set VO = New App_EnrollmentIDCondition
-    VO.Initialize StreamType, Grade, ClassNo, Gender
-    Set CreateEnrollmentFilterCondition = VO
 End Function
 
 Public Function CreateStreamType(ByVal Value As Long) As Dom_StreamType
@@ -164,9 +150,9 @@ Public Function CreateScheduleValue(ByVal Value As String) As Dom_ScheduleValue
     Set CreateScheduleValue = VO
 End Function
 
-Public Function CreateUpperValue(ByVal MainStreamGrade As Long, ByVal MainStreamClass As Long, ByVal Period As Long) As Dom_UpperValue
-    Dim VO As Dom_UpperValue
-    Set VO = New Dom_UpperValue
-    VO.Initialize MainStreamGrade, MainStreamClass, Period
-    Set CreateUpperValue = VO
+Public Function CreateMainStream(ByVal UpperGrade As Long, ByVal UpperClassNo As Long, ByVal Period As Long) As Dom_MainStreamValue
+    Dim VO As Dom_MainStreamValue
+    Set VO = New Dom_MainStreamValue
+    VO.Initialize UpperGrade, UpperClassNo
+    Set CreateMainStream = VO
 End Function

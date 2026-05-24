@@ -10,6 +10,16 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Mapper")
 Option Explicit
 
+Private Type Member
+    Factory As Dom_ValueObjectFactory
+End Type
+
+Private This As Member
+
+Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
+    Set This.Factory = Factory
+End Sub
+
 Public Function ToRaw(ByVal TypeCode As Dom_StreamType) As String
     If TypeCode.IsMain Then
         ToRaw = vbNullString
@@ -19,13 +29,19 @@ Public Function ToRaw(ByVal TypeCode As Dom_StreamType) As String
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_StreamType
-    Dim TypeCode As Long
     If 0 < VBA.InStr(1, Raw, jpnNen) Then
+        Dim TypeCode As Long
         TypeCode = Dom_StreamTypePolicy.Main
     ElseIf 0 < VBA.InStr(1, Raw, jpnTokushi) Then
         TypeCode = Dom_StreamTypePolicy.Special
     End If
-    Dim Factory As Dom_ValueObjectFactory
-    Set Factory = New Dom_ValueObjectFactory
-    Set ToDomain = Factory.CreateStreamType(TypeCode)
+    Set ToDomain = This.Factory.CreateStreamType(TypeCode)
+End Function
+
+Public Function ToModel(ByVal Raw As String) As String
+    If 0 < VBA.InStr(1, Raw, jpnNen) Then
+        ToModel = "Main"
+    ElseIf 0 < VBA.InStr(1, Raw, jpnTokushi) Then
+        ToModel = "Special"
+    End If
 End Function

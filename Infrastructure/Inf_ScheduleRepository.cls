@@ -12,50 +12,109 @@ Option Explicit
 Implements Dom_IScheduleRepository
 Private Type Member
     Persistence As Inf_SchedulePersistence
-    AggList     As Scripting.Dictionary
+    DateIndex   As Scripting.Dictionary
+    DateCache   As VBA.Collection
 End Type
 
 Private This As Member
 
 Public Sub Initialize(ByVal Persistence As Inf_SchedulePersistence)
     Set This.Persistence = Persistence
-    Set This.AggList = New Scripting.Dictionary
 End Sub
 
-Private Sub Dom_IScheduleRepository_Add(ByVal Aggregate As Dom_DailySchedule)
-    This.AggList.Add Aggregate.DateID.ToKey, Aggregate
+Private Sub EnsureLoaded(ByVal SchoolYear As Long)
+    If Not This.DateIndex Is Nothing Then Exit Sub
+    Set This.DateIndex = New Scripting.Dictionary
+    Set This.DateCache = New VBA.Collection
+    Dim Rows As Inf_ScheduleRows
+    Set Rows = This.Persistence.ReadAll(SchoolYear)
+    Dim Factory As New Inf_YearlyScheduleFactory
+    Dim Yearly As Dom_YearlySchedule
+    Set Yearly = Factory.Create(Rows)
+    BuildDateIndex Yearly
 End Sub
+
+Private Sub BuildDateIndex(ByVal Yearly As Dom_YearlySchedule)
+    Dim i As Long
+    For i = 1 To Yearly.Count
+        Dim Daily As Dom_DailySchedule
+        Set Daily = Yearly.Item(i)
+        This.DateIndex.Add Daily.DateID.ToKey, Daily
+    Next
+End Sub
+
+Private Sub ReplaceRow(ByRef Rows As Inf_ScheduleRows)
+    Dim RowCount As Long
+    RowCount = GetDailyRowCount(Rows)
+    Dim i As Long
+    For i = 1 To This.DateCache.Count
+        Dim TargetDate As Date
+        TargetDate = This.DateCache.Item(i)
+        Dim DateIndex As Long
+        DateIndex = Inf_DateUtility.DiffApr1st(TargetDate)
+        Dim BeginIndex As Long
+        BeginIndex = (DateIndex - 1) * RowCount + 1
+        Dim EndIndex As Long
+        EndIndex = BeginIndex + RowCount - 1
+        Dim Daily As Dom_DailySchedule
+        Set Daily = This.DateIndex.Item(CStr(TargetDate))
+        ReplaceRowOfDaily BeginIndex, EndIndex, Rows, Daily
+    Next
+End Sub
+
+Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByRef Rows As Inf_ScheduleRows, ByVal Daily As Dom_DailySchedule)
+    Dim i As Long
+    For i = BeginIndex To EndIndex
+        Dim Row As Inf_ScheduleRow
+        Set Row = Rows.Item(i)
+        ReplaceRowOfDailySchedule Row, Daily
+    Next
+End Sub
+
+Private Sub ReplaceRowOfDailySchedule(ByRef Row As Inf_ScheduleRow, ByVal Daily As Dom_DailySchedule)
+    Dim Mapper As Inf_ScheduleIDMapper
+    Set Mapper = New Inf_ScheduleIDMapper
+    Dim i As Long
+    For i = 1 To Daily.Count
+        Dim Entry As Dom_Schedule
+        Set Entry = Daily.Item(i)
+        If Row.RawID = Mapper.ToRaw(Entry.ID) Then
+            Row.Value = Entry.Value.Value
+        End If
+    Next
+End Sub
+
+Private Function GetDailyRowCount(ByVal Rows As Inf_ScheduleRows) As Long
+    Dim CurrentDate As Date
+    CurrentDate = Rows.Item(1).NormDate
+    Dim i As Long
+    For i = 1 To Rows.Count
+        If Rows.Item(i).NormDate <> CurrentDate Then Exit For
+    Next
+    GetDailyRowCount = i - 1
+End Function
 
 Private Function Dom_IScheduleRepository_FindByDate(ByVal TargetDate As Date) As Dom_DailySchedule
-    If This.AggList.Exists(CStr(TargetDate)) Then
-        Set Dom_IScheduleRepository_FindByDate = This.AggList.Item(CStr(TargetDate))
+    Dim SchoolYear As Long
+    SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
+    EnsureLoaded SchoolYear
+    If This.DateIndex.Exists(CStr(TargetDate)) Then
+        Set Dom_IScheduleRepository_FindByDate = This.DateIndex.Item(CStr(TargetDate))
     End If
 End Function
 
-Private Function Dom_IScheduleRepository_GetAll() As VBA.Collection
-    Dim Result As VBA.Collection
-    Set Result = New VBA.Collection
-    Dim Aggregate As Dom_DailySchedule
-    For Each Aggregate In This.AggList.Items
-        Result.Add Aggregate
-    Next
-    Set Dom_IScheduleRepository_GetAll = Result
-End Function
+Private Sub Dom_IScheduleRepository_Replace(ByVal TargetDate As Date, ByVal NewAggregate As Dom_DailySchedule)
+    Dim SchoolYear As Long
+    SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
+    EnsureLoaded SchoolYear
+    Set This.DateIndex.Item(CStr(TargetDate)) = NewAggregate
+    This.DateCache.Add TargetDate
+End Sub
 
-Private Function Dom_IScheduleRepository_ReadAll(ByVal SchoolYear As Long) As VBA.Collection
-    Set Dom_IScheduleRepository_ReadAll = This.Persistence.ReadAll(SchoolYear)
-End Function
-
-Private Function Dom_IScheduleRepository_Replace(ByVal NewAggregate As Dom_DailySchedule) As VBA.Collection
-    Dim Rows As VBA.Collection
-    Set Rows = Dom_IScheduleRepository_GetAll
-    Dim i As Long
-    For i = 1 To Rows.Count
-        Dim OldAggregate As Dom_DailySchedule
-        Set OldAggregate = Rows.Item(i)
-        If OldAggregate.DateID.Equals(NewAggregate.DateID) Then
-            Set Rows.Item(i) = NewAggregate
-        End If
-    Next
-    Set Dom_IScheduleRepository_Replace = Rows
-End Function
+Private Sub Dom_IScheduleRepository_Save(ByVal SchoolYear As Long)
+    EnsureLoaded SchoolYear
+    Dim Rows As Inf_ScheduleRows
+    Set Rows = This.Persistence.ReadAll(SchoolYear)
+    ReplaceRow Rows
+    This.Persistence.WriteAll SchoolYear, Rows
+End Sub

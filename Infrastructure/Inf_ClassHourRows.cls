@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Inf_EnrollmentRows"
+Attribute VB_Name = "Inf_ClassHourRows"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -19,7 +19,7 @@ Private Sub Class_Initialize()
     Set This.Rows = New VBA.Collection
 End Sub
 
-Public Sub Add(ByVal Row As Inf_EnrollmentRow)
+Public Sub Add(ByVal Row As Inf_ClassHourRow)
     This.Rows.Add Row
 End Sub
 
@@ -27,6 +27,6 @@ Public Function Count() As Long
     Count = This.Rows.Count
 End Function
 
-Public Function Item(ByVal Index As Long) As Inf_EnrollmentRow
+Public Function Item(ByVal Index As Long) As Inf_ClassHourRow
     Set Item = This.Rows.Item(Index)
 End Function

@@ -11,64 +11,127 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements Dom_IClassHourRepository
 Private Type Member
-    AggregateList As Scripting.Dictionary
+    Persistence As Inf_ClassHourPersistence
+    DateIndex   As Scripting.Dictionary
+    DateCache   As VBA.Collection
 End Type
 
 Private This As Member
 
-Private Sub Class_Initialize()
-    Set This.AggregateList = New Scripting.Dictionary
+Public Sub Initialize(ByVal Persistence As Inf_ClassHourPersistence)
+    Set This.Persistence = Persistence
 End Sub
 
-Private Function BuiledFilePath(ByVal SchoolYear As Long) As String
-    Dim Provider As Inf_WorkbookPathProvider
-    Set Provider = New Inf_WorkbookPathProvider
-    Dim BaseFolderPath As String
-    BaseFolderPath = Provider.GetBaseFolderPath
-    Dim FileName As String
-    FileName = "ClassHour" & CStr(SchoolYear) & ".csv"
-    BuiledFilePath = Inf_StringUtility.JoinByBackSlash(BaseFolderPath, "root", "data", "schoolyears", CStr(SchoolYear), FileName)
+Private Sub EnsureLoaded(ByVal SchoolYear As Long)
+    If Not This.DateIndex Is Nothing Then Exit Sub
+    Set This.DateIndex = New Scripting.Dictionary
+    Set This.DateCache = New VBA.Collection
+    Dim Rows As Inf_ClassHourRows
+    Set Rows = This.Persistence.ReadAll(SchoolYear)
+    Dim Factory As New Inf_YearlyClassHourFactory
+    Dim Yearly As Dom_YearlyClassHour
+    Set Yearly = Factory.Create(Rows)
+    BuildDateIndex Yearly
+End Sub
+
+Private Sub BuildDateIndex(ByVal Yearly As Dom_YearlyClassHour)
+    Dim i As Long
+    For i = 1 To Yearly.Count
+        Dim Daily As Dom_DailyClassHour
+        Set Daily = Yearly.Item(i)
+        This.DateIndex.Add Daily.DateID.ToKey, Daily
+    Next
+End Sub
+
+Private Sub ReplaceRow(ByRef Rows As Inf_ClassHourRows)
+    Dim RowCount As Long
+    RowCount = GetDailyRowCount(Rows)
+    Dim i As Long
+    For i = 1 To This.DateCache.Count
+        Dim TargetDate As Date
+        TargetDate = This.DateCache.Item(i)
+        Dim DateIndex As Long
+        DateIndex = Inf_DateUtility.DiffApr1st(TargetDate)
+        Dim BeginIndex As Long
+        BeginIndex = (DateIndex - 1) * RowCount + 1
+        Dim EndIndex As Long
+        EndIndex = BeginIndex + RowCount - 1
+        Dim Daily As Dom_DailyClassHour
+        Set Daily = This.DateIndex.Item(CStr(TargetDate))
+        ReplaceRowOfDaily BeginIndex, EndIndex, Rows, Daily
+    Next
+End Sub
+
+Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByRef Rows As Inf_ClassHourRows, ByVal Daily As Dom_DailyClassHour)
+    Dim i As Long
+    For i = BeginIndex To EndIndex
+        Dim Row As Inf_ClassHourRow
+        Set Row = Rows.Item(i)
+        If 0 < VBA.InStr(1, Row.RawID, jpnKouji) Then
+            ReplaceRowOfDailyTimeTable Row, Daily
+        Else
+            ReplaceRowOfDailyClassHour Row, Daily
+        End If
+    Next
+End Sub
+
+Private Sub ReplaceRowOfDailyTimeTable(ByRef Row As Inf_ClassHourRow, ByVal Daily As Dom_DailyClassHour)
+    Dim Mapper As Inf_TimeTableIDMapper
+    Set Mapper = New Inf_TimeTableIDMapper
+    Dim i As Long
+    For i = 1 To Daily.TimeTablesCount
+        Dim Entry As Dom_TimeTable
+        Set Entry = Daily.TimeTablesItem(i)
+        If Row.RawID = Mapper.ToRaw(Entry.ID) Then
+            Row.Value = Entry.Value.Value
+        End If
+    Next
+End Sub
+
+Private Sub ReplaceRowOfDailyClassHour(ByRef Row As Inf_ClassHourRow, ByVal Daily As Dom_DailyClassHour)
+    Dim Mapper As Inf_ClassHourIDMapper
+    Set Mapper = New Inf_ClassHourIDMapper
+    Dim i As Long
+    For i = 1 To Daily.ClassHoursCount
+        Dim Entry As Dom_ClassHour
+        Set Entry = Daily.ClassHoursItem(i)
+        If Row.RawID = Mapper.ToRaw(Entry.ID) Then
+            Row.Value = Entry.Value.Value
+        End If
+    Next
+End Sub
+
+Private Function GetDailyRowCount(ByVal Rows As Inf_ClassHourRows) As Long
+    Dim CurrentDate As Date
+    CurrentDate = Rows.Item(1).NormDate
+    Dim i As Long
+    For i = 1 To Rows.Count
+        If Rows.Item(i).NormDate <> CurrentDate Then Exit For
+    Next
+    GetDailyRowCount = i - 1
 End Function
 
-Private Sub Dom_IClassHourRepository_Add(ByVal Aggregate As Dom_DailyClassHour)
-    This.AggregateList.Add Aggregate.DateID.ToKey, Aggregate
-End Sub
-
 Private Function Dom_IClassHourRepository_FindByDate(ByVal TargetDate As Date) As Dom_DailyClassHour
-    If This.AggregateList.Exists(CStr(TargetDate)) Then
-        Set Dom_IClassHourRepository_FindByDate = This.AggregateList.Aggregate(CStr(TargetDate))
+    Dim SchoolYear As Long
+    SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
+    EnsureLoaded SchoolYear
+    If This.DateIndex.Exists(CStr(TargetDate)) Then
+        Set Dom_IClassHourRepository_FindByDate = This.DateIndex.Item(CStr(TargetDate))
     End If
 End Function
 
-Private Function Dom_IClassHourRepository_GetAll() As VBA.Collection
-    Dim Result As VBA.Collection
-    Set Result = New VBA.Collection
-    Dim Aggregate As Dom_DailyClassHour
-    For Each Aggregate In This.AggregateList.Items
-        Result.Add Aggregate
-    Next
-    Set Dom_IClassHourRepository_GetAll = Result
-End Function
+Private Sub Dom_IClassHourRepository_Replace(ByVal TargetDate As Date, ByVal NewAggregate As Dom_DailyClassHour)
+    Dim SchoolYear As Long
+    SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
+    EnsureLoaded SchoolYear
+    Set This.DateIndex.Item(CStr(TargetDate)) = NewAggregate
+    This.DateCache.Add TargetDate
+End Sub
 
-Private Function Dom_IClassHourRepository_ReadAll(ByVal SchoolYear As Long) As VBA.Collection
-    Dim FilePath As String
-    FilePath = BuiledFilePath(SchoolYear)
-    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function
-    Dim Persistence As Inf_CSVPersistence
-    Set Persistence = New Inf_CSVPersistence
-    Set Dom_IClassHourRepository_ReadAll = Persistence.ReadAll(FilePath)
-End Function
-
-Private Function Dom_IClassHourRepository_Replace(ByVal NewAggregate As Dom_DailyClassHour) As VBA.Collection
-    Dim Rows As VBA.Collection
-    Set Rows = Dom_IClassHourRepository_GetAll
-    Dim i As Long
-    For i = 1 To Rows.Count
-        Dim OldAggregate As Dom_DailyClassHour
-        Set OldAggregate = Rows.Item(i)
-        If OldAggregate.DateID.Equals(NewAggregate.DateID) Then
-            Set Rows.Item(i) = NewAggregate
-        End If
-    Next
-    Set Dom_IClassHourRepository_Replace = Rows
-End Function
+Private Sub Dom_IClassHourRepository_Save(ByVal SchoolYear As Long)
+    EnsureLoaded SchoolYear
+    Dim Rows As Inf_ClassHourRows
+    Set Rows = This.Persistence.ReadAll(SchoolYear)
+    ReplaceRow Rows
+    This.Persistence.WriteAll SchoolYear, Rows
+End Sub

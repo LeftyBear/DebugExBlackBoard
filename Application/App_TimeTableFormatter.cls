@@ -31,7 +31,7 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregat
     Dim TimeTable() As String
     TimeTable = ToTimeTable(TypeCode, Aggregate, Structure)
     Dim Total() As Long
-    ReDim Total(Structure.UpperValue.Item.MainStreamGradeCount)
+    ReDim Total(Structure.MainStream.Item.UpperGrade)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(TimeTable, 1) + 1, 1 To UBound(TimeTable, 2) + 1)
     Dim C As Long
@@ -46,7 +46,7 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregat
     For R = 2 To UBound(TimeTable, 1) + 1
         For C = 1 To UBound(TimeTable, 2) + 1
             If R < UBound(TimeTable, 1) + 1 And C = 1 Then
-                OutputTable(R, C) = Structure.Subject.FindByIndex(R - 1).Name
+'                OutputTable(R, C) = Structure.Subject.FindByIndex(R - 1).Name
             ElseIf R < UBound(TimeTable, 1) + 1 Then
                 OutputTable(R, C) = TimeTable(R - 1, C - 1)
                 If OutputTable(R, C) <> vbNullString Then Total(C - 1) = Total(C - 1) + 1
@@ -61,26 +61,27 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregat
 End Function
 
 Private Function ToTimeTable(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_DailyClassHour, ByVal Structure As Dom_SchoolStructure) As String()
-    Dim MainStreamGradeCount As Long
-    MainStreamGradeCount = Structure.UpperValue.Item.MainStreamGradeCount
+    Dim UpperGrade As Long
+    UpperGrade = Structure.MainStream.Item.UpperGrade
     Dim PeriodCount As Long
-    PeriodCount = Structure.UpperValue.Item.PeriodCount
+'    PeriodCount = Structure.UpperValue.Item.PeriodCount
+    PeriodCount = 1
     Dim Table() As String
-    ReDim Table(1 To PeriodCount, 1 To MainStreamGradeCount)
+    ReDim Table(1 To PeriodCount, 1 To UpperGrade)
     If Aggregate Is Nothing Then GoTo Finalize
     Dim ClassHourType As Dom_ClassHourType
     Set ClassHourType = This.Factory.CreateClassHourType(TypeCode)
     Dim G As Long
-    For G = 1 To MainStreamGradeCount
+    For G = 1 To UpperGrade
         Dim Grade As Dom_Grade
         Set Grade = This.Factory.CreateGrade(G)
         Dim P As Long
         For P = 1 To PeriodCount
             Dim Period As Dom_Period
             Set Period = This.Factory.CreatePeriod(P)
-            Dim Condition As App_TimeTableFilterCondition
-            Set Condition = This.Factory.CreateTimeTableFilterCondition(ClassHourType, Period, Grade)
-            Table(P, G) = This.Counter.CountHours(Aggregate, Condition)
+'            Dim Condition As App_TimeTableFilterCondition
+'            Set Condition = This.Factory.CreateTimeTableFilterCondition(ClassHourType, Period, Grade)
+'            Table(P, G) = This.Counter.CountHours(Aggregate, Condition)
         Next
     Next
 Finalize:

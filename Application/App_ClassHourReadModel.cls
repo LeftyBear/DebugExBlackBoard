@@ -12,9 +12,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public TypeCode As String
+Public Subject  As String
+Public Period   As Long
 Public Grade    As Long
-Public ClassNo  As Long
-Public Gender   As String
 Public Value    As Long
-Public Transfer As String
-Public Remarks  As String

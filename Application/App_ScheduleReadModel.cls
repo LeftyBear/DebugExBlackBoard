@@ -11,10 +11,5 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.DTO")
 Option Explicit
 
-Public TypeCode As String
-Public Grade    As Long
-Public ClassNo  As Long
-Public Gender   As String
-Public Value    As Long
-Public Transfer As String
-Public Remarks  As String
+Public RawID    As String
+Public Value    As String

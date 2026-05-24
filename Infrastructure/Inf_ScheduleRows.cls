@@ -23,6 +23,10 @@ Public Sub Add(ByVal Row As Inf_ScheduleRow)
     This.Rows.Add Row
 End Sub
 
+Public Sub Remove(ByVal Index As Long)
+    This.Rows.Remove Index
+End Sub
+
 Public Function Count() As Long
     Count = This.Rows.Count
 End Function

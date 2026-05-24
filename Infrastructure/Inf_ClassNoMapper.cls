@@ -36,8 +36,8 @@ Public Function ToModel(ByVal Raw As String) As Long
     ToModel = GetClassNo(Raw)
 End Function
 
-Private Function GetClassNo(ByVal RawGrade As String) As Long
+Private Function GetClassNo(ByVal Raw As String) As Long
     Dim Buffer As String
-    Buffer = VBA.Replace(RawGrade, jpnKumi, vbNullString)
+    Buffer = VBA.Replace(Raw, jpnKumi, vbNullString)
     GetClassNo = Inf_NumericUtility.ExtractNumber(Buffer)
 End Function

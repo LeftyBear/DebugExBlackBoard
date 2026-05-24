@@ -11,39 +11,97 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    CSV As Inf_CSVPersistence
+    CSV         As Inf_CSVPersistence
+    Provider    As Inf_WorkbookPathProvider
 End Type
 
 Private This As Member
 
 Public Sub Initialize(ByVal CSV As Inf_CSVPersistence)
     Set This.CSV = CSV
+    Set This.Provider = New Inf_WorkbookPathProvider
 End Sub
 
-Public Function ReadAll(ByVal SchoolYear As Long) As VBA.Collection
+Public Function ReadAll(ByVal SchoolYear As Long) As Inf_ClassHourRows
     Dim FilePath As String
-    FilePath = BuiledFilePath(SchoolYear)
-    Set ReadAll = This.CSV.ReadAll(FilePath)
+    FilePath = BuildFilePath(SchoolYear)
+    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function
+    Dim RawRows As Inf_RawRows
+    Set RawRows = This.CSV.ReadAll(FilePath)
+    Dim Factory As Inf_ClassHourRowsFactory
+    Set Factory = New Inf_ClassHourRowsFactory
+    Set ReadAll = Factory.Create(RawRows)
 End Function
 
-Public Sub WriteAll(ByVal SchoolYear As Long, ByVal Rows As VBA.Collection)
+Public Sub WriteAll(ByVal SchoolYear As Long, ByVal Rows As Inf_ClassHourRows)
     Dim FilePath As String
-    FilePath = BuiledFilePath(SchoolYear)
-    This.CSV.WriteAll FilePath, Rows
+    FilePath = BuildFilePath(SchoolYear)
+    Dim Header As VBA.Collection
+    Set Header = GetHeader(FilePath)
+    Dim Body As VBA.Collection
+    Set Body = GroupByDate(Rows)
+    Dim RawRows As Inf_RawRows
+    Set RawRows = BuildRows(Header, Body)
+    This.CSV.WriteAll FilePath, RawRows
 End Sub
 
 Public Sub Delete(ByVal SchoolYear As Long, ByVal Key As String)
     Dim FilePath As String
-    FilePath = BuiledFilePath(SchoolYear)
+    FilePath = BuildFilePath(SchoolYear)
     This.CSV.Delete FilePath, Key
 End Sub
 
-Private Function BuiledFilePath(ByVal SchoolYear As Long) As String
-    Dim Provider As Inf_WorkbookPathProvider
-    Set Provider = New Inf_WorkbookPathProvider
+Private Function GetHeader(ByVal FilePath As String) As VBA.Collection
+    Dim RawRows As Inf_RawRows
+    Set RawRows = This.CSV.ReadAll(FilePath)
+    Set GetHeader = RawRows.GetHeaderRows
+End Function
+
+Private Function GroupByDate(ByVal Rows As Inf_ClassHourRows) As VBA.Collection
+    Dim CurrentDate As Date
+    CurrentDate = Rows.Item(1).NormDate
+    Dim Records As VBA.Collection
+    Set Records = New VBA.Collection
+    Dim Fields As VBA.Collection
+    Set Fields = New VBA.Collection
+    Dim i As Long
+    For i = 1 To Rows.Count
+        Dim Row As Inf_ClassHourRow
+        Set Row = Rows.Item(i)
+        If Row.NormDate <> vbNullString Then
+            Fields.Add CStr(Row.NormDate)
+        ElseIf Row.RawID <> vbNullString Then
+            Fields.Add CStr(Row.Value)
+        End If
+        If CurrentDate <> Row.NormDate Then
+            CurrentDate = Row.NormDate
+            Records.Add Fields
+            Set Fields = New VBA.Collection
+        End If
+    Next
+    Set GroupByDate = Records
+End Function
+
+Private Function BuildRows(ByVal Header As VBA.Collection, ByVal Body As VBA.Collection) As Inf_RawRows
+    Dim Result As Inf_RawRows
+    Set Result = New Inf_RawRows
+    Dim C As Long
+    For C = 1 To Header.Count
+        Result.AddFiled Header.Item(C)
+    Next
+    Result.AddRecord Result.Fields
+    Result.InitializeFileds
+    Dim R As Long
+    For R = 1 To Body.Count
+        Result.AddRecord Body.Item(R)
+    Next
+    Set BuildRows = Result
+End Function
+
+Private Function BuildFilePath(ByVal SchoolYear As Long) As String
     Dim BaseFolderPath As String
-    BaseFolderPath = Provider.GetBaseFolderPath
+    BaseFolderPath = This.Provider.GetBaseFolderPath
     Dim FileName As String
     FileName = "ClassHour" & CStr(SchoolYear) & ".csv"
-    BuiledFilePath = Inf_StringUtility.JoinByBackSlash(BaseFolderPath, "root", "data", "schoolyears", CStr(SchoolYear), FileName)
+    BuildFilePath = Inf_StringUtility.JoinByBackSlash(BaseFolderPath, "root", "data", "schoolyears", CStr(SchoolYear), FileName)
 End Function

@@ -10,145 +10,205 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service")
 Option Explicit
 
-Private Type Member
-    Factory     As Dom_ValueObjectFactory
-    Calculator  As App_EnrollmentSummaryCalculator
-End Type
-
-Private This As Member
-
-Private Enum C
-    GradeColumn = 1
-    ClassColumn
-    MaleColumn
-    FemaleColumn
-    TotalColumn
+Private Enum C_
+    Grade = 1
+    ClassNo
+    Male
+    Female
+    Total
+    EndColumn
 End Enum
 
-Private Sub Class_Initialize()
-    Set This.Factory = New Dom_ValueObjectFactory
-    Set This.Calculator = New App_EnrollmentSummaryCalculator
-End Sub
-'
-'Public Sub Initialize(ByVal Calculator As App_EnrollmentSummaryCalculator)
-'    Set This.Calculator = Calculator
-'End Sub
+Private Const COLUMN_COUNT As Long = C_.EndColumn - 1
 
-Public Function Format(ByVal Aggregate As Dom_DailyEnrollment, ByVal Structure As Dom_SchoolStructure) As Variant()
-    Dim MainStreamGradeCount As Long
-    MainStreamGradeCount = Structure.UpperValue.Item.MainStreamGradeCount
-    Dim MainStreamClassCount As Long
-    MainStreamClassCount = Structure.UpperValue.Item.MainStreamClassCount
-    Dim SpecialStreamGradeCount As Long
-    SpecialStreamGradeCount = 1
-    Dim SpecialStreamClassCount As Long
-    SpecialStreamClassCount = Structure.SpecialStream.Count
-    Dim MainStream() As Long
-    MainStream = ToTable(Main, Aggregate, MainStreamGradeCount, MainStreamClassCount)
-    Dim SpecialStream() As Long
-    SpecialStream = ToTable(Special, Aggregate, SpecialStreamGradeCount, SpecialStreamClassCount)
-    Dim OutputTable() As Variant
-    ReDim OutputTable(1 To UBound(MainStream) + UBound(SpecialStream) + 2, 1 To C.TotalColumn)
-    OutputTable(1, C.GradeColumn) = jpnNen
-    OutputTable(1, C.ClassColumn) = jpnKumi
-    OutputTable(1, C.MaleColumn) = jpnOtoko
-    OutputTable(1, C.FemaleColumn) = jpnOnna
-    OutputTable(1, C.TotalColumn) = jpnGoukei
-    Dim R As Long
-    R = 2
-    Dim Grade As Long
-    For Grade = 1 To MainStreamGradeCount
-        Dim ClassNo As Long
-        For ClassNo = 1 To MainStreamClassCount
-            OutputTable(R, C.GradeColumn) = Grade
-            OutputTable(R, C.ClassColumn) = ClassNo
-            OutputTable(R, C.MaleColumn) = MainStream(R - 1, C.MaleColumn)
-            OutputTable(R, C.FemaleColumn) = MainStream(R - 1, C.FemaleColumn)
-            OutputTable(R, C.TotalColumn) = MainStream(R - 1, C.TotalColumn)
-            R = R + 1
-        Next
-        OutputTable(R, C.GradeColumn) = Grade & jpnNen
-        OutputTable(R, C.ClassColumn) = jpnGoukei
-        OutputTable(R, C.MaleColumn) = MainStream(R - 1, C.MaleColumn)
-        OutputTable(R, C.FemaleColumn) = MainStream(R - 1, C.FemaleColumn)
-        OutputTable(R, C.TotalColumn) = MainStream(R - 1, C.TotalColumn)
-        Dim GrandMaleTotal As Long
-        GrandMaleTotal = GrandMaleTotal + MainStream(R - 1, C.MaleColumn)
-        Dim GrandFemaleTotal As Long
-        GrandFemaleTotal = GrandFemaleTotal + MainStream(R - 1, C.FemaleColumn)
-        R = R + 1
-    Next
-    For Grade = 1 To SpecialStreamGradeCount
-        For ClassNo = 1 To SpecialStreamClassCount
-            OutputTable(R, C.GradeColumn) = jpnTokushi
-            OutputTable(R, C.ClassColumn) = Structure.SpecialStream.FindByIndex(ClassNo).Value
-            OutputTable(R, C.MaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.MaleColumn)
-            OutputTable(R, C.FemaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.FemaleColumn)
-            OutputTable(R, C.TotalColumn) = SpecialStream(R - UBound(MainStream) - 1, C.TotalColumn)
-            R = R + 1
-        Next
-        OutputTable(R, C.GradeColumn) = jpnTokushi
-        OutputTable(R, C.ClassColumn) = jpnGoukei
-        OutputTable(R, C.MaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.MaleColumn)
-        OutputTable(R, C.FemaleColumn) = SpecialStream(R - UBound(MainStream) - 1, C.FemaleColumn)
-        OutputTable(R, C.TotalColumn) = SpecialStream(R - UBound(MainStream) - 1, C.TotalColumn)
-        GrandMaleTotal = GrandMaleTotal + SpecialStream(R - UBound(MainStream) - 1, C.MaleColumn)
-        GrandFemaleTotal = GrandFemaleTotal + SpecialStream(R - UBound(MainStream) - 1, C.FemaleColumn)
-        R = R + 1
-    Next
-    OutputTable(R, C.GradeColumn) = jpnZentai
-    OutputTable(R, C.ClassColumn) = jpnGoukei
-    OutputTable(R, C.MaleColumn) = GrandMaleTotal
-    OutputTable(R, C.FemaleColumn) = GrandFemaleTotal
-    OutputTable(R, C.TotalColumn) = GrandMaleTotal + GrandFemaleTotal
-    Format = OutputTable
+Public Function Format(ByVal Models As App_EnrollmentReadModels, ByVal Structure As Dom_SchoolStructure) As Variant()
+    Dim Header() As Variant
+    Header = BuildHeader
+    Dim MainUpperGrade As Long
+    MainUpperGrade = Structure.MainStream.Item.UpperGrade
+    Dim MainUpperClassNo As Long
+    MainUpperClassNo = Structure.MainStream.Item.UpperClassNo
+    Dim MainTable() As Long
+    MainTable = BuildGenderTable(Models, "Main", MainUpperGrade, MainUpperClassNo)
+    Dim SpecialUpperClassNo As Long
+'    SpecialUpperClassNo = Structure.SpecialStream.Count
+    Dim SpecialTable() As Long
+    SpecialTable = BuildGenderTable(Models, "Special", 1, SpecialUpperClassNo)
+    Dim Body() As Variant
+    Body = BuildBody(MainTable, SpecialTable, MainUpperClassNo, SpecialUpperClassNo)
+    Format = BuildTable(Header, Body)
 End Function
 
-Private Function ToTable(ByVal TypeCode As Dom_StreamTypePolicy, ByVal Aggregate As Dom_DailyEnrollment, ByVal GradeCount As Long, ByVal ClassCount As Long) As Long()
-    '@Ignore MultipleDeclarations
-    Dim Table() As Long, MaleTotal() As Long, FemaleTotal() As Long, ClassTotal() As Long
-    ReDim Table(1 To GradeCount * ClassCount + GradeCount, 1 To C.TotalColumn)
-    If Aggregate Is Nothing Then GoTo Finalize
-    ReDim MaleTotal(0 To GradeCount)
-    ReDim FemaleTotal(0 To GradeCount)
-    ReDim ClassTotal(0 To GradeCount, 1 To ClassCount)
-    Dim StreamType As Dom_StreamType
-    Set StreamType = This.Factory.CreateStreamType(TypeCode)
+Private Sub SumGender(ByRef Base() As Long, ByRef MaleSummary() As Long, ByRef FemaleSummary() As Long)
     Dim R As Long
-    R = 1
-    Dim G As Long
-    For G = 1 To GradeCount
-        Dim Grade As Dom_Grade
-        Set Grade = This.Factory.CreateGrade(G)
-        Dim No As Long
-        For No = 1 To ClassCount
-            Dim ClassNo As Dom_ClassNo
-            Set ClassNo = This.Factory.CreateClassNo(No)
-            Dim GenderNo As Long
-            For GenderNo = Dom_GenderTypePolicy.Male To Dom_GenderTypePolicy.Female
-                Dim Gender As Dom_Gender
-                Set Gender = This.Factory.CreateGender(GenderNo)
-                Dim Condition As App_EnrollmentIDCondition
-                Set Condition = This.Factory.CreateEnrollmentFilterCondition(StreamType, Grade, ClassNo, Gender)
-                Dim EnrollmentValue As Dom_EnrollmentValue
-                Set EnrollmentValue = This.Calculator.SumClassOf(Aggregate, Condition)
-                If Gender.Value = Dom_GenderTypePolicy.Male Then
-                    MaleTotal(G) = MaleTotal(G) + EnrollmentValue.Value
-                    Table(R, C.MaleColumn) = EnrollmentValue.Value
-                Else
-                    FemaleTotal(G) = FemaleTotal(G) + EnrollmentValue.Value
-                    Table(R, C.FemaleColumn) = EnrollmentValue.Value
-                End If
-                ClassTotal(G, No) = ClassTotal(G, No) + EnrollmentValue.Value
-            Next
-            Table(R, C.TotalColumn) = ClassTotal(G, No)
+    For R = 1 To UBound(MaleSummary)
+        Base(R, C_.Male) = MaleSummary(R)
+        Base(R, C_.Female) = FemaleSummary(R)
+        Base(R, C_.Total) = MaleSummary(R) + FemaleSummary(R)
+    Next
+End Sub
+
+Private Sub AddClassName(ByRef Base() As Long, ByRef Grades() As Long, ByRef ClassNumbers() As Long)
+    Dim R As Long
+    For R = 1 To UBound(Base)
+        Base(R, C_.Grade) = Grades(R)
+        Base(R, C_.ClassNo) = ClassNumbers(R)
+    Next
+End Sub
+
+Private Function BuildHeader() As Variant()
+    Dim Result() As Variant
+    ReDim Result(1 To 1, 1 To COLUMN_COUNT)
+    Result(1, C_.Grade) = jpnNen
+    Result(1, C_.ClassNo) = jpnKumi
+    Result(1, C_.Male) = jpnOtoko
+    Result(1, C_.Female) = jpnOnna
+    Result(1, C_.Total) = jpnGoukei
+    BuildHeader = Result
+End Function
+
+Private Function BuildTable(ByRef Header() As Variant, ByRef Body() As Variant) As Variant()
+    Dim Result() As Variant
+    ReDim Result(1 To UBound(Header) + UBound(Body), 1 To COLUMN_COUNT)
+    Dim R As Long
+    For R = 1 To UBound(Header)
+        Dim C As Long
+        For C = 1 To COLUMN_COUNT
+            Result(R, C) = Header(R, C)
+        Next
+    Next
+    For R = UBound(Header) + 1 To UBound(Body)
+        For C = 1 To COLUMN_COUNT
+            Result(R, C) = Body(R, C)
+        Next
+    Next
+    BuildTable = Result
+End Function
+
+Private Function BuildBody(ByRef MainTable() As Long, ByRef SpecialTable() As Long, ByVal MainUpperClassNo As Long, ByVal SpecialUpperClassNo As Long) As Variant()
+    Dim Result() As Variant
+    ReDim Result(1 To UBound(MainTable) + UBound(SpecialTable), 1 To COLUMN_COUNT)
+    Dim R As Long
+    For R = 1 To UBound(MainTable)
+        Dim C As Long
+        For C = 1 To COLUMN_COUNT
+            If (R Mod MainUpperClassNo + 1) = 0 Then
+                Result(R, C_.Total) = jpnGoukei
+            Else
+                Result(R, C) = MainTable(R, C)
+            End If
+        Next
+    Next
+    For R = UBound(MainTable) + 1 To UBound(SpecialTable)
+        For C = 1 To COLUMN_COUNT
+            If (R Mod SpecialUpperClassNo + 1) = 0 Then
+                Result(R, C_.Total) = jpnGoukei
+            Else
+                Result(R, C) = SpecialTable(R, C)
+            End If
+        Next
+    Next
+    BuildBody = Result
+End Function
+
+Private Function BuildGenderTable(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+    Dim MaleSummary() As Long
+    MaleSummary = GetMaleSummary(Models, TypeCode, "Male", UpperGrade, UpperClassNo)
+    Dim FemaleSummary() As Long
+    FemaleSummary = GetFemaleSummary(Models, TypeCode, "Female", UpperGrade, UpperClassNo)
+    Dim Table() As Long
+    ReDim Table(1 To UpperGrade * UpperClassNo + UpperGrade, 1 To COLUMN_COUNT)
+    SumGender Table, MaleSummary, FemaleSummary
+    Dim Grades() As Long
+    Grades = GetGrades(UpperGrade, UpperClassNo)
+    Dim ClassNumbers() As Long
+    ClassNumbers = GetClassNumbers(UpperGrade, UpperClassNo)
+    AddClassName Table, Grades, ClassNumbers
+    BuildGenderTable = Table
+End Function
+
+Private Function GetMaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal Gender As String, ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+    Dim Values() As Long
+    Values = FilterBy(Models, TypeCode, "Male", UpperGrade, UpperClassNo)
+    GetMaleSummary = CalculateGenderTotal(Values, UpperGrade, UpperClassNo)
+End Function
+
+Private Function GetFemaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal Gender As String, ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+    Dim Values() As Long
+    Values = FilterBy(Models, TypeCode, "Female", UpperGrade, UpperClassNo)
+    GetFemaleSummary = CalculateGenderTotal(Values, UpperGrade, UpperClassNo)
+End Function
+
+Private Function FilterBy(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal Gender As String, ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+    Dim Result() As Long
+    ReDim Result(1 To UpperGrade, 1 To UpperClassNo)
+    Dim Model As App_EnrollmentReadModel
+    For Each Model In Models
+        If Model.TypeCode = TypeCode Then
+            If Model.Gender = Gender Then
+                Result(Model.Grade, Model.ClassNo) = Model.Value
+            End If
+        End If
+    Next
+    FilterBy = Result
+End Function
+
+Private Function CalculateGenderTotal(ByRef Values() As Long, ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+    Dim Result() As Long
+    ReDim Result(1 To UpperGrade * UpperClassNo + UpperGrade)
+    Dim Grade As Long
+    For Grade = 1 To UpperGrade
+        Dim ClassNo As Long
+        For ClassNo = 1 To UpperClassNo
+            Dim R As Long
+            If R < UpperClassNo + 1 Then
+                Result(R) = Values(Grade, ClassNo)
+                Dim Total As Long
+                Total = Total + Values(Grade, ClassNo)
+            End If
+            R = R + 1
+            If (R Mod UpperClassNo + 1) = 0 Then
+                Result(R) = Total
+                Total = 0
+                Dim GrandTotal As Long
+                GrandTotal = GrandTotal + Total
+            End If
+        Next
+    Next
+    Result(R) = GrandTotal
+    CalculateGenderTotal = Result
+End Function
+
+Private Function GetGrades(ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+    Dim Result() As Long
+    ReDim Result(1 To UpperGrade * UpperClassNo + UpperGrade)
+    Dim Grade As Long
+    For Grade = 1 To UpperGrade
+        Dim ClassNo As Long
+        For ClassNo = 1 To UpperClassNo
+            Dim R As Long
+            If R < UpperClassNo + 1 Then
+                Result(R) = Grade
+            End If
             R = R + 1
         Next
-        Table(R, C.MaleColumn) = MaleTotal(G)
-        Table(R, C.FemaleColumn) = FemaleTotal(G)
-        Table(R, C.TotalColumn) = MaleTotal(G) + FemaleTotal(G)
-        R = R + 1
     Next
-Finalize:
-    ToTable = Table
+    GetGrades = Result
+End Function
+
+Private Function GetClassNumbers(ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+    Dim Result() As Long
+    ReDim Result(1 To UpperGrade * UpperClassNo + UpperGrade)
+    Dim Grade As Long
+    For Grade = 1 To UpperGrade
+        Dim ClassNo As Long
+        For ClassNo = 1 To UpperClassNo
+            Dim R As Long
+            If R < UpperClassNo + 1 Then
+                Result(R) = ClassNo
+            End If
+            R = R + 1
+        Next
+    Next
+    GetClassNumbers = Result
 End Function

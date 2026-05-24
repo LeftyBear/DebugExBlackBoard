@@ -11,50 +11,74 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements Dom_ISpecialStreamRepository
 Private Type Member
+    Factory     As Dom_ValueObjectFactory
     Persistence As Inf_SpecialStreamPersistence
-    EntList     As Scripting.Dictionary
+    NameIndex   As Scripting.Dictionary
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Persistence As Inf_SpecialStreamPersistence)
+Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory, ByVal Persistence As Inf_SpecialStreamPersistence)
+    Set This.Factory = Factory
     Set This.Persistence = Persistence
-    Set This.EntList = New Scripting.Dictionary
 End Sub
 
-Private Sub Dom_ISpecialStreamRepository_Add(ByVal Entry As Dom_SpecialStream)
-    Dim Key As String
-    Key = Entry.Value
-    If This.EntList.Exists(Key) Then Err.Raise InfErrExistsKey, "Inf_SpecialStreamRepository", "Exists Key: " & Key
-    This.EntList.Add Key, Entry
+Private Sub EnsureLoaded()
+    If Not This.NameIndex Is Nothing Then Exit Sub
+    Dim Rows As Inf_SpecialStreamRows
+    Set Rows = This.Persistence.ReadAll
+    BuildNameIndex Rows
 End Sub
 
-Private Function Dom_ISpecialStreamRepository_Count() As Long
-    Dom_ISpecialStreamRepository_Count = This.EntList.Count
-End Function
-
-Private Function Dom_ISpecialStreamRepository_FindByIndex(ByVal Index As Long) As Dom_SpecialStream
-    If This.EntList.Exists(CStr(Index)) Then
-        Set Dom_ISpecialStreamRepository_FindByIndex = This.EntList.Item(CStr(Index))
-    End If
-End Function
-
-Private Function Dom_ISpecialStreamRepository_GetAll() As VBA.Collection
-    Dim Result As VBA.Collection
-    Set Result = New VBA.Collection
-    Dim Entry As Dom_SpecialStream
-    For Each Entry In This.EntList.Items
-        Result.Add Entry
+Private Sub BuildNameIndex(ByVal Rows As Inf_SpecialStreamRows)
+    Dim i As Long
+    For i = 1 To Rows.Count
+        Dim Row As Inf_SpecialStreamRow
+        Set Row = Rows.Item(i)
+        Dim Entry As Dom_SpecialStream
+        Set Entry = New Dom_SpecialStream
+        Entry.Initialize Row.Name
+        This.NameIndex.Add Row.Name, Entry
     Next
-    Set Dom_ISpecialStreamRepository_GetAll = Result
+End Sub
+
+Private Sub ReplaceRow(ByRef Rows As Inf_SpecialStreamRows)
+    Dim i As Long
+    For i = 1 To Rows.Count
+        Dim Row As Inf_SpecialStreamRow
+        Set Row = Rows.Item(i)
+        If Not This.NameIndex.Exists(Row.Name) Then
+            Rows.Remove i
+        End If
+    Next
+    Dim Key As Variant
+    For Each Key In This.NameIndex.Keys
+        Dim Entry As Dom_SpecialStream
+        Set Entry = This.NameIndex.Item(Key)
+        For i = 1 To Rows.Count
+            Set Row = Rows.Item(i)
+            Row.Name = Entry.Value
+        Next
+    Next
+End Sub
+
+Private Function Dom_ISpecialStreamRepository_FindByName(ByVal Name As String) As Dom_SpecialStream
+    EnsureLoaded
+    If Not This.NameIndex.Exists(Name) Then Exit Function
+    Set Dom_ISpecialStreamRepository_FindByName = This.NameIndex.Item(Name)
 End Function
 
-Private Function Dom_ISpecialStreamRepository_ReadAll() As VBA.Collection
-    Set Dom_ISpecialStreamRepository_ReadAll = This.Persistence.ReadAll
-End Function
+Private Sub Dom_ISpecialStreamRepository_Replace(ByVal OldName As String, ByVal NewEntry As Dom_SpecialStream)
+    EnsureLoaded
+    If Not This.NameIndex.Exists(OldName) Then Exit Sub
+    This.NameIndex.Remove OldName
+    This.NameIndex.Add NewEntry.Value, NewEntry
+End Sub
 
-Private Function Dom_ISpecialStreamRepository_Replace(ByVal Name As String, ByVal NewEntry As Dom_SpecialStream) As VBA.Collection
-    If Not This.EntList.Exists(Name) Then Exit Function
-    Set This.EntList.Item(Name) = NewEntry
-    Set Dom_ISpecialStreamRepository_Replace = Dom_ISpecialStreamRepository_GetAll
-End Function
+Private Sub Dom_ISpecialStreamRepository_Save()
+    EnsureLoaded
+    Dim Rows As Inf_SpecialStreamRows
+    Set Rows = This.Persistence.ReadAll
+    ReplaceRow Rows
+    This.Persistence.WriteAll Rows
+End Sub

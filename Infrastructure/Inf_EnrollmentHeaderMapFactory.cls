@@ -15,24 +15,24 @@ Public Function Create(ByVal HeaderRows As VBA.Collection) As Inf_EnrollmentHead
     Set Result = New Inf_EnrollmentHeaderMap
     Dim C As Long
     For C = 1 To HeaderRows.Count
-        Dim Meta As Inf_EnrollmentColumn
-        Set Meta = CreateMeta(HeaderRows.Item(C))
-        Result.Add C, Meta
+        Dim Column As Inf_EnrollmentColumn
+        Set Column = CreateColumn(HeaderRows.Item(C))
+        Result.Add C, Column
     Next
     Set Create = Result
 End Function
 
-Private Function CreateMeta(ByVal Header As String) As Inf_EnrollmentColumn
-    Dim Meta As Inf_EnrollmentColumn
-    Set Meta = New Inf_EnrollmentColumn
+Private Function CreateColumn(ByVal Header As String) As Inf_EnrollmentColumn
+    Dim Result As Inf_EnrollmentColumn
+    Set Result = New Inf_EnrollmentColumn
     If 0 < VBA.InStr(1, Header, jpnHizuke) Then
-        Meta.RawDate = Header
+        Result.RawDate = Header
     ElseIf 0 < VBA.InStr(1, Header, jpnIdou) Then
-        Meta.RawTransfer = Header
+        Result.RawTransfer = Header
     ElseIf 0 < VBA.InStr(1, Header, jpnBikou) Then
-        Meta.RawRemarks = Header
+        Result.RawRemarks = Header
     Else
-        Meta.RawID = Header
+        Result.RawID = Header
     End If
-    Set CreateMeta = Meta
+    Set CreateColumn = Result
 End Function

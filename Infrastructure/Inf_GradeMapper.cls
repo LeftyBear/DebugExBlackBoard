@@ -38,8 +38,8 @@ Public Function ToModel(ByVal Raw As String) As Long
     ToModel = GetGrade(Raw)
 End Function
 
-Private Function GetGrade(ByVal RawGrade As String) As Long
+Private Function GetGrade(ByVal Raw As String) As Long
     Dim Buffer As String
-    Buffer = VBA.Replace(RawGrade, jpnNen, vbNullString)
+    Buffer = VBA.Replace(Raw, jpnNen, vbNullString)
     GetGrade = Inf_NumericUtility.ExtractNumber(Buffer)
 End Function

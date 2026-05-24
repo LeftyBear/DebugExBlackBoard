@@ -33,17 +33,17 @@ Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
 End Sub
 
 Public Function ToRaw(ByVal ID As Dom_EnrollmentID) As String
-    Dim TypeCode As String
-    TypeCode = This.TypeMapper.ToRaw(ID.StreamType)
-    Dim Grade As String
-    Grade = This.GradeMapper.ToRaw(ID.Grade)
     Dim ClassNo As String
     ClassNo = This.ClassNoMapper.ToRaw(ID.ClassNo)
     Dim Gender As String
     Gender = This.GenderMapper.ToRaw(ID.Gender)
     If ID.IsMain Then
+        Dim Grade As String
+        Grade = This.GradeMapper.ToRaw(ID.Grade)
         ToRaw = Grade & charUnderScore & ClassNo & charUnderScore & Gender
     ElseIf ID.IsSpecial Then
+        Dim TypeCode As String
+        TypeCode = This.TypeMapper.ToRaw(ID.StreamType)
         ToRaw = TypeCode & charUnderScore & ClassNo & charUnderScore & Gender
     End If
 End Function

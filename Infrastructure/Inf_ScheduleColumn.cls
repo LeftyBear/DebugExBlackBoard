@@ -13,5 +13,3 @@ Option Explicit
 
 Public RawDate      As String
 Public RawID        As String
-Public RawTransfer  As String
-Public RawRemarks   As String

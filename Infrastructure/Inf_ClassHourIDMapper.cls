@@ -10,17 +10,33 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Mapper")
 Option Explicit
 
+Private Type Member
+    Factory         As Dom_ValueObjectFactory
+    TypeMapper      As Inf_ClassHourTypeMapper
+    SubjectMapper   As Inf_SubjectNameMapper
+    GradeMapper     As Inf_GradeMapper
+End Type
+
+Private This As Member
+
+Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
+    Set This.Factory = Factory
+    Set This.TypeMapper = New Inf_ClassHourTypeMapper
+    Set This.SubjectMapper = New Inf_SubjectNameMapper
+    Set This.GradeMapper = New Inf_GradeMapper
+    This.TypeMapper.Initialize This.Factory
+    This.GradeMapper.Initialize This.Factory
+    This.SubjectMapper.Initialize This.Factory
+End Sub
+
 Public Function ToRaw(ByVal ID As Dom_ClassHourID) As String
-    Dim TypeMapper As New Inf_ClassHourTypeMapper
     Dim TypeCode As String
-    TypeCode = TypeMapper.ToRaw(ID.TypeCode)
-    Dim SubjectMapper As New Inf_SubjectMapper
-    Dim Subject As String
-    Subject = SubjectMapper.ToRaw(ID.Subject)
-    Dim GradeMapper As New Inf_GradeMapper
+    TypeCode = This.TypeMapper.ToRaw(ID.TypeCode)
+    Dim SubjectName As String
+    SubjectName = This.SubjectMapper.ToRaw(ID.Subject)
     Dim Grade As String
-    Grade = GradeMapper.ToRaw(ID.Grade)
-    ToRaw = TypeCode & charUnderScore & Subject & charUnderScore & Grade
+    Grade = This.GradeMapper.ToRaw(ID.Grade)
+    ToRaw = TypeCode & charUnderScore & SubjectName & charUnderScore & Grade
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_ClassHourID
@@ -31,19 +47,15 @@ Public Function ToDomain(ByVal Raw As String) As Dom_ClassHourID
         Dim Part As String
         Part = Parts(i)
         If 0 < VBA.InStr(1, Part, jpnKeikaku) Or 0 < VBA.InStr(1, Part, jpnJisshi) Then
-            Dim TypeMapper As New Inf_ClassHourTypeMapper
             Dim ClassHourType As Dom_ClassHourType
-            Set ClassHourType = TypeMapper.ToDomain(Part)
+            Set ClassHourType = This.TypeMapper.ToDomain(Part)
         ElseIf VBA.InStr(1, Part, jpnNen) = 0 Then
-            Dim GradeMapper As New Inf_GradeMapper
             Dim Grade As Dom_Grade
-            Set Grade = GradeMapper.ToDomain(Part)
+            Set Grade = This.GradeMapper.ToDomain(Part)
         Else
-            Dim SubjectMapper As New Inf_SubjectMapper
-            Dim Subject As Dom_SubjectNew
-            Set Subject = SubjectMapper.ToDomain(Part)
+            Dim SubjectName As Dom_SubjectName
+            Set SubjectName = This.SubjectMapper.ToDomain(Part)
         End If
     Next
-    Dim Factory As New Dom_ValueObjectFactory
-    Set ToDomain = Factory.CreateClassHourID(ClassHourType, Subject, Grade)
+    Set ToDomain = This.Factory.CreateClassHourID(ClassHourType, SubjectName, Grade)
 End Function

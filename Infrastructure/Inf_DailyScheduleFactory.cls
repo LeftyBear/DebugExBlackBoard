@@ -27,24 +27,14 @@ Private Sub Class_Initialize()
 End Sub
 
 Public Function Create(ByVal TargetDate As Date, ByVal Row As Inf_ScheduleRow) As Dom_Schedule
-    Dim ID As Dom_ScheduleID
-    Set ID = This.IDMapper.ToDomain(Row.RawID)
-    If Row.RawTransfer <> vbNullString Then
-        Dim Transfer As Dom_Transfer
-        Set Transfer = This.TransferMapper.ToDomain(Row.RawTransfer)
-    End If
-    If Row.Remarks <> vbNullString Then
-        Dim Remarks As Dom_Remarks
-        Set Remarks = This.Factory.CreateRemarks(Row.Remarks)
-    End If
-    If ID Is Nothing And Transfer Is Nothing Then Exit Function
-    If ID Is Nothing And Remarks Is Nothing Then Exit Function
     Dim DateID As Dom_DateID
     Set DateID = This.Factory.CreateDateID(TargetDate)
+    Dim ID As Dom_ScheduleID
+    Set ID = This.IDMapper.ToDomain(Row.RawID)
     Dim Value As Dom_ScheduleValue
     Set Value = This.Factory.CreateScheduleValue(Row.Value)
     Dim Entity As Dom_Schedule
     Set Entity = New Dom_Schedule
-    Entity.Initialize DateID, ID, Value, Transfer, Remarks
+    Entity.Initialize DateID, ID, Value
     Set Create = Entity
 End Function

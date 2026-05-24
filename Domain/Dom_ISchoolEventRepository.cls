@@ -10,17 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Domain.RepositoryInterface")
 Option Explicit
 
-Public Sub Add(ByVal Entry As Dom_SchoolEvent)
+Public Sub Save()
 End Sub
 
-Public Function GetAll() As VBA.Collection
-End Function
+Public Sub Replace(ByVal Name As String, ByVal NewEntry As Dom_SchoolEvent)
+End Sub
 
-Public Function Replace(ByVal Name As String, ByVal NewEntry As Dom_SchoolEvent) As VBA.Collection
-End Function
-
-Public Function ReadAll() As VBA.Collection
-End Function
-
-Public Function Exsists(ByVal Name As String) As Boolean
+Public Function FindByName(ByVal Name As String) As Dom_SchoolEvent
 End Function

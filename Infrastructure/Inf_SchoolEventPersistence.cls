@@ -11,39 +11,88 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    CSV As Inf_CSVPersistence
+    CSV         As Inf_CSVPersistence
+    Provider    As Inf_WorkbookPathProvider
 End Type
 
 Private This As Member
 
 Public Sub Initialize(ByVal CSV As Inf_CSVPersistence)
     Set This.CSV = CSV
+    Set This.Provider = New Inf_WorkbookPathProvider
 End Sub
 
-Public Function ReadAll() As VBA.Collection
+Public Function ReadAll() As Inf_SchoolEventRows
     Dim FilePath As String
-    FilePath = BuiledFilePath
-    Set ReadAll = This.CSV.ReadAll(FilePath)
+    FilePath = BuildFilePath
+    Dim RawRows As Inf_RawRows
+    Set RawRows = This.CSV.ReadAll(FilePath)
+    Dim Factory As New Inf_SchoolEventRowsFactory
+    Set ReadAll = Factory.Create(RawRows)
 End Function
 
-Public Sub WriteAll(ByVal SchoolYear As Long, ByVal Rows As VBA.Collection)
+Public Sub WriteAll(ByVal Rows As Inf_SchoolEventRows)
+    Dim Headers As VBA.Collection
+    Set Headers = GetHeaders
+    Dim Body As VBA.Collection
+    Set Body = GroupByRecord(Rows)
+    Dim RawRows As Inf_RawRows
+    Set RawRows = BuildRows(Headers, Body)
     Dim FilePath As String
-    FilePath = BuiledFilePath
-    This.CSV.WriteAll FilePath, Rows
+    FilePath = BuildFilePath
+    This.CSV.WriteAll FilePath, RawRows
 End Sub
 
 Public Sub Delete(ByVal SchoolYear As Long, ByVal Key As String)
     Dim FilePath As String
-    FilePath = BuiledFilePath
+    FilePath = BuildFilePath
     This.CSV.Delete FilePath, Key
 End Sub
 
-Private Function BuiledFilePath() As String
-    Dim Provider As Inf_WorkbookPathProvider
-    Set Provider = New Inf_WorkbookPathProvider
+Public Function GetHeaders() As VBA.Collection
+    Dim FilePath As String
+    FilePath = BuildFilePath
+    Dim RawRows As Inf_RawRows
+    Set RawRows = This.CSV.ReadAll(FilePath)
+    Set GetHeaders = RawRows.GetHeaderRows
+End Function
+
+Private Function GroupByRecord(ByVal Rows As Inf_SchoolEventRows) As VBA.Collection
+    Dim Records As VBA.Collection
+    Set Records = New VBA.Collection
+    Dim Fields As VBA.Collection
+    Set Fields = New VBA.Collection
+    Dim i As Long
+    For i = 1 To Rows.Count
+        Dim Row As Inf_SchoolEventRow
+        Set Row = Rows.Item(i)
+        Fields.Add Row.Name
+        Records.Add Fields
+        Set Fields = New VBA.Collection
+    Next
+    Set GroupByRecord = Records
+End Function
+
+Private Function BuildRows(ByVal Headers As VBA.Collection, ByVal Body As VBA.Collection) As Inf_RawRows
+    Dim Result As Inf_RawRows
+    Set Result = New Inf_RawRows
+    Dim C As Long
+    For C = 1 To Headers.Count
+        Result.AddFiled Headers.Item(C)
+    Next
+    Result.AddRecord Result.Fields
+    Result.InitializeFileds
+    Dim R As Long
+    For R = 1 To Body.Count
+        Result.AddRecord Body.Item(R)
+    Next
+    Set BuildRows = Result
+End Function
+
+Private Function BuildFilePath() As String
     Dim BaseFolderPath As String
-    BaseFolderPath = Provider.GetBaseFolderPath
+    BaseFolderPath = This.Provider.GetBaseFolderPath
     Dim FileName As String
     FileName = "SchoolEventCatalog.csv"
-    BuiledFilePath = Inf_StringUtility.JoinByBackSlash(BaseFolderPath, "root", "Config", FileName)
+    BuildFilePath = Inf_StringUtility.JoinByBackSlash(BaseFolderPath, "root", "Config", FileName)
 End Function

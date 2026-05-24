@@ -10,23 +10,23 @@ Attribute VB_Exposed = False
 '@Folder("Domain.DTO")
 Option Explicit
 Private Type Member
-    Aggregates As VBA.Collection
+    Yearly As VBA.Collection
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.Aggregates = New VBA.Collection
+    Set This.Yearly = New VBA.Collection
 End Sub
 
 Public Sub Add(ByVal Aggregate As Dom_DailyEnrollment)
-    This.Aggregates.Add Aggregate
+    This.Yearly.Add Aggregate
 End Sub
 
 Public Function Count() As Long
-    Count = This.Aggregates.Count
+    Count = This.Yearly.Count
 End Function
 
 Public Function Item(ByVal Index As Long) As Dom_DailyEnrollment
-    Set Item = This.Aggregates.Item(Index)
+    Set Item = This.Yearly.Item(Index)
 End Function

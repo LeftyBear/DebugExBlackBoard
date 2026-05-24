@@ -11,14 +11,14 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public Function ReadAll(ByVal FilePath As String) As String
-    Dim Stream As ADODB.Stream
-    Set Stream = New ADODB.Stream
+    Dim Stream As Object
+    Set Stream = CreateObject("ADODB.Stream")
     With Stream
-        .Type = adTypeText
+        .Type = 2 ':=adTypeText
         .Charset = "Shift_JIS"
         .Open
         .LoadFromFile FilePath
-        ReadAll = .ReadText(adReadAll)
+        ReadAll = .ReadText(-1) ':=adReadAll
         .Close
     End With
     Set Stream = Nothing

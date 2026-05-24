@@ -25,13 +25,13 @@ Public Function ToRaw(ByVal Transfer As Dom_Transfer) As String
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_Transfer
-    Set ToDomain = This.Factory.CreateTransfer(IsTrue(Raw))
+    Set ToDomain = This.Factory.CreateTransfer(GetState(Raw))
 End Function
 
 Public Function ToModel(ByVal Raw As String) As String
-    ToModel = IsTrue(Raw)
+    ToModel = GetState(Raw)
 End Function
 
-Private Function IsTrue(ByVal Raw As String) As Boolean
-    IsTrue = Inf_BooleanUtility.ToBoolean(Raw)
+Private Function GetState(ByVal Raw As String) As Boolean
+    GetState = Inf_BooleanUtility.ToBoolean(Raw)
 End Function

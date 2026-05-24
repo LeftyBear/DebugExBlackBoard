@@ -53,19 +53,15 @@ Public Function Create(ByVal DailyRows As Inf_ClassHourRows) As App_ClassHourRea
                 Part = Parts(j)
                 If 0 < VBA.InStr(1, Part, jpnTokushi) Then
                     Model.TypeCode = This.TypeMapper.ToModel(Part)
+                ElseIf 0 < VBA.InStr(1, Part, jpnKumi) Then
+                    Model.Subject = This.ClassNoMapper.ToModel(Part)
+                ElseIf 0 < VBA.InStr(1, Part, jpnKouji) Then
+                    Model.Period = This.GenderMapper.ToModel(Part)
                 ElseIf 0 < VBA.InStr(1, Part, jpnNen) Then
                     Model.Grade = This.GradeMapper.ToModel(Part)
-                ElseIf 0 < VBA.InStr(1, Part, jpnKumi) Then
-                    Model.ClassNo = This.ClassNoMapper.ToModel(Part)
-                ElseIf 0 < VBA.InStr(1, Part, jpnOtoko) Or 0 < VBA.InStr(1, Part, jpnOnna) Then
-                    Model.Gender = This.GenderMapper.ToModel(Part)
                 End If
             Next
             Model.Value = Row.Value
-        ElseIf Row.RawTransfer <> vbNullString Then
-            Model.Transfer = This.TransferMapper.ToModel(Row.RawTransfer)
-        ElseIf Row.Remarks <> vbNullString Then
-            Model.Remarks = Row.Remarks
         End If
         Result.Add Model
     Next

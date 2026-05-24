@@ -11,37 +11,34 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Name        As String
-    TargetGrade As String
-    Mark        As String
+    Name        As Dom_SubjectName
+    TargetGrade As Dom_SubjectTargetGrade
+    Mark        As Dom_SubjectMark
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Name As String, ByVal TargetGrade As String, ByVal Mark As String)
-    If VBA.Len(Name) = 0 Then Err.Raise DomErrInvalidValue, "Dom_Subject", "教科名は文字列である必要があります。"
-    If VBA.Len(TargetGrade) = 0 Then Err.Raise DomErrInvalidValue, "Dom_Subject", "集計名は文字列である必要があります。"
-    If VBA.Len(Mark) = 0 Then Err.Raise DomErrInvalidValue, "Dom_Subject", "記号は文字列である必要があります。"
-    This.Name = Name
-    This.TargetGrade = TargetGrade
-    This.Mark = Mark
+Public Sub Initialize(ByVal Name As Dom_SubjectName, ByVal TargetGrade As Dom_SubjectTargetGrade, ByVal Mark As Dom_SubjectMark)
+    Set This.Name = Name
+    Set This.TargetGrade = TargetGrade
+    Set This.Mark = Mark
 End Sub
 
-Public Property Get Name() As String
-    Name = This.Name
+Public Property Get Name() As Dom_SubjectName
+    Set Name = This.Name
 End Property
 
-Public Property Get TargetGrade() As String
-    TargetGrade = This.TargetGrade
+Public Property Get TargetGrade() As Dom_SubjectTargetGrade
+    Set TargetGrade = This.TargetGrade
 End Property
 
-Public Property Get Mark() As String
-    Mark = This.Mark
+Public Property Get Mark() As Dom_SubjectMark
+    Set Mark = This.Mark
 End Property
 
 Public Function Equals(ByVal Other As Dom_Subject) As Boolean
-    If This.Name <> Other.Name Then Exit Function
-    If This.TargetGrade <> Other.TargetGrade Then Exit Function
-    If This.Mark <> Other.Mark Then Exit Function
+    If Not This.Name.Equals(Other.Name) Then Exit Function
+    If Not This.TargetGrade.Equals(Other.TargetGrade) Then Exit Function
+    If Not This.Mark.Equals(Other.Mark) Then Exit Function
     Equals = True
 End Function

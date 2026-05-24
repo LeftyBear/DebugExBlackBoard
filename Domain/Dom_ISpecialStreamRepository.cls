@@ -10,20 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Domain.RepositoryInterface")
 Option Explicit
 
-Public Sub Add(ByVal Entry As Dom_SpecialStream)
+Public Sub Save()
 End Sub
 
-Public Function FindByIndex(ByVal Index As Long) As Dom_SpecialStream
-End Function
+Public Sub Replace(ByVal OldName As String, ByVal NewEntry As Dom_SpecialStream)
+End Sub
 
-Public Function GetAll() As VBA.Collection
-End Function
-
-Public Function Replace(ByVal Name As String, ByVal NewEntry As Dom_SpecialStream) As VBA.Collection
-End Function
-
-Public Function ReadAll() As VBA.Collection
-End Function
-
-Public Function Count() As Long
+Public Function FindByName(ByVal Name As String) As Dom_SpecialStream
 End Function

@@ -22,10 +22,6 @@ Public Function Create(ByVal Column As Inf_ClassHourColumn, ByVal RawText As Str
             Result.RawID = Column.RawID
             Result.Value = Inf_NumericUtility.ExtractNumber(RawText)
         End If
-    ElseIf Column.RawTransfer <> vbNullString Then
-        Result.RawTransfer = RawText
-    ElseIf Column.RawRemarks <> vbNullString Then
-        Result.Remarks = RawText
     End If
     Set Create = Result
 End Function

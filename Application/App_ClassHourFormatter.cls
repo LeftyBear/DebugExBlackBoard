@@ -43,7 +43,7 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal YearlyAg
     For R = 2 To UBound(ClassHourTable, 1) + 1
         For C = 1 To UBound(ClassHourTable, 2) + 1
             If R < UBound(ClassHourTable, 1) + 1 And C = 1 Then
-                OutputTable(R, C) = Structure.Subject.FindByIndex(R - 1).Name
+'                OutputTable(R, C) = Structure.Subject.FindByIndex(R - 1).Name
             ElseIf R = UBound(ClassHourTable, 1) + 1 And C = 1 Then
                 OutputTable(R, C) = jpnGoukei
             Else
@@ -55,27 +55,28 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal YearlyAg
 End Function
 
 Private Function ToClassHourTable(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal YearlyAggregate As VBA.Collection, ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Structure As Dom_SchoolStructure) As Long()
-    Dim MainStreamGradeCount As Long
-    MainStreamGradeCount = Structure.UpperValue.Item.MainStreamGradeCount
+    Dim UpperGrade As Long
+    UpperGrade = Structure.MainStream.Item.UpperGrade
     Dim Table() As Long
-    ReDim Table(1 To Structure.Subject.Count + 1, 1 To MainStreamGradeCount)
+'    ReDim Table(1 To Structure.Subject.Count + 1, 1 To UpperGrade)
     If YearlyAggregate Is Nothing Then GoTo Finalize
     Dim Total() As Long
-    ReDim Total(1 To MainStreamGradeCount)
+    ReDim Total(1 To UpperGrade)
     Dim ClassHourType As Dom_ClassHourType
     Set ClassHourType = This.Factory.CreateClassHourType(TypeCode)
     Dim G As Long
-    For G = 1 To MainStreamGradeCount
+    For G = 1 To UpperGrade
         Dim Grade As Dom_Grade
         Set Grade = This.Factory.CreateGrade(G)
         Dim i As Long
-        For i = 1 To Structure.Subject.Count
+        For i = 1 To 1
+'        For i = 1 To Structure.Subject.Count
             Dim Subject As Dom_Subject
-            Set Subject = Structure.Subject.FindByIndex(i)
-            Dim Condition As App_ClassHourFilterCondition
-            Set Condition = This.Factory.CreateClassHourFilterCondition(ClassHourType, Subject, Grade)
+'            Set Subject = Structure.Subject.FindByIndex(i)
+'            Dim Condition As App_ClassHourFilterCondition
+'            Set Condition = This.Factory.CreateClassHourFilterCondition(ClassHourType, Subject, Grade)
             Dim ClassHourValue As Dom_ClassHourValue
-            Set ClassHourValue = This.Calculator.SumOf(YearlyAggregate, BeginIndex, EndIndex, Condition)
+'            Set ClassHourValue = This.Calculator.SumOf(YearlyAggregate, BeginIndex, EndIndex, Condition)
             Table(i, G) = ClassHourValue.Value
             Total(G) = Total(G) + ClassHourValue.Value
         Next

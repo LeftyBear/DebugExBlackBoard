@@ -61,7 +61,7 @@ Private Function CreateDaily(ByVal TargetDate As Date, ByVal Rows As VBA.Collect
         Set Row = Rows.Item(i)
         Dim Entry As Dom_ClassHour
         Set Entry = This.Factory.Create(TargetDate, Row)
-        If Not Entry Is Nothing Then Result.Add Entry
+        If Not Entry Is Nothing Then Result.AddClassHour Entry
     Next
     Set CreateDaily = Result
 End Function
