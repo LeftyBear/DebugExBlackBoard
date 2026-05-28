@@ -10,5 +10,5 @@ Attribute VB_Exposed = False
 '@Folder "Application.QueryServiceInterface"
 Option Explicit
 
-Public Function GetByName(ByVal Name As String) As App_SubjectReadModel
+Public Function GetAll() As App_SubjectReadModels
 End Function

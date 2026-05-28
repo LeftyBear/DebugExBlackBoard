@@ -16,18 +16,22 @@ End Type
 
 Private This As Member
 
+Private Const COLUMN_PERIOD As String = "çZéû"
+
 Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
     Set This.Factory = Factory
 End Sub
 
 Public Function ToRaw(ByVal Period As Dom_Period) As String
-    ToRaw = CStr(Period.Value) & jpnKouji
+    ToRaw = CStr(Period.Value) & COLUMN_PERIOD
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_Period
-    If 0 < VBA.InStr(1, Raw, jpnKouji) Then
+    If 0 < VBA.InStr(1, Raw, COLUMN_PERIOD) Then
         Dim Period As Long
         Period = GetPeriod(Raw)
+    Else
+        Exit Function
     End If
     Set ToDomain = This.Factory.CreatePeriod(Period)
 End Function
@@ -38,6 +42,6 @@ End Function
 
 Private Function GetPeriod(ByVal Raw As String) As Long
     Dim Buffer As String
-    Buffer = VBA.Replace(Raw, jpnKouji, vbNullString)
+    Buffer = VBA.Replace(Raw, COLUMN_PERIOD, vbNullString)
     GetPeriod = Inf_NumericUtility.ExtractNumber(Buffer)
 End Function

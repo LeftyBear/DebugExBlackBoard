@@ -16,6 +16,9 @@ Private Enum ParserState
     InsideQuotedField
 End Enum
 
+Private Const COMMA             As String = ","
+Private Const DOUBLE_QUOTATION  As String = """"
+
 Public Function ReadAll(ByVal FilePath As String) As Inf_RawRows
     Dim Reader As Inf_TextStreamReader
     Set Reader = New Inf_TextStreamReader
@@ -61,18 +64,19 @@ Private Function BuildLine(ByVal RawRows As Inf_RawRows) As VBA.Collection
             Fields(C - 1) = Field
         Next
         Dim Line As String
-        Line = VBA.Join(Fields, charComma)
+        Line = VBA.Join(Fields, COMMA)
         Result.Add Line
     Next
     Set BuildLine = Result
 End Function
 
 Private Function EscapeCSV(ByVal Part As String) As String
-    If 0 < VBA.InStr(1, Part, charDoubleQuotation) Then
-        EscapeCSV = VBA.Replace(Part, charDoubleQuotation, charEscapeDoubleQuotation)
+    Const ESCAPE_DOUBLE_QUOTATION As String = """"""
+    If 0 < VBA.InStr(1, Part, DOUBLE_QUOTATION) Then
+        EscapeCSV = VBA.Replace(Part, DOUBLE_QUOTATION, ESCAPE_DOUBLE_QUOTATION)
     End If
-    If 0 < VBA.InStr(1, Part, charComma) Or 0 < VBA.InStr(1, Part, charDoubleQuotation) Or 0 < VBA.InStr(1, Part, vbCrLf) Then
-        EscapeCSV = charDoubleQuotation & Part & charDoubleQuotation
+    If 0 < VBA.InStr(1, Part, COMMA) Or 0 < VBA.InStr(1, Part, DOUBLE_QUOTATION) Or 0 < VBA.InStr(1, Part, vbCrLf) Then
+        EscapeCSV = DOUBLE_QUOTATION & Part & DOUBLE_QUOTATION
     End If
 End Function
 
@@ -120,9 +124,9 @@ Private Function ParseCSV(ByVal TextData As String) As Inf_RawRows
 End Function
 
 Private Sub TryAddRecord(ByRef RawRows As Inf_RawRows, ByRef State As ParserState, ByRef Buffer As String, ByRef i As Long, ByRef Char As String, ByRef NextChar As String)
-    If Char = charDoubleQuotation Then
+    If Char = DOUBLE_QUOTATION Then
         State = InsideQuotedField
-    ElseIf Char = charComma Then
+    ElseIf Char = COMMA Then
         RawRows.AddFiled Buffer
         Buffer = vbNullString
     ElseIf Char = vbCr Then
@@ -142,7 +146,7 @@ Private Sub TryAddRecord(ByRef RawRows As Inf_RawRows, ByRef State As ParserStat
 End Sub
 
 Private Sub AddRecord(ByRef RawRows As Inf_RawRows, ByRef State As ParserState, ByRef Buffer As String, ByRef i As Long, ByRef Char As String, ByRef NextChar As String)
-    If Char = charComma Then
+    If Char = COMMA Then
         RawRows.AddFiled Buffer
         Buffer = vbNullString
         State = OutsideField
@@ -163,9 +167,9 @@ Private Sub AddRecord(ByRef RawRows As Inf_RawRows, ByRef State As ParserState, 
 End Sub
 
 Private Sub EscapeDoubleQuotation(ByRef State As ParserState, ByRef Buffer As String, ByRef i As Long, ByRef Char As String, ByRef NextChar As String)
-    If Char = charDoubleQuotation Then
-        If NextChar = charDoubleQuotation Then
-            Buffer = Buffer & charDoubleQuotation
+    If Char = DOUBLE_QUOTATION Then
+        If NextChar = DOUBLE_QUOTATION Then
+            Buffer = Buffer & DOUBLE_QUOTATION
             i = i + 1
         Else
             State = OutsideField

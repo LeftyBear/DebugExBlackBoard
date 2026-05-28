@@ -49,9 +49,9 @@ End Property
 '    Dim ClassNoMapper As New Inf_ClassNoMapper
 '    Dim GenderMapper As New Inf_GenderMapper
 '    If This.StreamType.IsMain Then
-'        ToKey = GradeMapper.ToRaw(This.Grade) & charUnderScore & ClassNoMapper.ToRaw(This.ClassNo) & charUnderScore & GenderMapper.ToRaw(This.Gender)
+'        ToKey = GradeMapper.ToRaw(This.Grade) & DELIMITER & ClassNoMapper.ToRaw(This.ClassNo) & DELIMITER & GenderMapper.ToRaw(This.Gender)
 '    ElseIf This.StreamType.IsSpecial Then
-'        ToKey = StreamTypeMapper.ToRaw(This.StreamType) & charUnderScore & ClassNoMapper.ToRaw(This.ClassNo) & charUnderScore & GenderMapper.ToRaw(This.Gender)
+'        ToKey = StreamTypeMapper.ToRaw(This.StreamType) & DELIMITER & ClassNoMapper.ToRaw(This.ClassNo) & DELIMITER & GenderMapper.ToRaw(This.Gender)
 '    End If
 'End Function
 

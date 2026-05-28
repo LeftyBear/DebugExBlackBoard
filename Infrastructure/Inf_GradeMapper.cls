@@ -16,19 +16,25 @@ End Type
 
 Private This As Member
 
+Private Const COLUMN_GRADE As String = "”N"
+
 Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
     Set This.Factory = Factory
 End Sub
 
 Public Function ToRaw(ByVal Grade As Dom_Grade) As String
-    ToRaw = CStr(Grade.Value) & jpnNen
+    ToRaw = CStr(Grade.Value) & COLUMN_GRADE
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_Grade
-    If 0 < VBA.InStr(1, Raw, jpnNen) Then
+    Dim TypeMapper As New Inf_StreamTypeMapper
+    Dim TypeCode As Dom_StreamType
+    Set TypeCode = TypeMapper.ToDomain(Raw)
+    If TypeCode Is Nothing Then Exit Function
+    If TypeCode.IsMain Then
         Dim Grade As Long
         Grade = GetGrade(Raw)
-    ElseIf 0 < VBA.InStr(1, Raw, jpnTokushi) Then
+    ElseIf TypeCode.IsSpecial Then
         Grade = 1
     End If
     Set ToDomain = This.Factory.CreateGrade(Grade)
@@ -40,6 +46,10 @@ End Function
 
 Private Function GetGrade(ByVal Raw As String) As Long
     Dim Buffer As String
-    Buffer = VBA.Replace(Raw, jpnNen, vbNullString)
+    Buffer = VBA.Replace(Raw, COLUMN_GRADE, vbNullString)
     GetGrade = Inf_NumericUtility.ExtractNumber(Buffer)
+End Function
+
+Public Property Get ColumnName() As String
+    ColumnName = COLUMN_GRADE
 End Function

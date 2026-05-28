@@ -17,9 +17,9 @@ Public Function GetBaseFolderPath() As String
     ParentPath = GetParentPath(CurrentPath)
     Dim GrandParentPath As String
     GrandParentPath = GetParentPath(ParentPath)
-    GetBaseFolderPath = GrandParentPath & charBackSlash
+    GetBaseFolderPath = GrandParentPath & "\"
 End Function
 
 Private Function GetParentPath(ByVal TargetPath As String) As String
-    GetParentPath = VBA.Left$(TargetPath, VBA.InStrRev(TargetPath, charBackSlash) - 1)
+    GetParentPath = VBA.Left$(TargetPath, VBA.InStrRev(TargetPath, "\") - 1)
 End Function

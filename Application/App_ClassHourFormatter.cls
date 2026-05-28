@@ -36,7 +36,7 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal YearlyAg
         If C = 1 Then
             OutputTable(1, C) = vbNullString
         Else
-            OutputTable(1, C) = CStr(C - 1) & jpnNen
+            OutputTable(1, C) = CStr(C - 1) & "”N"
         End If
     Next
     Dim R As Long
@@ -45,7 +45,7 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal YearlyAg
             If R < UBound(ClassHourTable, 1) + 1 And C = 1 Then
 '                OutputTable(R, C) = Structure.Subject.FindByIndex(R - 1).Name
             ElseIf R = UBound(ClassHourTable, 1) + 1 And C = 1 Then
-                OutputTable(R, C) = jpnGoukei
+                OutputTable(R, C) = "‡Œv"
             Else
                 OutputTable(R, C) = ClassHourTable(R - 1, C - 1)
             End If

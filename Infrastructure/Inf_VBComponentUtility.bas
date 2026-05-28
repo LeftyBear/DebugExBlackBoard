@@ -6,10 +6,11 @@ Private Const CtStdModule   As Long = 1
 Private Const CtClassModule As Long = 2
 Private Const CtMsForm      As Long = 3
 Private Const RootPath      As String = "C:\Users\biz\Documents\GitHub\DebugExBlackBoard\"
+Private Const PERIOD        As String = "."
 
 Public Sub BuildAddin()
     Dim FilePath As String
-    FilePath = ThisWorkbook.Path & charBackSlash & "test_" & VBA.Format$(Now, "yyyymmddhhnnss") & ".xlam"
+    FilePath = ThisWorkbook.Path & "\" & "test_" & VBA.Format$(Now, "yyyymmddhhnnss") & ".xlam"
     Dim AddinWorkbook As Excel.Workbook
     Set AddinWorkbook = CreateAddinWorkbook(FilePath)
     ImportAllComponents AddinWorkbook.VBProject, RootPath
@@ -56,7 +57,7 @@ Private Sub TraverseFolders(ByVal Project As Object, ByVal FolderPath As String)
                 i = i + 1
                 Dim SubFolders() As String
                 ReDim Preserve SubFolders(i)
-                SubFolders(i) = FolderPath & FolderName & charBackSlash
+                SubFolders(i) = FolderPath & FolderName & "\"
             End If
         End If
         FolderName = VBA.Dir()
@@ -112,12 +113,12 @@ Private Function CreateAddinWorkbook(ByVal FilePath As String) As Excel.Workbook
 End Function
 
 Private Function RemoveExtension(ByVal FileName As String) As String
-    RemoveExtension = VBA.Left$(FileName, VBA.InStrRev(FileName, charPeriod) - 1)
+    RemoveExtension = VBA.Left$(FileName, VBA.InStrRev(FileName, PERIOD) - 1)
 End Function
 
 Private Function IsImportTarget(ByVal FileName As String) As Boolean
     Dim Extension As String
-    Extension = VBA.Mid$(FileName, VBA.InStrRev(FileName, charPeriod))
+    Extension = VBA.Mid$(FileName, VBA.InStrRev(FileName, PERIOD))
     Select Case VBA.LCase$(Extension)
     Case ".bas", ".cls", ".frm": IsImportTarget = True
     End Select

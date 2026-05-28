@@ -81,36 +81,6 @@ Public Function IsFourDigitNumber(ByVal Value As String) As Boolean
     IsFourDigitNumber = True
 End Function
 
-Public Function NormalizeToDate(ByVal RawText As String) As Date
-    Dim TextValue As String
-    TextValue = VBA.Trim$(RawText)
-    If TextValue = vbNullString Then Err.Raise DomErrEmptyDate, "App_DateUtility", "日付に変換する値が必要です。"
-    TextValue = VBA.StrConv(TextValue, vbNarrow)
-    '@Ignore AssignmentNotUsed
-    TextValue = VBA.Replace(TextValue, charHyphen, charBackSlash)
-    If 0 < VBA.InStr(1, TextValue, charSlash) Then
-        If UBound(VBA.Split(TextValue, charSlash)) <> 2 Then Err.Raise DomErrInvalidDateFormat, "App_DateUtility", "日付に変換できる形式である必要があります。値: " & RawText
-        Dim YearPart As Long
-        YearPart = CLng(VBA.Split(TextValue, charSlash)(0))
-        Dim MonthPart As Long
-        MonthPart = CLng(VBA.Split(TextValue, charSlash)(1))
-        Dim DayPart As Long
-        DayPart = CLng(VBA.Split(TextValue, charSlash)(2))
-    ElseIf VBA.Len(TextValue) = 8 And VBA.IsNumeric(TextValue) Then
-        YearPart = CLng(VBA.Left$(TextValue, 4))
-        MonthPart = CLng(VBA.Mid$(TextValue, 5, 2))
-        DayPart = CLng(VBA.Right$(TextValue, 2))
-    Else
-        Err.Raise DomErrInvalidDateFormat, "App_DateUtility", "日付に変換できる形式である必要があります。値: " & RawText
-    End If
-    On Error GoTo InvalidDate
-    NormalizeToDate = VBA.DateSerial(YearPart, MonthPart, DayPart)
-    On Error GoTo 0
-    Exit Function
-InvalidDate:
-    Err.Raise DomErrInvalidDateValue, "App_DateUtility", "日付に変換できる値である必要があります。値: " & RawText
-End Function
-
 Public Function OutOfSchoolYear(ByVal TargetDate As Date) As Boolean
     Dim Apr1st As Date
     Apr1st = GetApr1st(TargetDate)

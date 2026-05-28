@@ -63,14 +63,16 @@ Private Sub ReplaceRow(ByRef Rows As Inf_ClassHourRows)
 End Sub
 
 Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByRef Rows As Inf_ClassHourRows, ByVal Daily As Dom_DailyClassHour)
+    Dim Mapper As Inf_PeriodMapper
+    Set Mapper = New Inf_PeriodMapper
     Dim i As Long
     For i = BeginIndex To EndIndex
         Dim Row As Inf_ClassHourRow
         Set Row = Rows.Item(i)
-        If 0 < VBA.InStr(1, Row.RawID, jpnKouji) Then
-            ReplaceRowOfDailyTimeTable Row, Daily
-        Else
+        If Mapper.ToDomain(Row.RawID) Is Nothing Then
             ReplaceRowOfDailyClassHour Row, Daily
+        Else
+            ReplaceRowOfDailyTimeTable Row, Daily
         End If
     Next
 End Sub

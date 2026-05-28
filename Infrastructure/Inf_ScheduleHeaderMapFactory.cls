@@ -22,13 +22,13 @@ Public Function Create(ByVal HeaderRows As VBA.Collection) As Inf_ScheduleHeader
     Set Create = Result
 End Function
 
-Private Function CreateColumn(ByVal Header As String) As Inf_ScheduleColumn
+Private Function CreateColumn(ByVal ColumnName As String) As Inf_ScheduleColumn
     Dim Column As Inf_ScheduleColumn
     Set Column = New Inf_ScheduleColumn
-    If 0 < VBA.InStr(1, Header, jpnHizuke) Then
-        Column.RawDate = Header
+    If 0 < VBA.InStr(1, ColumnName, HIZUKE) Then
+        Column.RawDate = ColumnName
     Else
-        Column.RawID = Header
+        Column.RawID = ColumnName
     End If
     Set CreateColumn = Column
 End Function

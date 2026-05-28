@@ -21,15 +21,15 @@ Public Function NormalizeToDate(ByVal RawText As String) As Date
     If TextValue = vbNullString Then Exit Function
     TextValue = VBA.StrConv(TextValue, vbNarrow)
     '@Ignore AssignmentNotUsed
-    TextValue = VBA.Replace(TextValue, charHyphen, charBackSlash)
-    If 0 < VBA.InStr(1, TextValue, charSlash) Then
-        If UBound(VBA.Split(TextValue, charSlash)) <> 2 Then Exit Function
+    TextValue = VBA.Replace(TextValue, "-", "\")
+    If 0 < VBA.InStr(1, TextValue, "/") Then
+        If UBound(VBA.Split(TextValue, "/")) <> 2 Then Exit Function
         Dim YearPart As Long
-        YearPart = CLng(VBA.Split(TextValue, charSlash)(0))
+        YearPart = CLng(VBA.Split(TextValue, "/")(0))
         Dim MonthPart As Long
-        MonthPart = CLng(VBA.Split(TextValue, charSlash)(1))
+        MonthPart = CLng(VBA.Split(TextValue, "/")(1))
         Dim DayPart As Long
-        DayPart = CLng(VBA.Split(TextValue, charSlash)(2))
+        DayPart = CLng(VBA.Split(TextValue, "/")(2))
     ElseIf VBA.Len(TextValue) = 8 And VBA.IsNumeric(TextValue) Then
         YearPart = CLng(VBA.Left$(TextValue, 4))
         MonthPart = CLng(VBA.Mid$(TextValue, 5, 2))

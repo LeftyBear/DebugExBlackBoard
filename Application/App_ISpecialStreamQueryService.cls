@@ -10,5 +10,5 @@ Attribute VB_Exposed = False
 '@Folder "Application.QueryServiceInterface"
 Option Explicit
 
-Public Function GetModels() As App_SpecialStreamReadModels
+Public Function GetAll() As App_SpecialStreamReadModels
 End Function

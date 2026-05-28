@@ -40,32 +40,36 @@ Public Function ToRaw(ByVal ID As Dom_EnrollmentID) As String
     If ID.IsMain Then
         Dim Grade As String
         Grade = This.GradeMapper.ToRaw(ID.Grade)
-        ToRaw = Grade & charUnderScore & ClassNo & charUnderScore & Gender
+        ToRaw = Grade & DELIMITER & ClassNo & DELIMITER & Gender
     ElseIf ID.IsSpecial Then
         Dim TypeCode As String
         TypeCode = This.TypeMapper.ToRaw(ID.StreamType)
-        ToRaw = TypeCode & charUnderScore & ClassNo & charUnderScore & Gender
+        ToRaw = TypeCode & DELIMITER & ClassNo & DELIMITER & Gender
     End If
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_EnrollmentID
     Dim Parts() As String
-    Parts = VBA.Split(Raw, charUnderScore)
+    Parts = VBA.Split(Raw, DELIMITER)
     If UBound(Parts) <> 2 Then Exit Function
     Dim i As Long
     For i = 0 To UBound(Parts)
         Dim Part As String
         Part = Parts(i)
-        If 0 < VBA.InStr(1, Part, jpnTokushi) Or 0 < VBA.InStr(1, Part, jpnNen) Then
-            Dim StreamType As Dom_StreamType
+        Dim StreamType As Dom_StreamType
+        If StreamType Is Nothing Then
             Set StreamType = This.TypeMapper.ToDomain(Part)
-            Dim Grade As Dom_Grade
+        End If
+        Dim Grade As Dom_Grade
+        If Grade Is Nothing Then
             Set Grade = This.GradeMapper.ToDomain(Part)
-        ElseIf 0 < VBA.InStr(1, Part, jpnKumi) Then
-            Dim ClassNo As Dom_ClassNo
+        End If
+        Dim ClassNo As Dom_ClassNo
+        If ClassNo Is Nothing Then
             Set ClassNo = This.ClassNoMapper.ToDomain(Part)
-        ElseIf 0 < VBA.InStr(1, Part, jpnOtoko) Or 0 < VBA.InStr(1, Part, jpnOnna) Then
-            Dim Gender As Dom_Gender
+        End If
+        Dim Gender As Dom_Gender
+        If Gender Is Nothing Then
             Set Gender = This.GenderMapper.ToDomain(Part)
         End If
     Next

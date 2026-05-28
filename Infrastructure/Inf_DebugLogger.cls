@@ -12,5 +12,6 @@ Option Explicit
 Implements App_ILogPersistence
 
 Private Sub App_ILogPersistence_Log(ByVal Message As String)
-    Debug.Print Now & charHalfSpace & Message
+    Const HALF_SPACE As String = " "
+    Debug.Print Now & HALF_SPACE & Message
 End Sub

@@ -12,7 +12,7 @@ Option Explicit
 Implements App_ISubjectQueryService
 Private Type Member
     Persistence As Inf_SubjectPersistence
-    NameIndex   As Scripting.Dictionary
+    Rows As Inf_SubjectRows
 End Type
 
 Private This As Member
@@ -22,39 +22,16 @@ Public Sub Initialize(ByVal Persistence As Inf_SubjectPersistence)
 End Sub
 
 Private Sub EnsureLoaded()
-    If This.NameIndex Is Nothing Then
-        Set This.NameIndex = New Scripting.Dictionary
-        BuildNameIndex
-    End If
-End Sub
-
-Private Sub BuildNameIndex()
+    If Not This.Rows Is Nothing Then Exit Sub
+    Set This.Rows = New Inf_SubjectRows
     Dim RawRows As Inf_RawRows
     Set RawRows = This.Persistence.ReadAll
-    Dim R As Long
-    For R = 2 To RawRows.RecordsCount
-        Dim Row As Inf_SubjectRow
-        Set Row = New Inf_SubjectRow
-        Dim C As Long
-        For C = 1 To RawRows.FieldsCount
-            If RawRows.GetField(1, C) = jpnKyoukaMei Then
-                Row.Name = RawRows.GetField(R, C)
-            ElseIf Rows.GetField(1, C) = jpnTaisyoGakunen Then
-                Row.TargetGrade = RawRows.GetField(R, C)
-            ElseIf Rows.GetField(1, C) = jpnKigou Then
-                Row.Mark = RawRows.GetField(R, C)
-            End If
-        Next
-        This.NameIndex.Add Row.Name, Row
-    Next
+    Dim Factory As New Inf_SubjectRowsFactory
+    Set This.Rows = Factory.Create(RawRows)
 End Sub
 
-Private Function App_ISubjectQueryService_GetByName(ByVal Name As String) As App_SubjectReadModel
+Private Function App_ISubjectQueryService_GetAll() As App_SubjectReadModels
     EnsureLoaded
-    If This.NameIndex.Exists(Name) Then Exit Function
-    Dim Row As Inf_SubjectRow
-    Set Row = This.NameIndex.Item(Name)
-    Dim Factory As Inf_SubjectModelFactory
-    Set Factory = New Inf_SubjectModelFactory
-    Set App_ISubjectQueryService_GetByName = Factory.Create(Row)
+    Dim Factory As New Inf_SubjectModelFactory
+    Set App_ISubjectQueryService_GetAll = Factory.Create(This.Rows)
 End Function

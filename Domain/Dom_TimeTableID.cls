@@ -43,7 +43,7 @@ Public Function ToKey() As String
     Set PeriodMapper = New Inf_PeriodMapper
     Dim GradeMapper As Inf_GradeMapper
     Set GradeMapper = New Inf_GradeMapper
-    ToKey = ClassHourTypeMapper.ToRaw(This.ClassHourType) & charUnderScore & PeriodMapper.ToRaw(This.Period) & charUnderScore & GradeMapper.ToRaw(This.Grade)
+    ToKey = ClassHourTypeMapper.ToRaw(This.ClassHourType) & DELIMITER & PeriodMapper.ToRaw(This.Period) & DELIMITER & GradeMapper.ToRaw(This.Grade)
 End Function
 
 Public Function Equals(ByVal Other As Dom_TimeTableID) As Boolean

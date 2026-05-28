@@ -36,24 +36,24 @@ Public Function ToRaw(ByVal ID As Dom_ClassHourID) As String
     SubjectName = This.SubjectMapper.ToRaw(ID.Subject)
     Dim Grade As String
     Grade = This.GradeMapper.ToRaw(ID.Grade)
-    ToRaw = TypeCode & charUnderScore & SubjectName & charUnderScore & Grade
+    ToRaw = TypeCode & DELIMITER & SubjectName & DELIMITER & Grade
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_ClassHourID
     Dim Parts() As String
-    Parts = VBA.Split(Raw, charUnderScore)
+    Parts = VBA.Split(Raw, DELIMITER)
     Dim i As Long
     For i = 0 To UBound(Parts)
         Dim Part As String
         Part = Parts(i)
-        If 0 < VBA.InStr(1, Part, jpnKeikaku) Or 0 < VBA.InStr(1, Part, jpnJisshi) Then
-            Dim ClassHourType As Dom_ClassHourType
+        Dim ClassHourType As Dom_ClassHourType
+        Dim Grade As Dom_Grade
+        Dim SubjectName As Dom_SubjectName
+        If ClassHourType Is Nothing Then
             Set ClassHourType = This.TypeMapper.ToDomain(Part)
-        ElseIf VBA.InStr(1, Part, jpnNen) = 0 Then
-            Dim Grade As Dom_Grade
+        ElseIf Grade Is Nothing Then
             Set Grade = This.GradeMapper.ToDomain(Part)
-        Else
-            Dim SubjectName As Dom_SubjectName
+        ElseIf SubjectName Is Nothing Then
             Set SubjectName = This.SubjectMapper.ToDomain(Part)
         End If
     Next

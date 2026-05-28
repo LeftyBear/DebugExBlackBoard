@@ -5,9 +5,9 @@ Option Explicit
 Public Function JoinByBackSlash(ParamArray Strings() As Variant) As String
     Dim i As Long
     For i = LBound(Strings) To UBound(Strings)
-        If VBA.Right$(Strings(i), 1) = charBackSlash Then
+        If VBA.Right$(Strings(i), 1) = "\" Then
             Strings(i) = VBA.Left$(Strings(i), VBA.Len(Strings(i)) - 1)
         End If
     Next
-    JoinByBackSlash = VBA.Join(Strings, charBackSlash)
+    JoinByBackSlash = VBA.Join(Strings, "\")
 End Function

@@ -46,18 +46,21 @@ Public Function Create(ByVal DailyRows As Inf_EnrollmentRows) As App_EnrollmentR
         Set Model = New App_EnrollmentReadModel
         If Row.RawID <> vbNullString Then
             Dim Parts() As String
-            Parts = VBA.Split(Row.RawID, charUnderScore)
+            Parts = VBA.Split(Row.RawID, DELIMITER)
             Dim j As Long
             For j = 0 To UBound(Parts)
                 Dim Part As String
                 Part = Parts(j)
-                If 0 < VBA.InStr(1, Part, jpnTokushi) Then
+                If Model.TypeCode = vbNullString Then
                     Model.TypeCode = This.TypeMapper.ToModel(Part)
-                ElseIf 0 < VBA.InStr(1, Part, jpnNen) Then
+                End If
+                If Model.Grade = vbNullString Then
                     Model.Grade = This.GradeMapper.ToModel(Part)
-                ElseIf 0 < VBA.InStr(1, Part, jpnKumi) Then
+                End If
+                If Model.ClassNo = vbNullString Then
                     Model.ClassNo = This.ClassNoMapper.ToModel(Part)
-                ElseIf 0 < VBA.InStr(1, Part, jpnOtoko) Or 0 < VBA.InStr(1, Part, jpnOnna) Then
+                End If
+                If Model.Gender = vbNullString Then
                     Model.Gender = This.GenderMapper.ToModel(Part)
                 End If
             Next

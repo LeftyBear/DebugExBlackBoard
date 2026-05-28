@@ -1,5 +1,5 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Pre_MainView 
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Pre_MainView
    Caption         =   "UserForm1"
    ClientHeight    =   3040
    ClientLeft      =   110
@@ -76,7 +76,7 @@ End Function
 Private Function BuildGridControlName(ByVal Kind As String, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long) As String
     Dim Cells() As Variant
     Cells = Array(Kind, CStr(Grade), CStr(ClassNo))
-    BuildGridControlName = VBA.Join(Cells, charUnderScore)
+    BuildGridControlName = VBA.Join(Cells, DELIMITER)
 End Function
 
 Private Sub Pre_IMainView_HideLoading()

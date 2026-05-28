@@ -10,6 +10,9 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Factory")
 Option Explicit
 
+Private Const COLUMN_TRANSFER   As String = "ç›ê–àŸìÆ"
+Private Const COLUMN_REMARKS    As String = "ç›ê–îıçl"
+
 Public Function Create(ByVal HeaderRows As VBA.Collection) As Inf_EnrollmentHeaderMap
     Dim Result As Inf_EnrollmentHeaderMap
     Set Result = New Inf_EnrollmentHeaderMap
@@ -22,17 +25,17 @@ Public Function Create(ByVal HeaderRows As VBA.Collection) As Inf_EnrollmentHead
     Set Create = Result
 End Function
 
-Private Function CreateColumn(ByVal Header As String) As Inf_EnrollmentColumn
+Private Function CreateColumn(ByVal ColumnName As String) As Inf_EnrollmentColumn
     Dim Result As Inf_EnrollmentColumn
     Set Result = New Inf_EnrollmentColumn
-    If 0 < VBA.InStr(1, Header, jpnHizuke) Then
-        Result.RawDate = Header
-    ElseIf 0 < VBA.InStr(1, Header, jpnIdou) Then
-        Result.RawTransfer = Header
-    ElseIf 0 < VBA.InStr(1, Header, jpnBikou) Then
-        Result.RawRemarks = Header
+    If 0 < VBA.InStr(1, ColumnName, HIZUKE) Then
+        Result.RawDate = ColumnName
+    ElseIf 0 < VBA.InStr(1, ColumnName, COLUMN_TRANSFER) Then
+        Result.RawTransfer = ColumnName
+    ElseIf 0 < VBA.InStr(1, ColumnName, COLUMN_REMARKS) Then
+        Result.RawRemarks = ColumnName
     Else
-        Result.RawID = Header
+        Result.RawID = ColumnName
     End If
     Set CreateColumn = Result
 End Function

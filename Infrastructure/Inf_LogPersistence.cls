@@ -25,6 +25,6 @@ Private Sub App_ILogPersistence_Log(ByVal Message As String)
     Dim FileNo As Integer
     FileNo = VBA.FreeFile
     Open This.FilePath For Append As #FileNo
-    Print #FileNo, Now & charHalfSpace & Message
+    Print #FileNo, Now & " " & Message
     Close #FileNo
 End Sub

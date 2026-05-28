@@ -13,14 +13,14 @@ Option Explicit
 Public Function Create(ByVal RawRows As Inf_RawRows) As Inf_SubjectRows
     Dim Result As Inf_SubjectRows
     Set Result = New Inf_SubjectRows
-    Dim RowFactory As Inf_SubjectRowFactory
-    Set RowFactory = New Inf_SubjectRowFactory
+    Dim Factory As Inf_SubjectRowFactory
+    Set Factory = New Inf_SubjectRowFactory
     Dim R As Long
     For R = 2 To RawRows.RecordsCount
         Dim C As Long
         For C = 1 To RawRows.FieldsCount
             Dim Row As Inf_SubjectRow
-            Set Row = RowFactory.Create(RawRows.GetField(1, C), RawRows.GetField(R, C))
+            Set Row = Factory.Create(RawRows.GetField(1, C), RawRows.GetField(R, C))
             Result.Add Row
         Next
     Next

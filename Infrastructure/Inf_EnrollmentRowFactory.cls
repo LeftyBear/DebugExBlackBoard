@@ -17,7 +17,7 @@ Public Function Create(ByVal Column As Inf_EnrollmentColumn, ByVal RawText As St
         Result.NormDate = Inf_DateUtility.NormalizeToDate(RawText)
     ElseIf Column.RawID <> vbNullString Then
         Dim Parts() As String
-        Parts = VBA.Split(Column.RawID, charUnderScore)
+        Parts = VBA.Split(Column.RawID, DELIMITER)
         If UBound(Parts) = 2 Then
             Result.RawID = Column.RawID
             Result.Value = Inf_NumericUtility.ExtractNumber(RawText)

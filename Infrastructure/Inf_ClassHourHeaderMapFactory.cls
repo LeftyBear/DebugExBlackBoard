@@ -22,13 +22,13 @@ Public Function Create(ByVal HeaderRows As VBA.Collection) As Inf_ClassHourHeade
     Set Create = Result
 End Function
 
-Private Function CreateColumn(ByVal Header As String) As Inf_ClassHourColumn
+Private Function CreateColumn(ByVal ColumnName As String) As Inf_ClassHourColumn
     Dim Result As Inf_ClassHourColumn
     Set Result = New Inf_ClassHourColumn
-    If 0 < VBA.InStr(1, Header, jpnHizuke) Then
-        Result.RawDate = Header
+    If 0 < VBA.InStr(1, ColumnName, HIZUKE) Then
+        Result.RawDate = ColumnName
     Else
-        Result.RawID = Header
+        Result.RawID = ColumnName
     End If
     Set CreateColumn = Result
 End Function

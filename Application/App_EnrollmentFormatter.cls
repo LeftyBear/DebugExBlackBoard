@@ -21,21 +21,23 @@ End Enum
 
 Private Const COLUMN_COUNT As Long = C_.EndColumn - 1
 
-Public Function Format(ByVal Models As App_EnrollmentReadModels, ByVal Structure As Dom_SchoolStructure) As Variant()
+Public Function Format(ByVal Models As App_EnrollmentReadModels, ByVal MainModel As App_MainStreamReadModel, ByVal SpecialModels As App_SpecialStreamReadModels) As Variant()
     Dim Header() As Variant
     Header = BuildHeader
-    Dim MainUpperGrade As Long
-    MainUpperGrade = Structure.MainStream.Item.UpperGrade
-    Dim MainUpperClassNo As Long
-    MainUpperClassNo = Structure.MainStream.Item.UpperClassNo
+    Dim MainGradeCount As Long
+    MainGradeCount = MainModel.GradeCount
+    Dim MainClassNoCount As Long
+    MainClassNoCount = MainModel.ClassNoCount
     Dim MainTable() As Long
-    MainTable = BuildGenderTable(Models, "Main", MainUpperGrade, MainUpperClassNo)
-    Dim SpecialUpperClassNo As Long
-'    SpecialUpperClassNo = Structure.SpecialStream.Count
+    MainTable = BuildGenderTable(Models, "Main", MainGradeCount, MainClassNoCount)
+    Dim SpecialGradeCount As Long
+    SpecialGradeCount = SpecialModels.GradeCount
+    Dim SpecialClassNoCount As Long
+    SpecialClassNoCount = SpecialModels.ClassNoCount
     Dim SpecialTable() As Long
-    SpecialTable = BuildGenderTable(Models, "Special", 1, SpecialUpperClassNo)
+    SpecialTable = BuildGenderTable(Models, "Special", 1, SpecialClassNoCount)
     Dim Body() As Variant
-    Body = BuildBody(MainTable, SpecialTable, MainUpperClassNo, SpecialUpperClassNo)
+    Body = BuildBody(MainTable, SpecialTable, MainClassNoCount, SpecialClassNoCount)
     Format = BuildTable(Header, Body)
 End Function
 
@@ -59,11 +61,11 @@ End Sub
 Private Function BuildHeader() As Variant()
     Dim Result() As Variant
     ReDim Result(1 To 1, 1 To COLUMN_COUNT)
-    Result(1, C_.Grade) = jpnNen
-    Result(1, C_.ClassNo) = jpnKumi
-    Result(1, C_.Male) = jpnOtoko
-    Result(1, C_.Female) = jpnOnna
-    Result(1, C_.Total) = jpnGoukei
+    Result(1, C_.Grade) = "年"
+    Result(1, C_.ClassNo) = "組"
+    Result(1, C_.Male) = "男"
+    Result(1, C_.Female) = "女"
+    Result(1, C_.Total) = "合計"
     BuildHeader = Result
 End Function
 
@@ -85,15 +87,15 @@ Private Function BuildTable(ByRef Header() As Variant, ByRef Body() As Variant) 
     BuildTable = Result
 End Function
 
-Private Function BuildBody(ByRef MainTable() As Long, ByRef SpecialTable() As Long, ByVal MainUpperClassNo As Long, ByVal SpecialUpperClassNo As Long) As Variant()
+Private Function BuildBody(ByRef MainTable() As Long, ByRef SpecialTable() As Long, ByVal MainClassNoCount As Long, ByVal SpecialClassNoCount As Long) As Variant()
     Dim Result() As Variant
     ReDim Result(1 To UBound(MainTable) + UBound(SpecialTable), 1 To COLUMN_COUNT)
     Dim R As Long
     For R = 1 To UBound(MainTable)
         Dim C As Long
         For C = 1 To COLUMN_COUNT
-            If (R Mod MainUpperClassNo + 1) = 0 Then
-                Result(R, C_.Total) = jpnGoukei
+            If (R Mod MainClassNoCount + 1) = 0 Then
+                Result(R, C_.Total) = "合計"
             Else
                 Result(R, C) = MainTable(R, C)
             End If
@@ -101,8 +103,8 @@ Private Function BuildBody(ByRef MainTable() As Long, ByRef SpecialTable() As Lo
     Next
     For R = UBound(MainTable) + 1 To UBound(SpecialTable)
         For C = 1 To COLUMN_COUNT
-            If (R Mod SpecialUpperClassNo + 1) = 0 Then
-                Result(R, C_.Total) = jpnGoukei
+            If (R Mod SpecialClassNoCount + 1) = 0 Then
+                Result(R, C_.Total) = "合計"
             Else
                 Result(R, C) = SpecialTable(R, C)
             End If
@@ -111,37 +113,37 @@ Private Function BuildBody(ByRef MainTable() As Long, ByRef SpecialTable() As Lo
     BuildBody = Result
 End Function
 
-Private Function BuildGenderTable(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+Private Function BuildGenderTable(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
     Dim MaleSummary() As Long
-    MaleSummary = GetMaleSummary(Models, TypeCode, "Male", UpperGrade, UpperClassNo)
+    MaleSummary = GetMaleSummary(Models, TypeCode, "Male", GradeCount, ClassNoCount)
     Dim FemaleSummary() As Long
-    FemaleSummary = GetFemaleSummary(Models, TypeCode, "Female", UpperGrade, UpperClassNo)
+    FemaleSummary = GetFemaleSummary(Models, TypeCode, "Female", GradeCount, ClassNoCount)
     Dim Table() As Long
-    ReDim Table(1 To UpperGrade * UpperClassNo + UpperGrade, 1 To COLUMN_COUNT)
+    ReDim Table(1 To GradeCount * ClassNoCount + GradeCount, 1 To COLUMN_COUNT)
     SumGender Table, MaleSummary, FemaleSummary
     Dim Grades() As Long
-    Grades = GetGrades(UpperGrade, UpperClassNo)
+    Grades = GetGrades(GradeCount, ClassNoCount)
     Dim ClassNumbers() As Long
-    ClassNumbers = GetClassNumbers(UpperGrade, UpperClassNo)
+    ClassNumbers = GetClassNumbers(GradeCount, ClassNoCount)
     AddClassName Table, Grades, ClassNumbers
     BuildGenderTable = Table
 End Function
 
-Private Function GetMaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal Gender As String, ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+Private Function GetMaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal Gender As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
     Dim Values() As Long
-    Values = FilterBy(Models, TypeCode, "Male", UpperGrade, UpperClassNo)
-    GetMaleSummary = CalculateGenderTotal(Values, UpperGrade, UpperClassNo)
+    Values = FilterBy(Models, TypeCode, "Male", GradeCount, ClassNoCount)
+    GetMaleSummary = CalculateGenderTotal(Values, GradeCount, ClassNoCount)
 End Function
 
-Private Function GetFemaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal Gender As String, ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+Private Function GetFemaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal Gender As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
     Dim Values() As Long
-    Values = FilterBy(Models, TypeCode, "Female", UpperGrade, UpperClassNo)
-    GetFemaleSummary = CalculateGenderTotal(Values, UpperGrade, UpperClassNo)
+    Values = FilterBy(Models, TypeCode, "Female", GradeCount, ClassNoCount)
+    GetFemaleSummary = CalculateGenderTotal(Values, GradeCount, ClassNoCount)
 End Function
 
-Private Function FilterBy(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal Gender As String, ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+Private Function FilterBy(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal Gender As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
     Dim Result() As Long
-    ReDim Result(1 To UpperGrade, 1 To UpperClassNo)
+    ReDim Result(1 To GradeCount, 1 To ClassNoCount)
     Dim Model As App_EnrollmentReadModel
     For Each Model In Models
         If Model.TypeCode = TypeCode Then
@@ -153,21 +155,21 @@ Private Function FilterBy(ByVal Models As App_EnrollmentReadModels, ByVal TypeCo
     FilterBy = Result
 End Function
 
-Private Function CalculateGenderTotal(ByRef Values() As Long, ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+Private Function CalculateGenderTotal(ByRef Values() As Long, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
     Dim Result() As Long
-    ReDim Result(1 To UpperGrade * UpperClassNo + UpperGrade)
+    ReDim Result(1 To GradeCount * ClassNoCount + GradeCount)
     Dim Grade As Long
-    For Grade = 1 To UpperGrade
+    For Grade = 1 To GradeCount
         Dim ClassNo As Long
-        For ClassNo = 1 To UpperClassNo
+        For ClassNo = 1 To ClassNoCount
             Dim R As Long
-            If R < UpperClassNo + 1 Then
+            If R < ClassNoCount + 1 Then
                 Result(R) = Values(Grade, ClassNo)
                 Dim Total As Long
                 Total = Total + Values(Grade, ClassNo)
             End If
             R = R + 1
-            If (R Mod UpperClassNo + 1) = 0 Then
+            If (R Mod ClassNoCount + 1) = 0 Then
                 Result(R) = Total
                 Total = 0
                 Dim GrandTotal As Long
@@ -179,15 +181,15 @@ Private Function CalculateGenderTotal(ByRef Values() As Long, ByVal UpperGrade A
     CalculateGenderTotal = Result
 End Function
 
-Private Function GetGrades(ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+Private Function GetGrades(ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
     Dim Result() As Long
-    ReDim Result(1 To UpperGrade * UpperClassNo + UpperGrade)
+    ReDim Result(1 To GradeCount * ClassNoCount + GradeCount)
     Dim Grade As Long
-    For Grade = 1 To UpperGrade
+    For Grade = 1 To GradeCount
         Dim ClassNo As Long
-        For ClassNo = 1 To UpperClassNo
+        For ClassNo = 1 To ClassNoCount
             Dim R As Long
-            If R < UpperClassNo + 1 Then
+            If R < ClassNoCount + 1 Then
                 Result(R) = Grade
             End If
             R = R + 1
@@ -196,15 +198,15 @@ Private Function GetGrades(ByVal UpperGrade As Long, ByVal UpperClassNo As Long)
     GetGrades = Result
 End Function
 
-Private Function GetClassNumbers(ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Long()
+Private Function GetClassNumbers(ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
     Dim Result() As Long
-    ReDim Result(1 To UpperGrade * UpperClassNo + UpperGrade)
+    ReDim Result(1 To GradeCount * ClassNoCount + GradeCount)
     Dim Grade As Long
-    For Grade = 1 To UpperGrade
+    For Grade = 1 To GradeCount
         Dim ClassNo As Long
-        For ClassNo = 1 To UpperClassNo
+        For ClassNo = 1 To ClassNoCount
             Dim R As Long
-            If R < UpperClassNo + 1 Then
+            If R < ClassNoCount + 1 Then
                 Result(R) = ClassNo
             End If
             R = R + 1

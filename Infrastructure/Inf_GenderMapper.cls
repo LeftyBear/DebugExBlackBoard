@@ -16,32 +16,37 @@ End Type
 
 Private This As Member
 
+Private Const COLUMN_MALE       As String = "íj"
+Private Const COLUMN_FEMALE     As String = "èó"
+
 Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
     Set This.Factory = Factory
 End Sub
 
 Public Function ToRaw(ByVal Gender As Dom_Gender) As String
     If Gender.IsMale Then
-        ToRaw = jpnOtoko
+        ToRaw = COLUMN_MALE
     ElseIf Gender.IsFemale Then
-        ToRaw = jpnOnna
+        ToRaw = COLUMN_FEMALE
     End If
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_Gender
-    Dim Gender As Long
-    If 0 < VBA.InStr(1, Raw, jpnOtoko) Then
+    If 0 < VBA.InStr(1, Raw, COLUMN_MALE) Then
+        Dim Gender As Long
         Gender = Dom_GenderTypePolicy.Male
-    ElseIf 0 < VBA.InStr(1, Raw, jpnOnna) Then
+    ElseIf 0 < VBA.InStr(1, Raw, COLUMN_FEMALE) Then
         Gender = Dom_GenderTypePolicy.Female
+    Else
+        Exit Function
     End If
     Set ToDomain = This.Factory.CreateGender(Gender)
 End Function
 
 Public Function ToModel(ByVal Raw As String) As String
-    If 0 < VBA.InStr(1, Raw, jpnOtoko) Then
+    If 0 < VBA.InStr(1, Raw, COLUMN_MALE) Then
         ToModel = "Male"
-    ElseIf 0 < VBA.InStr(1, Raw, jpnOnna) Then
+    ElseIf 0 < VBA.InStr(1, Raw, COLUMN_FEMALE) Then
         ToModel = "Female"
     End If
 End Function

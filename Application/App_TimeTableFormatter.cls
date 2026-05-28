@@ -39,7 +39,7 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregat
         If C = 1 Then
             OutputTable(1, C) = vbNullString
         Else
-            OutputTable(1, C) = CStr(C - 1) & jpnNen
+            OutputTable(1, C) = CStr(C - 1) & "îN"
         End If
     Next
     Dim R As Long
@@ -51,7 +51,7 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregat
                 OutputTable(R, C) = TimeTable(R - 1, C - 1)
                 If OutputTable(R, C) <> vbNullString Then Total(C - 1) = Total(C - 1) + 1
             ElseIf R = UBound(TimeTable, 1) + 1 And C = 1 Then
-                OutputTable(R, C) = jpnGoukei
+                OutputTable(R, C) = "çáåv"
             ElseIf R = UBound(TimeTable, 1) + 1 Then
                 OutputTable(R, C) = Total(C - 1)
             End If

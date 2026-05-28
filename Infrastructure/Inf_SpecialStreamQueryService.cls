@@ -43,8 +43,8 @@ Private Sub BuildRow(ByVal RawRows As Inf_RawRows)
     Next
 End Sub
 
-Private Function App_ISpecialStreamQueryService_GetModels() As App_SpecialStreamReadModels
+Private Function App_ISpecialStreamQueryService_GetAll() As App_SpecialStreamReadModels
     EnsureLoaded
     Dim Factory As New Inf_SpecialStreamModelFactory
-    Set App_ISpecialStreamQueryService_GetModels = Factory.Create(This.Rows)
+    Set App_ISpecialStreamQueryService_GetAll = Factory.Create(This.Rows)
 End Function
