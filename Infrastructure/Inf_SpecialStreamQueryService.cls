@@ -24,22 +24,17 @@ End Sub
 Private Sub EnsureLoaded()
     If Not This.Rows Is Nothing Then Exit Sub
     Set This.Rows = New Inf_SpecialStreamRows
-    Dim RawRows As Inf_RawRows
-    Set RawRows = This.Persistence.ReadAll
-    BuildRow RawRows
+    Dim Rows As Inf_SpecialStreamRows
+    Set Rows = This.Persistence.ReadAll
+    BuildRow Rows
 End Sub
 
-Private Sub BuildRow(ByVal RawRows As Inf_RawRows)
-    Dim Factory As Inf_SpecialStreamRowFactory
-    Set Factory = New Inf_SpecialStreamRowFactory
-    Dim R As Long
-    For R = 2 To RawRows.RecordsCount
-        Dim C As Long
-        For C = 1 To RawRows.FieldsCount
-            Dim Row As Inf_SpecialStreamRow
-            Set Row = Factory.Create(RawRows.GetField(1, C), RawRows.GetField(R, C))
-            This.Rows.Add Row
-        Next
+Private Sub BuildRow(ByVal Rows As Inf_SpecialStreamRows)
+    Dim i As Long
+    For i = 1 To Rows.Count
+        Dim Row As Inf_SpecialStreamRow
+        Set Row = Rows.Item(i)
+        This.Rows.Add Row
     Next
 End Sub
 

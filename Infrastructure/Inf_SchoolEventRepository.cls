@@ -26,25 +26,22 @@ End Sub
 Private Sub EnsureLoaded()
     If Not This.NameIndex Is Nothing Then Exit Sub
     Set This.NameIndex = New Scripting.Dictionary
-    Dim RawRows As Inf_RawRows
-    Set RawRows = This.Persistence.ReadAll
-    BuildNameIndex RawRows
+    Dim Rows As Inf_SchoolEventRows
+    Set Rows = This.Persistence.ReadAll
+    BuildNameIndex Rows
 End Sub
 
-Private Sub BuildNameIndex(ByVal RawRows As Inf_RawRows)
+Private Sub BuildNameIndex(ByVal Rows As Inf_SchoolEventRows)
     Dim Factory As Inf_SchoolEventRowFactory
     Set Factory = New Inf_SchoolEventRowFactory
-    Dim R As Long
-    For R = 2 To RawRows.RecordsCount
-        Dim C As Long
-        For C = 1 To RawRows.FieldsCount
-            Dim Row as Inf_SchoolEventRow
-            Set Row = Factory.Create(RawRows.GetField(1, C),RawRows.GetField(R, C))
-            Dim Entry As Dom_SchoolEvent
-            Set Entry = New Dom_SchoolEvent
-            Entry.Initialize Row.Name
-            This.NameIndex.Add Entry.Value, Entry
-        Next
+    Dim i As Long
+    For i = 1 To Rows.Count
+        Dim Row As Inf_SchoolEventRow
+        Set Row = Rows.Item(i)
+        Dim Entry As Dom_SchoolEvent
+        Set Entry = New Dom_SchoolEvent
+        Entry.Initialize Row.Name
+        This.NameIndex.Add Entry.Value, Entry
     Next
 End Sub
 

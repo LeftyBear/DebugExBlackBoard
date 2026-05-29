@@ -31,10 +31,16 @@ Public Function ReadAll() As Inf_MainStreamRows
     Set ReadAll = Factory.Create(RawRows)
 End Function
 
-Public Sub WriteAll(ByVal Rows As VBA.Collection)
+Public Sub WriteAll(ByVal Rows As Inf_MainStreamRows)
+    Dim Headers As VBA.Collection
+    Set Headers = GetHeaders
+    Dim Body As VBA.Collection
+    Set Body = GetValues(Rows)
+    Dim RawRows As Inf_RawRows
+    Set RawRows = BuildRows(Headers, Body)
     Dim FilePath As String
     FilePath = BuildFilePath
-    This.CSV.WriteAll FilePath, Rows
+    This.CSV.WriteAll FilePath, RawRows
 End Sub
 
 Public Sub Delete(ByVal Key As String)
@@ -42,6 +48,49 @@ Public Sub Delete(ByVal Key As String)
     FilePath = BuildFilePath
     This.CSV.Delete FilePath, Key
 End Sub
+
+Public Function GetHeaders() As VBA.Collection
+    Dim FilePath As String
+    FilePath = BuildFilePath
+    Dim RawRows As Inf_RawRows
+    Set RawRows = This.CSV.ReadAll(FilePath)
+    Set GetHeaders = RawRows.GetHeaderRows
+End Function
+
+Private Function GetValues(ByVal Rows As Inf_MainStreamRows) As VBA.Collection
+    Dim Records As VBA.Collection
+    Set Records = New VBA.Collection
+    Dim Fields As VBA.Collection
+    Set Fields = New VBA.Collection
+    Dim i As Long
+    For i = 1 To Rows.Count
+        Dim Row As Inf_MainStreamRow
+        Set Row = Rows.Item(i)
+        If Row.UpperGrade <> vbNullString Then
+            Fields.Add CStr(Row.UpperGrade)
+        ElseIf Row.UpperClassNo <> vbNullString Then
+            Fields.Add CStr(Row.UpperClassNo)
+        End If
+    Next
+    Records.Add Fields
+    Set GetValues = Records
+End Function
+
+Private Function BuildRows(ByVal Headers As VBA.Collection, ByVal Values As VBA.Collection) As Inf_RawRows
+    Dim Result As Inf_RawRows
+    Set Result = New Inf_RawRows
+    Dim C As Long
+    For C = 1 To Headers.Count
+        Result.AddFiled Headers.Item(C)
+    Next
+    Result.AddRecord Result.Fields
+    Result.InitializeFileds
+    Dim R As Long
+    For R = 1 To Values.Count
+        Result.AddRecord Values.Item(R)
+    Next
+    Set BuildRows = Result
+End Function
 
 Private Function BuildFilePath() As String
     Dim BaseFolderPath As String

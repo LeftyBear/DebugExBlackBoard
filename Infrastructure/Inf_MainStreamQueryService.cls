@@ -23,24 +23,7 @@ End Sub
 
 Private Sub EnsureLoaded()
     If Not This.Rows Is Nothing Then Exit Sub
-    Set This.Rows = New Inf_MainStreamRows
-    Dim RawRows As Inf_RawRows
-    Set RawRows = This.Persistence.ReadAll
-    BuildRows RawRows
-End Sub
-
-Private Sub BuildRows(ByVal RawRows As Inf_RawRows)
-    Dim Factory As Inf_MainStreamRowFactory
-    Set Factory = New Inf_MainStreamRowFactory
-    Dim R As Long
-    For R = 2 To RawRows.RecordsCount
-        Dim C As Long
-        For C = 1 To RawRows.FieldsCount
-            Dim Row As Inf_MainStreamRow
-            Set Row = Factory.Create(RawRows.GetField(1, C), RawRows.GetField(R, C))
-            This.Rows.Add Row
-        Next
-    Next
+    Set This.Rows = This.Persistence.ReadAll
 End Sub
 
 Private Function App_IMainStreamQueryService_GetModel() As App_MainStreamReadModel

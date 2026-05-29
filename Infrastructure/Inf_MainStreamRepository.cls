@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Repository")
+'@Folder("Infrastructure.Repository")
 Option Explicit
 Implements Dom_IMainStreamRepository
 Private Type Member
@@ -61,7 +61,7 @@ Private Sub Dom_IMainStreamRepository_Save()
     This.Persistence.WriteAll Rows
 End Sub
 
-Private Sub ReplaceRow(ByRef Rows As Inf_EnrollmentRows)
+Private Sub ReplaceRow(ByRef Rows As Inf_MainStreamRows)
     Dim i As Long
     For i = 1 To Rows.Count
         Dim Row As Inf_MainStreamRow

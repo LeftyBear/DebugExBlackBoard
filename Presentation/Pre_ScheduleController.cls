@@ -20,7 +20,7 @@ Public Sub Initialize(ByVal Presenter As Pre_SchedulePresenter)
     Set This.Presenter = Presenter
 End Sub
 
-Public Sub ViewSchedule(ByVal Index As Long, ByVal ClassHour As Dom_IClassHourRepository, ByVal Enrollment As Dom_IEnrollmentRepository, ByVal Schedule As Dom_IScheduleRepository, ByVal Structure As Dom_SchoolStructure)
+Public Sub ViewSchedule(ByVal Index As Long, ByVal ClassHour As Dom_IClassHourRepository, ByVal Enrollment As Dom_IEnrollmentRepository, ByVal Schedule As Dom_IScheduleRepository)
 '    Dim ClassHourAgg As VBA.Collection
 '    Set ClassHourAgg = ClassHour.GetAll
 '    Dim EnrollmentAgg As VBA.Collection

@@ -34,9 +34,9 @@ Private Sub Excute()
     This.Base.Execute Me
 End Sub
 
-Public Sub Show(ByVal Index As Long, ByVal ClassHour As VBA.Collection, ByVal Enrollment As VBA.Collection, ByVal Schedule As VBA.Collection, ByVal Structure As Dom_SchoolStructure)
+Public Sub Show(ByVal Index As Long, ByVal ClassHour As VBA.Collection, ByVal Enrollment As VBA.Collection, ByVal Schedule As VBA.Collection)
     Dim NewDTO As App_ViewDTO
-    Set NewDTO = This.Factory.Create(Index, ClassHour, Enrollment, Schedule, Structure)
+    Set NewDTO = This.Factory.Create(Index, ClassHour, Enrollment, Schedule)
     RenderDiff This.CurrentDTO, NewDTO
 End Sub
 

@@ -30,7 +30,7 @@ End Sub
 '    Set This.TimeTableFormatter = TimeTableFormatter
 'End Sub
 
-Public Function Create(ByVal Index As Long, ByVal ClassHour As VBA.Collection, ByVal Enrollment As VBA.Collection, ByVal Schedule As VBA.Collection, ByVal Structure As Dom_SchoolStructure) As App_ViewDTO
+Public Function Create(ByVal Index As Long, ByVal ClassHour As VBA.Collection, ByVal Enrollment As VBA.Collection, ByVal Schedule As VBA.Collection) As App_ViewDTO
 '    Dim BeginDate As Date
 '    BeginDate = App_DateUtility.GetMonday(InitialDate.Value)
 '    Dim BeginIndex As Long
@@ -39,16 +39,16 @@ Public Function Create(ByVal Index As Long, ByVal ClassHour As VBA.Collection, B
 '    EndDate = App_DateUtility.GetSunday(InitialDate.Value)
 '    Dim EndIndex As Long
 '    EndIndex = App_DateUtility.DiffApr1st(EndDate)
-    Dim ViewDTO As App_ViewDTO
-    Set ViewDTO = New App_ViewDTO
-    With ViewDTO
-        Set .Structure = Structure
-        Set .Schedule = Schedule.Item(Index)
-        .ClassHourPlanTable = This.ClassHourFormatter.Format(Plan, ClassHour, Index, Index, Structure)
-        .ClassHourExecutionTable = This.ClassHourFormatter.Format(Execution, ClassHour, Index, Index, Structure)
-        .TimeTablePlanTable = This.TimeTableFormatter.Format(Plan, ClassHour.Item(Index), Structure)
-        .TimeTableExecutionTable = This.TimeTableFormatter.Format(Execution, ClassHour.Item(Index), Structure)
-        .EnrollmentTable = This.EnrollmentFormatter.Format(Enrollment.Item(Index), Structure)
-    End With
-    Set Create = ViewDTO
+'    Dim ViewDTO As App_ViewDTO
+'    Set ViewDTO = New App_ViewDTO
+'    With ViewDTO
+'        Set .Structure = Structure
+'        Set .Schedule = Schedule.Item(Index)
+'        .ClassHourPlanTable = This.ClassHourFormatter.Format(Plan, ClassHour, Index, Index, Structure)
+'        .ClassHourExecutionTable = This.ClassHourFormatter.Format(Execution, ClassHour, Index, Index, Structure)
+'        .TimeTablePlanTable = This.TimeTableFormatter.Format(Plan, ClassHour.Item(Index), Structure)
+'        .TimeTableExecutionTable = This.TimeTableFormatter.Format(Execution, ClassHour.Item(Index), Structure)
+'        .EnrollmentTable = This.EnrollmentFormatter.Format(Enrollment.Item(Index), Structure)
+'    End With
+'    Set Create = ViewDTO
 End Function

@@ -22,6 +22,10 @@ Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
     Set This.Factory = Factory
 End Sub
 
+Public Property Get ColumnName() As String
+    ColumnName = COLUMN_GRADE
+End Property
+
 Public Function ToRaw(ByVal Grade As Dom_Grade) As String
     ToRaw = CStr(Grade.Value) & COLUMN_GRADE
 End Function
@@ -48,8 +52,4 @@ Private Function GetGrade(ByVal Raw As String) As Long
     Dim Buffer As String
     Buffer = VBA.Replace(Raw, COLUMN_GRADE, vbNullString)
     GetGrade = Inf_NumericUtility.ExtractNumber(Buffer)
-End Function
-
-Public Property Get ColumnName() As String
-    ColumnName = COLUMN_GRADE
 End Function

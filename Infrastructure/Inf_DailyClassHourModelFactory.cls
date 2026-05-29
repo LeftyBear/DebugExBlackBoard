@@ -12,7 +12,6 @@ Option Explicit
 
 Private Type Member
     TypeMapper      As Inf_ClassHourTypeMapper
-    SubjectMapper   As Inf_SubjectMapper
     PeriodMapper    As Inf_PeriodMapper
     GradeMapper     As Inf_GradeMapper
 End Type
@@ -21,13 +20,11 @@ Private This As Member
 
 Private Sub Class_Initialize()
     Set This.TypeMapper = New Inf_ClassHourTypeMapper
-    Set This.SubjectMapper = New Inf_SubjectMapper
     Set This.PeriodMapper = New Inf_PeriodMapper
     Set This.GradeMapper = New Inf_GradeMapper
     Dim Factory As Dom_ValueObjectFactory
     Set Factory = New Dom_ValueObjectFactory
     This.TypeMapper.Initialize Factory
-    This.SubjectMapper.Initialize Factory
     This.PeriodMapper.Initialize Factory
     This.GradeMapper.Initialize Factory
 End Sub
@@ -52,7 +49,7 @@ Public Function Create(ByVal DailyRows As Inf_ClassHourRows) As App_ClassHourRea
                     Model.TypeCode = This.TypeMapper.ToModel(Part)
                 End If
                 If Model.Subject = vbNullString Then
-                    Model.Subject = This.SubjectMapper.ToModel(Part)
+                    Model.Subject = Part
                 End If
                 If Model.Period = vbNullString Then
                     Model.Period = This.PeriodMapper.ToModel(Part)
@@ -67,3 +64,4 @@ Public Function Create(ByVal DailyRows As Inf_ClassHourRows) As App_ClassHourRea
     Next
     Set Create = Result
 End Function
+

@@ -12,13 +12,13 @@ Option Explicit
 
 Private Type Member
     TypeCode    As Dom_ClassHourType
-    Subject     As Dom_Subject
+    Subject     As Dom_SubjectName
     Grade       As Dom_Grade
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal TypeCode As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade)
+Public Sub Initialize(ByVal TypeCode As Dom_ClassHourType, ByVal Subject As Dom_SubjectName, ByVal Grade As Dom_Grade)
     Set This.TypeCode = TypeCode
     Set This.Subject = Subject
     Set This.Grade = Grade
@@ -28,7 +28,7 @@ Public Property Get TypeCode() As Dom_ClassHourType
     Set TypeCode = This.TypeCode
 End Property
 
-Public Property Get Subject() As Dom_Subject
+Public Property Get Subject() As Dom_SubjectName
     Set Subject = This.Subject
 End Property
 
@@ -41,7 +41,7 @@ Public Function ToKey() As String
     Set TypeCodeMapper = New Inf_ClassHourTypeMapper
     Dim GradeMapper As Inf_GradeMapper
     Set GradeMapper = New Inf_GradeMapper
-    ToKey = TypeCodeMapper.ToRaw(This.TypeCode) & DELIMITER & This.Subject.Name & DELIMITER & GradeMapper.ToRaw(This.Grade)
+    ToKey = TypeCodeMapper.ToRaw(This.TypeCode) & DELIMITER & This.Subject.Value & DELIMITER & GradeMapper.ToRaw(This.Grade)
 End Function
 
 Public Function Equals(ByVal Other As Dom_ClassHourID) As Boolean

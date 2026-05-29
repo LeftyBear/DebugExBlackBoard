@@ -11,7 +11,6 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements Pre_IPresenterCallback
 Private Type Member
-    Structure       As Dom_SchoolStructure
     Logger          As App_ILogPersistence
     MainView        As Pre_IMainView
     Base            As Pre_BasePresenter

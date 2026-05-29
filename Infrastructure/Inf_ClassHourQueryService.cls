@@ -56,7 +56,6 @@ Private Function App_IClassHourQueryService_GetByDate(ByVal TargetDate As Date) 
     If This.DateIndex.Exists(CStr(TargetDate)) Then Exit Function
     Dim DailyRows As Inf_ClassHourRows
     Set DailyRows = This.DateIndex.Item(CStr(TargetDate))
-    Dim Factory As Inf_DailyClassHourModelFactory
-    Set Factory = New Inf_DailyClassHourModelFactory
+    Dim Factory As New Inf_DailyClassHourModelFactory
     Set App_IClassHourQueryService_GetByDate = Factory.Create(DailyRows)
 End Function

@@ -25,9 +25,9 @@ Public Function Format(ByVal Models As App_EnrollmentReadModels, ByVal MainModel
     Dim Header() As Variant
     Header = BuildHeader
     Dim MainGradeCount As Long
-    MainGradeCount = MainModel.GradeCount
+    MainGradeCount = MainModel.UpperGrade
     Dim MainClassNoCount As Long
-    MainClassNoCount = MainModel.ClassNoCount
+    MainClassNoCount = MainModel.UpperClassNo
     Dim MainTable() As Long
     MainTable = BuildGenderTable(Models, "Main", MainGradeCount, MainClassNoCount)
     Dim SpecialGradeCount As Long

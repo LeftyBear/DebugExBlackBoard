@@ -12,7 +12,7 @@ Option Explicit
 Implements App_ISubjectQueryService
 Private Type Member
     Persistence As Inf_SubjectPersistence
-    Rows As Inf_SubjectRows
+    Rows        As Inf_SubjectRows
 End Type
 
 Private This As Member
@@ -23,11 +23,7 @@ End Sub
 
 Private Sub EnsureLoaded()
     If Not This.Rows Is Nothing Then Exit Sub
-    Set This.Rows = New Inf_SubjectRows
-    Dim RawRows As Inf_RawRows
-    Set RawRows = This.Persistence.ReadAll
-    Dim Factory As New Inf_SubjectRowsFactory
-    Set This.Rows = Factory.Create(RawRows)
+    Set This.Rows = This.Persistence.ReadAll
 End Sub
 
 Private Function App_ISubjectQueryService_GetAll() As App_SubjectReadModels

@@ -17,10 +17,10 @@ Public Function CreateDateID(ByVal Value As Date) As Dom_DateID
     Set CreateDateID = VO
 End Function
 
-Public Function CreateClassHourID(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_Subject, ByVal Grade As Dom_Grade) As Dom_ClassHourID
+Public Function CreateClassHourID(ByVal ClassHourType As Dom_ClassHourType, ByVal SubjectName As Dom_SubjectName, ByVal Grade As Dom_Grade) As Dom_ClassHourID
     Dim VO As Dom_ClassHourID
     Set VO = New Dom_ClassHourID
-    VO.Initialize ClassHourType, Subject, Grade
+    VO.Initialize ClassHourType, SubjectName, Grade
     Set CreateClassHourID = VO
 End Function
 

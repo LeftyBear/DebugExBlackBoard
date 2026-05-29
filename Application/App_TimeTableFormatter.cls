@@ -27,11 +27,11 @@ End Sub
 '    Set This.Factory = Factory
 'End Sub
 
-Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_DailyClassHour, ByVal Structure As Dom_SchoolStructure) As Variant()
+Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_DailyClassHour) As Variant()
     Dim TimeTable() As String
-    TimeTable = ToTimeTable(TypeCode, Aggregate, Structure)
+    TimeTable = ToTimeTable(TypeCode, Aggregate)
     Dim Total() As Long
-    ReDim Total(Structure.MainStream.Item.UpperGrade)
+'    ReDim Total(Structure.MainStream.Item.UpperGrade)
     Dim OutputTable() As Variant
     ReDim OutputTable(1 To UBound(TimeTable, 1) + 1, 1 To UBound(TimeTable, 2) + 1)
     Dim C As Long
@@ -60,9 +60,9 @@ Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregat
     Format = OutputTable
 End Function
 
-Private Function ToTimeTable(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_DailyClassHour, ByVal Structure As Dom_SchoolStructure) As String()
+Private Function ToTimeTable(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_DailyClassHour) As String()
     Dim UpperGrade As Long
-    UpperGrade = Structure.MainStream.Item.UpperGrade
+'    UpperGrade = Structure.MainStream.Item.UpperGrade
     Dim PeriodCount As Long
 '    PeriodCount = Structure.UpperValue.Item.PeriodCount
     PeriodCount = 1
