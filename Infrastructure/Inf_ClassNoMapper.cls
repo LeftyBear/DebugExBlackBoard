@@ -10,17 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
-Private Type Member
-    Factory As Dom_ValueObjectFactory
-End Type
-
-Private This As Member
-
 Private Const CLASS_NO As String = "‘g"
-
-Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Factory = Factory
-End Sub
 
 Public Property Get ColumnClassNo() As String
     ColumnClassNo = CLASS_NO
@@ -34,7 +24,7 @@ Public Function ToDomain(ByVal Raw As String) As Dom_ClassNo
     If VBA.InStr(1, Raw, CLASS_NO) = 0 Then Exit Function
     Dim ClassNo As Long
     ClassNo = GetClassNo(Raw)
-    Set ToDomain = This.Factory.CreateClassNo(ClassNo)
+    Set ToDomain = Dom_ValueObjectFactory.CreateClassNo(ClassNo)
 End Function
 
 Public Function ToModel(ByVal Raw As String) As Long

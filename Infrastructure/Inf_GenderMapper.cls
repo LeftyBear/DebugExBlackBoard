@@ -10,20 +10,10 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
-Private Type Member
-    Factory As Dom_ValueObjectFactory
-End Type
-
-Private This As Member
-
 Private Const COLUMN_MALE       As String = "íj"
 Private Const COLUMN_FEMALE     As String = "èó"
 Private Const MODEL_MALE        As String = "Male"
 Private Const MODEL_FEMALE      As String = "Female"
-
-Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Factory = Factory
-End Sub
 
 Public Property Get MaleKey() As String
     MaleKey = MODEL_MALE
@@ -50,7 +40,7 @@ Public Function ToDomain(ByVal Raw As String) As Dom_Gender
     Else
         Exit Function
     End If
-    Set ToDomain = This.Factory.CreateGender(Gender)
+    Set ToDomain = Dom_ValueObjectFactory.CreateGender(Gender)
 End Function
 
 Public Function ToModel(ByVal Raw As String) As String

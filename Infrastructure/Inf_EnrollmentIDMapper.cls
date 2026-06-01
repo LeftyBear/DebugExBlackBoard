@@ -11,7 +11,6 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Factory         As Dom_ValueObjectFactory
     TypeMapper      As Inf_StreamTypeMapper
     GradeMapper     As Inf_GradeMapper
     ClassNoMapper   As Inf_ClassNoMapper
@@ -20,16 +19,11 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Factory = Factory
+Private Sub Class_Initialize()
     Set This.TypeMapper = New Inf_StreamTypeMapper
     Set This.GradeMapper = New Inf_GradeMapper
     Set This.ClassNoMapper = New Inf_ClassNoMapper
     Set This.GenderMapper = New Inf_GenderMapper
-    This.TypeMapper.Initialize This.Factory
-    This.GradeMapper.Initialize This.Factory
-    This.ClassNoMapper.Initialize This.Factory
-    This.GenderMapper.Initialize This.Factory
 End Sub
 
 Public Function ToRaw(ByVal ID As Dom_EnrollmentID) As String
@@ -73,5 +67,5 @@ Public Function ToDomain(ByVal Raw As String) As Dom_EnrollmentID
             Set Gender = This.GenderMapper.ToDomain(Part)
         End If
     Next
-    Set ToDomain = This.Factory.CreateEnrollmentID(StreamType, Grade, ClassNo, Gender)
+    Set ToDomain = Dom_EnrollmentIDFactory.Create(StreamType, Grade, ClassNo, Gender)
 End Function

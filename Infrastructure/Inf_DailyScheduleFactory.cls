@@ -11,7 +11,6 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Factory         As Dom_ValueObjectFactory
     IDMapper        As Inf_ScheduleIDMapper
     TransferMapper  As Inf_TransferMapper
 End Type
@@ -19,20 +18,17 @@ End Type
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.Factory = New Dom_ValueObjectFactory
     Set This.IDMapper = New Inf_ScheduleIDMapper
     Set This.TransferMapper = New Inf_TransferMapper
-    This.IDMapper.Initialize This.Factory
-    This.TransferMapper.Initialize This.Factory
 End Sub
 
 Public Function Create(ByVal TargetDate As Date, ByVal Row As Inf_ScheduleRow) As Dom_Schedule
     Dim DateID As Dom_DateID
-    Set DateID = This.Factory.CreateDateID(TargetDate)
+    Set DateID = Dom_ValueObjectFactory.CreateDateID(TargetDate)
     Dim ID As Dom_ScheduleID
     Set ID = This.IDMapper.ToDomain(Row.RawID)
     Dim Value As Dom_ScheduleName
-    Set Value = This.Factory.CreateScheduleValue(Row.Value)
+    Set Value = Dom_ValueObjectFactory.CreateScheduleValue(Row.Value)
     Dim Entity As Dom_Schedule
     Set Entity = New Dom_Schedule
     Entity.Initialize DateID, ID, Value

@@ -22,11 +22,6 @@ Private Sub Class_Initialize()
     Set This.TypeMapper = New Inf_ClassHourTypeMapper
     Set This.PeriodMapper = New Inf_PeriodMapper
     Set This.GradeMapper = New Inf_GradeMapper
-    Dim Factory As Dom_ValueObjectFactory
-    Set Factory = New Dom_ValueObjectFactory
-    This.TypeMapper.Initialize Factory
-    This.PeriodMapper.Initialize Factory
-    This.GradeMapper.Initialize Factory
 End Sub
 
 Public Function Create(ByVal DailyRows As Inf_ClassHourRows) As App_ClassHourReadModels

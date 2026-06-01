@@ -11,15 +11,13 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements Dom_ISpecialStreamRepository
 Private Type Member
-    Factory     As Dom_ValueObjectFactory
     Persistence As Inf_SpecialStreamPersistence
     NameIndex   As Scripting.Dictionary
 End Type
 
 Private This As Member
 
-Public Sub Inject(ByVal Factory As Dom_ValueObjectFactory, ByVal Persistence As Inf_SpecialStreamPersistence)
-    Set This.Factory = Factory
+Public Sub Inject(ByVal Persistence As Inf_SpecialStreamPersistence)
     Set This.Persistence = Persistence
 End Sub
 

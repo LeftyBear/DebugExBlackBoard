@@ -10,19 +10,9 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
-Private Type Member
-    Factory As Dom_ValueObjectFactory
-End Type
-
-Private This As Member
-
 Private Const COLUMN_SPECIAL    As String = "“ÁŽx"
 Private Const MODEL_MAIN        As String = "Main"
 Private Const MODEL_SPECIAL     As String = "Special"
-
-Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Factory = Factory
-End Sub
 
 Public Property Get MainKey() As String
     MainKey = MODEL_MAIN
@@ -50,7 +40,7 @@ Public Function ToDomain(ByVal Raw As String) As Dom_StreamType
     Else
         Exit Function
     End If
-    Set ToDomain = This.Factory.CreateStreamType(TypeCode)
+    Set ToDomain = Dom_ValueObjectFactory.CreateStreamType(TypeCode)
 End Function
 
 Public Function ToModel(ByVal Raw As String) As String

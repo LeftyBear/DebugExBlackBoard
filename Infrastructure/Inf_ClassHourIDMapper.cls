@@ -11,7 +11,6 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Factory         As Dom_ValueObjectFactory
     TypeMapper      As Inf_ClassHourTypeMapper
     SubjectMapper   As Inf_SubjectNameMapper
     GradeMapper     As Inf_GradeMapper
@@ -19,14 +18,10 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Factory = Factory
+Private Sub Class_Initialize()
     Set This.TypeMapper = New Inf_ClassHourTypeMapper
     Set This.SubjectMapper = New Inf_SubjectNameMapper
     Set This.GradeMapper = New Inf_GradeMapper
-    This.TypeMapper.Initialize This.Factory
-    This.GradeMapper.Initialize This.Factory
-    This.SubjectMapper.Initialize This.Factory
 End Sub
 
 Public Function ToRaw(ByVal ID As Dom_ClassHourID) As String
@@ -57,5 +52,5 @@ Public Function ToDomain(ByVal Raw As String) As Dom_ClassHourID
             Set SubjectName = This.SubjectMapper.ToDomain(Part)
         End If
     Next
-    Set ToDomain = This.Factory.CreateClassHourID(ClassHourType, SubjectName, Grade)
+    Set ToDomain = Dom_ClassHourIDFactory.Create(ClassHourType, SubjectName, Grade)
 End Function

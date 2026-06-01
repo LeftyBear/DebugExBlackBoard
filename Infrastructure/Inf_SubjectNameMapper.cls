@@ -10,20 +10,10 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Mapper")
 Option Explicit
 
-Private Type Member
-    Factory As Dom_ValueObjectFactory
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Factory = Factory
-End Sub
-
 Public Function ToRaw(ByVal SubjectName As Dom_SubjectName) As String
     ToRaw = SubjectName.Value
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_SubjectName
-    Set ToDomain = This.Factory.CreateSubjectName(Raw)
+    Set ToDomain = Dom_ValueObjectFactory.CreateSubjectName(Raw)
 End Function

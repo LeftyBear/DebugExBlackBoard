@@ -26,13 +26,6 @@ Private Sub Class_Initialize()
     Set This.ClassNoMapper = New Inf_ClassNoMapper
     Set This.GenderMapper = New Inf_GenderMapper
     Set This.TransferMapper = New Inf_TransferMapper
-    Dim Factory As Dom_ValueObjectFactory
-    Set Factory = New Dom_ValueObjectFactory
-    This.TypeMapper.Initialize Factory
-    This.GradeMapper.Initialize Factory
-    This.ClassNoMapper.Initialize Factory
-    This.GenderMapper.Initialize Factory
-    This.TransferMapper.Initialize Factory
 End Sub
 
 Public Function Create(ByVal DailyRows As Inf_ScheduleRows) As App_ScheduleReadModels

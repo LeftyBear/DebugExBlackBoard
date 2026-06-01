@@ -10,20 +10,10 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
-Private Type Member
-    Factory As Dom_ValueObjectFactory
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Factory = Factory
-End Sub
-
 Public Function ToRaw(ByVal ID As Dom_ScheduleID) As String
     ToRaw = ID.Value
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_ScheduleID
-    Set ToDomain = This.Factory.CreateScheduleID(Raw)
+    Set ToDomain = Dom_ValueObjectFactory.CreateScheduleID(Raw)
 End Function

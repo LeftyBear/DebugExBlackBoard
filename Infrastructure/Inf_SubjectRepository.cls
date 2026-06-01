@@ -11,15 +11,13 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements Dom_ISubjectRepository
 Private Type Member
-    Factory     As Dom_ValueObjectFactory
     Persistence As Inf_SubjectPersistence
     NameIndex   As Scripting.Dictionary
 End Type
 
 Private This As Member
 
-Public Sub Inject(ByVal Factory As Dom_ValueObjectFactory, ByVal Persistence As Inf_SubjectPersistence)
-    Set This.Factory = Factory
+Public Sub Inject(ByVal Persistence As Inf_SubjectPersistence)
     Set This.Persistence = Persistence
 End Sub
 
@@ -39,11 +37,11 @@ Private Sub BuildNameIndex(ByVal Rows As Inf_SubjectRows)
         Dim Entry As Dom_Subject
         Set Entry = New Dom_Subject
         Dim Name As Dom_SubjectName
-        Set Name = This.Factory.CreateSubjectName(Row.Name)
+        Set Name = Dom_ValueObjectFactory.CreateSubjectName(Row.Name)
         Dim TargetGrade As Dom_SubjectTargetGrade
-        Set TargetGrade = This.Factory.CreateSubjectTargetGrade(Row.TargetGrade)
+        Set TargetGrade = Dom_ValueObjectFactory.CreateSubjectTargetGrade(Row.TargetGrade)
         Dim Mark As Dom_SubjectMark
-        Set Mark = This.Factory.CreateSubjectMark(Row.Mark)
+        Set Mark = Dom_ValueObjectFactory.CreateSubjectMark(Row.Mark)
         Entry.Initialize Name, TargetGrade, Mark
         This.NameIndex.Add Row.Name, Entry
     Next

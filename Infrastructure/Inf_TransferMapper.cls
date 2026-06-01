@@ -10,22 +10,12 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
-Private Type Member
-    Factory As Dom_ValueObjectFactory
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Factory = Factory
-End Sub
-
 Public Function ToRaw(ByVal Transfer As Dom_Transfer) As String
     ToRaw = CStr(Transfer.IsTrue)
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_Transfer
-    Set ToDomain = This.Factory.CreateTransfer(GetState(Raw))
+    Set ToDomain = Dom_ValueObjectFactory.CreateTransfer(GetState(Raw))
 End Function
 
 Public Function ToModel(ByVal Raw As String) As String

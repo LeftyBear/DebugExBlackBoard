@@ -10,17 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
-Private Type Member
-    Factory As Dom_ValueObjectFactory
-End Type
-
-Private This As Member
-
 Private Const COLUMN_PERIOD As String = "çZéû"
-
-Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
-    Set This.Factory = Factory
-End Sub
 
 Public Property Get Key() As String
     Key = COLUMN_PERIOD
@@ -37,7 +27,7 @@ Public Function ToDomain(ByVal Raw As String) As Dom_Period
     Else
         Exit Function
     End If
-    Set ToDomain = This.Factory.CreatePeriod(Period)
+    Set ToDomain = Dom_ValueObjectFactory.CreatePeriod(Period)
 End Function
 
 Public Function ToModel(ByVal Raw As String) As Long

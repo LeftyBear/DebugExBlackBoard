@@ -11,16 +11,13 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Factory     As Dom_ValueObjectFactory
     IDMapper    As Inf_ClassHourIDMapper
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.Factory = New Dom_ValueObjectFactory
     Set This.IDMapper = New Inf_ClassHourIDMapper
-    This.IDMapper.Initialize This.Factory
 End Sub
 
 Public Function Create(ByVal TargetDate As Date, ByVal Row As Inf_ClassHourRow) As Dom_ClassHour
@@ -28,9 +25,9 @@ Public Function Create(ByVal TargetDate As Date, ByVal Row As Inf_ClassHourRow) 
     Set ID = This.IDMapper.ToDomain(Row.RawID)
     If ID Is Nothing Then Exit Function
     Dim DateID As Dom_DateID
-    Set DateID = This.Factory.CreateDateID(TargetDate)
+    Set DateID = Dom_ValueObjectFactory.CreateDateID(TargetDate)
     Dim Value As Dom_ClassHourValue
-    Set Value = This.Factory.CreateClassHourValue(Row.Value)
+    Set Value = Dom_ValueObjectFactory.CreateClassHourValue(Row.Value)
     Dim Entity As Dom_ClassHour
     Set Entity = New Dom_ClassHour
     Entity.Initialize DateID, ID, Value

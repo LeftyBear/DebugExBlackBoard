@@ -26,8 +26,7 @@ Private Sub EnsureLoaded()
     Dim Row As Inf_PeriodRow
     Set Row = This.Persistence.ReadAll
     Dim Period As Dom_Period
-    Set Period = New Dom_Period
-    Period.Initialize Row.Value
+    Set Period = Dom_ValueObjectFactory.CreatePeriod(Row.Value)
     Set This.Value = Period
 End Sub
 

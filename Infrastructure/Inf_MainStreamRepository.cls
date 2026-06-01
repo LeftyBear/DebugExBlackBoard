@@ -37,8 +37,7 @@ Private Sub EnsureLoaded()
             UpperClassNo = Row.UpperClassNo
         End If
         Dim Value As Dom_MainStreamValue
-        Set Value = New Dom_MainStreamValue
-        Value.Initialize UpperGrade, UpperClassNo
+        Set Value = Dom_MainStreamValueFactory.Create(UpperGrade, UpperClassNo)
     Next
     Set This.Value = Value
 End Sub
