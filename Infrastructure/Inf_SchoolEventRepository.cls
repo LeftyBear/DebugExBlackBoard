@@ -30,8 +30,6 @@ Private Sub EnsureLoaded()
 End Sub
 
 Private Sub BuildNameIndex(ByVal Rows As Inf_SchoolEventRows)
-    Dim Factory As Inf_SchoolEventRowFactory
-    Set Factory = New Inf_SchoolEventRowFactory
     Dim i As Long
     For i = 1 To Rows.Count
         Dim Row As Inf_SchoolEventRow

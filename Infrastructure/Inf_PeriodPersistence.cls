@@ -28,8 +28,7 @@ Public Function ReadAll() As Inf_PeriodRow
     If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function
     Dim RawRows As Inf_RawRows
     Set RawRows = This.CSV.ReadAll(FilePath)
-    Dim Factory As New Inf_PeriodRowFactory
-    Set ReadAll = Factory.Create(RawRows)
+    Set ReadAll = Inf_PeriodRowFactory.Create(RawRows)
 End Function
 
 Public Sub WriteAll(ByVal Row As Inf_PeriodRow)

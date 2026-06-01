@@ -28,6 +28,5 @@ End Sub
 
 Private Function App_ISubjectQueryService_GetAll() As App_SubjectReadModels
     EnsureLoaded
-    Dim Factory As New Inf_SubjectModelFactory
-    Set App_ISubjectQueryService_GetAll = Factory.Create(This.Rows)
+    Set App_ISubjectQueryService_GetAll = Inf_SubjectModelFactory.Create(This.Rows)
 End Function

@@ -1,14 +1,7 @@
-VERSION 1.0 CLASS
-BEGIN
-  MultiUse = -1  'True
-END
 Attribute VB_Name = "Inf_EnrollmentRowFactory"
-Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
 '@Folder("Infrastructure.Factory")
 Option Explicit
+Option Private Module
 
 Public Function Create(ByVal Column As Inf_EnrollmentColumn, ByVal RawText As String) As Inf_EnrollmentRow
     Dim Result As Inf_EnrollmentRow

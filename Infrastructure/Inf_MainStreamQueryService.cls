@@ -28,6 +28,5 @@ End Sub
 
 Private Function App_IMainStreamQueryService_GetModel() As App_MainStreamReadModel
     EnsureLoaded
-    Dim Factory As New Inf_MainStreamModelFactory
-    Set App_IMainStreamQueryService_GetModel = Factory.Create(This.Rows)
+    Set App_IMainStreamQueryService_GetModel = Inf_MainStreamModelFactory.Create(This.Rows)
 End Function

@@ -40,6 +40,5 @@ End Sub
 
 Private Function App_ISchoolEventQueryService_GetAll() As App_SchoolEventReadModels
     EnsureLoaded
-    Dim Factory As New Inf_SchoolEventModelFactory
-    Set App_ISchoolEventQueryService_GetAll = Factory.Create(This.Rows)
+    Set App_ISchoolEventQueryService_GetAll = Inf_SchoolEventModelFactory.Create(This.Rows)
 End Function

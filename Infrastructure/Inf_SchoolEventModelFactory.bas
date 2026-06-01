@@ -1,14 +1,7 @@
-VERSION 1.0 CLASS
-BEGIN
-  MultiUse = -1  'True
-END
 Attribute VB_Name = "Inf_SchoolEventModelFactory"
-Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
 '@Folder("Infrastructure.Factory")
 Option Explicit
+Option Private Module
 
 Public Function Create(ByVal Rows As Inf_SchoolEventRows) As App_SchoolEventReadModels
     Dim Result As App_SchoolEventReadModels

@@ -1,14 +1,7 @@
-VERSION 1.0 CLASS
-BEGIN
-  MultiUse = -1  'True
-END
 Attribute VB_Name = "Inf_SubjectModelFactory"
-Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
 '@Folder("Infrastructure.Factory")
 Option Explicit
+Option Private Module
 
 Public Function Create(ByVal Rows As Inf_SubjectRows) As App_SubjectReadModels
     Dim Result As App_SubjectReadModels

@@ -40,6 +40,5 @@ End Sub
 
 Private Function App_ISpecialStreamQueryService_GetAll() As App_SpecialStreamReadModels
     EnsureLoaded
-    Dim Factory As New Inf_SpecialStreamModelFactory
-    Set App_ISpecialStreamQueryService_GetAll = Factory.Create(This.Rows)
+    Set App_ISpecialStreamQueryService_GetAll = Inf_SpecialStreamModelFactory.Create(This.Rows)
 End Function

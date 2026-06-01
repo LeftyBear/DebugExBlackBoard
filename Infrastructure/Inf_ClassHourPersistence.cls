@@ -28,9 +28,7 @@ Public Function ReadAll(ByVal SchoolYear As Long) As Inf_ClassHourRows
     If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function
     Dim RawRows As Inf_RawRows
     Set RawRows = This.CSV.ReadAll(FilePath)
-    Dim Factory As Inf_ClassHourRowsFactory
-    Set Factory = New Inf_ClassHourRowsFactory
-    Set ReadAll = Factory.Create(RawRows)
+    Set ReadAll = Inf_ClassHourRowsFactory.Create(RawRows)
 End Function
 
 Public Sub WriteAll(ByVal SchoolYear As Long, ByVal Rows As Inf_ClassHourRows)

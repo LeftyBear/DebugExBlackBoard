@@ -27,8 +27,7 @@ Public Function ReadAll() As Inf_MainStreamRows
     FilePath = BuildFilePath
     Dim RawRows As Inf_RawRows
     Set RawRows = This.CSV.ReadAll(FilePath)
-    Dim Factory As New Inf_MainStreamRowsFactory
-    Set ReadAll = Factory.Create(RawRows)
+    Set ReadAll = Inf_MainStreamRowsFactory.Create(RawRows)
 End Function
 
 Public Sub WriteAll(ByVal Rows As Inf_MainStreamRows)

@@ -28,8 +28,7 @@ Public Function ReadAll() As Inf_SubjectRows
     If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function
     Dim RawRows As Inf_RawRows
     Set RawRows = This.CSV.ReadAll(FilePath)
-    Dim Factory As New Inf_SubjectRowsFactory
-    Set ReadAll = Factory.Create(RawRows)
+    Set ReadAll = Inf_SubjectRowsFactory.Create(RawRows)
 End Function
 
 Public Sub WriteAll(ByVal Rows As Inf_SubjectRows)
