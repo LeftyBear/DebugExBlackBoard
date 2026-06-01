@@ -17,7 +17,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Persistence As Inf_MainStreamPersistence)
+Public Sub Inject(ByVal Persistence As Inf_MainStreamPersistence)
     Set This.Persistence = Persistence
 End Sub
 

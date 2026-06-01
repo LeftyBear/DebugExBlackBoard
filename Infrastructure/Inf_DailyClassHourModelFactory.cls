@@ -50,15 +50,16 @@ Public Function Create(ByVal DailyRows As Inf_ClassHourRows) As App_ClassHourRea
                 End If
                 If Model.Subject = vbNullString Then
                     Model.Subject = Part
+                    Model.Value = Row.Value
                 End If
                 If Model.Period = vbNullString Then
                     Model.Period = This.PeriodMapper.ToModel(Part)
+                    Model.Mark = Row.Mark
                 End If
                 If Model.Grade = vbNullString Then
                     Model.Grade = This.GradeMapper.ToModel(Part)
                 End If
             Next
-            Model.Value = Row.Value
         End If
         Result.Add Model
     Next

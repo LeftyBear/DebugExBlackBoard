@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@IgnoreModule MoveFieldCloserToUsage, EncapsulatePublicField
-'@Folder("Infrastructure.DTO")
+'@Folder("Application.DTO")
 Option Explicit
 
 Public Name As Long

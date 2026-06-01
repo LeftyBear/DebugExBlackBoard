@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@IgnoreModule MoveFieldCloserToUsage, EncapsulatePublicField
-'@Folder("Infrastructure.DTO")
+'@Folder("Application.DTO")
 Option Explicit
 
 Public TypeCode As String
@@ -16,3 +16,4 @@ Public Subject  As String
 Public Period   As Long
 Public Grade    As Long
 Public Value    As Long
+Public Mark     As String

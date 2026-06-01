@@ -7,66 +7,69 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.DTO")
+'@Folder("Infrastructure.DTOCollection")
 Option Explicit
 Private Type Member
-    Fields  As VBA.Collection
-    Records As VBA.Collection
+    RawRows As VBA.Collection
+    Rows    As VBA.Collection
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.Fields = New VBA.Collection
-    Set This.Records = New VBA.Collection
+    Set This.RawRows = New VBA.Collection
+    Set This.Rows = New VBA.Collection
 End Sub
 
-Public Sub InitializeFileds()
-    Set This.Fields = New VBA.Collection
+Public Sub AddRow(ByVal RawText As String)
+    This.Rows.Add RawText
 End Sub
 
-Public Sub AddFiled(ByVal RawText As String)
-    This.Fields.Add RawText
+Public Sub AddRows(ByVal Rows As VBA.Collection)
+    This.RawRows.Add Rows
 End Sub
 
-Public Sub AddRecord(ByVal Fields As VBA.Collection)
-    This.Records.Add Fields
+Public Sub AddRowsInternal()
+    This.RawRows.Add This.Rows
+    Set This.Rows = New VBA.Collection
 End Sub
 
-Public Sub Remove(ByVal Index As Long)
-    This.Records.Remove Index
+Public Sub Remove(ByVal RowIndex As Long)
+    If This.RawRows.Count = 0 Then Exit Sub
+    If RowIndex < 1 Or This.RawRows.Count < RowIndex Then Exit Sub
+    This.RawRows.Remove RowIndex
 End Sub
 
-Public Property Get Fields() As VBA.Collection
-    Set Fields = This.Fields
-End Property
-
-Public Property Get Records() As VBA.Collection
-    Set Records = This.Records
-End Property
-
-Public Function FieldsCount() As Long
-    If This.Records.Count = 0 Then Exit Function
-    Dim Field As VBA.Collection
-    Set Field = This.Records.Item(1)
-    FieldsCount = Fields.Count
+Public Function RowsCount() As Long
+    If This.RawRows.Count = 0 Then Exit Function
+    RowsCount = This.RawRows.Count
 End Function
 
-Public Function RecordsCount() As Long
-    If This.Records.Count = 0 Then Exit Function
-    RecordsCount = This.Records.Count
+Public Function ColumnsCount(ByVal RowIndex As Long) As Long
+    If This.RawRows.Count = 0 Then Exit Function
+    Dim Columns As VBA.Collection
+    Set Columns = This.RawRows.Item(RowIndex)
+    ColumnsCount = Columns.Count
 End Function
 
-Public Function GetHeaderRows() As VBA.Collection
-    If This.Records.Count = 0 Then Exit Function
-    Set GetHeaderRows = This.Records.Item(1)
+Public Function GetHeaders() As VBA.Collection
+    If This.RawRows.Count = 0 Then Exit Function
+    Set GetHeaders = This.RawRows.Item(1)
 End Function
 
-Public Function GetField(ByVal RecordIndex As Long, ByVal FieldIndex As Long) As String
-    If This.Records.Count = 0 Then Exit Function
-    If RecordIndex < 1 Or This.Records.Count < RecordIndex Then Exit Function
-    Dim Field As VBA.Collection
-    Set Field = This.Records.Item(RecordIndex)
-    If FieldIndex < 1 Or Fields.Count < FieldIndex Then Exit Function
-    GetField = Field.Item(FieldIndex)
+Public Function GetHeader(ByVal ColumnIndex As Long) As String
+    Dim Headers As VBA.Collection
+    Set Headers = Me.GetHeaders
+    If Headers Is Nothing Then Exit Function
+    If ColumnIndex < 1 Or Headers.Count < ColumnIndex Then Exit Function
+    GetHeader = Headers.Item(ColumnIndex)
+End Function
+
+Public Function GetRow(ByVal RowIndex As Long, ByVal ColumnIndex As Long) As String
+    If This.RawRows.Count = 0 Then Exit Function
+    If RowIndex < 1 Or This.RawRows.Count < RowIndex Then Exit Function
+    Dim Columns As VBA.Collection
+    Set Columns = This.RawRows.Item(RowIndex)
+    If ColumnIndex < 1 Or Columns.Count < ColumnIndex Then Exit Function
+    GetRow = Columns.Item(ColumnIndex)
 End Function

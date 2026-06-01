@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.EntityFactory")
+'@Folder("Infrastructure.EntityFactory")
 Option Explicit
 
 Private Type Member
@@ -31,7 +31,7 @@ Public Function Create(ByVal TargetDate As Date, ByVal Row As Inf_ScheduleRow) A
     Set DateID = This.Factory.CreateDateID(TargetDate)
     Dim ID As Dom_ScheduleID
     Set ID = This.IDMapper.ToDomain(Row.RawID)
-    Dim Value As Dom_ScheduleValue
+    Dim Value As Dom_ScheduleName
     Set Value = This.Factory.CreateScheduleValue(Row.Value)
     Dim Entity As Dom_Schedule
     Set Entity = New Dom_Schedule

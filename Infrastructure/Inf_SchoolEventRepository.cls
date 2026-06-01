@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Repository")
+'@Folder("Infrastructure.Repository")
 Option Explicit
 Implements Dom_ISchoolEventRepository
 Private Type Member
@@ -18,7 +18,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory, ByVal Persistence As Inf_SchoolEventPersistence)
+Public Sub Inject(ByVal Factory As Dom_ValueObjectFactory, ByVal Persistence As Inf_SchoolEventPersistence)
     Set This.Factory = Factory
     Set This.Persistence = Persistence
 End Sub

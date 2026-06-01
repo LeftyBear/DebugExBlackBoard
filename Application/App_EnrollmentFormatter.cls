@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Service")
+'@Folder("Application.Service.Formatter")
 Option Explicit
 
 Private Enum C_
@@ -28,14 +28,15 @@ Public Function Format(ByVal Models As App_EnrollmentReadModels, ByVal MainModel
     MainGradeCount = MainModel.UpperGrade
     Dim MainClassNoCount As Long
     MainClassNoCount = MainModel.UpperClassNo
+    Dim Mapper As New Inf_StreamTypeMapper
     Dim MainTable() As Long
-    MainTable = BuildGenderTable(Models, "Main", MainGradeCount, MainClassNoCount)
+    MainTable = BuildGenderTable(Models, Mapper.MainKey, MainGradeCount, MainClassNoCount)
     Dim SpecialGradeCount As Long
     SpecialGradeCount = SpecialModels.GradeCount
     Dim SpecialClassNoCount As Long
     SpecialClassNoCount = SpecialModels.ClassNoCount
     Dim SpecialTable() As Long
-    SpecialTable = BuildGenderTable(Models, "Special", 1, SpecialClassNoCount)
+    SpecialTable = BuildGenderTable(Models, Mapper.SpecialKey, 1, SpecialClassNoCount)
     Dim Body() As Variant
     Body = BuildBody(MainTable, SpecialTable, MainClassNoCount, SpecialClassNoCount)
     Format = BuildTable(Header, Body)
@@ -43,7 +44,7 @@ End Function
 
 Private Sub SumGender(ByRef Base() As Long, ByRef MaleSummary() As Long, ByRef FemaleSummary() As Long)
     Dim R As Long
-    For R = 1 To UBound(MaleSummary)
+    For R = LBound(MaleSummary) To UBound(MaleSummary)
         Base(R, C_.Male) = MaleSummary(R)
         Base(R, C_.Female) = FemaleSummary(R)
         Base(R, C_.Total) = MaleSummary(R) + FemaleSummary(R)
@@ -52,7 +53,7 @@ End Sub
 
 Private Sub AddClassName(ByRef Base() As Long, ByRef Grades() As Long, ByRef ClassNumbers() As Long)
     Dim R As Long
-    For R = 1 To UBound(Base)
+    For R = LBound(Base) To UBound(Base)
         Base(R, C_.Grade) = Grades(R)
         Base(R, C_.ClassNo) = ClassNumbers(R)
     Next
@@ -69,31 +70,13 @@ Private Function BuildHeader() As Variant()
     BuildHeader = Result
 End Function
 
-Private Function BuildTable(ByRef Header() As Variant, ByRef Body() As Variant) As Variant()
-    Dim Result() As Variant
-    ReDim Result(1 To UBound(Header) + UBound(Body), 1 To COLUMN_COUNT)
-    Dim R As Long
-    For R = 1 To UBound(Header)
-        Dim C As Long
-        For C = 1 To COLUMN_COUNT
-            Result(R, C) = Header(R, C)
-        Next
-    Next
-    For R = UBound(Header) + 1 To UBound(Body)
-        For C = 1 To COLUMN_COUNT
-            Result(R, C) = Body(R, C)
-        Next
-    Next
-    BuildTable = Result
-End Function
-
 Private Function BuildBody(ByRef MainTable() As Long, ByRef SpecialTable() As Long, ByVal MainClassNoCount As Long, ByVal SpecialClassNoCount As Long) As Variant()
     Dim Result() As Variant
-    ReDim Result(1 To UBound(MainTable) + UBound(SpecialTable), 1 To COLUMN_COUNT)
+    ReDim Result(1 To UBound(MainTable) + UBound(SpecialTable), LBound(MainTable, 2) To UBound(MainTable, 2))
     Dim R As Long
     For R = 1 To UBound(MainTable)
         Dim C As Long
-        For C = 1 To COLUMN_COUNT
+        For C = LBound(MainTable, 2) To UBound(MainTable, 2)
             If (R Mod MainClassNoCount + 1) = 0 Then
                 Result(R, C_.Total) = "çáåv"
             Else
@@ -102,7 +85,7 @@ Private Function BuildBody(ByRef MainTable() As Long, ByRef SpecialTable() As Lo
         Next
     Next
     For R = UBound(MainTable) + 1 To UBound(SpecialTable)
-        For C = 1 To COLUMN_COUNT
+        For C = LBound(MainTable, 2) To UBound(MainTable, 2)
             If (R Mod SpecialClassNoCount + 1) = 0 Then
                 Result(R, C_.Total) = "çáåv"
             Else
@@ -113,11 +96,29 @@ Private Function BuildBody(ByRef MainTable() As Long, ByRef SpecialTable() As Lo
     BuildBody = Result
 End Function
 
+Private Function BuildTable(ByRef Header() As Variant, ByRef Body() As Variant) As Variant()
+    Dim Result() As Variant
+    ReDim Result(1 To UBound(Header) + UBound(Body), LBound(Header, 2) To UBound(Header, 2))
+    Dim R As Long
+    For R = 1 To UBound(Header)
+        Dim C As Long
+        For C = LBound(Header, 2) To UBound(Header, 2)
+            Result(R, C) = Header(R, C)
+        Next
+    Next
+    For R = UBound(Header) + 1 To UBound(Body)
+        For C = LBound(Header, 2) To UBound(Header, 2)
+            Result(R, C) = Body(R, C)
+        Next
+    Next
+    BuildTable = Result
+End Function
+
 Private Function BuildGenderTable(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
     Dim MaleSummary() As Long
-    MaleSummary = GetMaleSummary(Models, TypeCode, "Male", GradeCount, ClassNoCount)
+    MaleSummary = GetMaleSummary(Models, TypeCode, GradeCount, ClassNoCount)
     Dim FemaleSummary() As Long
-    FemaleSummary = GetFemaleSummary(Models, TypeCode, "Female", GradeCount, ClassNoCount)
+    FemaleSummary = GetFemaleSummary(Models, TypeCode, GradeCount, ClassNoCount)
     Dim Table() As Long
     ReDim Table(1 To GradeCount * ClassNoCount + GradeCount, 1 To COLUMN_COUNT)
     SumGender Table, MaleSummary, FemaleSummary
@@ -129,15 +130,17 @@ Private Function BuildGenderTable(ByVal Models As App_EnrollmentReadModels, ByVa
     BuildGenderTable = Table
 End Function
 
-Private Function GetMaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal Gender As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
+Private Function GetMaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
+    Dim Mapper As New Inf_GenderMapper
     Dim Values() As Long
-    Values = FilterBy(Models, TypeCode, "Male", GradeCount, ClassNoCount)
+    Values = FilterBy(Models, TypeCode, Mapper.MaleKey, GradeCount, ClassNoCount)
     GetMaleSummary = CalculateGenderTotal(Values, GradeCount, ClassNoCount)
 End Function
 
-Private Function GetFemaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal Gender As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
+Private Function GetFemaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
+    Dim Mapper As New Inf_GenderMapper
     Dim Values() As Long
-    Values = FilterBy(Models, TypeCode, "Female", GradeCount, ClassNoCount)
+    Values = FilterBy(Models, TypeCode, Mapper.FemaleKey, GradeCount, ClassNoCount)
     GetFemaleSummary = CalculateGenderTotal(Values, GradeCount, ClassNoCount)
 End Function
 

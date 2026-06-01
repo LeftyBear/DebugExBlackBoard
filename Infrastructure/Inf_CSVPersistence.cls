@@ -41,8 +41,8 @@ Public Sub Delete(ByVal FilePath As String, ByVal DateKey As String)
     Dim Rows As Inf_RawRows
     Set Rows = Me.ReadAll(FilePath)
     Dim i As Long
-    For i = Rows.RecordsCount To 1 Step -1
-        If Rows.GetField(i, 1) = DateKey Then
+    For i = Rows.RowsCount To 1 Step -1
+        If Rows.GetRow(i, 1) = DateKey Then
             Rows.Remove i
             Exit For
         End If
@@ -54,13 +54,13 @@ Private Function BuildLine(ByVal RawRows As Inf_RawRows) As VBA.Collection
     Dim Result As VBA.Collection
     Set Result = New VBA.Collection
     Dim R As Long
-    For R = 1 To RawRows.RecordsCount
+    For R = 1 To RawRows.RowsCount
         Dim Fields() As Variant
-        ReDim Fields(RawRows.FieldsCount - 1)
+        ReDim Fields(RawRows.ColumnsCount(R) - 1)
         Dim C As Long
-        For C = 1 To RawRows.FieldsCount
+        For C = 1 To RawRows.ColumnsCount(R)
             Dim Field As String
-            Field = EscapeCSV(RawRows.GetField(R, C))
+            Field = EscapeCSV(RawRows.GetRow(R, C))
             Fields(C - 1) = Field
         Next
         Dim Line As String
@@ -111,14 +111,13 @@ Private Function ParseCSV(ByVal TextData As String) As Inf_RawRows
         End If
         Select Case State
         Case OutsideField:      TryAddRecord Result, State, Buffer, i, Char, NextChar
-        Case InsideField:       AddRecord Result, State, Buffer, i, Char, NextChar
+        Case InsideField:       AddRows Result, State, Buffer, i, Char, NextChar
         Case InsideQuotedField: EscapeDoubleQuotation State, Buffer, i, Char, NextChar
         End Select
     Next
     If VBA.Trim$(Buffer) <> vbNullString Then
-        Result.AddFiled Buffer
-        Result.AddRecord Result.Fields
-        Result.InitializeFileds
+        Result.AddRow Buffer
+        Result.AddRowsInternal
     End If
     Set ParseCSV = Result
 End Function
@@ -127,14 +126,13 @@ Private Sub TryAddRecord(ByRef RawRows As Inf_RawRows, ByRef State As ParserStat
     If Char = DOUBLE_QUOTATION Then
         State = InsideQuotedField
     ElseIf Char = COMMA Then
-        RawRows.AddFiled Buffer
+        RawRows.AddRow Buffer
         Buffer = vbNullString
     ElseIf Char = vbCr Then
         If NextChar = vbLf Then
             With RawRows
-                .AddFiled Buffer
-                .AddRecord .Fields
-                .InitializeFileds
+                .AddRow Buffer
+                .AddRowsInternal
             End With
             Buffer = vbNullString
             i = i + 1
@@ -145,17 +143,16 @@ Private Sub TryAddRecord(ByRef RawRows As Inf_RawRows, ByRef State As ParserStat
     End If
 End Sub
 
-Private Sub AddRecord(ByRef RawRows As Inf_RawRows, ByRef State As ParserState, ByRef Buffer As String, ByRef i As Long, ByRef Char As String, ByRef NextChar As String)
+Private Sub AddRows(ByRef RawRows As Inf_RawRows, ByRef State As ParserState, ByRef Buffer As String, ByRef i As Long, ByRef Char As String, ByRef NextChar As String)
     If Char = COMMA Then
-        RawRows.AddFiled Buffer
+        RawRows.AddRow Buffer
         Buffer = vbNullString
         State = OutsideField
     ElseIf Char = vbCr Then
         If NextChar = vbLf Then
             With RawRows
-                .AddFiled Buffer
-                .AddRecord .Fields
-                .InitializeFileds
+                .AddRow Buffer
+                .AddRowsInternal
             End With
             Buffer = vbNullString
             State = OutsideField

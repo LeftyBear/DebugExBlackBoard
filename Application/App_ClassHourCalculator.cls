@@ -7,34 +7,18 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Service")
+'@Folder("Application.Service.Calculator")
 Option Explicit
 
-Private Type Member
-    Filter As App_ClassHourFilter
-End Type
-
-Private This As Member
-
-Private Sub Class_Initialize()
-    Set This.Filter = New App_ClassHourFilter
-End Sub
-'
-'Public Sub Initialize(ByVal Filter As App_ClassHourFilter)
-'    Set This.Filter = Filter
-'End Sub
-
-Public Function SumOfOneDay(ByVal Aggregate As Dom_DailyClassHour, ByVal Condition As App_ClassHourFilterCondition) As Dom_ClassHourValue
-    Dim Total As Dom_ClassHourValue
-    Set Total = New Dom_ClassHourValue
-    Total.Initialize 0
-    Dim ClassHours As VBA.Collection
-    Set ClassHours = This.Filter.FilterByGrade(Aggregate, Condition)
+Public Function CalculateTotal(ByVal Models As App_ClassHourReadModels, ByVal TypeCode As String, ByVal Grade As Long) As Long
     Dim i As Long
-    For i = 1 To ClassHours.Count
-        Dim ClassHour As Dom_ClassHour
-        Set ClassHour = ClassHours.Item(i)
-        Set Total = Total.Add(ClassHour.Value)
+    For i = 1 To Models.Count
+        If Models.Item(i).TypeCode = TypeCode Then
+            If Models.Item(i).Grade = Grade Then
+                Dim Result As Long
+                Result = Result + Models.Item(i).Value
+            End If
+        End If
     Next
-    Set SumOfOneDay = Total
+    CalculateTotal = Result
 End Function

@@ -16,7 +16,7 @@ Public Sub ExportAllModules()
     For Each Component In ThisWorkbook.VBProject.VBComponents
         If IsExportTarget(Component) Then ExportComponent Component
     Next
-    CleanupUnusedComponents ROOT_PATH
+    CleanupUnusedComponents
 End Sub
 
 Private Sub ExportComponent(ByVal Component As Object)
@@ -26,7 +26,7 @@ Private Sub ExportComponent(ByVal Component As Object)
     Component.Export FilePath
 End Sub
 
-Private Sub CleanupUnusedComponents(ByVal ROOT_PATH As String)
+Private Sub CleanupUnusedComponents()
     CleanupFolder ROOT_PATH & "CompositionRoot\"
     CleanupFolder ROOT_PATH & "Policy\"
     CleanupFolder ROOT_PATH & "Domain\"

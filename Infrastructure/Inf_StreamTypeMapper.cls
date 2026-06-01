@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.Mapper")
+'@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
 Private Type Member
@@ -16,11 +16,21 @@ End Type
 
 Private This As Member
 
-Private Const COLUMN_SPECIAL As String = "“ÁŽx"
+Private Const COLUMN_SPECIAL    As String = "“ÁŽx"
+Private Const MODEL_MAIN        As String = "Main"
+Private Const MODEL_SPECIAL     As String = "Special"
 
 Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
     Set This.Factory = Factory
 End Sub
+
+Public Property Get MainKey() As String
+    MainKey = MODEL_MAIN
+End Property
+
+Public Property Get SpecialKey() As String
+    SpecialKey = MODEL_SPECIAL
+End Property
 
 Public Function ToRaw(ByVal TypeCode As Dom_StreamType) As String
     If TypeCode.IsMain Then
@@ -46,8 +56,8 @@ End Function
 Public Function ToModel(ByVal Raw As String) As String
     Dim GradeMapper As New Inf_GradeMapper
     If 0 < VBA.InStr(1, Raw, GradeMapper.ColumnName) Then
-        ToModel = "Main"
+        ToModel = MODEL_MAIN
     ElseIf 0 < VBA.InStr(1, Raw, COLUMN_SPECIAL) Then
-        ToModel = "Special"
+        ToModel = MODEL_SPECIAL
     End If
 End Function

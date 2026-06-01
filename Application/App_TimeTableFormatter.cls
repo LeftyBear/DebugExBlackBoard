@@ -7,83 +7,100 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.UseCase")
+'@Folder("Application.Service.Formatter")
 Option Explicit
 
-Private Type Member
-    Factory As Dom_ValueObjectFactory
-    Counter As App_TimeTableSummaryCounter
-End Type
+Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal TypeCode As String, ByVal PeriodModel As App_PeriodReadModel, ByVal MainModel As App_MainStreamReadModel) As Variant()
+    Dim PeriodCount As Long
+    PeriodCount = PeriodModel.Value
+    Dim GradeCount As Long
+    GradeCount = MainModel.UpperGrade
+    Dim Header() As Variant
+    Header = BuildHeader(GradeCount)
+    Dim MarkTable() As Long
+    MarkTable = BuildMarkTable(Models, TypeCode, PeriodCount, GradeCount)
+    Dim CountedTable() As Long
+    CountedTable = CountMark(Models, TypeCode, MarkTable)
+    Dim Body() As Variant
+    Body = BuildBody(CountedTable)
+    Format = BuildTable(Header, Body)
+End Function
 
-Private This As Member
-
-Private Sub Class_Initialize()
-    Set This.Factory = New Dom_ValueObjectFactory
-    Set This.Counter = New App_TimeTableSummaryCounter
-End Sub
-'
-'Public Sub Initialize(ByVal Counter As App_TimeTableSummaryCounter)
-'    Set This.Counter = Counter
-'    Set This.Factory = Factory
-'End Sub
-
-Public Function Format(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_DailyClassHour) As Variant()
-    Dim TimeTable() As String
-    TimeTable = ToTimeTable(TypeCode, Aggregate)
-    Dim Total() As Long
-'    ReDim Total(Structure.MainStream.Item.UpperGrade)
-    Dim OutputTable() As Variant
-    ReDim OutputTable(1 To UBound(TimeTable, 1) + 1, 1 To UBound(TimeTable, 2) + 1)
+Private Function BuildHeader(ByVal GradeCount As Long) As Variant()
+    Dim Result() As Variant
+    ReDim Result(1 To 1, 1 To GradeCount + 1)
     Dim C As Long
-    For C = 1 To UBound(TimeTable, 2) + 1
-        If C = 1 Then
-            OutputTable(1, C) = vbNullString
-        Else
-            OutputTable(1, C) = CStr(C - 1) & "îN"
-        End If
+    For C = 2 To GradeCount + 1
+        Result(1, C) = C - 1 & "îN"
     Next
+    BuildHeader = Result
+End Function
+
+Private Function BuildBody(ByRef Table() As Long) As Variant()
+    Dim Result() As Variant
+    ReDim Result(LBound(Table) To UBound(Table), LBound(Table, 2) To UBound(Table, 2) + 1)
     Dim R As Long
-    For R = 2 To UBound(TimeTable, 1) + 1
-        For C = 1 To UBound(TimeTable, 2) + 1
-            If R < UBound(TimeTable, 1) + 1 And C = 1 Then
-'                OutputTable(R, C) = Structure.Subject.FindByIndex(R - 1).Name
-            ElseIf R < UBound(TimeTable, 1) + 1 Then
-                OutputTable(R, C) = TimeTable(R - 1, C - 1)
-                If OutputTable(R, C) <> vbNullString Then Total(C - 1) = Total(C - 1) + 1
-            ElseIf R = UBound(TimeTable, 1) + 1 And C = 1 Then
-                OutputTable(R, C) = "çáåv"
-            ElseIf R = UBound(TimeTable, 1) + 1 Then
-                OutputTable(R, C) = Total(C - 1)
+    For R = LBound(Table) To UBound(Table)
+        Dim C As Long
+        For C = 1 To 1
+            If C = 1 Then
+                Result(R, C) = 1
+            Else
+                Result(R, C) = Table(R, C)
             End If
         Next
     Next
-    Format = OutputTable
+    BuildBody = Result
 End Function
 
-Private Function ToTimeTable(ByVal TypeCode As Dom_ClassHourTypePolicy, ByVal Aggregate As Dom_DailyClassHour) As String()
-    Dim UpperGrade As Long
-'    UpperGrade = Structure.MainStream.Item.UpperGrade
-    Dim PeriodCount As Long
-'    PeriodCount = Structure.UpperValue.Item.PeriodCount
-    PeriodCount = 1
-    Dim Table() As String
-    ReDim Table(1 To PeriodCount, 1 To UpperGrade)
-    If Aggregate Is Nothing Then GoTo Finalize
-    Dim ClassHourType As Dom_ClassHourType
-    Set ClassHourType = This.Factory.CreateClassHourType(TypeCode)
-    Dim G As Long
-    For G = 1 To UpperGrade
-        Dim Grade As Dom_Grade
-        Set Grade = This.Factory.CreateGrade(G)
-        Dim P As Long
-        For P = 1 To PeriodCount
-            Dim Period As Dom_Period
-            Set Period = This.Factory.CreatePeriod(P)
-'            Dim Condition As App_TimeTableFilterCondition
-'            Set Condition = This.Factory.CreateTimeTableFilterCondition(ClassHourType, Period, Grade)
-'            Table(P, G) = This.Counter.CountHours(Aggregate, Condition)
+Private Function BuildTable(ByRef Header() As Variant, ByRef Body() As Variant) As Variant()
+    Dim Result() As Variant
+    ReDim Result(1 To UBound(Header) + UBound(Body), LBound(Header, 2) To UBound(Header, 2))
+    Dim R As Long
+    For R = 1 To UBound(Header)
+        Dim C As Long
+        For C = LBound(Header, 2) To UBound(Header, 2)
+            Result(R, C) = Header(R, C)
         Next
     Next
-Finalize:
-    ToTimeTable = Table
+    For R = UBound(Header) + 1 To UBound(Body)
+        For C = LBound(Header, 2) To UBound(Header, 2)
+            Result(R, C) = Body(R, C)
+        Next
+    Next
+    BuildTable = Result
+End Function
+
+Private Function BuildMarkTable(ByVal Models As App_ClassHourReadModels, ByVal TypeCode As String, ByVal PeriodCount As Long, ByVal GradeCount As Long) As Long()
+    Dim Result() As Long
+    ReDim Result(1 To PeriodCount, 1 To GradeCount)
+    Dim R As Long
+    For R = 1 To PeriodCount
+        Dim i As Long
+        For i = 1 To Models.Count
+            If Models.Item(i).TypeCode = TypeCode Then
+                If Models.Item(i).Period = R Then
+                    Result(R, Models.Item(i).Grade) = Models.Item(i).Mark
+                End If
+            End If
+        Next
+    Next
+    BuildMarkTable = Result
+End Function
+
+Private Function CountMark(ByVal Models As App_ClassHourReadModels, ByVal TypeCode As String, ByRef MarkTable() As Long) As Long()
+    Dim Result() As Long
+    ReDim Result(LBound(MarkTable) To UBound(MarkTable) + 1, LBound(MarkTable, 2) To UBound(MarkTable, 2))
+    Dim Grade As Long
+    For Grade = LBound(MarkTable, 2) To UBound(MarkTable, 2)
+        Dim Period As Long
+        For Period = LBound(MarkTable) To UBound(MarkTable)
+            Result(Period, Grade) = MarkTable(Period, Grade)
+            Dim Count As Long
+            Count = Count + MarkTable(Period, Grade)
+        Next
+        Result(Period + 1, Grade) = Count
+        Count = 0
+    Next
+    CountMark = Result
 End Function

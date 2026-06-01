@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Application.QueryServiceInterface"
+'@Folder("Application.QueryServiceInterface")
 Option Explicit
 
 Public Function GetByDate(ByVal TargetDate As Date) As App_EnrollmentReadModels

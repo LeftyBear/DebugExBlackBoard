@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.Mapper")
+'@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
 Private Type Member
@@ -18,10 +18,20 @@ Private This As Member
 
 Private Const COLUMN_MALE       As String = "íj"
 Private Const COLUMN_FEMALE     As String = "èó"
+Private Const MODEL_MALE        As String = "Male"
+Private Const MODEL_FEMALE      As String = "Female"
 
 Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
     Set This.Factory = Factory
 End Sub
+
+Public Property Get MaleKey() As String
+    MaleKey = MODEL_MALE
+End Property
+
+Public Property Get FemaleKey() As String
+    FemaleKey = MODEL_FEMALE
+End Property
 
 Public Function ToRaw(ByVal Gender As Dom_Gender) As String
     If Gender.IsMale Then
@@ -45,8 +55,8 @@ End Function
 
 Public Function ToModel(ByVal Raw As String) As String
     If 0 < VBA.InStr(1, Raw, COLUMN_MALE) Then
-        ToModel = "Male"
+        ToModel = MODEL_MALE
     ElseIf 0 < VBA.InStr(1, Raw, COLUMN_FEMALE) Then
-        ToModel = "Female"
+        ToModel = MODEL_FEMALE
     End If
 End Function

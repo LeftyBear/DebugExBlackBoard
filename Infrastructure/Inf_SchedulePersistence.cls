@@ -17,7 +17,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal CSV As Inf_CSVPersistence)
+Public Sub Inject(ByVal CSV As Inf_CSVPersistence)
     Set This.CSV = CSV
     Set This.Provider = New Inf_WorkbookPathProvider
 End Sub
@@ -53,7 +53,7 @@ End Sub
 Private Function GetHeader(ByVal FilePath As String) As VBA.Collection
     Dim RawRows As Inf_RawRows
     Set RawRows = This.CSV.ReadAll(FilePath)
-    Set GetHeader = RawRows.GetHeaderRows
+    Set GetHeader = RawRows.GetHeaders
 End Function
 
 Private Function GroupByDate(ByVal Rows As Inf_ScheduleRows) As VBA.Collection
@@ -86,13 +86,12 @@ Private Function BuildRows(ByVal Header As VBA.Collection, ByVal Body As VBA.Col
     Set Result = New Inf_RawRows
     Dim C As Long
     For C = 1 To Header.Count
-        Result.AddFiled Header.Item(C)
+        Result.AddRow Header.Item(C)
     Next
-    Result.AddRecord Result.Fields
-    Result.InitializeFileds
+    Result.AddRowsInternal
     Dim R As Long
     For R = 1 To Body.Count
-        Result.AddRecord Body.Item(R)
+        Result.AddRows Body.Item(R)
     Next
     Set BuildRows = Result
 End Function

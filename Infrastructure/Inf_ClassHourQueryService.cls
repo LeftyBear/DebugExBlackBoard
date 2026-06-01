@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Infrastructure.QueryService"
+'@Folder("Infrastructure.QueryService")
 Option Explicit
 Implements App_IClassHourQueryService
 Private Type Member
@@ -18,7 +18,7 @@ End Type
 Private This As Member
 Private Const DateColumns As Long = 1
 
-Public Sub Initialize(ByVal Persistence As Inf_ClassHourPersistence)
+Public Sub Inject(ByVal Persistence As Inf_ClassHourPersistence)
     Set This.Persistence = Persistence
 End Sub
 

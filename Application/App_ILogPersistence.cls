@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder "Application.PersistenceInterface"
+'@Folder("Application.PersistenceInterface")
 Option Explicit
 
 Public Sub Log(ByVal Message As String)

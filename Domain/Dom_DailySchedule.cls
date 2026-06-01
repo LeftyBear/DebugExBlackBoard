@@ -30,8 +30,8 @@ Public Sub UpdateValue(ByVal ID As Dom_ScheduleID, ByVal NewValue As String)
     Dim Target As Dom_Schedule
     Set Target = FindByID(ID)
     If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_DailySchedule", "Scheduleオブジェクトが必要です。"
-    Dim Value As Dom_ScheduleValue
-    Set Value = New Dom_ScheduleValue
+    Dim Value As Dom_ScheduleName
+    Set Value = New Dom_ScheduleName
     Value.Initialize NewValue
     Target.ChangeValueInternal Value
 End Sub

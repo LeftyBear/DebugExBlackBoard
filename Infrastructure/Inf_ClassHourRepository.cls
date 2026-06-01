@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Repository")
+'@Folder("Infrastructure.Repository")
 Option Explicit
 Implements Dom_IClassHourRepository
 Private Type Member
@@ -18,7 +18,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Persistence As Inf_ClassHourPersistence)
+Public Sub Inject(ByVal Persistence As Inf_ClassHourPersistence)
     Set This.Persistence = Persistence
 End Sub
 

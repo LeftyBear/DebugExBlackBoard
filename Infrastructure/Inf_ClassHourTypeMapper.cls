@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.Mapper")
+'@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
 Private Type Member
@@ -18,10 +18,20 @@ Private This As Member
 
 Private Const COLUMN_PLAN       As String = "Œv‰æ"
 Private Const COLUMN_EXECUTION  As String = "ŽÀŽ{"
+Private Const MODEL_PLAN        As String = "Plan"
+Private Const MODEL_EXECUTION   As String = "Exe"
 
 Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
     Set This.Factory = Factory
 End Sub
+
+Public Property Get PlanKey() As String
+    PlanKey = MODEL_PLAN
+End Property
+
+Public Property Get ExecutionKey() As String
+    ExecutionKey = MODEL_EXECUTION
+End Property
 
 Public Function ToRaw(ByVal TypeCode As Dom_ClassHourType) As String
     If TypeCode.IsPlan Then
@@ -45,8 +55,8 @@ End Function
 
 Public Function ToModel(ByVal Raw As String) As String
     If 0 < VBA.InStr(1, Raw, COLUMN_PLAN) Then
-        ToModel = "Plan"
+        ToModel = MODEL_PLAN
     ElseIf 0 < VBA.InStr(1, Raw, COLUMN_EXECUTION) Then
-        ToModel = "Exe"
+        ToModel = MODEL_EXECUTION
     End If
 End Function

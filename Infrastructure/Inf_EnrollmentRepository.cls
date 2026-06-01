@@ -18,7 +18,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Persistence As Inf_EnrollmentPersistence)
+Public Sub Inject(ByVal Persistence As Inf_EnrollmentPersistence)
     Set This.Persistence = Persistence
 End Sub
 

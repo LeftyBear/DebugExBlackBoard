@@ -16,11 +16,11 @@ Public Function Create(ByVal RawRows As Inf_RawRows) As Inf_SchoolEventRows
     Dim RowFactory As Inf_SchoolEventRowFactory
     Set RowFactory = New Inf_SchoolEventRowFactory
     Dim R As Long
-    For R = 2 To RawRows.RecordsCount
+    For R = 2 To RawRows.RowsCount
         Dim C As Long
-        For C = 1 To RawRows.FieldsCount
+        For C = 1 To RawRows.ColumnsCount(R)
             Dim Row As Inf_SchoolEventRow
-            Set Row = RowFactory.Create(RawRows.GetField(1, C), RawRows.GetField(R, C))
+            Set Row = RowFactory.Create(RawRows.GetHeader(C), RawRows.GetRow(R, C))
             Result.Add Row
         Next
     Next

@@ -17,7 +17,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal CSV As Inf_CSVPersistence)
+Public Sub Inject(ByVal CSV As Inf_CSVPersistence)
     Set This.CSV = CSV
     Set This.Provider = New Inf_WorkbookPathProvider
 End Sub
@@ -54,7 +54,7 @@ Public Function GetHeaders() As VBA.Collection
     FilePath = BuildFilePath
     Dim RawRows As Inf_RawRows
     Set RawRows = This.CSV.ReadAll(FilePath)
-    Set GetHeaders = RawRows.GetHeaderRows
+    Set GetHeaders = RawRows.GetHeaders
 End Function
 
 Private Function GetValues(ByVal Rows As Inf_MainStreamRows) As VBA.Collection
@@ -81,13 +81,12 @@ Private Function BuildRows(ByVal Headers As VBA.Collection, ByVal Values As VBA.
     Set Result = New Inf_RawRows
     Dim C As Long
     For C = 1 To Headers.Count
-        Result.AddFiled Headers.Item(C)
+        Result.AddRow Headers.Item(C)
     Next
-    Result.AddRecord Result.Fields
-    Result.InitializeFileds
+    Result.AddRowsInternal
     Dim R As Long
     For R = 1 To Values.Count
-        Result.AddRecord Values.Item(R)
+        Result.AddRows Values.Item(R)
     Next
     Set BuildRows = Result
 End Function

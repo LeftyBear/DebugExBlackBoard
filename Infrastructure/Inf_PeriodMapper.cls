@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.Mapper")
+'@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
 Private Type Member
@@ -21,6 +21,10 @@ Private Const COLUMN_PERIOD As String = "çZéû"
 Public Sub Initialize(ByVal Factory As Dom_ValueObjectFactory)
     Set This.Factory = Factory
 End Sub
+
+Public Property Get Key() As String
+    Key = COLUMN_PERIOD
+End Property
 
 Public Function ToRaw(ByVal Period As Dom_Period) As String
     ToRaw = CStr(Period.Value) & COLUMN_PERIOD

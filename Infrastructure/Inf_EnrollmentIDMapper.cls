@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.Mapper")
+'@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
 Private Type Member

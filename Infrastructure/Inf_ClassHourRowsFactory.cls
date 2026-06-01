@@ -15,15 +15,15 @@ Public Function Create(ByVal RawRows As Inf_RawRows) As Inf_ClassHourRows
     Set Result = New Inf_ClassHourRows
     Dim MapFactory As New Inf_ClassHourHeaderMapFactory
     Dim Map As Inf_ClassHourHeaderMap
-    Set Map = MapFactory.Create(RawRows.GetHeaderRows)
+    Set Map = MapFactory.Create(RawRows.GetHeaders)
     Dim RowFactory As Inf_ClassHourRowFactory
     Set RowFactory = New Inf_ClassHourRowFactory
     Dim R As Long
-    For R = 2 To RawRows.RecordsCount
+    For R = 2 To RawRows.RowsCount
         Dim C As Long
-        For C = 1 To RawRows.FieldsCount
+        For C = 1 To RawRows.ColumnsCount(R)
             Dim Row As Inf_ClassHourRow
-            Set Row = RowFactory.Create(Map.Item(C), RawRows.GetField(R, C))
+            Set Row = RowFactory.Create(Map.Item(C), RawRows.GetRow(R, C))
             Result.Add Row
         Next
     Next

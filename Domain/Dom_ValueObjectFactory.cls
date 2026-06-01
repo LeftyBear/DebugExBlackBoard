@@ -143,9 +143,9 @@ Public Function CreateScheduleID(ByVal Value As String) As Dom_ScheduleID
     Set CreateScheduleID = VO
 End Function
 
-Public Function CreateScheduleValue(ByVal Value As String) As Dom_ScheduleValue
-    Dim VO As Dom_ScheduleValue
-    Set VO = New Dom_ScheduleValue
+Public Function CreateScheduleValue(ByVal Value As String) As Dom_ScheduleName
+    Dim VO As Dom_ScheduleName
+    Set VO = New Dom_ScheduleName
     VO.Initialize Value
     Set CreateScheduleValue = VO
 End Function
