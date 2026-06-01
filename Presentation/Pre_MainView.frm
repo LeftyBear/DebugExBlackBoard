@@ -17,6 +17,7 @@ Attribute VB_Exposed = False
 
 
 
+
 '@Folder "Application.View"
 Option Explicit
 Implements Pre_IMainView

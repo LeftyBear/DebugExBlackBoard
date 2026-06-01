@@ -36,12 +36,14 @@ Private Sub CleanupUnusedComponents()
 End Sub
 
 Private Sub CleanupFolder(ByVal FolderPath As String)
-    If VBA.Dir(FolderPath, vbDirectory) <> vbNullString Then Exit Sub
+'    If VBA.Dir(FolderPath, vbDirectory) <> vbNullString Then Exit Sub
     Dim FileName As String
     FileName = VBA.Dir(FolderPath & "*.*")
     Do While 0 < VBA.Len(FileName)
         If FileName <> ".gitkeep" Then
-            If Not IsModuleStillExists(RemoveExtension(FileName)) Then VBA.Kill FolderPath & FileName
+            If Not IsModuleStillExists(RemoveExtension(FileName)) Then
+                VBA.Kill FolderPath & FileName
+            End If
         End If
         FileName = VBA.Dir
     Loop
