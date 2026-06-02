@@ -28,6 +28,7 @@ Private Sub EnsureLoaded(ByVal SchoolYear As Long)
     Set This.DateCache = New VBA.Collection
     Dim Rows As Inf_ScheduleRows
     Set Rows = This.Persistence.ReadAll(SchoolYear)
+    '@Ignore SelfAssignedDeclaration
     Dim Factory As New Inf_YearlyScheduleFactory
     Dim Yearly As Dom_YearlySchedule
     Set Yearly = Factory.Create(Rows)
@@ -43,7 +44,7 @@ Private Sub BuildDateIndex(ByVal Yearly As Dom_YearlySchedule)
     Next
 End Sub
 
-Private Sub ReplaceRow(ByRef Rows As Inf_ScheduleRows)
+Private Sub ReplaceRow(ByVal Rows As Inf_ScheduleRows)
     Dim RowCount As Long
     RowCount = GetDailyRowCount(Rows)
     Dim i As Long
@@ -62,7 +63,7 @@ Private Sub ReplaceRow(ByRef Rows As Inf_ScheduleRows)
     Next
 End Sub
 
-Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByRef Rows As Inf_ScheduleRows, ByVal Daily As Dom_DailySchedule)
+Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Rows As Inf_ScheduleRows, ByVal Daily As Dom_DailySchedule)
     Dim i As Long
     For i = BeginIndex To EndIndex
         Dim Row As Inf_ScheduleRow
@@ -71,7 +72,7 @@ Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, 
     Next
 End Sub
 
-Private Sub ReplaceRowOfDailySchedule(ByRef Row As Inf_ScheduleRow, ByVal Daily As Dom_DailySchedule)
+Private Sub ReplaceRowOfDailySchedule(ByVal Row As Inf_ScheduleRow, ByVal Daily As Dom_DailySchedule)
     Dim Mapper As Inf_ScheduleIDMapper
     Set Mapper = New Inf_ScheduleIDMapper
     Dim i As Long

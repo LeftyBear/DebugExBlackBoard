@@ -28,6 +28,7 @@ Private Sub EnsureLoaded(ByVal SchoolYear As Long)
     Set This.DateCache = New VBA.Collection
     Dim Rows As Inf_ClassHourRows
     Set Rows = This.Persistence.ReadAll(SchoolYear)
+    '@Ignore SelfAssignedDeclaration
     Dim Factory As New Inf_YearlyClassHourFactory
     Dim Yearly As Dom_YearlyClassHour
     Set Yearly = Factory.Create(Rows)
@@ -43,7 +44,7 @@ Private Sub BuildDateIndex(ByVal Yearly As Dom_YearlyClassHour)
     Next
 End Sub
 
-Private Sub ReplaceRow(ByRef Rows As Inf_ClassHourRows)
+Private Sub ReplaceRow(ByVal Rows As Inf_ClassHourRows)
     Dim RowCount As Long
     RowCount = GetDailyRowCount(Rows)
     Dim i As Long
@@ -62,7 +63,7 @@ Private Sub ReplaceRow(ByRef Rows As Inf_ClassHourRows)
     Next
 End Sub
 
-Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByRef Rows As Inf_ClassHourRows, ByVal Daily As Dom_DailyClassHour)
+Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Rows As Inf_ClassHourRows, ByVal Daily As Dom_DailyClassHour)
     Dim Mapper As Inf_PeriodMapper
     Set Mapper = New Inf_PeriodMapper
     Dim i As Long
@@ -77,7 +78,7 @@ Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, 
     Next
 End Sub
 
-Private Sub ReplaceRowOfDailyTimeTable(ByRef Row As Inf_ClassHourRow, ByVal Daily As Dom_DailyClassHour)
+Private Sub ReplaceRowOfDailyTimeTable(ByVal Row As Inf_ClassHourRow, ByVal Daily As Dom_DailyClassHour)
     Dim Mapper As Inf_TimeTableIDMapper
     Set Mapper = New Inf_TimeTableIDMapper
     Dim i As Long
@@ -90,7 +91,7 @@ Private Sub ReplaceRowOfDailyTimeTable(ByRef Row As Inf_ClassHourRow, ByVal Dail
     Next
 End Sub
 
-Private Sub ReplaceRowOfDailyClassHour(ByRef Row As Inf_ClassHourRow, ByVal Daily As Dom_DailyClassHour)
+Private Sub ReplaceRowOfDailyClassHour(ByVal Row As Inf_ClassHourRow, ByVal Daily As Dom_DailyClassHour)
     Dim Mapper As Inf_ClassHourIDMapper
     Set Mapper = New Inf_ClassHourIDMapper
     Dim i As Long

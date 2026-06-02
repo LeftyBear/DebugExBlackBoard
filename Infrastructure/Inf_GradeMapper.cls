@@ -21,6 +21,7 @@ Public Function ToRaw(ByVal Grade As Dom_Grade) As String
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_Grade
+    '@Ignore SelfAssignedDeclaration
     Dim TypeMapper As New Inf_StreamTypeMapper
     Dim TypeCode As Dom_StreamType
     Set TypeCode = TypeMapper.ToDomain(Raw)

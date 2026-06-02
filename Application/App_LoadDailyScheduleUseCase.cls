@@ -11,11 +11,15 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    QueryService As Inf_ScheduleQueryService
+    QueryService As App_IScheduleQueryService
 End Type
 
 Private This As Member
 
-Public Sub Inject(ByVal QueryService As Inf_ScheduleQueryService)
+Friend Sub Inject(ByVal QueryService As App_IScheduleQueryService)
     Set This.QueryService = QueryService
 End Sub
+
+Public Function Execute(ByVal TargetDate As Date) As App_ScheduleReadModels
+    Set Execute = This.QueryService.GetByDate(TargetDate)
+End Function

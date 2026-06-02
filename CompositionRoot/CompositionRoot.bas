@@ -67,13 +67,13 @@ Public Sub Boot()
     'UseCase ---------------------------------------------------------------
     Dim LoadDailyScheduleUseCase As App_LoadDailyScheduleUseCase
     Set LoadDailyScheduleUseCase = CreateLoadDailyScheduleUseCase(ScheduleQueryService)
-    Dim TotalDailyPeriodUseCase As App_TotalDailyPeriodUseCase
+    Dim TotalDailyPeriodUseCase As App_BuildPeriodTotalUseCase
     Set TotalDailyPeriodUseCase = CreateTotalDailyPeriodUseCase(ClassHourQueryService, MainStreamQueryService)
     'Presentation ----------------------------------------------------------
     Dim DailySchedulePresenter As Pre_DailySchedulePresenter
-    Set DailySchedulePresenter = CreateDailySchedulePresenter(LoadDailyScheduleUseCase)
+    Set DailySchedulePresenter = CreateDailySchedulePresenter(LoadDailyScheduleUseCase, Logger)
     Dim DailyPeriodPresenter As Pre_DailyPeriodPresenter
-    Set DailyPeriodPresenter = CreateDailyPeriodPresenter(TotalDailyPeriodUseCase)
+    Set DailyPeriodPresenter = CreateDailyPeriodPresenter(TotalDailyPeriodUseCase, Logger)
     'View ------------------------------------------------------------------
     Dim MainView As Pre_MainView
     Set MainView = New Pre_MainView
@@ -115,15 +115,15 @@ Private Function CreateSchedulePersistence(ByVal Persistence As Inf_CSVPersisten
 End Function
 
 Private Function CreateScheduleQueryService(ByVal Persistence As Inf_SchedulePersistence) As App_IScheduleQueryService
-    Dim Result As App_IScheduleQueryService
+    Dim Result As Inf_ScheduleQueryService
     Set Result = New Inf_ScheduleQueryService
     Result.Inject Persistence
     Set CreateScheduleQueryService = Result
 End Function
 
 Private Function CreateScheduleRepository(ByVal Persistence As Inf_SchedulePersistence) As Dom_IScheduleRepository
-    Dim Result As Dom_IScheduleRepository
-    Set Result = New Dom_IScheduleRepository
+    Dim Result As Inf_ScheduleRepository
+    Set Result = New Inf_ScheduleRepository
     Result.Inject Persistence
     Set CreateScheduleRepository = Result
 End Function
@@ -136,15 +136,15 @@ Private Function CreateSchoolEventPersistence(ByVal Persistence As Inf_CSVPersis
 End Function
 
 Private Function CreateSchoolEventQueryService(ByVal Persistence As Inf_SchoolEventPersistence) As App_ISchoolEventQueryService
-    Dim Result As App_ISchoolEventQueryService
+    Dim Result As Inf_SchoolEventQueryService
     Set Result = New Inf_SchoolEventQueryService
     Result.Inject Persistence
     Set CreateSchoolEventQueryService = Result
 End Function
 
 Private Function CreateSchoolEventRepository(ByVal Persistence As Inf_SchoolEventPersistence) As Dom_ISchoolEventRepository
-    Dim Result As Dom_ISchoolEventRepository
-    Set Result = New Dom_ISchoolEventRepository
+    Dim Result As Inf_SchoolEventRepository
+    Set Result = New Inf_SchoolEventRepository
     Result.Inject Persistence
     Set CreateSchoolEventRepository = Result
 End Function
@@ -157,15 +157,15 @@ Private Function CreateClassHourPersistence(ByVal Persistence As Inf_CSVPersiste
 End Function
 
 Private Function CreateClassHourQueryService(ByVal Persistence As Inf_ClassHourPersistence) As App_IClassHourQueryService
-    Dim Result As App_IClassHourQueryService
+    Dim Result As Inf_ClassHourQueryService
     Set Result = New Inf_ClassHourQueryService
     Result.Inject Persistence
     Set CreateClassHourQueryService = Result
 End Function
 
 Private Function CreateClassHourRepository(ByVal Persistence As Inf_ClassHourPersistence) As Dom_IClassHourRepository
-Dim Result As Dom_IClassHourRepository
-    Set Result = New Dom_IClassHourRepository
+    Dim Result As Inf_ClassHourRepository
+    Set Result = New Inf_ClassHourRepository
     Result.Inject Persistence
     Set CreateClassHourRepository = Result
 End Function
@@ -178,15 +178,15 @@ Private Function CreateSubjectPersistence(ByVal Persistence As Inf_CSVPersistenc
 End Function
 
 Private Function CreateSubjectQueryService(ByVal Persistence As Inf_SubjectPersistence) As App_ISubjectQueryService
-    Dim Result As App_ISubjectQueryService
-    Set Result = New App_ISubjectQueryService
+    Dim Result As Inf_SubjectQueryService
+    Set Result = New Inf_SubjectQueryService
     Result.Inject Persistence
     Set CreateSubjectQueryService = Result
 End Function
 
 Private Function CreateSubjectRepository(ByVal Persistence As Inf_SubjectPersistence) As Dom_ISubjectRepository
-    Dim Result As Dom_ISubjectRepository
-    Set Result = New Dom_ISubjectRepository
+    Dim Result As Inf_SubjectRepository
+    Set Result = New Inf_SubjectRepository
     Result.Inject Persistence
     Set CreateSubjectRepository = Result
 End Function
@@ -199,15 +199,15 @@ Private Function CreatePeriodPersistence(ByVal Persistence As Inf_CSVPersistence
 End Function
 
 Private Function CreatePeriodQueryService(ByVal Persistence As Inf_PeriodPersistence) As App_IPeriodQueryService
-    Dim Result As App_IPeriodQueryService
-    Set Result = New App_IPeriodQueryService
+    Dim Result As Inf_PeriodQueryService
+    Set Result = New Inf_PeriodQueryService
     Result.Inject Persistence
     Set CreatePeriodQueryService = Result
 End Function
 
 Private Function CreatePeriodRepository(ByVal Persistence As Inf_PeriodPersistence) As Dom_IPeriodRepository
-    Dim Result As Dom_IPeriodRepository
-    Set Result = New Dom_IPeriodRepository
+    Dim Result As Inf_PeriodRepository
+    Set Result = New Inf_PeriodRepository
     Result.Inject Persistence
     Set CreatePeriodRepository = Result
 End Function
@@ -220,15 +220,15 @@ Private Function CreateEnrollmentPersistence(ByVal Persistence As Inf_CSVPersist
 End Function
 
 Private Function CreateEnrollmentQueryService(ByVal Persistence As Inf_EnrollmentPersistence) As App_IEnrollmentQueryService
-    Dim Result As App_IEnrollmentQueryService
-    Set Result = New App_IEnrollmentQueryService
+    Dim Result As Inf_EnrollmentQueryService
+    Set Result = New Inf_EnrollmentQueryService
     Result.Inject Persistence
     Set CreateEnrollmentQueryService = Result
 End Function
 
 Private Function CreateEnrollmentRepository(ByVal Persistence As Inf_EnrollmentPersistence) As Dom_IEnrollmentRepository
-    Dim Result As Dom_IEnrollmentRepository
-    Set Result = New Dom_IEnrollmentRepository
+    Dim Result As Inf_EnrollmentRepository
+    Set Result = New Inf_EnrollmentRepository
     Result.Inject Persistence
     Set CreateEnrollmentRepository = Result
 End Function
@@ -241,15 +241,15 @@ Private Function CreateMainStreamPersistence(ByVal Persistence As Inf_CSVPersist
 End Function
 
 Private Function CreateMainStreamQueryService(ByVal Persistence As Inf_MainStreamPersistence) As App_IMainStreamQueryService
-    Dim Result As App_IMainStreamQueryService
-    Set Result = New App_IMainStreamQueryService
+    Dim Result As Inf_MainStreamQueryService
+    Set Result = New Inf_MainStreamQueryService
     Result.Inject Persistence
     Set CreateMainStreamQueryService = Result
 End Function
 
 Private Function CreateMainStreamRepository(ByVal Persistence As Inf_MainStreamPersistence) As Dom_IMainStreamRepository
-    Dim Result As Dom_IMainStreamRepository
-    Set Result = New Dom_IMainStreamRepository
+    Dim Result As Inf_MainStreamRepository
+    Set Result = New Inf_MainStreamRepository
     Result.Inject Persistence
     Set CreateMainStreamRepository = Result
 End Function
@@ -262,15 +262,15 @@ Private Function CreateSpecialStreamPersistence(ByVal Persistence As Inf_CSVPers
 End Function
 
 Private Function CreateSpecialStreamQueryService(ByVal Persistence As Inf_SpecialStreamPersistence) As App_ISpecialStreamQueryService
-    Dim Result As App_ISpecialStreamQueryService
-    Set Result = New App_ISpecialStreamQueryService
+    Dim Result As Inf_SpecialStreamQueryService
+    Set Result = New Inf_SpecialStreamQueryService
     Result.Inject Persistence
     Set CreateSpecialStreamQueryService = Result
 End Function
 
 Private Function CreateSpecialStreamRepository(ByVal Persistence As Inf_SpecialStreamPersistence) As Dom_ISpecialStreamRepository
-    Dim Result As Dom_ISpecialStreamRepository
-    Set Result = New Dom_ISpecialStreamRepository
+    Dim Result As Inf_SpecialStreamRepository
+    Set Result = New Inf_SpecialStreamRepository
     Result.Inject Persistence
     Set CreateSpecialStreamRepository = Result
 End Function
@@ -282,23 +282,23 @@ Private Function CreateLoadDailyScheduleUseCase(ByVal QueryService As Inf_Schedu
     Set CreateLoadDailyScheduleUseCase = Result
 End Function
 
-Private Function CreateTotalDailyPeriodUseCase(ByVal ClassHourQS As Inf_ClassHourQueryService, ByVal MainStreamQS As App_IMainStreamQueryService) As App_TotalDailyPeriodUseCase
-    Dim Result As App_TotalDailyPeriodUseCase
-    Set Result = New App_TotalDailyPeriodUseCase
+Private Function CreateTotalDailyPeriodUseCase(ByVal ClassHourQS As Inf_ClassHourQueryService, ByVal MainStreamQS As App_IMainStreamQueryService) As App_BuildPeriodTotalUseCase
+    Dim Result As App_BuildPeriodTotalUseCase
+    Set Result = New App_BuildPeriodTotalUseCase
     Result.Inject ClassHourQS, MainStreamQS
     Set CreateTotalDailyPeriodUseCase = Result
 End Function
 
-Private Function CreateDailySchedulePresenter(ByVal UseCase As App_LoadDailyScheduleUseCase) As Pre_DailySchedulePresenter
+Private Function CreateDailySchedulePresenter(ByVal UseCase As App_LoadDailyScheduleUseCase, ByVal Logger As App_ILogPersistence) As Pre_DailySchedulePresenter
     Dim Result As Pre_DailySchedulePresenter
     Set Result = New Pre_DailySchedulePresenter
-    Result.Inject UseCase
+    Result.Inject UseCase, Logger, New Pre_BasePresenter
     Set CreateDailySchedulePresenter = Result
 End Function
 
-Private Function CreateDailyPeriodPresenter(ByVal UseCase As App_TotalDailyPeriodUseCase) As Pre_DailyPeriodPresenter
+Private Function CreateDailyPeriodPresenter(ByVal UseCase As App_BuildPeriodTotalUseCase, ByVal Logger As App_ILogPersistence) As Pre_DailyPeriodPresenter
     Dim Result As Pre_DailyPeriodPresenter
     Set Result = New Pre_DailyPeriodPresenter
-    Result.Inject UseCase
+    Result.Inject UseCase, Logger
     Set CreateDailyPeriodPresenter = Result
 End Function

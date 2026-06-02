@@ -47,7 +47,7 @@ Private Sub BuildNameIndex(ByVal Rows As Inf_SubjectRows)
     Next
 End Sub
 
-Private Sub ReplaceRow(ByRef Rows As Inf_SubjectRows)
+Private Sub ReplaceRow(ByVal Rows As Inf_SubjectRows)
     Dim i As Long
     For i = 1 To Rows.Count
         Dim Row As Inf_SubjectRow

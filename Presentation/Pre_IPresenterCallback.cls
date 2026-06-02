@@ -16,5 +16,5 @@ End Sub
 Public Sub RenderResult(ByVal Result As Pre_PresenterResult)
 End Sub
 
-Public Sub LogSystemError(ByVal Error As ErrObject)
+Public Sub LogSystemError(ByVal Error As VBA.ErrObject)
 End Sub

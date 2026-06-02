@@ -28,11 +28,10 @@ Public Function Format(ByVal Models As App_EnrollmentReadModels, ByVal MainModel
     MainGradeCount = MainModel.UpperGrade
     Dim MainClassNoCount As Long
     MainClassNoCount = MainModel.UpperClassNo
+    '@Ignore SelfAssignedDeclaration
     Dim Mapper As New Inf_StreamTypeMapper
     Dim MainTable() As Long
     MainTable = BuildGenderTable(Models, Mapper.MainKey, MainGradeCount, MainClassNoCount)
-    Dim SpecialGradeCount As Long
-    SpecialGradeCount = SpecialModels.GradeCount
     Dim SpecialClassNoCount As Long
     SpecialClassNoCount = SpecialModels.ClassNoCount
     Dim SpecialTable() As Long
@@ -131,6 +130,7 @@ Private Function BuildGenderTable(ByVal Models As App_EnrollmentReadModels, ByVa
 End Function
 
 Private Function GetMaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
+    '@Ignore SelfAssignedDeclaration
     Dim Mapper As New Inf_GenderMapper
     Dim Values() As Long
     Values = FilterBy(Models, TypeCode, Mapper.MaleKey, GradeCount, ClassNoCount)
@@ -138,6 +138,7 @@ Private Function GetMaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal 
 End Function
 
 Private Function GetFemaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
+    '@Ignore SelfAssignedDeclaration
     Dim Mapper As New Inf_GenderMapper
     Dim Values() As Long
     Values = FilterBy(Models, TypeCode, Mapper.FemaleKey, GradeCount, ClassNoCount)

@@ -48,6 +48,6 @@ Private Sub Dom_IPeriodRepository_Save()
     This.Persistence.WriteAll Row
 End Sub
 
-Private Sub ReplaceRow(ByRef Row As Inf_PeriodRow)
+Private Sub ReplaceRow(ByVal Row As Inf_PeriodRow)
     Row.Value = This.Value.Value
 End Sub

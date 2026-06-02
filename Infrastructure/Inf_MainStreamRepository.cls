@@ -60,7 +60,7 @@ Private Sub Dom_IMainStreamRepository_Save()
     This.Persistence.WriteAll Rows
 End Sub
 
-Private Sub ReplaceRow(ByRef Rows As Inf_MainStreamRows)
+Private Sub ReplaceRow(ByVal Rows As Inf_MainStreamRows)
     Dim i As Long
     For i = 1 To Rows.Count
         Dim Row As Inf_MainStreamRow

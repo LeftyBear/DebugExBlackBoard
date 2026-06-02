@@ -122,7 +122,7 @@ Private Function ParseCSV(ByVal TextData As String) As Inf_RawRows
     Set ParseCSV = Result
 End Function
 
-Private Sub TryAddRecord(ByRef RawRows As Inf_RawRows, ByRef State As ParserState, ByRef Buffer As String, ByRef i As Long, ByRef Char As String, ByRef NextChar As String)
+Private Sub TryAddRecord(ByVal RawRows As Inf_RawRows, ByRef State As ParserState, ByRef Buffer As String, ByRef i As Long, ByVal Char As String, ByVal NextChar As String)
     If Char = DOUBLE_QUOTATION Then
         State = InsideQuotedField
     ElseIf Char = COMMA Then
@@ -143,7 +143,7 @@ Private Sub TryAddRecord(ByRef RawRows As Inf_RawRows, ByRef State As ParserStat
     End If
 End Sub
 
-Private Sub AddRows(ByRef RawRows As Inf_RawRows, ByRef State As ParserState, ByRef Buffer As String, ByRef i As Long, ByRef Char As String, ByRef NextChar As String)
+Private Sub AddRows(ByVal RawRows As Inf_RawRows, ByRef State As ParserState, ByRef Buffer As String, ByRef i As Long, ByVal Char As String, ByVal NextChar As String)
     If Char = COMMA Then
         RawRows.AddRow Buffer
         Buffer = vbNullString
@@ -163,7 +163,7 @@ Private Sub AddRows(ByRef RawRows As Inf_RawRows, ByRef State As ParserState, By
     End If
 End Sub
 
-Private Sub EscapeDoubleQuotation(ByRef State As ParserState, ByRef Buffer As String, ByRef i As Long, ByRef Char As String, ByRef NextChar As String)
+Private Sub EscapeDoubleQuotation(ByRef State As ParserState, ByRef Buffer As String, ByRef i As Long, ByVal Char As String, ByVal NextChar As String)
     If Char = DOUBLE_QUOTATION Then
         If NextChar = DOUBLE_QUOTATION Then
             Buffer = Buffer & DOUBLE_QUOTATION

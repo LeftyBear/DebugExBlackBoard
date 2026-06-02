@@ -16,7 +16,6 @@ Private Type Member
 End Type
 
 Private This As Member
-Private Const DateColumns As Long = 1
 
 Public Sub Inject(ByVal Persistence As Inf_ClassHourPersistence)
     Set This.Persistence = Persistence
@@ -56,6 +55,7 @@ Private Function App_IClassHourQueryService_GetByDate(ByVal TargetDate As Date) 
     If This.DateIndex.Exists(CStr(TargetDate)) Then Exit Function
     Dim DailyRows As Inf_ClassHourRows
     Set DailyRows = This.DateIndex.Item(CStr(TargetDate))
+    '@Ignore SelfAssignedDeclaration
     Dim Factory As New Inf_DailyClassHourModelFactory
     Set App_IClassHourQueryService_GetByDate = Factory.Create(DailyRows)
 End Function

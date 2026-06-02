@@ -28,6 +28,7 @@ Private Sub EnsureLoaded(ByVal SchoolYear As Long)
     Set This.DateCache = New VBA.Collection
     Dim Rows As Inf_EnrollmentRows
     Set Rows = This.Persistence.ReadAll(SchoolYear)
+    '@Ignore SelfAssignedDeclaration
     Dim Factory As New Inf_YearlyEnrollmentFactory
     Dim Yearly As Dom_YearlyEnrollment
     Set Yearly = Factory.Create(Rows)
@@ -43,7 +44,7 @@ Private Sub BuildDateIndex(ByVal Yearly As Dom_YearlyEnrollment)
     Next
 End Sub
 
-Private Sub ReplaceRow(ByRef Rows As Inf_EnrollmentRows)
+Private Sub ReplaceRow(ByVal Rows As Inf_EnrollmentRows)
     Dim RowCount As Long
     RowCount = GetDailyRowCount(Rows)
     Dim i As Long
@@ -62,7 +63,7 @@ Private Sub ReplaceRow(ByRef Rows As Inf_EnrollmentRows)
     Next
 End Sub
 
-Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByRef Rows As Inf_EnrollmentRows, ByVal Daily As Dom_DailyEnrollment)
+Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Rows As Inf_EnrollmentRows, ByVal Daily As Dom_DailyEnrollment)
     Dim i As Long
     For i = BeginIndex To EndIndex
         Dim Row As Inf_EnrollmentRow
@@ -71,7 +72,7 @@ Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, 
     Next
 End Sub
 
-Private Sub ReplaceRowOfDailyEnrollment(ByRef Row As Inf_EnrollmentRow, ByVal Daily As Dom_DailyEnrollment)
+Private Sub ReplaceRowOfDailyEnrollment(ByVal Row As Inf_EnrollmentRow, ByVal Daily As Dom_DailyEnrollment)
     Dim Mapper As Inf_EnrollmentIDMapper
     Set Mapper = New Inf_EnrollmentIDMapper
     Dim i As Long

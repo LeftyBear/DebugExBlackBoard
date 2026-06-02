@@ -31,6 +31,7 @@ Public Function ToRaw(ByVal TypeCode As Dom_StreamType) As String
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_StreamType
+    '@Ignore SelfAssignedDeclaration
     Dim GradeMapper As New Inf_GradeMapper
     If 0 < VBA.InStr(1, Raw, GradeMapper.ColumnName) Then
         Dim TypeCode As Long
@@ -44,6 +45,7 @@ Public Function ToDomain(ByVal Raw As String) As Dom_StreamType
 End Function
 
 Public Function ToModel(ByVal Raw As String) As String
+    '@Ignore SelfAssignedDeclaration
     Dim GradeMapper As New Inf_GradeMapper
     If 0 < VBA.InStr(1, Raw, GradeMapper.ColumnName) Then
         ToModel = MODEL_MAIN

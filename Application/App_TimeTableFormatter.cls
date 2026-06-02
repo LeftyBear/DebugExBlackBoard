@@ -20,7 +20,7 @@ Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal TypeCode A
     Dim MarkTable() As Long
     MarkTable = BuildMarkTable(Models, TypeCode, PeriodCount, GradeCount)
     Dim CountedTable() As Long
-    CountedTable = CountMark(Models, TypeCode, MarkTable)
+    CountedTable = CountMark(MarkTable)
     Dim Body() As Variant
     Body = BuildBody(CountedTable)
     Format = BuildTable(Header, Body)
@@ -88,7 +88,7 @@ Private Function BuildMarkTable(ByVal Models As App_ClassHourReadModels, ByVal T
     BuildMarkTable = Result
 End Function
 
-Private Function CountMark(ByVal Models As App_ClassHourReadModels, ByVal TypeCode As String, ByRef MarkTable() As Long) As Long()
+Private Function CountMark(ByRef MarkTable() As Long) As Long()
     Dim Result() As Long
     ReDim Result(LBound(MarkTable) To UBound(MarkTable) + 1, LBound(MarkTable, 2) To UBound(MarkTable, 2))
     Dim Grade As Long

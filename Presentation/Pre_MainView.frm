@@ -84,19 +84,11 @@ Private Sub Pre_IMainView_HideLoading()
 End Sub
 
 Private Sub Pre_IMainView_NotifyBusinessError(ByVal Message As String)
-    MsgBox Message, vbCritical, "業務エラー"
+    MsgBox Message, vbExclamation, "業務エラー"
 End Sub
 
 Private Sub Pre_IMainView_NotifySystemError()
-    MsgBox "予期しないエラーが発生したのでログに書き出しました。", vbCritical, "システムエラー"
-End Sub
-
-Private Sub Pre_IMainView_Render(ByVal ViewModel As App_ViewDTO)
-    Pre_IMainView_RenderEnrollment ViewModel.EnrollmentTable
-    Pre_IMainView_RenderClassHourPlan ViewModel.ClassHourPlanTable
-    Pre_IMainView_RenderClassHourExecution ViewModel.ClassHourExecutionTable
-    Pre_IMainView_RenderTimeTablePlan ViewModel.TimeTablePlanTable
-    Pre_IMainView_RenderTimeTableExecution ViewModel.TimeTableExecutionTable
+    MsgBox "予期しないエラーが発生したのでログに書き出しました。", vbExclamation, "システムエラー"
 End Sub
 
 Private Sub Pre_IMainView_RenderClassHourExecution(ByRef Table() As Variant)

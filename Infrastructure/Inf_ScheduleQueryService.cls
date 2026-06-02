@@ -16,7 +16,6 @@ Private Type Member
 End Type
 
 Private This As Member
-Private Const DateColumns As Long = 1
 
 Public Sub Inject(ByVal Persistence As Inf_SchedulePersistence)
     Set This.Persistence = Persistence

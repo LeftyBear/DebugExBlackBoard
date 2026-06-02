@@ -25,9 +25,6 @@ End Sub
 Public Sub NotifySystemError()
 End Sub
 
-Public Sub Render(ByVal ViewModel As App_ViewDTO)
-End Sub
-
 Public Sub RenderEnrollment(ByRef Table() As Variant)
 End Sub
 

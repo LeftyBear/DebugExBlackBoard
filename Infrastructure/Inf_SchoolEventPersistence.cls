@@ -42,7 +42,7 @@ Public Sub WriteAll(ByVal Rows As Inf_SchoolEventRows)
     This.CSV.WriteAll FilePath, RawRows
 End Sub
 
-Public Sub Delete(ByVal SchoolYear As Long, ByVal Key As String)
+Public Sub Delete(ByVal Key As String)
     Dim FilePath As String
     FilePath = BuildFilePath
     This.CSV.Delete FilePath, Key

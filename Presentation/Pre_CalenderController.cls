@@ -12,13 +12,13 @@ Option Explicit
 
 Private Type Member
     Calender    As Pre_CalenderPresenter
-    Schedule    As Pre_SchedulePresenter
+    Schedule    As Pre_DailySchedulePresenter
     CurrentYear As Long
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Calender As Pre_CalenderPresenter, ByVal Schedule As Pre_SchedulePresenter)
+Public Sub Initialize(ByVal Calender As Pre_CalenderPresenter, ByVal Schedule As Pre_DailySchedulePresenter)
     Set This.Calender = Calender
     Set This.Schedule = Schedule
 End Sub

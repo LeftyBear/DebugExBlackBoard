@@ -10,21 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Presentation.ViewModel")
 Option Explicit
 
-Private Type Member
-    Factory As Pre_PresenterResultFactory
-End Type
-
-Private This As Member
-
-Public Sub Initialize(ByVal Factory As Pre_PresenterResultFactory)
-    Set This.Factory = Factory
-End Sub
-
 Public Sub Execute(ByVal Callback As Pre_IPresenterCallback)
     On Error GoTo ErrHandler
     Callback.ExecuteCore
     Dim Result As Pre_PresenterResult
-    Set Result = This.Factory.CreateSuccess
+    Set Result = Pre_PresenterResultFactory.CreateSuccess
     GoTo Finally
 ErrHandler:
     If ErrorPolicy.IsDomainError(Err.Number) Or ErrorPolicy.IsInfrastructureError(Err.Number) Then
@@ -32,10 +22,10 @@ ErrHandler:
         Message = "î‘çÜ: " & Err.Number & vbCrLf & _
                   "èÍèä: " & Err.Source & vbCrLf & _
                   "ê‡ñæ: " & Err.Description
-        Set Result = This.Factory.CreateBusinessError(Message)
+        Set Result = Pre_PresenterResultFactory.CreateBusinessError(Message)
     Else
         Callback.LogSystemError Err
-        Set Result = This.Factory.CreateSystemError
+        Set Result = Pre_PresenterResultFactory.CreateSystemError
     End If
 Finally:
     Callback.RenderResult Result

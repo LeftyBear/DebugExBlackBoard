@@ -40,7 +40,7 @@ Private Sub BuildNameIndex(ByVal Rows As Inf_SpecialStreamRows)
     Next
 End Sub
 
-Private Sub ReplaceRow(ByRef Rows As Inf_SpecialStreamRows)
+Private Sub ReplaceRow(ByVal Rows As Inf_SpecialStreamRows)
     Dim i As Long
     For i = 1 To Rows.Count
         Dim Row As Inf_SpecialStreamRow
