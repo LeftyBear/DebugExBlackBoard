@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "App_MainStreamReadModels"
+Attribute VB_Name = "App_DailyPeriodReadModels"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -19,7 +19,7 @@ Private Sub Class_Initialize()
     Set This.Models = New VBA.Collection
 End Sub
 
-Public Sub Add(ByVal Model As App_MainStreamReadModel)
+Public Sub Add(ByVal Model As App_DailyPeriodReadModel)
     This.Models.Add Model
 End Sub
 
@@ -27,6 +27,6 @@ Public Function Count() As Long
     Count = This.Models.Count
 End Function
 
-Public Function Item(ByVal Index As Long) As App_MainStreamReadModel
+Public Function Item(ByVal Index As Long) As App_DailyPeriodReadModel
     Set Item = This.Models.Item(Index)
 End Function

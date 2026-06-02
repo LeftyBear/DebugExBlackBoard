@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Infrastructure.Service.Mapper")
 Option Explicit
-
+Implements App_IClassHourTypeMapper
 Private Const COLUMN_PLAN       As String = "Œv‰æ"
 Private Const COLUMN_EXECUTION  As String = "ŽÀŽ{"
 Private Const MODEL_PLAN        As String = "Plan"
@@ -50,3 +50,11 @@ Public Function ToModel(ByVal Raw As String) As String
         ToModel = MODEL_EXECUTION
     End If
 End Function
+
+Private Property Get App_IClassHourTypeMapper_ExecutionKey() As String
+    App_IClassHourTypeMapper_ExecutionKey = Me.ExecutionKey
+End Property
+
+Private Property Get App_IClassHourTypeMapper_PlanKey() As String
+    App_IClassHourTypeMapper_PlanKey = Me.PlanKey
+End Property

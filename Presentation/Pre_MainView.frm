@@ -13,29 +13,26 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
-
-
-
-
 '@Folder "Application.View"
 Option Explicit
 Implements Pre_IMainView
 Private Type Member
-    Calender As Pre_CalenderController
+    DailySchedulePresenter  As Pre_DailySchedulePresenter
+    DailyPeriodPresenter    As Pre_DailyPeriodPresenter
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Calender As Pre_CalenderController)
-    Set This.Calender = Calender
+Public Sub Inject(ByVal DailySchedulePresenter As Pre_DailySchedulePresenter, ByVal DailyPeriodPresenter As Pre_DailyPeriodPresenter)
+    Set This.DailySchedulePresenter = DailySchedulePresenter
+    Set This.DailyPeriodPresenter = DailyPeriodPresenter
 End Sub
-
-Public Sub OnChangeDate(ByVal SelectedDate As Date)
-    Dim SchoolYear As Long
-    SchoolYear = App_DateUtility.GetSchoolYear(SelectedDate)
-    This.Calender.LoadOf SchoolYear
-End Sub
+'
+'Public Sub OnChangeDate(ByVal SelectedDate As Date)
+'    Dim SchoolYear As Long
+'    SchoolYear = App_DateUtility.GetSchoolYear(SelectedDate)
+'    This.Calender.LoadOf SchoolYear
+'End Sub
 
 Public Sub SetGridValue(ByVal Kind As String, ByVal Value As Variant, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long)
     Dim Cell As Object
