@@ -14,55 +14,55 @@ Public Sub Boot()
     'Persistence -----------------------------------------------------------
     Dim CSV As Inf_IPersistence
     Set CSV = New Inf_CSVPersistence
-    Dim ClassHourPersistence As Inf_IClassHourPersistence
+    Dim ClassHourPersistence As Inf_ClassHourPersistence
     Set ClassHourPersistence =CreateClassHourPersistence(CSV)
-    Dim EnrollmentPersistence As Inf_IEnrollmentPersistence
+    Dim EnrollmentPersistence As Inf_EnrollmentPersistence
     Set EnrollmentPersistence = CreateEnrollmentPersistence(CSV)
-    Dim SchedulePersistence As Inf_ISchedulePersistence
+    Dim SchedulePersistence As Inf_SchedulePersistence
     Set SchedulePersistence = CreateSchedulePersistence(CSV)
-    Dim MainStreamPersistence As Inf_IMainStreamPersistence
+    Dim MainStreamPersistence As Inf_MainStreamPersistence
     Set MainStreamPersistence = CreateMainStreamPersistence(CSV)
-    Dim SpecialStreamPersistence As Inf_ISpecialStreamPersistence
+    Dim SpecialStreamPersistence As Inf_SpecialStreamPersistence
     Set SpecialStreamPersistence = CreateSpecialStreamPersistence(CSV)
-    Dim SubjectPersistence As Inf_ISubjectPersistence
+    Dim SubjectPersistence As Inf_SubjectPersistence
     Set SubjectPersistence = CreateSubjectPersistence(CSV)
-    Dim PeriodPersistence As Inf_IPeriodPersistence
+    Dim PeriodPersistence As Inf_PeriodPersistence
     Set PeriodPersistence = CreatePeriodPersistence(CSV)
-    Dim SchoolEventPersistence As Inf_ISchoolEventPersistence
+    Dim SchoolEventPersistence As Inf_SchoolEventPersistence
     Set SchoolEventPersistence = CreateSchoolEventPersistence(CSV)
     'QueryService ----------------------------------------------------------
-    Dim ClassHourQueryService As Inf_IClassHourQueryService
+    Dim ClassHourQueryService As Inf_ClassHourQueryService
     Set ClassHourQueryService =CreateClassHourQueryService(ClassHourPersistence)
-    Dim EnrollmentQueryService As Inf_IEnrollmentQueryService
+    Dim EnrollmentQueryService As Inf_EnrollmentQueryService
     Set EnrollmentQueryService = CreateEnrollmentQueryService(EnrollmentPersistence)
-    Dim ScheduleQueryService As Inf_IScheduleQueryService
+    Dim ScheduleQueryService As Inf_ScheduleQueryService
     Set ScheduleQueryService = CreateScheduleQueryService(SchedulePersistence)
-    Dim MainStreamQueryService As Inf_IMainStreamQueryService
+    Dim MainStreamQueryService As Inf_MainStreamQueryService
     Set MainStreamQueryService = CreateMainStreamQueryService(MainStreamPersistence)
-    Dim SpecialStreamQueryService As Inf_ISpecialStreamQueryService
+    Dim SpecialStreamQueryService As Inf_SpecialStreamQueryService
     Set SpecialStreamQueryService = CreateSpecialStreamQueryService(SpecialStreamPersistence)
-    Dim SubjectQueryService As Inf_ISubjectQueryService
+    Dim SubjectQueryService As Inf_SubjectQueryService
     Set SubjectQueryService = CreateSubjectQueryService(SubjectPersistence)
-    Dim PeriodQueryService As Inf_IPeriodQueryService
+    Dim PeriodQueryService As Inf_PeriodQueryService
     Set PeriodQueryService = CreatePeriodQueryService(PeriodPersistence)
-    Dim SchoolEventQueryService As Inf_ISchoolEventQueryService
+    Dim SchoolEventQueryService As Inf_SchoolEventQueryService
     Set SchoolEventQueryService = CreateSchoolEventQueryService(SchoolEventPersistence)
     'Repository ------------------------------------------------------------
-    Dim ClassHourRepository As Inf_IClassHourRepository
+    Dim ClassHourRepository As Inf_ClassHourRepository
     Set ClassHourRepository = CreateClassHourRepository(ClassHourPersistence)
-    Dim EnrollmentRepository As Inf_IEnrollmentRepository
+    Dim EnrollmentRepository As Inf_EnrollmentRepository
     Set EnrollmentRepository = CreateEnrollmentRepository(EnrollmentPersistence)
-    Dim ScheduleRepository As Inf_IScheduleRepository
+    Dim ScheduleRepository As Inf_ScheduleRepository
     Set ScheduleRepository = CreateScheduleRepository(SchedulePersistence)
-    Dim MainStreamRepository As Inf_IMainStreamRepository
+    Dim MainStreamRepository As Inf_MainStreamRepository
     Set MainStreamRepository = CreateMainStreamRepository(MainStreamPersistence)
-    Dim SpecialStreamRepository As Inf_ISpecialStreamRepository
+    Dim SpecialStreamRepository As Inf_SpecialStreamRepository
     Set SpecialStreamRepository = CreateSpecialStreamRepository(SpecialStreamPersistence)
-    Dim SubjectRepository As Inf_ISubjectRepository
+    Dim SubjectRepository As Inf_SubjectRepository
     Set SubjectRepository = CreateSubjectRepository(SubjectPersistence)
-    Dim PeriodRepository As Inf_IPeriodRepository
+    Dim PeriodRepository As Inf_PeriodRepository
     Set PeriodRepository = CreatePeriodRepository(PeriodPersistence)
-    Dim SchoolEventRepository As Inf_ISchoolEventRepository
+    Dim SchoolEventRepository As Inf_SchoolEventRepository
     Set SchoolEventRepository = CreateSchoolEventRepository(SchoolEventPersistence)
     'UseCase ---------------------------------------------------------------
     Dim TotalDailyPeriodUseCase As App_TotalDailyPeriodUseCase
@@ -101,170 +101,170 @@ Private Function CreateLogger(ByVal LogFilePath As String) As App_ILogPersistenc
     Set CreateLogger = Result
 End Function
 
-Private Function CreateClassHourPersistence(Byval CSV as Inf_CSVPersistence) As Inf_IClassHourParsistence
-    Dim Result As Inf_IClassHourParsistence
-    Set Result = New Inf_IClassHourParsistence
+Private Function CreateClassHourPersistence(Byval CSV as Inf_CSVPersistence) As Inf_ClassHourParsistence
+    Dim Result As Inf_ClassHourParsistence
+    Set Result = New Inf_ClassHourParsistence
     Result.Inject CSV
     Set CreateClassHourPersistence = Result
 End Function
 
-Private Function CreateClassHourQueryService(ByVal ClassHourPersistence As Inf_IClassHourPersistence) As Inf_IClassHourQueryService
-    Dim Result As Inf_IClassHourQueryService
+Private Function CreateClassHourQueryService(ByVal ClassHourPersistence As Inf_ClassHourPersistence) As Inf_ClassHourQueryService
+    Dim Result As Inf_ClassHourQueryService
     Set Result = New Inf_ClassHourQueryService
     Result.Inject ClassHourPersistence
     Set CreateClassHourQueryService = Result
 End Function
 
-Private Function CreateClassHourRepository(ByVal ClassHourPersistence As Inf_IClassHourPersistence) As Inf_IClassHourRepository
-    Dim Result As Inf_IClassHourRepository
+Private Function CreateClassHourRepository(ByVal ClassHourPersistence As Inf_ClassHourPersistence) As Inf_ClassHourRepository
+Dim Result As Inf_ClassHourRepository
     Set Result = New Inf_ClassHourRepository
     Result.Inject ClassHourPersistence
     Set CreateClassHourRepository = Result
 End Function
 
-Private Function CreateEnrollmentPersistence(ByVal CSV As Inf_CSVPersistence) As Inf_IEnrollmentPersistence
-    Dim Result As Inf_IEnrollmentPersistence
+Private Function CreateEnrollmentPersistence(ByVal CSV As Inf_CSVPersistence) As Inf_EnrollmentPersistence
+    Dim Result As Inf_EnrollmentPersistence
     Set Result = New Inf_EnrollmentPersistence
     Result.Inject CSV
     Set CreateEnrollmentPersistence = Result
 End Function
 
-Private Function CreateEnrollmentQueryService(ByVal EnrollmentPersistence As Inf_IEnrollmentPersistence) As Inf_IEnrollmentQueryService
-    Dim Result As Inf_IEnrollmentQueryService
+Private Function CreateEnrollmentQueryService(ByVal EnrollmentPersistence As Inf_EnrollmentPersistence) As Inf_EnrollmentQueryService
+    Dim Result As Inf_EnrollmentQueryService
     Set Result = New Inf_EnrollmentQueryService
     Result.Inject EnrollmentPersistence
     Set CreateEnrollmentQueryService = Result
 End Function
 
-Private Function CreateEnrollmentRepository(ByVal EnrollmentPersistence As Inf_IEnrollmentPersistence) As Inf_IEnrollmentRepository
-    Dim Result As Inf_IEnrollmentRepository
+Private Function CreateEnrollmentRepository(ByVal EnrollmentPersistence As Inf_EnrollmentPersistence) As Inf_EnrollmentRepository
+    Dim Result As Inf_EnrollmentRepository
     Set Result = New Inf_EnrollmentRepository
     Result.Inject EnrollmentPersistence
     Set CreateEnrollmentRepository = Result
 End Function
 
-Private Function CreateSchedulePersistence(ByVal CSV As Inf_CSVPersistence) As Inf_ISchedulePersistence
-    Dim Result As Inf_ISchedulePersistence
+Private Function CreateSchedulePersistence(ByVal CSV As Inf_CSVPersistence) As Inf_SchedulePersistence
+    Dim Result As Inf_SchedulePersistence
     Set Result = New Inf_SchedulePersistence
     Result.Inject CSV
     Set CreateSchedulePersistence = Result
 End Function
 
-Private Function CreateScheduleQueryService(ByVal SchedulePersistence As Inf_ISchedulePersistence) As Inf_IScheduleQueryService
-    Dim Result As Inf_IScheduleQueryService
+Private Function CreateScheduleQueryService(ByVal SchedulePersistence As Inf_SchedulePersistence) As Inf_ScheduleQueryService
+    Dim Result As Inf_ScheduleQueryService
     Set Result = New Inf_ScheduleQueryService
     Result.Inject SchedulePersistence
     Set CreateScheduleQueryService = Result
 End Function
 
-Private Function CreateScheduleRepository(ByVal SchedulePersistence As Inf_ISchedulePersistence) As Inf_IScheduleRepository
-    Dim Result As Inf_IScheduleRepository
+Private Function CreateScheduleRepository(ByVal SchedulePersistence As Inf_SchedulePersistence) As Inf_ScheduleRepository
+    Dim Result As Inf_ScheduleRepository
     Set Result = New Inf_ScheduleRepository
     Result.Inject SchedulePersistence
     Set CreateScheduleRepository = Result
 End Function
 
-Private Function CreateMainStreamPersistence(ByVal CSV As Inf_CSVPersistence) As Inf_IMainStreamPersistence
-    Dim Result As Inf_IMainStreamPersistence
+Private Function CreateMainStreamPersistence(ByVal CSV As Inf_CSVPersistence) As Inf_MainStreamPersistence
+    Dim Result As Inf_MainStreamPersistence
     Set Result = New Inf_MainStreamPersistence
     Result.Inject CSV
     Set CreateMainStreamPersistence = Result
 End Function
 
-Private Function CreateMainStreamQueryService(ByVal MainStreamPersistence As Inf_IMainStreamPersistence) As Inf_IMainStreamQueryService
-    Dim Result As Inf_IMainStreamQueryService
+Private Function CreateMainStreamQueryService(ByVal MainStreamPersistence As Inf_MainStreamPersistence) As Inf_MainStreamQueryService
+    Dim Result As Inf_MainStreamQueryService
     Set Result = New Inf_MainStreamQueryService
     Result.Inject MainStreamPersistence
     Set CreateMainStreamQueryService = Result
 End Function
 
-Private Function CreateMainStreamRepository(ByVal MainStreamPersistence As Inf_IMainStreamPersistence) As Inf_IMainStreamRepository
-    Dim Result As Inf_IMainStreamRepository
+Private Function CreateMainStreamRepository(ByVal MainStreamPersistence As Inf_MainStreamPersistence) As Inf_MainStreamRepository
+    Dim Result As Inf_MainStreamRepository
     Set Result = New Inf_MainStreamRepository
     Result.Inject MainStreamPersistence
     Set CreateMainStreamRepository = Result
 End Function
 
-Private Function CreateSpecialStreamPersistence(ByVal CSV As Inf_CSVPersistence) As Inf_ISpecialStreamPersistence
-    Dim Result As Inf_ISpecialStreamPersistence
+Private Function CreateSpecialStreamPersistence(ByVal CSV As Inf_CSVPersistence) As Inf_SpecialStreamPersistence
+    Dim Result As Inf_SpecialStreamPersistence
     Set Result = New Inf_SpecialStreamPersistence
     Result.Inject CSV
     Set CreateSpecialStreamPersistence = Result
 End Function
 
-Private Function CreateSpecialStreamQueryService(ByVal SpecialStreamPersistence As Inf_ISpecialStreamPersistence) As Inf_ISpecialStreamQueryService
-    Dim Result As Inf_ISpecialStreamQueryService
+Private Function CreateSpecialStreamQueryService(ByVal SpecialStreamPersistence As Inf_SpecialStreamPersistence) As Inf_SpecialStreamQueryService
+    Dim Result As Inf_SpecialStreamQueryService
     Set Result = New Inf_SpecialStreamQueryService
     Result.Inject SpecialStreamPersistence
     Set CreateSpecialStreamQueryService = Result
 End Function
 
-Private Function CreateSpecialStreamRepository(ByVal SpecialStreamPersistence As Inf_ISpecialStreamPersistence) As Inf_ISpecialStreamRepository
-    Dim Result As Inf_ISpecialStreamRepository
+Private Function CreateSpecialStreamRepository(ByVal SpecialStreamPersistence As Inf_SpecialStreamPersistence) As Inf_SpecialStreamRepository
+    Dim Result As Inf_SpecialStreamRepository
     Set Result = New Inf_SpecialStreamRepository
     Result.Inject SpecialStreamPersistence
     Set CreateSpecialStreamRepository = Result
 End Function
 
-Private Function CreateSubjectPersistence(ByVal CSV As Inf_CSVPersistence) As Inf_ISubjectPersistence
-    Dim Result As Inf_ISubjectPersistence
-    Set Result = New Inf_ISubjectPersistence
+Private Function CreateSubjectPersistence(ByVal CSV As Inf_CSVPersistence) As Inf_SubjectPersistence
+    Dim Result As Inf_SubjectPersistence
+    Set Result = New Inf_SubjectPersistence
     Result.Inject CSV
     Set CreateSubjectPersistence = Result
 End Function
 
-Private Function CreateSubjectQueryService(ByVal SubjectPersistence As Inf_ISubjectPersistence) As Inf_ISubjectQueryService
-    Dim Result As Inf_ISubjectQueryService
-    Set Result = New Inf_ISubjectQueryService
+Private Function CreateSubjectQueryService(ByVal SubjectPersistence As Inf_SubjectPersistence) As Inf_SubjectQueryService
+    Dim Result As Inf_SubjectQueryService
+    Set Result = New Inf_SubjectQueryService
     Result.Inject SubjectPersistence
     Set CreateSubjectQueryService = Result
 End Function
 
-Private Function CreateSubjectRepository(ByVal SubjectPersistence As Inf_ISubjectPersistence) As Inf_ISubjectRepository
-    Dim Result As Inf_ISubjectRepository
-    Set Result = New Inf_ISubjectRepository
+Private Function CreateSubjectRepository(ByVal SubjectPersistence As Inf_SubjectPersistence) As Inf_SubjectRepository
+    Dim Result As Inf_SubjectRepository
+    Set Result = New Inf_SubjectRepository
     Result.Inject SubjectPersistence
     Set CreateSubjectRepository = Result
 End Function
 
-Private Function CreatePeriodPersistence(ByVal CSV As Inf_CSVPersistence) As Inf_IPeriodPersistence
-    Dim Result As Inf_IPeriodPersistence
-    Set Result = New Inf_IPeriodPersistence
+Private Function CreatePeriodPersistence(ByVal CSV As Inf_CSVPersistence) As Inf_PeriodPersistence
+    Dim Result As Inf_PeriodPersistence
+    Set Result = New Inf_PeriodPersistence
     Result.Inject CSV
     Set CreatePeriodPersistence = Result
 End Function
 
-Private Function CreatePeriodQueryService(ByVal PeriodPersistence As Inf_IPeriodPersistence) As Inf_IPeriodQueryService
-    Dim Result As Inf_IPeriodQueryService
-    Set Result = New Inf_IPeriodQueryService
+Private Function CreatePeriodQueryService(ByVal PeriodPersistence As Inf_PeriodPersistence) As Inf_PeriodQueryService
+    Dim Result As Inf_PeriodQueryService
+    Set Result = New Inf_PeriodQueryService
     Result.Inject PeriodPersistence
     Set CreatePeriodQueryService = Result
 End Function
 
-Private Function CreatePeriodRepository(ByVal PeriodPersistence As Inf_IPeriodPersistence) As Inf_IPeriodRepository
-    Dim Result As Inf_IPeriodRepository
-    Set Result = New Inf_IPeriodRepository
+Private Function CreatePeriodRepository(ByVal PeriodPersistence As Inf_PeriodPersistence) As Inf_PeriodRepository
+    Dim Result As Inf_PeriodRepository
+    Set Result = New Inf_PeriodRepository
     Result.Inject PeriodPersistence
     Set CreatePeriodRepository = Result
 End Function
 
-Private Function CreateSchoolEventPersistence(ByVal CSV As Inf_CSVPersistence) As Inf_ISchoolEventPersistence
-    Dim Result As Inf_ISchoolEventPersistence
-    Set Result = New Inf_ISchoolEventPersistence
+Private Function CreateSchoolEventPersistence(ByVal CSV As Inf_CSVPersistence) As Inf_SchoolEventPersistence
+    Dim Result As Inf_SchoolEventPersistence
+    Set Result = New Inf_SchoolEventPersistence
     Result.Inject CSV
     Set CreateSchoolEventPersistence = Result
 End Function
 
-Private Function CreateSchoolEventQueryService(ByVal SchoolEventPersistence As Inf_ISchoolEventPersistence) As Inf_ISchoolEventQueryService
-    Dim Result As Inf_ISchoolEventQueryService
-    Set Result = New Inf_ISchoolEventQueryService
+Private Function CreateSchoolEventQueryService(ByVal SchoolEventPersistence As Inf_SchoolEventPersistence) As Inf_SchoolEventQueryService
+    Dim Result As Inf_SchoolEventQueryService
+    Set Result = New Inf_SchoolEventQueryService
     Result.Inject SchoolEventPersistence
     Set CreateSchoolEventQueryService = Result
 End Function
 
-Private Function CreateSchoolEventRepository(ByVal SchoolEventPersistence As Inf_ISchoolEventPersistence) As Inf_ISchoolEventRepository
-    Dim Result As Inf_ISchoolEventRepository
-    Set Result = New Inf_ISchoolEventRepository
+Private Function CreateSchoolEventRepository(ByVal SchoolEventPersistence As Inf_SchoolEventPersistence) As Inf_SchoolEventRepository
+    Dim Result As Inf_SchoolEventRepository
+    Set Result = New Inf_SchoolEventRepository
     Result.Inject SchoolEventPersistence
     Set CreateSchoolEventRepository = Result
 End Function
