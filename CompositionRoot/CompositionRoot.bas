@@ -64,10 +64,9 @@ Public Sub Boot()
     Set MainStreamRepo = CreateMainStreamRepository(MainStreamPersis)
     Dim SpecialStreamRepo As Dom_ISpecialStreamRepository
     Set SpecialStreamRepo = CreateSpecialStreamRepository(SpecialStreamPersis)
-    'View ------------------------------------------------------------------
+    'Presenter -------------------------------------------------------------
     Dim MainView As Pre_MainView
     Set MainView = New Pre_MainView
-    'Presenter -------------------------------------------------------------
     Dim DailyPeriodPre As Pre_DailyPeriodPresenter
     Set DailyPeriodPre = New Pre_DailyPeriodPresenter
     DailyPeriodPre.Inject MainView, New App_PeriodFormatter
@@ -80,6 +79,9 @@ Public Sub Boot()
     Dim UserUCFactory As App_UserUseCaseFactory
     Set UserUCFactory = New App_UserUseCaseFactory
     UserUCFactory.Inject Logger, ClassHourQS, ScheduleQS, MainStreamQS, Base, DailyPeriodPre, DailySchedulePre
+    Dim EditerUCFactory As App_EditerUseCaseFactory
+    Set EditerUCFactory = New App_EditerUseCaseFactory
+    EditerUCFactory.Inject Logger, ScheduleRepo, SchoolEventRepo, ClassHourRepo, SubjectRepo, PeriodRepo, EnrollmentRepo, MainStreamRepo, SpecialStreamRepo, Base, DailyPeriodPre, DailySchedulePre
     MainView.Inject UserUCFactory
     MainView.OnChangeDate Date
     MainView.Show

@@ -12,9 +12,13 @@ Option Explicit
 
 Private Type Member
     Logger          As App_ILogPersistence
-    ClassHourQS     As App_IClassHourQueryService
     ScheduleQS      As App_IScheduleQueryService
+    ClassHourQS     As App_IClassHourQueryService
+    SubjectQS       As App_ISubjectQueryService
+    PeriodQS        As App_IPeriodQueryService
+    EnrollmentQS    As App_IEnrollmentQueryService
     MainStreamQS    As App_IMainStreamQueryService
+    SpecialStreamQS As App_ISpecialStreamQueryService
     Base            As App_BaseUseCase
     PeriodPre       As Pre_DailyPeriodPresenter
     SchedulePre     As Pre_DailySchedulePresenter
@@ -22,11 +26,15 @@ End Type
 
 Private This As Member
 
-Friend Sub Inject(ByVal Logger As App_ILogPersistence, ByVal ClassHourQS As App_IClassHourQueryService, ByVal ScheduleQS As App_IScheduleQueryService, ByVal MainStreamQS As App_IMainStreamQueryService, ByVal Base As App_BaseUseCase, ByVal PeriodPre As Pre_DailyPeriodPresenter, ByVal SchedulePre As Pre_DailySchedulePresenter)
+Friend Sub Inject(ByVal Logger As App_ILogPersistence,  ByVal ScheduleQS As App_IScheduleQueryService,ByVal ClassHourQS As App_IClassHourQueryService, ByVal SubjectQS As App_ISubjectQueryService, ByVal PeriodQS As App_IPeriodQueryService, Byval EnrollmentQS As App_IEnrollmentQueryService, ByVal MainStreamQS As App_IMainStreamQueryService, Byval SpecialStreamQS As App_ISpecialStreamQueryService, ByVal Base As App_BaseUseCase, ByVal PeriodPre As Pre_DailyPeriodPresenter, ByVal SchedulePre As Pre_DailySchedulePresenter)
     Set This.Logger = Logger
-    Set This.ClassHourQS = ClassHourQS
     Set This.ScheduleQS = ScheduleQS
+    Set This.ClassHourQS = ClassHourQS
+    Set This.SubjectQS = SubjectQS
+    Set This.PeriodQS = PeriodQS
+    Set This.EnrollmentQS = EnrollmentQS
     Set This.MainStreamQS = MainStreamQS
+    Set This.SpecialStreamQS = SpecialStreamQS
     Set This.Base = Base
     Set This.PeriodPre = PeriodPre
     Set This.SchedulePre = SchedulePre
