@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Pre_BasePresenter"
+Attribute VB_Name = "App_BaseUseCase"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -10,10 +10,10 @@ Attribute VB_Exposed = False
 '@Folder("Presentation.ViewModel")
 Option Explicit
 
-Public Sub Execute(ByVal Callback As Pre_IPresenterCallback)
+Public Sub Execute(ByVal Callback As App_IUseCaseCallback)
     On Error GoTo ErrHandler
     Callback.ExecuteCore
-    Dim Result As Pre_PresenterResult
+    Dim Result As App_UseCaseResult
     Set Result = Pre_PresenterResultFactory.CreateSuccess
     GoTo Finally
 ErrHandler:

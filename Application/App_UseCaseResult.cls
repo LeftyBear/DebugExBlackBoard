@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Pre_PresenterResult"
+Attribute VB_Name = "App_UseCaseResult"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -16,6 +16,12 @@ Private Type Member
 End Type
 
 Private This As Member
+
+Public Enum Pre_ViewResultTypePolicy
+    Success
+    BusinessError
+    SystemError
+End Enum
 
 Public Sub Initialize(ByVal TypeCode As Pre_ViewResultTypePolicy, ByVal Message As String)
     This.TypeCode = TypeCode

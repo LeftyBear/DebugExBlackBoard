@@ -23,18 +23,15 @@ End Sub
 
 Private Sub EnsureLoaded()
     If Not This.Rows Is Nothing Then Exit Sub
-    Set This.Rows = New Inf_SpecialStreamRows
-    Dim Rows As Inf_SpecialStreamRows
-    Set Rows = This.Persistence.ReadAll
-    BuildRow Rows
+    BuildRow
 End Sub
 
-Private Sub BuildRow(ByVal Rows As Inf_SpecialStreamRows)
+Private Sub BuildRow()
+    Dim Rows As Inf_SpecialStreamRows
+    Set Rows = This.Persistence.ReadAll
     Dim i As Long
     For i = 1 To Rows.Count
-        Dim Row As Inf_SpecialStreamRow
-        Set Row = Rows.Item(i)
-        This.Rows.Add Row
+        This.Rows.Add Rows.Item(i)
     Next
 End Sub
 
@@ -42,3 +39,7 @@ Private Function App_ISpecialStreamQueryService_GetAll() As App_SpecialStreamRea
     EnsureLoaded
     Set App_ISpecialStreamQueryService_GetAll = Inf_SpecialStreamModelFactory.Create(This.Rows)
 End Function
+
+Private Sub App_ISpecialStreamQueryService_Rebuild()
+    BuildRow
+End Sub

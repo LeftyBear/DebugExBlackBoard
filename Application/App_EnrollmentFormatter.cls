@@ -113,11 +113,11 @@ Private Function BuildTable(ByRef Header() As Variant, ByRef Body() As Variant) 
     BuildTable = Result
 End Function
 
-Private Function BuildGenderTable(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
+Private Function BuildGenderTable(ByVal Models As App_EnrollmentReadModels, ByVal TypeKey As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
     Dim MaleSummary() As Long
-    MaleSummary = GetMaleSummary(Models, TypeCode, GradeCount, ClassNoCount)
+    MaleSummary = GetMaleSummary(Models, TypeKey, GradeCount, ClassNoCount)
     Dim FemaleSummary() As Long
-    FemaleSummary = GetFemaleSummary(Models, TypeCode, GradeCount, ClassNoCount)
+    FemaleSummary = GetFemaleSummary(Models, TypeKey, GradeCount, ClassNoCount)
     Dim Table() As Long
     ReDim Table(1 To GradeCount * ClassNoCount + GradeCount, 1 To COLUMN_COUNT)
     SumGender Table, MaleSummary, FemaleSummary
@@ -129,28 +129,28 @@ Private Function BuildGenderTable(ByVal Models As App_EnrollmentReadModels, ByVa
     BuildGenderTable = Table
 End Function
 
-Private Function GetMaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
+Private Function GetMaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeKey As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
     '@Ignore SelfAssignedDeclaration
     Dim Mapper As New Inf_GenderMapper
     Dim Values() As Long
-    Values = FilterBy(Models, TypeCode, Mapper.MaleKey, GradeCount, ClassNoCount)
+    Values = FilterBy(Models, TypeKey, Mapper.MaleKey, GradeCount, ClassNoCount)
     GetMaleSummary = CalculateGenderTotal(Values, GradeCount, ClassNoCount)
 End Function
 
-Private Function GetFemaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
+Private Function GetFemaleSummary(ByVal Models As App_EnrollmentReadModels, ByVal TypeKey As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
     '@Ignore SelfAssignedDeclaration
     Dim Mapper As New Inf_GenderMapper
     Dim Values() As Long
-    Values = FilterBy(Models, TypeCode, Mapper.FemaleKey, GradeCount, ClassNoCount)
+    Values = FilterBy(Models, TypeKey, Mapper.FemaleKey, GradeCount, ClassNoCount)
     GetFemaleSummary = CalculateGenderTotal(Values, GradeCount, ClassNoCount)
 End Function
 
-Private Function FilterBy(ByVal Models As App_EnrollmentReadModels, ByVal TypeCode As String, ByVal Gender As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
+Private Function FilterBy(ByVal Models As App_EnrollmentReadModels, ByVal TypeKey As String, ByVal Gender As String, ByVal GradeCount As Long, ByVal ClassNoCount As Long) As Long()
     Dim Result() As Long
     ReDim Result(1 To GradeCount, 1 To ClassNoCount)
     Dim Model As App_EnrollmentReadModel
     For Each Model In Models
-        If Model.TypeCode = TypeCode Then
+        If Model.TypeKey = TypeKey Then
             If Model.Gender = Gender Then
                 Result(Model.Grade, Model.ClassNo) = Model.Value
             End If

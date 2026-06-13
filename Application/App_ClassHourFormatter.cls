@@ -10,15 +10,19 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service.Formatter")
 Option Explicit
 
-Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal TypeCode As String, ByVal SubjectModels As App_SubjectReadModels, ByVal MainModel As App_MainStreamReadModel) As Variant()
+Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal KeyCode As App_ClassHourKeyCode, ByVal SubjectModels As App_SubjectReadModels, ByVal MainModel As App_MainStreamReadModel) As Variant()
+    Dim Resolver As App_ClassHourTypeModelResolver
+    Set Resolver = New App_ClassHourTypeModelResolver
+    Dim Key As String
+    Key = Resolver.ParseKey(KeyCode)
     Dim GradeCount As Long
     GradeCount = MainModel.UpperGrade
     Dim Header() As Variant
     Header = BuildHeader(GradeCount)
     Dim ValueTable() As Long
-    ValueTable = BuildValueTable(Models, TypeCode, SubjectModels, GradeCount)
+    ValueTable = BuildValueTable(Models, Key, SubjectModels, GradeCount)
     Dim TotalizedTable() As Long
-    TotalizedTable = TotalizeValue(Models, TypeCode, ValueTable)
+    TotalizedTable = TotalizeValue(Models, Key, ValueTable)
     Dim Body() As Variant
     Body = BuildBody(TotalizedTable, SubjectModels)
     Format = BuildTable(Header, Body)
@@ -69,16 +73,16 @@ Private Function BuildTable(ByRef Header() As Variant, ByRef Body() As Variant) 
     BuildTable = Result
 End Function
 
-Private Function BuildValueTable(ByVal Models As App_ClassHourReadModels, ByVal TypeCode As String, ByVal SubjectModels As App_SubjectReadModels, ByVal GradeCount As Long) As Long()
+Private Function BuildValueTable(ByVal Models As App_ClassHourReadModels, ByVal Key As String, ByVal SubjectModels As App_SubjectReadModels, ByVal GradeCount As Long) As Long()
     Dim Result() As Long
     ReDim Result(1 To SubjectModels.Count, 1 To GradeCount)
     Dim R As Long
     For R = 1 To SubjectModels.Count
         Dim i As Long
-        For i = 1 To Models.Count
-            If Models.Item(i).TypeCode = TypeCode Then
-                If Models.Item(i).Subject = SubjectModels.Item(R).Name Then
-                    Result(R, Models.Item(i).Grade) = Models.Item(i).Value
+        For i = 1 To Models.ClassHourCount
+            If Models.ClassHourItem(i).Key = Key Then
+                If Models.ClassHourItem(i).Subject = SubjectModels.Item(R).Name Then
+                    Result(R, Models.ClassHourItem(i).Grade) = Models.ClassHourItem(i).Value
                 End If
             End If
         Next
@@ -86,14 +90,14 @@ Private Function BuildValueTable(ByVal Models As App_ClassHourReadModels, ByVal 
     BuildValueTable = Result
 End Function
 
-Private Function TotalizeValue(ByVal Models As App_ClassHourReadModels, ByVal TypeCode As String, ByRef ValueTable() As Long) As Long()
+Private Function TotalizeValue(ByVal Models As App_ClassHourReadModels, ByVal Key As String, ByRef ValueTable() As Long) As Long()
     Dim Result() As Long
     ReDim Result(LBound(ValueTable) To UBound(ValueTable) + 1, LBound(ValueTable, 2) To UBound(ValueTable, 2))
     Dim Calculator As App_ClassHourCalculator
     Set Calculator = New App_ClassHourCalculator
     Dim Grade As Long
     For Grade = LBound(ValueTable, 2) To UBound(ValueTable, 2)
-        Result(UBound(ValueTable) + 1, Grade) = Calculator.CalculateTotal(Models, TypeCode, Grade)
+        Result(UBound(ValueTable) + 1, Grade) = Calculator.CalculateTotal(Models, Key, Grade)
     Next
     TotalizeValue = Result
 End Function

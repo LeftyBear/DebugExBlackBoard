@@ -48,12 +48,10 @@ Public Sub Delete(ByVal Key As String)
     This.CSV.Delete FilePath, Key
 End Sub
 
-Public Function GetHeaders() As VBA.Collection
+Public Function GetHeaders() As Variant
     Dim FilePath As String
     FilePath = BuildFilePath
-    Dim RawRows As Inf_RawRows
-    Set RawRows = This.CSV.ReadAll(FilePath)
-    Set GetHeaders = RawRows.GetHeaders
+    GetHeaders = This.CSV.ReadAll(FilePath).GetHeaders
 End Function
 
 Private Function GetValues(ByVal Rows As Inf_MainStreamRows) As VBA.Collection

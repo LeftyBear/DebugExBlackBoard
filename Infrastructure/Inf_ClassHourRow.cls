@@ -13,5 +13,4 @@ Option Explicit
 
 Public NormDate As Date
 Public RawID    As String
-Public Value    As Long
-Public Mark     As String
+Public RawValue As String

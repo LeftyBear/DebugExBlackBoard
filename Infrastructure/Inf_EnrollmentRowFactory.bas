@@ -3,12 +3,11 @@ Attribute VB_Name = "Inf_EnrollmentRowFactory"
 Option Explicit
 Option Private Module
 
-Public Function Create(ByVal Column As Inf_EnrollmentColumn, ByVal RawText As String) As Inf_EnrollmentRow
+Public Function Create(ByVal RawDate As String, ByVal Column As Inf_EnrollmentColumn, ByVal RawText As String) As Inf_EnrollmentRow
     Dim Result As Inf_EnrollmentRow
     Set Result = New Inf_EnrollmentRow
-    If Column.RawDate <> vbNullString Then
-        Result.NormDate = Inf_DateUtility.NormalizeToDate(RawText)
-    ElseIf Column.RawID <> vbNullString Then
+    Result.NormDate = Inf_DateUtility.NormalizeToDate(RawDate)
+    If Column.RawID <> vbNullString Then
         Dim Parts() As String
         Parts = VBA.Split(Column.RawID, DELIMITER)
         If UBound(Parts) = 2 Then

@@ -2,12 +2,12 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Dom_DailyClassHour"
+Attribute VB_Name = "Dom_DailyClassHours"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Domain.Entity")
+'@Folder("Domain.Entry")
 Option Explicit
 
 Private Type Member
@@ -23,20 +23,20 @@ Private Sub Class_Initialize()
     Set This.TimeTables = New VBA.Collection
 End Sub
 
-Public Sub AddClassHour(ByVal Entity As Dom_ClassHour)
-    If This.DateID Is Nothing Then Set This.DateID = Entity.DateID
-    This.ClassHours.Add Entity
+Public Sub AddClassHour(ByVal Entry As Dom_ClassHour)
+    If This.DateID Is Nothing Then Set This.DateID = Entry.DateID
+    This.ClassHours.Add Entry
 End Sub
 
-Public Sub AddTimeTable(ByVal Entity As Dom_TimeTable)
-    If This.DateID Is Nothing Then Set This.DateID = Entity.DateID
-    This.TimeTables.Add Entity
+Public Sub AddTimeTable(ByVal Entry As Dom_TimeTable)
+    If This.DateID Is Nothing Then Set This.DateID = Entry.DateID
+    This.TimeTables.Add Entry
 End Sub
 
 Public Sub UpdateClassHourValue(ByVal ID As Dom_ClassHourID, ByVal NewValue As Long)
     Dim Target As Dom_ClassHour
     Set Target = FindClassHour(ID)
-    If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_DailyClassHour", "ClassHourオブジェクトが必要です。"
+    If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_DailyClassHours", "ClassHourオブジェクトが必要です。"
     Dim VO As Dom_ClassHourValue
     Set VO = New Dom_ClassHourValue
     VO.Initialize NewValue
@@ -46,7 +46,7 @@ End Sub
 Public Sub UpdateTimeTableValue(ByVal ID As Dom_TimeTableID, ByVal NewValue As String)
     Dim Target As Dom_TimeTable
     Set Target = FindTimeTable(ID)
-    If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_DailyClassHour", "ClassHourオブジェクトが必要です。"
+    If Target Is Nothing Then Err.Raise DomErrNothingObject, "Dom_DailyClassHours", "ClassHourオブジェクトが必要です。"
     Dim VO As Dom_TimeTableValue
     Set VO = New Dom_TimeTableValue
     VO.Initialize NewValue

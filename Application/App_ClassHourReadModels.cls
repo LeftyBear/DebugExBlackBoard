@@ -9,24 +9,39 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Application.DTOCollection")
 Option Explicit
+
 Private Type Member
-    Models As VBA.Collection
+    ClassHourModels As VBA.Collection
+    TimeTableModels As VBA.Collection
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.Models = New VBA.Collection
+    Set This.ClassHourModels = New VBA.Collection
+    Set This.TimeTableModels = New VBA.Collection
 End Sub
 
-Public Sub Add(ByVal Model As App_ClassHourReadModel)
-    This.Models.Add Model
+Public Sub AddClassHour(ByVal Model As App_ClassHourReadModel)
+    This.ClassHourModels.Add Model
 End Sub
 
-Public Function Count() As Long
-    Count = This.Models.Count
+Public Sub AddTimeTable(ByVal Model As App_TimeTableReadModel)
+    This.TimeTableModels.Add Model
+End Sub
+
+Public Function ClassHourCount() As Long
+    ClassHourCount = This.ClassHourModels.Count
 End Function
 
-Public Function Item(ByVal Index As Long) As App_ClassHourReadModel
-    Set Item = This.Models.Item(Index)
+Public Function TimeTableCount() As Long
+    TimeTableCount = This.TimeTableModels.Count
+End Function
+
+Public Function ClassHourItem(ByVal Index As Long) As App_ClassHourReadModel
+    Set ClassHourItem = This.ClassHourModels.Item(Index)
+End Function
+
+Public Function TimeTableItem(ByVal Index As Long) As App_TimeTableReadModel
+    Set TimeTableItem = This.TimeTableModels.Item(Index)
 End Function

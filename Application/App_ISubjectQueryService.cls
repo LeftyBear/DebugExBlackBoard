@@ -12,3 +12,6 @@ Option Explicit
 
 Public Function GetAll() As App_SubjectReadModels
 End Function
+
+Public Sub Rebuild()
+End Sub

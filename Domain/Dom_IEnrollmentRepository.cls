@@ -13,8 +13,8 @@ Option Explicit
 Public Sub Save(ByVal SchoolYear As Long)
 End Sub
 
-Public Sub Replace(ByVal TargetDate As Date, ByVal NewAggregate As Dom_DailyEnrollment)
+Public Sub Replace(ByVal TargetDate As Date, ByVal NewAggregate As Dom_DailyEnrollments)
 End Sub
 
-Public Function FindByDate(ByVal TargetDate As Date) As Dom_DailyEnrollment
+Public Function FindByDate(ByVal TargetDate As Date) As Dom_DailyEnrollments
 End Function

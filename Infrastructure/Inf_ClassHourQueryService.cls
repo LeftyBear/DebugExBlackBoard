@@ -24,29 +24,42 @@ End Sub
 Private Sub EnsureLoaded(ByVal TargetDate As Date)
     If This.DateIndex Is Nothing Then
         Set This.DateIndex = New Scripting.Dictionary
-        BuildDateIndex TargetDate
     Else
-        If Not This.DateIndex.Exists(CStr(TargetDate)) Then
-            BuildDateIndex TargetDate
-        End If
+        If This.DateIndex.Exists(CStr(TargetDate)) Then Exit Sub
     End If
-End Sub
-
-Private Sub BuildDateIndex(ByVal TargetDate As Date)
     Dim SchoolYear As Long
     SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
     Dim Rows As Inf_ClassHourRows
     Set Rows = This.Persistence.ReadAll(SchoolYear)
+    BuildDateIndex Rows
+End Sub
+
+Private Sub BuildDateIndex(ByVal Rows As Inf_ClassHourRows)
     Dim i As Long
     For i = 1 To Rows.Count
-        Dim Row As Inf_ClassHourRow
-        Set Row = Rows.Item(i)
-        If Row.NormDate <> vbNullString Then
+        Dim TargetDate As Date
+        TargetDate = Rows.Item(i).NormDate
+        If 0 < TargetDate Then
             Dim DailyRows As Inf_ClassHourRows
             Set DailyRows = New Inf_ClassHourRows
-            This.DateIndex.Add Row.NormDate, DailyRows
+            This.DateIndex.Add CStr(TargetDate), DailyRows
         End If
-        DailyRows.Add Row
+        DailyRows.Add Rows.Item(i)
+    Next
+End Sub
+
+Private Sub RebuildDateIndex(ByVal Rows As Inf_ClassHourRows)
+    Dim i As Long
+    For i = 1 To Rows.Count
+        Dim TargetDate As Date
+        TargetDate = Rows.Item(i).NormDate
+        If 0 < TargetDate Then
+            Dim DailyRows As Inf_ClassHourRows
+            Set DailyRows = This.DateIndex.Item(CStr(TargetDate))
+        End If
+        Dim RowIndex As Long
+        RowIndex = ((i - 1) Mod Rows.Count) + 1
+        Set DailyRows.Item(RowIndex) = Rows.Item(i)
     Next
 End Sub
 
@@ -55,7 +68,19 @@ Private Function App_IClassHourQueryService_GetByDate(ByVal TargetDate As Date) 
     If This.DateIndex.Exists(CStr(TargetDate)) Then Exit Function
     Dim DailyRows As Inf_ClassHourRows
     Set DailyRows = This.DateIndex.Item(CStr(TargetDate))
-    '@Ignore SelfAssignedDeclaration
-    Dim Factory As New Inf_DailyClassHourModelFactory
-    Set App_IClassHourQueryService_GetByDate = Factory.Create(DailyRows)
+    Dim EntityFactory As Inf_DailyClassHourFactory
+    Set EntityFactory = New Inf_DailyClassHourFactory
+    Dim DailyEntries As Dom_DailyClassHours
+    Set DailyEntries = EntityFactory.Create(DailyRows)
+    Dim ModelFactory As Inf_DailyClassHourModelFactory
+    Set ModelFactory = New Inf_DailyClassHourModelFactory
+    Set App_IClassHourQueryService_GetByDate = ModelFactory.Create(DailyEntries)
 End Function
+
+Private Sub App_IClassHourQueryService_Rebuild(ByVal TargetDate As Date)
+    Dim SchoolYear As Long
+    SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
+    Dim Rows As Inf_ClassHourRows
+    Set Rows = This.Persistence.ReadAll(SchoolYear)
+    RebuildDateIndex Rows
+End Sub

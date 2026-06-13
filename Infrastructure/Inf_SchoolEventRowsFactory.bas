@@ -11,7 +11,7 @@ Public Function Create(ByVal RawRows As Inf_RawRows) As Inf_SchoolEventRows
         Dim C As Long
         For C = 1 To RawRows.ColumnsCount(R)
             Dim Row As Inf_SchoolEventRow
-            Set Row = Inf_SchoolEventRowFactory.Create(RawRows.GetHeader(C), RawRows.GetRow(R, C))
+            Set Row = Inf_SchoolEventRowFactory.Create(RawRows.GetColumnName(C), RawRows.GetRow(R, C))
             Result.Add Row
         Next
     Next

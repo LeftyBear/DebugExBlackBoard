@@ -14,70 +14,74 @@ Public Sub Boot()
     'Persistence -----------------------------------------------------------
     Dim CSV As Inf_CSVPersistence
     Set CSV = New Inf_CSVPersistence
-    Dim SchedulePersistence As Inf_SchedulePersistence
-    Set SchedulePersistence = CreateSchedulePersistence(CSV)
-    Dim SchoolEventPersistence As Inf_SchoolEventPersistence
-    Set SchoolEventPersistence = CreateSchoolEventPersistence(CSV)
-    Dim ClassHourPersistence As Inf_ClassHourPersistence
-    Set ClassHourPersistence = CreateClassHourPersistence(CSV)
-    Dim SubjectPersistence As Inf_SubjectPersistence
-    Set SubjectPersistence = CreateSubjectPersistence(CSV)
-    Dim PeriodPersistence As Inf_PeriodPersistence
-    Set PeriodPersistence = CreatePeriodPersistence(CSV)
-    Dim EnrollmentPersistence As Inf_EnrollmentPersistence
-    Set EnrollmentPersistence = CreateEnrollmentPersistence(CSV)
-    Dim MainStreamPersistence As Inf_MainStreamPersistence
-    Set MainStreamPersistence = CreateMainStreamPersistence(CSV)
-    Dim SpecialStreamPersistence As Inf_SpecialStreamPersistence
-    Set SpecialStreamPersistence = CreateSpecialStreamPersistence(CSV)
+    Dim SchedulePersis As Inf_SchedulePersistence
+    Set SchedulePersis = CreateSchedulePersistence(CSV)
+    Dim SchoolEventPersis As Inf_SchoolEventPersistence
+    Set SchoolEventPersis = CreateSchoolEventPersistence(CSV)
+    Dim ClassHourPersis As Inf_ClassHourPersistence
+    Set ClassHourPersis = CreateClassHourPersistence(CSV)
+    Dim SubjectPersis As Inf_SubjectPersistence
+    Set SubjectPersis = CreateSubjectPersistence(CSV)
+    Dim PeriodPersis As Inf_PeriodPersistence
+    Set PeriodPersis = CreatePeriodPersistence(CSV)
+    Dim EnrollmentPersis As Inf_EnrollmentPersistence
+    Set EnrollmentPersis = CreateEnrollmentPersistence(CSV)
+    Dim MainStreamPersis As Inf_MainStreamPersistence
+    Set MainStreamPersis = CreateMainStreamPersistence(CSV)
+    Dim SpecialStreamPersis As Inf_SpecialStreamPersistence
+    Set SpecialStreamPersis = CreateSpecialStreamPersistence(CSV)
     'QueryService ----------------------------------------------------------
-    Dim ScheduleQueryService As App_IScheduleQueryService
-    Set ScheduleQueryService = CreateScheduleQueryService(SchedulePersistence)
-    Dim SchoolEventQueryService As App_ISchoolEventQueryService
-    Set SchoolEventQueryService = CreateSchoolEventQueryService(SchoolEventPersistence)
-    Dim ClassHourQueryService As App_IClassHourQueryService
-    Set ClassHourQueryService = CreateClassHourQueryService(ClassHourPersistence)
-    Dim SubjectQueryService As App_ISubjectQueryService
-    Set SubjectQueryService = CreateSubjectQueryService(SubjectPersistence)
-    Dim PeriodQueryService As App_IPeriodQueryService
-    Set PeriodQueryService = CreatePeriodQueryService(PeriodPersistence)
-    Dim EnrollmentQueryService As App_IEnrollmentQueryService
-    Set EnrollmentQueryService = CreateEnrollmentQueryService(EnrollmentPersistence)
-    Dim MainStreamQueryService As App_IMainStreamQueryService
-    Set MainStreamQueryService = CreateMainStreamQueryService(MainStreamPersistence)
-    Dim SpecialStreamQueryService As App_ISpecialStreamQueryService
-    Set SpecialStreamQueryService = CreateSpecialStreamQueryService(SpecialStreamPersistence)
+    Dim ScheduleQS As App_IScheduleQueryService
+    Set ScheduleQS = CreateScheduleQueryService(SchedulePersis)
+    Dim SchoolEventQS As App_ISchoolEventQueryService
+    Set SchoolEventQS = CreateSchoolEventQueryService(SchoolEventPersis)
+    Dim ClassHourQS As App_IClassHourQueryService
+    Set ClassHourQS = CreateClassHourQueryService(ClassHourPersis)
+    Dim SubjectQS As App_ISubjectQueryService
+    Set SubjectQS = CreateSubjectQueryService(SubjectPersis)
+    Dim PeriodQS As App_IPeriodQueryService
+    Set PeriodQS = CreatePeriodQueryService(PeriodPersis)
+    Dim EnrollmentQS As App_IEnrollmentQueryService
+    Set EnrollmentQS = CreateEnrollmentQueryService(EnrollmentPersis)
+    Dim MainStreamQS As App_IMainStreamQueryService
+    Set MainStreamQS = CreateMainStreamQueryService(MainStreamPersis)
+    Dim SpecialStreamQS As App_ISpecialStreamQueryService
+    Set SpecialStreamQS = CreateSpecialStreamQueryService(SpecialStreamPersis)
     'Repository ------------------------------------------------------------
-    Dim ScheduleRepository As Dom_IScheduleRepository
-    Set ScheduleRepository = CreateScheduleRepository(SchedulePersistence)
-    Dim SchoolEventRepository As Dom_ISchoolEventRepository
-    Set SchoolEventRepository = CreateSchoolEventRepository(SchoolEventPersistence)
-    Dim ClassHourRepository As Dom_IClassHourRepository
-    Set ClassHourRepository = CreateClassHourRepository(ClassHourPersistence)
-    Dim SubjectRepository As Dom_ISubjectRepository
-    Set SubjectRepository = CreateSubjectRepository(SubjectPersistence)
-    Dim PeriodRepository As Dom_IPeriodRepository
-    Set PeriodRepository = CreatePeriodRepository(PeriodPersistence)
-    Dim EnrollmentRepository As Dom_IEnrollmentRepository
-    Set EnrollmentRepository = CreateEnrollmentRepository(EnrollmentPersistence)
-    Dim MainStreamRepository As Dom_IMainStreamRepository
-    Set MainStreamRepository = CreateMainStreamRepository(MainStreamPersistence)
-    Dim SpecialStreamRepository As Dom_ISpecialStreamRepository
-    Set SpecialStreamRepository = CreateSpecialStreamRepository(SpecialStreamPersistence)
-    'UseCase ---------------------------------------------------------------
-    Dim LoadDailyScheduleUseCase As App_LoadDailyScheduleUseCase
-    Set LoadDailyScheduleUseCase = CreateLoadDailyScheduleUseCase(ScheduleQueryService)
-    Dim TotalDailyPeriodUseCase As App_BuildPeriodTotalUseCase
-    Set TotalDailyPeriodUseCase = CreateTotalDailyPeriodUseCase(ClassHourQueryService, MainStreamQueryService)
-    'Presentation ----------------------------------------------------------
-    Dim DailySchedulePresenter As Pre_DailySchedulePresenter
-    Set DailySchedulePresenter = CreateDailySchedulePresenter(LoadDailyScheduleUseCase, Logger)
-    Dim DailyPeriodPresenter As Pre_DailyPeriodPresenter
-    Set DailyPeriodPresenter = CreateDailyPeriodPresenter(TotalDailyPeriodUseCase, Logger)
+    Dim ScheduleRepo As Dom_IScheduleRepository
+    Set ScheduleRepo = CreateScheduleRepository(SchedulePersis)
+    Dim SchoolEventRepo As Dom_ISchoolEventRepository
+    Set SchoolEventRepo = CreateSchoolEventRepository(SchoolEventPersis)
+    Dim ClassHourRepo As Dom_IClassHourRepository
+    Set ClassHourRepo = CreateClassHourRepository(ClassHourPersis)
+    Dim SubjectRepo As Dom_ISubjectRepository
+    Set SubjectRepo = CreateSubjectRepository(SubjectPersis)
+    Dim PeriodRepo As Dom_IPeriodRepository
+    Set PeriodRepo = CreatePeriodRepository(PeriodPersis)
+    Dim EnrollmentRepo As Dom_IEnrollmentRepository
+    Set EnrollmentRepo = CreateEnrollmentRepository(EnrollmentPersis)
+    Dim MainStreamRepo As Dom_IMainStreamRepository
+    Set MainStreamRepo = CreateMainStreamRepository(MainStreamPersis)
+    Dim SpecialStreamRepo As Dom_ISpecialStreamRepository
+    Set SpecialStreamRepo = CreateSpecialStreamRepository(SpecialStreamPersis)
     'View ------------------------------------------------------------------
     Dim MainView As Pre_MainView
     Set MainView = New Pre_MainView
-    MainView.Inject DailySchedulePresenter, DailyPeriodPresenter
+    'Presenter -------------------------------------------------------------
+    Dim DailyPeriodPre As Pre_DailyPeriodPresenter
+    Set DailyPeriodPre = New Pre_DailyPeriodPresenter
+    DailyPeriodPre.Inject MainView, New App_PeriodFormatter
+    Dim DailySchedulePre As Pre_DailySchedulePresenter
+    Set DailySchedulePre = New Pre_DailySchedulePresenter
+    DailySchedulePre.Inject MainView
+    'UseCaseFactory --------------------------------------------------------
+    Dim Base As App_BaseUseCase
+    Set Base = New App_BaseUseCase
+    Dim UserUCFactory As App_UserUseCaseFactory
+    Set UserUCFactory = New App_UserUseCaseFactory
+    UserUCFactory.Inject Logger, ClassHourQS, ScheduleQS, MainStreamQS, Base, DailyPeriodPre, DailySchedulePre
+    MainView.Inject UserUCFactory
+    MainView.OnChangeDate Date
     MainView.Show
     Exit Sub
 ErrHandle:
@@ -273,32 +277,4 @@ Private Function CreateSpecialStreamRepository(ByVal Persistence As Inf_SpecialS
     Set Result = New Inf_SpecialStreamRepository
     Result.Inject Persistence
     Set CreateSpecialStreamRepository = Result
-End Function
-
-Private Function CreateLoadDailyScheduleUseCase(ByVal QueryService As Inf_ScheduleQueryService) As App_LoadDailyScheduleUseCase
-    Dim Result As App_LoadDailyScheduleUseCase
-    Set Result = New App_LoadDailyScheduleUseCase
-    Result.Inject QueryService
-    Set CreateLoadDailyScheduleUseCase = Result
-End Function
-
-Private Function CreateTotalDailyPeriodUseCase(ByVal ClassHourQS As Inf_ClassHourQueryService, ByVal MainStreamQS As App_IMainStreamQueryService) As App_BuildPeriodTotalUseCase
-    Dim Result As App_BuildPeriodTotalUseCase
-    Set Result = New App_BuildPeriodTotalUseCase
-    Result.Inject ClassHourQS, MainStreamQS
-    Set CreateTotalDailyPeriodUseCase = Result
-End Function
-
-Private Function CreateDailySchedulePresenter(ByVal UseCase As App_LoadDailyScheduleUseCase, ByVal Logger As App_ILogPersistence) As Pre_DailySchedulePresenter
-    Dim Result As Pre_DailySchedulePresenter
-    Set Result = New Pre_DailySchedulePresenter
-    Result.Inject UseCase, Logger, New Pre_BasePresenter
-    Set CreateDailySchedulePresenter = Result
-End Function
-
-Private Function CreateDailyPeriodPresenter(ByVal UseCase As App_BuildPeriodTotalUseCase, ByVal Logger As App_ILogPersistence) As Pre_DailyPeriodPresenter
-    Dim Result As Pre_DailyPeriodPresenter
-    Set Result = New Pre_DailyPeriodPresenter
-    Result.Inject UseCase, Logger
-    Set CreateDailyPeriodPresenter = Result
 End Function

@@ -12,5 +12,5 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public NormDate As Date
-Public RawID    As String
+Public Name     As String
 Public Value    As String

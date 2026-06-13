@@ -12,3 +12,6 @@ Option Explicit
 
 Public Function GetAll() As App_SchoolEventReadModels
 End Function
+
+Public Sub Rebuild()
+End Sub

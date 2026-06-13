@@ -8,24 +8,24 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@IgnoreModule UseMeaningfulName
-'@Folder("Domain.Entity")
+'@Folder("Domain.Entry")
 Option Explicit
 
 Private Type Member
     DateID  As Dom_DateID
-    ID      As Dom_ScheduleID
-    Value   As Dom_ScheduleName
+    Name    As Dom_ScheduleName
+    Value   As Dom_ScheduleValue
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal DateID As Dom_DateID, ByVal ID As Dom_ScheduleID, ByVal Value As Dom_ScheduleName)
+Public Sub Initialize(ByVal DateID As Dom_DateID, ByVal Name As Dom_ScheduleName, ByVal Value As Dom_ScheduleValue)
     Set This.DateID = DateID
-    Set This.ID = ID
+    Set This.Name = Name
     Set This.Value = Value
 End Sub
 
-Friend Sub ChangeValueInternal(ByVal NewValue As Dom_ScheduleName)
+Friend Sub ChangeValueInternal(ByVal NewValue As Dom_ScheduleValue)
     Set This.Value = NewValue
 End Sub
 
@@ -33,10 +33,10 @@ Public Property Get DateID() As Dom_DateID
     Set DateID = This.DateID
 End Property
 
-Public Property Get ID() As Dom_ScheduleID
-    Set ID = This.ID
+Public Property Get Name() As Dom_ScheduleName
+    Set Name = This.Name
 End Property
 
-Public Property Get Value() As Dom_ScheduleName
+Public Property Get Value() As Dom_ScheduleValue
     Set Value = This.Value
 End Property

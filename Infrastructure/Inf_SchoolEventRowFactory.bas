@@ -2,13 +2,12 @@ Attribute VB_Name = "Inf_SchoolEventRowFactory"
 '@Folder("Infrastructure.Factory")
 Option Explicit
 Option Private Module
+Private Const COLUMN_EVENT_NAME As String = "イベント名"
 
-Private Const EVENT_NAME As String = "イベント名"
-
-Public Function Create(ByVal Header As String, ByVal RawText As String) As Inf_SchoolEventRow
+Public Function Create(ByVal ColumnName As String, ByVal RawText As String) As Inf_SchoolEventRow
     Dim Result As Inf_SchoolEventRow
     Set Result = New Inf_SchoolEventRow
-    If Header = EVENT_NAME Then
+    If ColumnName = COLUMN_EVENT_NAME Then
         Result.Name = RawText
     End If
     Set Create = Result

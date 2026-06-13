@@ -2,16 +2,15 @@ Attribute VB_Name = "Inf_MainStreamRowFactory"
 '@Folder("Infrastructure.Factory")
 Option Explicit
 Option Private Module
+Private Const COLUMN_UPPER_GRADE As String = "普通学年数"
+Private Const COLUMN_UPPER_CLASS  As String = "普通学級数"
 
-Private Const UPPER_GRADE As String = "普通学年数"
-Private Const UPPER_CLASS  As String = "普通学級数"
-
-Public Function Create(ByVal Header As String, ByVal RawText As String) As Inf_MainStreamRow
+Public Function Create(ByVal ColumnName As String, ByVal RawText As String) As Inf_MainStreamRow
     Dim Result As Inf_MainStreamRow
     Set Result = New Inf_MainStreamRow
-    If Header = UPPER_GRADE Then
+    If ColumnName = COLUMN_UPPER_GRADE Then
         Result.UpperGrade = RawText
-    ElseIf Header = UPPER_CLASS Then
+    ElseIf ColumnName = COLUMN_UPPER_CLASS Then
         Result.UpperClassNo = RawText
     End If
     Set Create = Result

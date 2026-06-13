@@ -30,3 +30,7 @@ Private Function App_IMainStreamQueryService_GetModel() As App_MainStreamReadMod
     EnsureLoaded
     Set App_IMainStreamQueryService_GetModel = Inf_MainStreamModelFactory.Create(This.Rows)
 End Function
+
+Private Sub App_IMainStreamQueryService_Rebuild()
+    Set This.Rows = This.Persistence.ReadAll
+End Sub

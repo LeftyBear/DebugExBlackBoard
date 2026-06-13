@@ -10,54 +10,33 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Factory")
 Option Explicit
 
-Private Type Member
-    TypeMapper      As Inf_ClassHourTypeMapper
-    PeriodMapper    As Inf_PeriodMapper
-    GradeMapper     As Inf_GradeMapper
-End Type
-
-Private This As Member
-
-Private Sub Class_Initialize()
-    Set This.TypeMapper = New Inf_ClassHourTypeMapper
-    Set This.PeriodMapper = New Inf_PeriodMapper
-    Set This.GradeMapper = New Inf_GradeMapper
-End Sub
-
-Public Function Create(ByVal DailyRows As Inf_ClassHourRows) As App_ClassHourReadModels
+Public Function Create(ByVal Entries As Dom_DailyClassHours) As App_ClassHourReadModels
     Dim Result As App_ClassHourReadModels
     Set Result = New App_ClassHourReadModels
+    Dim Resolver As App_ClassHourTypeModelResolver
+    Set Resolver = New App_ClassHourTypeModelResolver
     Dim i As Long
-    For i = 1 To DailyRows.Count
-        Dim Row As Inf_ClassHourRow
-        Set Row = DailyRows.Item(i)
-        Dim Model As App_ClassHourReadModel
-        Set Model = New App_ClassHourReadModel
-        If Row.RawID <> vbNullString Then
-            Dim Parts() As String
-            Parts = VBA.Split(Row.RawID, DELIMITER)
-            Dim j As Long
-            For j = 0 To UBound(Parts)
-                Dim Part As String
-                Part = Parts(j)
-                If Model.TypeCode = vbNullString Then
-                    Model.TypeCode = This.TypeMapper.ToModel(Part)
-                End If
-                If Model.Subject = vbNullString Then
-                    Model.Subject = Part
-                    Model.Value = Row.Value
-                End If
-                If Model.Period = vbNullString Then
-                    Model.Period = This.PeriodMapper.ToModel(Part)
-                    Model.Mark = Row.Mark
-                End If
-                If Model.Grade = vbNullString Then
-                    Model.Grade = This.GradeMapper.ToModel(Part)
-                End If
-            Next
-        End If
-        Result.Add Model
+    For i = 1 To Entries.ClassHoursCount
+        Dim ClassHourModel As App_ClassHourReadModel
+        Set ClassHourModel = New App_ClassHourReadModel
+        Dim ClassHour As Dom_ClassHour
+        Set ClassHour = Entries.ClassHoursItem(i)
+        ClassHourModel.Key = Resolver.ToModel(ClassHour.ID.ClassHourType)
+        ClassHourModel.Subject = ClassHour.ID.Subject.Value
+        ClassHourModel.Grade = ClassHour.ID.Grade.Value
+        ClassHourModel.Value = ClassHour.Value.Value
+        Result.AddClassHour ClassHourModel
+    Next
+    For i = 1 To Entries.TimeTablesCount
+        Dim TimeTableModel As App_TimeTableReadModel
+        Set TimeTableModel = New App_TimeTableReadModel
+        Dim TimeTable As Dom_TimeTable
+        Set TimeTable = Entries.TimeTablesItem(i)
+        TimeTableModel.Key = Resolver.ToModel(TimeTable.ID.ClassHourType)
+        TimeTableModel.Period = TimeTable.ID.Period.Value
+        TimeTableModel.Grade = TimeTable.ID.Grade.Value
+        TimeTableModel.Mark = TimeTable.Value.Value
+        Result.AddTimeTable TimeTableModel
     Next
     Set Create = Result
 End Function
-

@@ -52,17 +52,25 @@ Public Function ColumnsCount(ByVal RowIndex As Long) As Long
     ColumnsCount = Columns.Count
 End Function
 
-Public Function GetHeaders() As VBA.Collection
-    If This.RawRows.Count = 0 Then Exit Function
-    Set GetHeaders = This.RawRows.Item(1)
+Public Function GetColumnName(ByVal ColumnIndex As Long) As String
+    Dim Headers() As Variant
+    Headers = GetHeaders
+    If ColumnIndex < LBound(Headers) Or UBound(Headers) < ColumnIndex Then Exit Function
+    GetColumnName = Headers(ColumnIndex)
 End Function
 
-Public Function GetHeader(ByVal ColumnIndex As Long) As String
+Public Function GetHeaders() As Variant()
+    Dim Result() As Variant
+    ReDim Result(0)
+    If This.RawRows.Count = 0 Then GetHeaders = Result: Exit Function
     Dim Headers As VBA.Collection
-    Set Headers = Me.GetHeaders
-    If Headers Is Nothing Then Exit Function
-    If ColumnIndex < 1 Or Headers.Count < ColumnIndex Then Exit Function
-    GetHeader = Headers.Item(ColumnIndex)
+    Set Headers = This.RawRows.Item(1)
+    ReDim Result(1 To Headers.Count)
+    Dim i As Long
+    For i = 1 To Headers.Count
+        Result(i) = Headers.Item(i)
+    Next
+    GetHeaders = Result
 End Function
 
 Public Function GetRow(ByVal RowIndex As Long, ByVal ColumnIndex As Long) As String

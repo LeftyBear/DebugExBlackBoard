@@ -10,7 +10,7 @@ Public Function CreateDateID(ByVal Value As Date) As Dom_DateID
     Set CreateDateID = VO
 End Function
 
-Public Function CreateClassHourType(ByVal Value As Long) As Dom_ClassHourType
+Public Function CreateClassHourType(ByVal Value As Dom_ClassHourTypeCode) As Dom_ClassHourType
     Dim VO As Dom_ClassHourType
     Set VO = New Dom_ClassHourType
     VO.Initialize Value
@@ -108,16 +108,16 @@ Public Function CreateRemarks(ByVal Value As String) As Dom_Remarks
     Set CreateRemarks = VO
 End Function
 
-Public Function CreateScheduleID(ByVal Value As String) As Dom_ScheduleID
-    Dim VO As Dom_ScheduleID
-    Set VO = New Dom_ScheduleID
-    VO.Initialize Value
-    Set CreateScheduleID = VO
-End Function
-
-Public Function CreateScheduleValue(ByVal Value As String) As Dom_ScheduleName
+Public Function CreateScheduleName(ByVal Value As String) As Dom_ScheduleName
     Dim VO As Dom_ScheduleName
     Set VO = New Dom_ScheduleName
+    VO.Initialize Value
+    Set CreateScheduleName = VO
+End Function
+
+Public Function CreateScheduleValue(ByVal Value As String) As Dom_ScheduleValue
+    Dim VO As Dom_ScheduleValue
+    Set VO = New Dom_ScheduleValue
     VO.Initialize Value
     Set CreateScheduleValue = VO
 End Function

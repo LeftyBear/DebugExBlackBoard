@@ -11,21 +11,21 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    TypeCode    As Dom_ClassHourType
-    Subject     As Dom_SubjectName
-    Grade       As Dom_Grade
+    ClassHourType   As Dom_ClassHourType
+    Subject         As Dom_SubjectName
+    Grade           As Dom_Grade
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal TypeCode As Dom_ClassHourType, ByVal Subject As Dom_SubjectName, ByVal Grade As Dom_Grade)
-    Set This.TypeCode = TypeCode
+Public Sub Initialize(ByVal ClassHourType As Dom_ClassHourType, ByVal Subject As Dom_SubjectName, ByVal Grade As Dom_Grade)
+    Set This.ClassHourType = ClassHourType
     Set This.Subject = Subject
     Set This.Grade = Grade
 End Sub
 
-Public Property Get TypeCode() As Dom_ClassHourType
-    Set TypeCode = This.TypeCode
+Public Property Get ClassHourType() As Dom_ClassHourType
+    Set ClassHourType = This.ClassHourType
 End Property
 
 Public Property Get Subject() As Dom_SubjectName
@@ -41,20 +41,20 @@ Public Function ToKey() As String
     Set TypeCodeMapper = New Inf_ClassHourTypeMapper
     Dim GradeMapper As Inf_GradeMapper
     Set GradeMapper = New Inf_GradeMapper
-    ToKey = TypeCodeMapper.ToRaw(This.TypeCode) & DELIMITER & This.Subject.Value & DELIMITER & GradeMapper.ToRaw(This.Grade)
+    ToKey = TypeCodeMapper.ToRaw(This.ClassHourType) & DELIMITER & This.Subject.Value & DELIMITER & GradeMapper.ToRaw(This.Grade)
 End Function
 
 Public Function Equals(ByVal Other As Dom_ClassHourID) As Boolean
-    If Not This.TypeCode.Equals(Other.TypeCode) Then Exit Function
+    If Not This.ClassHourType.Equals(Other.ClassHourType) Then Exit Function
     If Not This.Subject.Equals(Other.Subject) Then Exit Function
     If Not This.Grade.Equals(Other.Grade) Then Exit Function
     Equals = True
 End Function
 
 Public Function IsPlan() As Boolean
-    IsPlan = (This.TypeCode.Value = Dom_ClassHourTypePolicy.Plan)
+    IsPlan = (This.ClassHourType.Value = PlanCode)
 End Function
 
 Public Function IsExecution() As Boolean
-    IsExecution = (This.TypeCode.Value = Dom_ClassHourTypePolicy.Execution)
+    IsExecution = (This.ClassHourType.Value = ExeCode)
 End Function

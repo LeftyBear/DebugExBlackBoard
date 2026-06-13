@@ -30,3 +30,7 @@ Private Function App_IPeriodQueryService_GetModel() As App_PeriodReadModel
     EnsureLoaded
     Set App_IPeriodQueryService_GetModel = Inf_PeriodModelFactory.Create(This.Row)
 End Function
+
+Private Sub App_IPeriodQueryService_Rebuild()
+    Set This.Row = This.Persistence.ReadAll
+End Sub

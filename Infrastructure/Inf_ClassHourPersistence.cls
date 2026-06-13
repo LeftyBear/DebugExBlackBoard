@@ -34,10 +34,10 @@ End Function
 Public Sub WriteAll(ByVal SchoolYear As Long, ByVal Rows As Inf_ClassHourRows)
     Dim FilePath As String
     FilePath = BuildFilePath(SchoolYear)
-    Dim Header As VBA.Collection
-    Set Header = GetHeader(FilePath)
-    Dim Body As VBA.Collection
-    Set Body = GroupByDate(Rows)
+    Dim Header() As Variant
+    Header = This.CSV.ReadAll(FilePath).GetHeaders
+    Dim Body() As Variant
+    Body = GroupByDate(Rows)
     Dim RawRows As Inf_RawRows
     Set RawRows = BuildRows(Header, Body)
     This.CSV.WriteAll FilePath, RawRows
@@ -49,48 +49,62 @@ Public Sub Delete(ByVal SchoolYear As Long, ByVal Key As String)
     This.CSV.Delete FilePath, Key
 End Sub
 
-Private Function GetHeader(ByVal FilePath As String) As VBA.Collection
-    Dim RawRows As Inf_RawRows
-    Set RawRows = This.CSV.ReadAll(FilePath)
-    Set GetHeader = RawRows.GetHeaders
-End Function
-
-Private Function GroupByDate(ByVal Rows As Inf_ClassHourRows) As VBA.Collection
-    Dim CurrentDate As Date
-    CurrentDate = Rows.Item(1).NormDate
-    Dim Records As VBA.Collection
-    Set Records = New VBA.Collection
-    Dim Fields As VBA.Collection
-    Set Fields = New VBA.Collection
+Private Function GroupByDate(ByVal Rows As Inf_ClassHourRows) As Variant()
+    Dim UpperColumn As Long
+    UpperColumn = GetColumnsCount(Rows)
+    Dim UpperRow As Long
+    UpperRow = Rows.Count / UpperColumn
+    Dim Result() As Variant
+    ReDim Result(1 To UpperRow, 1 To UpperColumn)
     Dim i As Long
     For i = 1 To Rows.Count
-        Dim Row As Inf_ClassHourRow
-        Set Row = Rows.Item(i)
-        If Row.NormDate <> vbNullString Then
-            Fields.Add CStr(Row.NormDate)
-        ElseIf Row.RawID <> vbNullString Then
-            Fields.Add CStr(Row.Value)
-        End If
-        If CurrentDate <> Row.NormDate Then
-            CurrentDate = Row.NormDate
-            Records.Add Fields
-            Set Fields = New VBA.Collection
+        Dim R As Long
+        R = ((i - 1) \ UpperColumn) + 1
+        Dim C As Long
+        C = ((i - 1) Mod UpperColumn) + 1
+        If 0 < Rows.Item(i).NormDate Then
+            Result(R, C) = Rows.Item(i).NormDate
+        ElseIf Rows.Item(i).RawID <> vbNullString Then
+            Result(R, C) = Rows.Item(i).RawValue
         End If
     Next
-    Set GroupByDate = Records
+    GroupByDate = Result
 End Function
 
-Private Function BuildRows(ByVal Header As VBA.Collection, ByVal Body As VBA.Collection) As Inf_RawRows
+Private Function GetColumnsCount(ByVal Rows As Inf_ClassHourRows) As Long
+    Dim i As Long
+    For i = 1 To Rows.Count
+        If 0 < Rows.Item(i).NormDate Then
+            Dim IsTarget As Boolean
+            If IsTarget = False Then
+                IsTarget = True
+            Else
+                Exit For
+            End If
+        End If
+        If IsTarget Then
+            Dim Count As Long
+            Count = Count + 1
+        End If
+    Next
+    GetColumnsCount = Count
+End Function
+
+Private Function BuildRows(ByRef Header() As Variant, ByRef Body() As Variant) As Inf_RawRows
     Dim Result As Inf_RawRows
     Set Result = New Inf_RawRows
-    Dim C As Long
-    For C = 1 To Header.Count
-        Result.AddRow Header.Item(C)
+    Dim i As Long
+    For i = LBound(Header) To UBound(Header)
+        Result.AddRow Header(i)
     Next
     Result.AddRowsInternal
     Dim R As Long
-    For R = 1 To Body.Count
-        Result.AddRows Body.Item(R)
+    For R = LBound(Body) To UBound(Body)
+        Dim C As Long
+        For C = LBound(Body, 2) To UBound(Body, 2)
+            Result.AddRow Body(R, C)
+        Next
+        Result.AddRowsInternal
     Next
     Set BuildRows = Result
 End Function

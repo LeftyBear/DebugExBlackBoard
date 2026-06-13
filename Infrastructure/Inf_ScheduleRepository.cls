@@ -28,17 +28,13 @@ Private Sub EnsureLoaded(ByVal SchoolYear As Long)
     Set This.DateCache = New VBA.Collection
     Dim Rows As Inf_ScheduleRows
     Set Rows = This.Persistence.ReadAll(SchoolYear)
-    '@Ignore SelfAssignedDeclaration
-    Dim Factory As New Inf_YearlyScheduleFactory
-    Dim Yearly As Dom_YearlySchedule
-    Set Yearly = Factory.Create(Rows)
-    BuildDateIndex Yearly
+    
 End Sub
 
 Private Sub BuildDateIndex(ByVal Yearly As Dom_YearlySchedule)
     Dim i As Long
     For i = 1 To Yearly.Count
-        Dim Daily As Dom_DailySchedule
+        Dim Daily As Dom_DailySchedules
         Set Daily = Yearly.Item(i)
         This.DateIndex.Add Daily.DateID.ToKey, Daily
     Next
@@ -57,13 +53,13 @@ Private Sub ReplaceRow(ByVal Rows As Inf_ScheduleRows)
         BeginIndex = (DateIndex - 1) * RowCount + 1
         Dim EndIndex As Long
         EndIndex = BeginIndex + RowCount - 1
-        Dim Daily As Dom_DailySchedule
+        Dim Daily As Dom_DailySchedules
         Set Daily = This.DateIndex.Item(CStr(TargetDate))
         ReplaceRowOfDaily BeginIndex, EndIndex, Rows, Daily
     Next
 End Sub
 
-Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Rows As Inf_ScheduleRows, ByVal Daily As Dom_DailySchedule)
+Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Rows As Inf_ScheduleRows, ByVal Daily As Dom_DailySchedules)
     Dim i As Long
     For i = BeginIndex To EndIndex
         Dim Row As Inf_ScheduleRow
@@ -72,14 +68,12 @@ Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, 
     Next
 End Sub
 
-Private Sub ReplaceRowOfDailySchedule(ByVal Row As Inf_ScheduleRow, ByVal Daily As Dom_DailySchedule)
-    Dim Mapper As Inf_ScheduleIDMapper
-    Set Mapper = New Inf_ScheduleIDMapper
+Private Sub ReplaceRowOfDailySchedule(ByVal Row As Inf_ScheduleRow, ByVal Daily As Dom_DailySchedules)
     Dim i As Long
     For i = 1 To Daily.Count
         Dim Entry As Dom_Schedule
         Set Entry = Daily.Item(i)
-        If Row.RawID = Mapper.ToRaw(Entry.ID) Then
+        If Row.Name = Entry.Name.Value Then
             Row.Value = Entry.Value.Value
         End If
     Next
@@ -95,7 +89,7 @@ Private Function GetDailyRowCount(ByVal Rows As Inf_ScheduleRows) As Long
     GetDailyRowCount = i - 1
 End Function
 
-Private Function Dom_IScheduleRepository_FindByDate(ByVal TargetDate As Date) As Dom_DailySchedule
+Private Function Dom_IScheduleRepository_FindByDate(ByVal TargetDate As Date) As Dom_DailySchedules
     Dim SchoolYear As Long
     SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
     EnsureLoaded SchoolYear
@@ -104,7 +98,7 @@ Private Function Dom_IScheduleRepository_FindByDate(ByVal TargetDate As Date) As
     End If
 End Function
 
-Private Sub Dom_IScheduleRepository_Replace(ByVal TargetDate As Date, ByVal NewAggregate As Dom_DailySchedule)
+Private Sub Dom_IScheduleRepository_Replace(ByVal TargetDate As Date, ByVal NewAggregate As Dom_DailySchedules)
     Dim SchoolYear As Long
     SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
     EnsureLoaded SchoolYear

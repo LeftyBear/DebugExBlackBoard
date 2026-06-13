@@ -11,5 +11,5 @@ Attribute VB_Exposed = False
 '@Folder("Application.DTO")
 Option Explicit
 
-Public RawID    As String
+Public Name     As String
 Public Value    As String

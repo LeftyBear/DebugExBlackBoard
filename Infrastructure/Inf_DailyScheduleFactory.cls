@@ -7,30 +7,27 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.EntityFactory")
+'@Folder("Infrastructure.Factory")
 Option Explicit
 
 Private Type Member
-    IDMapper        As Inf_ScheduleIDMapper
-    TransferMapper  As Inf_TransferMapper
+    Factory As Inf_ScheduleFactory
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.IDMapper = New Inf_ScheduleIDMapper
-    Set This.TransferMapper = New Inf_TransferMapper
+    Set This.Factory = New Inf_ScheduleFactory
 End Sub
 
-Public Function Create(ByVal TargetDate As Date, ByVal Row As Inf_ScheduleRow) As Dom_Schedule
-    Dim DateID As Dom_DateID
-    Set DateID = Dom_ValueObjectFactory.CreateDateID(TargetDate)
-    Dim ID As Dom_ScheduleID
-    Set ID = This.IDMapper.ToDomain(Row.RawID)
-    Dim Value As Dom_ScheduleName
-    Set Value = Dom_ValueObjectFactory.CreateScheduleValue(Row.Value)
-    Dim Entity As Dom_Schedule
-    Set Entity = New Dom_Schedule
-    Entity.Initialize DateID, ID, Value
-    Set Create = Entity
+Public Function Create(ByVal DailyRows As Inf_ScheduleRows) As Dom_DailySchedules
+    Dim Result As Dom_DailySchedules
+    Set Result = New Dom_DailySchedules
+    Dim i As Long
+    For i = 1 To DailyRows.Count
+        Dim Entry As Dom_Schedule
+        Set Entry = This.Factory.Create(DailyRows.Item(i))
+        If Not Entry Is Nothing Then Result.Add Entry
+    Next
+    Set Create = Result
 End Function

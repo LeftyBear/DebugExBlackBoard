@@ -11,7 +11,7 @@ Attribute VB_Exposed = False
 '@Folder("Application.DTO")
 Option Explicit
 
-Public TypeCode As String
+Public TypeKey  As String
 Public Grade    As Long
 Public ClassNo  As Long
 Public Gender   As String

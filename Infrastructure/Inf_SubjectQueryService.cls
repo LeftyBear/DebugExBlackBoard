@@ -30,3 +30,7 @@ Private Function App_ISubjectQueryService_GetAll() As App_SubjectReadModels
     EnsureLoaded
     Set App_ISubjectQueryService_GetAll = Inf_SubjectModelFactory.Create(This.Rows)
 End Function
+
+Private Sub App_ISubjectQueryService_Rebuild()
+    Set This.Rows = This.Persistence.ReadAll
+End Sub

@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@IgnoreModule UseMeaningfulName
-'@Folder("Domain.Entity")
+'@Folder("Domain.Entry")
 Option Explicit
 
 Private Type Member

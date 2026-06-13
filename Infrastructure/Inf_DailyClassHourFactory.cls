@@ -7,29 +7,39 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.EntityFactory")
+'@Folder("Infrastructure.Factory")
 Option Explicit
 
 Private Type Member
-    IDMapper    As Inf_ClassHourIDMapper
+    ClassHourFactory    As Inf_ClassHourFactory
+    ClassHourIDMapper   As Inf_ClassHourIDMapper
+    TimeTableFactory    As Inf_TimeTableFactory
+    TimeTableIDMapper   As Inf_TimeTableIDMapper
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.IDMapper = New Inf_ClassHourIDMapper
+    Set This.ClassHourFactory = New Inf_ClassHourFactory
+    Set This.ClassHourIDMapper = New Inf_ClassHourIDMapper
+    Set This.TimeTableFactory = New Inf_TimeTableFactory
+    Set This.TimeTableIDMapper = New Inf_TimeTableIDMapper
 End Sub
 
-Public Function Create(ByVal TargetDate As Date, ByVal Row As Inf_ClassHourRow) As Dom_ClassHour
-    Dim ID As Dom_ClassHourID
-    Set ID = This.IDMapper.ToDomain(Row.RawID)
-    If ID Is Nothing Then Exit Function
-    Dim DateID As Dom_DateID
-    Set DateID = Dom_ValueObjectFactory.CreateDateID(TargetDate)
-    Dim Value As Dom_ClassHourValue
-    Set Value = Dom_ValueObjectFactory.CreateClassHourValue(Row.Value)
-    Dim Entity As Dom_ClassHour
-    Set Entity = New Dom_ClassHour
-    Entity.Initialize DateID, ID, Value
-    Set Create = Entity
+Public Function Create(ByVal DailyRows As Inf_ClassHourRows) As Dom_DailyClassHours
+    Dim Result As Dom_DailyClassHours
+    Set Result = New Dom_DailyClassHours
+    Dim i As Long
+    For i = 1 To DailyRows.Count
+        If Not This.ClassHourIDMapper.ToDomain(DailyRows.Item(i).RawID) Is Nothing Then
+            Dim ClassHour As Dom_ClassHour
+            Set ClassHour = This.ClassHourFactory.Create(DailyRows.Item(i))
+            If Not ClassHour Is Nothing Then Result.AddClassHour ClassHour
+        ElseIf Not This.TimeTableIDMapper.ToDomain(DailyRows.Item(i).RawID) Is Nothing Then
+            Dim TimeTable As Dom_TimeTable
+            Set TimeTable = This.TimeTableFactory.Create(DailyRows.Item(i))
+            If Not TimeTable Is Nothing Then Result.AddTimeTable TimeTable
+        End If
+    Next
+    Set Create = Result
 End Function

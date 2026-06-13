@@ -10,19 +10,19 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service.Calculator")
 Option Explicit
 
-Public Function CalculateTotal(ByVal Models As App_ClassHourReadModels, ByVal TypeCode As String, ByVal Grade As Long) As Long
+Public Function CalculateTotal(ByVal Models As App_ClassHourReadModels, ByVal Key As String, ByVal Grade As Long) As Long
     Dim i As Long
-    For i = 1 To Models.Count
-        If IsTarget(Models.Item(i), TypeCode, Grade) Then
+    For i = 1 To Models.ClassHourCount
+        If IsTarget(Models.ClassHourItem(i), Key, Grade) Then
             Dim Result As Long
-            Result = Result + Models.Item(i).Value
+            Result = Result + Models.ClassHourItem(i).Value
         End If
     Next
     CalculateTotal = Result
 End Function
 
-Private Function IsTarget(ByVal Model As App_ClassHourReadModel, ByVal TypeCode As String, ByVal Grade As Long) As Boolean
-    If Model.TypeCode <> TypeCode Then Exit Function
+Private Function IsTarget(ByVal Model As App_ClassHourReadModel, ByVal Key As String, ByVal Grade As Long) As Boolean
+    If Model.Key <> Key Then Exit Function
     If Model.Subject = vbNullString Then Exit Function
     If Model.Grade <> Grade Then Exit Function
     IsTarget = True

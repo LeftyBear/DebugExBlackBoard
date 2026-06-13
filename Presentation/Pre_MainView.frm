@@ -17,22 +17,20 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements Pre_IMainView
 Private Type Member
-    DailySchedulePresenter  As Pre_DailySchedulePresenter
-    DailyPeriodPresenter    As Pre_DailyPeriodPresenter
+    UserUCFactory As App_UserUseCaseFactory
 End Type
 
 Private This As Member
 
-Public Sub Inject(ByVal DailySchedulePresenter As Pre_DailySchedulePresenter, ByVal DailyPeriodPresenter As Pre_DailyPeriodPresenter)
-    Set This.DailySchedulePresenter = DailySchedulePresenter
-    Set This.DailyPeriodPresenter = DailyPeriodPresenter
+Public Sub Inject(ByVal UserUCFactory As App_UserUseCaseFactory)
+    Set This.UserUCFactory = UserUCFactory
 End Sub
-'
-'Public Sub OnChangeDate(ByVal SelectedDate As Date)
-'    Dim SchoolYear As Long
-'    SchoolYear = App_DateUtility.GetSchoolYear(SelectedDate)
-'    This.Calender.LoadOf SchoolYear
-'End Sub
+
+Public Sub OnChangeDate(ByVal SelectedDate As Date)
+    Dim ImportDailyPeriodUseCase As App_ImportDailyPeriodUseCase
+    Set ImportDailyPeriodUseCase = This.UserUCFactory.CreateImportDailyPeriodUseCase
+    ImportDailyPeriodUseCase.Execute SelectedDate
+End Sub
 
 Public Sub SetGridValue(ByVal Kind As String, ByVal Value As Variant, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long)
     Dim Cell As Object
@@ -91,23 +89,31 @@ Private Sub Pre_IMainView_NotifySystemError()
     MsgBox "予期しないエラーが発生したのでログに書き出しました。", vbExclamation, "システムエラー"
 End Sub
 
-Private Sub Pre_IMainView_RenderClassHourExecution(ByRef Table() As Variant)
+Private Sub Pre_IMainView_RenderClassHourExecution(ByRef ViewTable() As Variant)
 
 End Sub
 
-Private Sub Pre_IMainView_RenderClassHourPlan(ByRef Table() As Variant)
+Private Sub Pre_IMainView_RenderClassHourPlan(ByRef ViewTable() As Variant)
 
 End Sub
 
-Private Sub Pre_IMainView_RenderEnrollment(ByRef Table() As Variant)
+Private Sub Pre_IMainView_ShowDailyPeriod(ByRef ViewTable() As Variant)
+    
+End Sub
+
+Private Sub Pre_IMainView_RenderEnrollment(ByRef ViewTable() As Variant)
 
 End Sub
 
-Private Sub Pre_IMainView_RenderTimeTableExecution(ByRef Table() As Variant)
+Private Sub Pre_IMainView_ShowSchedule(ByVal ViewModels As App_ScheduleReadModels)
+    
+End Sub
+
+Private Sub Pre_IMainView_RenderTimeTableExecution(ByRef ViewTable() As Variant)
 
 End Sub
 
-Private Sub Pre_IMainView_RenderTimeTablePlan(ByRef Table() As Variant)
+Private Sub Pre_IMainView_RenderTimeTablePlan(ByRef ViewTable() As Variant)
 
 End Sub
 

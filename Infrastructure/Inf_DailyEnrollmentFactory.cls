@@ -7,40 +7,27 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Infrastructure.EntityFactory")
+'@Folder("Infrastructure.Factory")
 Option Explicit
 
 Private Type Member
-    IDMapper        As Inf_EnrollmentIDMapper
-    TransferMapper  As Inf_TransferMapper
+    Factory As Inf_EnrollmentFactory
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.IDMapper = New Inf_EnrollmentIDMapper
-    Set This.TransferMapper = New Inf_TransferMapper
+    Set This.Factory = New Inf_EnrollmentFactory
 End Sub
 
-Public Function Create(ByVal TargetDate As Date, ByVal Row As Inf_EnrollmentRow) As Dom_Enrollment
-    Dim ID As Dom_EnrollmentID
-    Set ID = This.IDMapper.ToDomain(Row.RawID)
-    If Row.RawTransfer <> vbNullString Then
-        Dim Transfer As Dom_Transfer
-        Set Transfer = This.TransferMapper.ToDomain(Row.RawTransfer)
-    End If
-    If Row.Remarks <> vbNullString Then
-        Dim Remarks As Dom_Remarks
-        Set Remarks = Dom_ValueObjectFactory.CreateRemarks(Row.Remarks)
-    End If
-    If ID Is Nothing And Transfer Is Nothing Then Exit Function
-    If ID Is Nothing And Remarks Is Nothing Then Exit Function
-    Dim DateID As Dom_DateID
-    Set DateID = Dom_ValueObjectFactory.CreateDateID(TargetDate)
-    Dim Value As Dom_EnrollmentValue
-    Set Value = Dom_ValueObjectFactory.CreateEnrollmentValue(Row.Value)
-    Dim Entity As Dom_Enrollment
-    Set Entity = New Dom_Enrollment
-    Entity.Initialize DateID, ID, Value, Transfer, Remarks
-    Set Create = Entity
+Public Function Create(ByVal DailyRows As Inf_EnrollmentRows) As Dom_DailyEnrollments
+    Dim Result As Dom_DailyEnrollments
+    Set Result = New Dom_DailyEnrollments
+    Dim i As Long
+    For i = 1 To DailyRows.Count
+        Dim Entry As Dom_Enrollment
+        Set Entry = This.Factory.Create(DailyRows.Item(i))
+        If Not Entry Is Nothing Then Result.Add Entry
+    Next
+    Set Create = Result
 End Function

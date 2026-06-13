@@ -19,7 +19,7 @@ Private Sub Class_Initialize()
     Set This.Yearly = New VBA.Collection
 End Sub
 
-Public Sub Add(ByVal Aggregate As Dom_DailyClassHour)
+Public Sub Add(ByVal Aggregate As Dom_DailyClassHours)
     This.Yearly.Add Aggregate
 End Sub
 
@@ -27,6 +27,6 @@ Public Function Count() As Long
     Count = This.Yearly.Count
 End Function
 
-Public Function Item(ByVal Index As Long) As Dom_DailyClassHour
+Public Function Item(ByVal Index As Long) As Dom_DailyClassHours
     Set Item = This.Yearly.Item(Index)
 End Function

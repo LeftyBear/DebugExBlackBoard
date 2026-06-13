@@ -12,3 +12,6 @@ Option Explicit
 
 Public Function GetModel() As App_PeriodReadModel
 End Function
+
+Public Sub Rebuild()
+End Sub

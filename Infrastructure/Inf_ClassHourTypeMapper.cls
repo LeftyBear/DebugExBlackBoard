@@ -9,52 +9,31 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Infrastructure.Service.Mapper")
 Option Explicit
-Implements App_IClassHourTypeMapper
+
+Public Enum Dom_ClassHourTypeCode
+    PlanCode = 1
+    ExeCode
+End Enum
+
 Private Const COLUMN_PLAN       As String = "Œv‰æ"
 Private Const COLUMN_EXECUTION  As String = "ŽÀŽ{"
-Private Const MODEL_PLAN        As String = "Plan"
-Private Const MODEL_EXECUTION   As String = "Exe"
 
-Public Property Get PlanKey() As String
-    PlanKey = MODEL_PLAN
-End Property
-
-Public Property Get ExecutionKey() As String
-    ExecutionKey = MODEL_EXECUTION
-End Property
-
-Public Function ToRaw(ByVal TypeCode As Dom_ClassHourType) As String
-    If TypeCode.IsPlan Then
+Public Function ToRaw(ByVal ClassHourType As Dom_ClassHourType) As String
+    If ClassHourType.IsPlan Then
         ToRaw = COLUMN_PLAN
-    ElseIf TypeCode.IsExecution Then
+    ElseIf ClassHourType.IsExecution Then
         ToRaw = COLUMN_EXECUTION
     End If
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_ClassHourType
+    Dim TypeCode As Dom_ClassHourTypeCode
     If 0 < VBA.InStr(1, Raw, COLUMN_PLAN) Then
-        Dim TypeCode As Long
-        TypeCode = Dom_ClassHourTypePolicy.Plan
+        TypeCode = PlanCode
     ElseIf 0 < VBA.InStr(1, Raw, COLUMN_EXECUTION) Then
-        TypeCode = Dom_ClassHourTypePolicy.Execution
+        TypeCode = ExeCode
     Else
         Exit Function
     End If
     Set ToDomain = Dom_ValueObjectFactory.CreateClassHourType(TypeCode)
 End Function
-
-Public Function ToModel(ByVal Raw As String) As String
-    If 0 < VBA.InStr(1, Raw, COLUMN_PLAN) Then
-        ToModel = MODEL_PLAN
-    ElseIf 0 < VBA.InStr(1, Raw, COLUMN_EXECUTION) Then
-        ToModel = MODEL_EXECUTION
-    End If
-End Function
-
-Private Property Get App_IClassHourTypeMapper_ExecutionKey() As String
-    App_IClassHourTypeMapper_ExecutionKey = Me.ExecutionKey
-End Property
-
-Private Property Get App_IClassHourTypeMapper_PlanKey() As String
-    App_IClassHourTypeMapper_PlanKey = Me.PlanKey
-End Property

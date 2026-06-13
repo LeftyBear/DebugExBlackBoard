@@ -11,31 +11,25 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Value As Long
+    Value As Dom_ClassHourTypeCode
 End Type
 
 Private This As Member
 
-Public Enum Dom_ClassHourTypePolicy
-    Plan = 1
-    Execution
-End Enum
-
-Public Sub Initialize(ByVal Value As Long)
-    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_ClassHourType", "数値は0以上である必要があります。"
+Public Sub Initialize(ByVal Value As Dom_ClassHourTypeCode)
     This.Value = Value
 End Sub
 
-Public Property Get Value() As Long
+Public Property Get Value() As Dom_ClassHourTypeCode
     Value = This.Value
 End Property
 
 Public Function IsPlan() As Boolean
-    IsPlan = (This.Value = Plan)
+    IsPlan = (This.Value = PlanCode)
 End Function
 
 Public Function IsExecution() As Boolean
-    IsExecution = (This.Value = Execution)
+    IsExecution = (This.Value = ExeCode)
 End Function
 
 Public Function Equals(ByVal Other As Dom_ClassHourType) As Boolean

@@ -25,17 +25,23 @@ End Sub
 Public Sub NotifySystemError()
 End Sub
 
-Public Sub RenderEnrollment(ByRef Table() As Variant)
+Public Sub ShowSchedule(ByVal ViewModels As App_ScheduleReadModels)
 End Sub
 
-Public Sub RenderClassHourPlan(ByRef Table() As Variant)
+Public Sub ShowDailyPeriod(ByRef ViewTable() As Variant)
 End Sub
 
-Public Sub RenderClassHourExecution(ByRef Table() As Variant)
+Public Sub RenderClassHourPlan(ByRef ViewTable() As Variant)
 End Sub
 
-Public Sub RenderTimeTablePlan(ByRef Table() As Variant)
+Public Sub RenderClassHourExecution(ByRef ViewTable() As Variant)
 End Sub
 
-Public Sub RenderTimeTableExecution(ByRef Table() As Variant)
+Public Sub RenderTimeTablePlan(ByRef ViewTable() As Variant)
+End Sub
+
+Public Sub RenderTimeTableExecution(ByRef ViewTable() As Variant)
+End Sub
+
+Public Sub RenderEnrollment(ByRef ViewTable() As Variant)
 End Sub

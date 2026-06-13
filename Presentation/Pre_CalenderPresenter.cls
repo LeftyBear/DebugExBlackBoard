@@ -9,33 +9,35 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Presentation.ViewModel")
 Option Explicit
-Implements Pre_IPresenterCallback
+Implements App_IUseCaseCallback
 Private Type Member
-    Logger          As App_ILogPersistence
-    MainView        As Pre_IMainView
-    Base            As Pre_BasePresenter
+    Logger      As App_ILogPersistence
+    MainView    As Pre_IMainView
+    Base        As App_BaseUseCase
+    TargetDate  As Date
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Logger As App_ILogPersistence, ByVal Base As Pre_BasePresenter)
+Friend Sub Initialize(ByVal Logger As App_ILogPersistence, ByVal Base As App_BaseUseCase)
     Set This.Logger = Logger
     Set This.Base = Base
 End Sub
 
-Public Sub AttachView(ByVal MainView As Pre_IMainView)
+Friend Sub Inject(ByVal MainView As Pre_IMainView)
     Set This.MainView = MainView
 End Sub
 
-Private Sub Excute()
+Public Sub Present(ByVal TargetDate As Date)
+    This.TargetDate = TargetDate
     This.Base.Execute Me
 End Sub
 
-Private Sub Pre_IPresenterCallback_ExecuteCore()
-    
+Private Sub App_IUseCaseCallback_ExecuteCore()
+    'RepaintCalenderUseCase
 End Sub
 
-Private Sub Pre_IPresenterCallback_LogSystemError(ByVal Error As ErrObject)
+Private Sub App_IUseCaseCallback_LogSystemError(ByVal Error As ErrObject)
     Dim Message As String
     Message = "ErrorNumber: " & Error.Number & _
               "  ModuleName: " & Error.Source & _
@@ -43,12 +45,12 @@ Private Sub Pre_IPresenterCallback_LogSystemError(ByVal Error As ErrObject)
     This.Logger.Log Message
 End Sub
 
-Private Sub Pre_IPresenterCallback_RenderResult(ByVal Result As Pre_PresenterResult)
-    If Result.TypeCode = Pre_ViewResultTypePolicy.Success Then
+Private Sub App_IUseCaseCallback_RenderResult(ByVal Result As App_UseCaseResult)
+    If Result.TypeCode = Success Then
         This.MainView.ShowSuccess Result.Message
-    ElseIf Result.TypeCode = Pre_ViewResultTypePolicy.BusinessError Then
+    ElseIf Result.TypeCode = BusinessError Then
         This.MainView.NotifyBusinessError Result.Message
-    ElseIf Result.TypeCode = Pre_ViewResultTypePolicy.SystemError Then
+    ElseIf Result.TypeCode = SystemError Then
         This.MainView.NotifySystemError
     End If
 End Sub

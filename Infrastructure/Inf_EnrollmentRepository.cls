@@ -28,17 +28,13 @@ Private Sub EnsureLoaded(ByVal SchoolYear As Long)
     Set This.DateCache = New VBA.Collection
     Dim Rows As Inf_EnrollmentRows
     Set Rows = This.Persistence.ReadAll(SchoolYear)
-    '@Ignore SelfAssignedDeclaration
-    Dim Factory As New Inf_YearlyEnrollmentFactory
-    Dim Yearly As Dom_YearlyEnrollment
-    Set Yearly = Factory.Create(Rows)
-    BuildDateIndex Yearly
+    
 End Sub
 
 Private Sub BuildDateIndex(ByVal Yearly As Dom_YearlyEnrollment)
     Dim i As Long
     For i = 1 To Yearly.Count
-        Dim Daily As Dom_DailyEnrollment
+        Dim Daily As Dom_DailyEnrollments
         Set Daily = Yearly.Item(i)
         This.DateIndex.Add Daily.DateID.ToKey, Daily
     Next
@@ -57,13 +53,13 @@ Private Sub ReplaceRow(ByVal Rows As Inf_EnrollmentRows)
         BeginIndex = (DateIndex - 1) * RowCount + 1
         Dim EndIndex As Long
         EndIndex = BeginIndex + RowCount - 1
-        Dim Daily As Dom_DailyEnrollment
+        Dim Daily As Dom_DailyEnrollments
         Set Daily = This.DateIndex.Item(CStr(TargetDate))
         ReplaceRowOfDaily BeginIndex, EndIndex, Rows, Daily
     Next
 End Sub
 
-Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Rows As Inf_EnrollmentRows, ByVal Daily As Dom_DailyEnrollment)
+Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, ByVal Rows As Inf_EnrollmentRows, ByVal Daily As Dom_DailyEnrollments)
     Dim i As Long
     For i = BeginIndex To EndIndex
         Dim Row As Inf_EnrollmentRow
@@ -72,7 +68,7 @@ Private Sub ReplaceRowOfDaily(ByVal BeginIndex As Long, ByVal EndIndex As Long, 
     Next
 End Sub
 
-Private Sub ReplaceRowOfDailyEnrollment(ByVal Row As Inf_EnrollmentRow, ByVal Daily As Dom_DailyEnrollment)
+Private Sub ReplaceRowOfDailyEnrollment(ByVal Row As Inf_EnrollmentRow, ByVal Daily As Dom_DailyEnrollments)
     Dim Mapper As Inf_EnrollmentIDMapper
     Set Mapper = New Inf_EnrollmentIDMapper
     Dim i As Long
@@ -99,7 +95,7 @@ Private Function GetDailyRowCount(ByVal Rows As Inf_EnrollmentRows) As Long
     GetDailyRowCount = i - 1
 End Function
 
-Private Function Dom_IEnrollmentRepository_FindByDate(ByVal TargetDate As Date) As Dom_DailyEnrollment
+Private Function Dom_IEnrollmentRepository_FindByDate(ByVal TargetDate As Date) As Dom_DailyEnrollments
     Dim SchoolYear As Long
     SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
     EnsureLoaded SchoolYear
@@ -108,7 +104,7 @@ Private Function Dom_IEnrollmentRepository_FindByDate(ByVal TargetDate As Date) 
     End If
 End Function
 
-Private Sub Dom_IEnrollmentRepository_Replace(ByVal TargetDate As Date, ByVal NewAggregate As Dom_DailyEnrollment)
+Private Sub Dom_IEnrollmentRepository_Replace(ByVal TargetDate As Date, ByVal NewAggregate As Dom_DailyEnrollments)
     Dim SchoolYear As Long
     SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
     EnsureLoaded SchoolYear

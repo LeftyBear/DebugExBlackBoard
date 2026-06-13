@@ -31,8 +31,8 @@ Public Function ReadAll() As Inf_SchoolEventRows
 End Function
 
 Public Sub WriteAll(ByVal Rows As Inf_SchoolEventRows)
-    Dim Headers As VBA.Collection
-    Set Headers = GetHeaders
+    Dim Headers() As Variant
+    Headers = GetHeaders
     Dim Body As VBA.Collection
     Set Body = GroupByRecord(Rows)
     Dim RawRows As Inf_RawRows
@@ -48,12 +48,10 @@ Public Sub Delete(ByVal Key As String)
     This.CSV.Delete FilePath, Key
 End Sub
 
-Public Function GetHeaders() As VBA.Collection
+Public Function GetHeaders() As Variant()
     Dim FilePath As String
     FilePath = BuildFilePath
-    Dim RawRows As Inf_RawRows
-    Set RawRows = This.CSV.ReadAll(FilePath)
-    Set GetHeaders = RawRows.GetHeaders
+    GetHeaders = This.CSV.ReadAll(FilePath).GetHeaders
 End Function
 
 Private Function GroupByRecord(ByVal Rows As Inf_SchoolEventRows) As VBA.Collection
@@ -72,17 +70,16 @@ Private Function GroupByRecord(ByVal Rows As Inf_SchoolEventRows) As VBA.Collect
     Set GroupByRecord = Records
 End Function
 
-Private Function BuildRows(ByVal Headers As VBA.Collection, ByVal Body As VBA.Collection) As Inf_RawRows
+Private Function BuildRows(ByRef Headers As Variant, ByVal Body As VBA.Collection) As Inf_RawRows
     Dim Result As Inf_RawRows
     Set Result = New Inf_RawRows
-    Dim C As Long
-    For C = 1 To Headers.Count
-        Result.AddRow Headers.Item(C)
+    Dim i As Long
+    For i = LBound(Headers) To UBound(Headers)
+        Result.AddRow Headers(i)
     Next
     Result.AddRowsInternal
-    Dim R As Long
-    For R = 1 To Body.Count
-        Result.AddRows Body.Item(R)
+    For i = 1 To Body.Count
+        Result.AddRows Body.Item(i)
     Next
     Set BuildRows = Result
 End Function

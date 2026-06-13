@@ -12,3 +12,6 @@ Option Explicit
 
 Public Function GetByDate(ByVal TargetDate As Date) As App_EnrollmentReadModels
 End Function
+
+Public Sub Rebuild(ByVal TargetDate As Date)
+End Sub

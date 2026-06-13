@@ -2,18 +2,17 @@ Attribute VB_Name = "Inf_EnrollmentHeaderMapFactory"
 '@Folder("Infrastructure.Factory")
 Option Explicit
 Option Private Module
-
 Private Const COLUMN_TRANSFER   As String = "ç›ê–àŸìÆ"
 Private Const COLUMN_REMARKS    As String = "ç›ê–îıçl"
 
-Public Function Create(ByVal HeaderRows As VBA.Collection) As Inf_EnrollmentHeaderMap
+Public Function Create(ByRef Header() As Variant) As Inf_EnrollmentHeaderMap
     Dim Result As Inf_EnrollmentHeaderMap
     Set Result = New Inf_EnrollmentHeaderMap
     Dim C As Long
-    For C = 1 To HeaderRows.Count
+    For C = LBound(Header) To UBound(Header)
         Dim Column As Inf_EnrollmentColumn
-        Set Column = CreateColumn(HeaderRows.Item(C))
-        Result.Add C, Column
+        Set Column = CreateColumn(Header(C))
+        Result.Add CStr(C), Column
     Next
     Set Create = Result
 End Function

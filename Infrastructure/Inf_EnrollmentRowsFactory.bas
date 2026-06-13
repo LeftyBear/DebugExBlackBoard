@@ -11,9 +11,13 @@ Public Function Create(ByVal RawRows As Inf_RawRows) As Inf_EnrollmentRows
     Dim R As Long
     For R = 2 To RawRows.RowsCount
         Dim C As Long
-        For C = 1 To RawRows.ColumnsCount(R)
+        For C = 2 To RawRows.ColumnsCount(R)
+            Dim RawDate As String
+            RawDate = RawRows.GetRow(R, 1)
+            Dim Column As Inf_EnrollmentColumn
+            Set Column = Map.Item(CStr(C))
             Dim Row As Inf_EnrollmentRow
-            Set Row = Inf_EnrollmentRowFactory.Create(Map.Item(C), RawRows.GetRow(R, C))
+            Set Row = Inf_EnrollmentRowFactory.Create(RawDate, Column, RawRows.GetRow(R, C))
             Result.Add Row
         Next
     Next

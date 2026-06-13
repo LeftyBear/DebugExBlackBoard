@@ -10,59 +10,24 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Factory")
 Option Explicit
 
-Private Type Member
-    TypeMapper      As Inf_StreamTypeMapper
-    GradeMapper     As Inf_GradeMapper
-    ClassNoMapper   As Inf_ClassNoMapper
-    GenderMapper    As Inf_GenderMapper
-    TransferMapper  As Inf_TransferMapper
-End Type
-
-Private This As Member
-
-Private Sub Class_Initialize()
-    Set This.TypeMapper = New Inf_StreamTypeMapper
-    Set This.GradeMapper = New Inf_GradeMapper
-    Set This.ClassNoMapper = New Inf_ClassNoMapper
-    Set This.GenderMapper = New Inf_GenderMapper
-    Set This.TransferMapper = New Inf_TransferMapper
-End Sub
-
-Public Function Create(ByVal DailyRows As Inf_EnrollmentRows) As App_EnrollmentReadModels
+Public Function Create(ByVal Entries As Dom_DailyEnrollments) As App_EnrollmentReadModels
     Dim Result As App_EnrollmentReadModels
     Set Result = New App_EnrollmentReadModels
+    Dim Resolver As App_StreamTypeModelResolver
+    Set Resolver = New App_StreamTypeModelResolver
     Dim i As Long
-    For i = 1 To DailyRows.Count
-        Dim Row As Inf_EnrollmentRow
-        Set Row = DailyRows.Item(i)
+    For i = 1 To Entries.Count
         Dim Model As App_EnrollmentReadModel
         Set Model = New App_EnrollmentReadModel
-        If Row.RawID <> vbNullString Then
-            Dim Parts() As String
-            Parts = VBA.Split(Row.RawID, DELIMITER)
-            Dim j As Long
-            For j = 0 To UBound(Parts)
-                Dim Part As String
-                Part = Parts(j)
-                If Model.TypeCode = vbNullString Then
-                    Model.TypeCode = This.TypeMapper.ToModel(Part)
-                End If
-                If Model.Grade = vbNullString Then
-                    Model.Grade = This.GradeMapper.ToModel(Part)
-                End If
-                If Model.ClassNo = vbNullString Then
-                    Model.ClassNo = This.ClassNoMapper.ToModel(Part)
-                End If
-                If Model.Gender = vbNullString Then
-                    Model.Gender = This.GenderMapper.ToModel(Part)
-                End If
-            Next
-            Model.Value = Row.Value
-        ElseIf Row.RawTransfer <> vbNullString Then
-            Model.Transfer = This.TransferMapper.ToModel(Row.RawTransfer)
-        ElseIf Row.Remarks <> vbNullString Then
-            Model.Remarks = Row.Remarks
-        End If
+        Dim Entry As Dom_Enrollment
+        Set Entry = Entries.Item(i)
+        Model.TypeKey = Resolver.ToModel(Entry.ID.StreamType)
+        Model.Grade = Entry.ID.Grade.Value
+        Model.ClassNo = Entry.ID.ClassNo.Value
+        Model.Gender = Entry.ID.Gender.Value
+        Model.Value = Entry.Value.Value
+        Model.Transfer = Entry.Transfer
+        Model.Remarks = Entry.Remarks
         Result.Add Model
     Next
     Set Create = Result

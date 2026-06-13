@@ -11,27 +11,25 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    TypeMapper      As Inf_ClassHourTypeMapper
-    SubjectMapper   As Inf_SubjectNameMapper
-    GradeMapper     As Inf_GradeMapper
+    TypeMapper  As Inf_ClassHourTypeMapper
+    GradeMapper As Inf_GradeMapper
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
     Set This.TypeMapper = New Inf_ClassHourTypeMapper
-    Set This.SubjectMapper = New Inf_SubjectNameMapper
     Set This.GradeMapper = New Inf_GradeMapper
 End Sub
 
 Public Function ToRaw(ByVal ID As Dom_ClassHourID) As String
-    Dim TypeCode As String
-    TypeCode = This.TypeMapper.ToRaw(ID.TypeCode)
+    Dim TypeString As String
+    TypeString = This.TypeMapper.ToRaw(ID.ClassHourType)
     Dim SubjectName As String
-    SubjectName = This.SubjectMapper.ToRaw(ID.Subject)
+    SubjectName = ID.Subject.Value
     Dim Grade As String
     Grade = This.GradeMapper.ToRaw(ID.Grade)
-    ToRaw = TypeCode & DELIMITER & SubjectName & DELIMITER & Grade
+    ToRaw = TypeString & DELIMITER & SubjectName & DELIMITER & Grade
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_ClassHourID
@@ -49,7 +47,7 @@ Public Function ToDomain(ByVal Raw As String) As Dom_ClassHourID
         ElseIf Grade Is Nothing Then
             Set Grade = This.GradeMapper.ToDomain(Part)
         ElseIf SubjectName Is Nothing Then
-            Set SubjectName = This.SubjectMapper.ToDomain(Part)
+            Set SubjectName = Dom_ValueObjectFactory.CreateSubjectName(Part)
         End If
     Next
     Set ToDomain = Dom_ClassHourIDFactory.Create(ClassHourType, SubjectName, Grade)

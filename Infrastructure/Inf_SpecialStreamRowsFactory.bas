@@ -11,7 +11,7 @@ Public Function Create(ByVal RawRows As Inf_RawRows) As Inf_SpecialStreamRows
         Dim C As Long
         For C = 1 To RawRows.ColumnsCount(R)
             Dim Row As Inf_SpecialStreamRow
-            Set Row = Inf_SpecialStreamRowFactory.Create(RawRows.GetHeader(C), RawRows.GetRow(R, C))
+            Set Row = Inf_SpecialStreamRowFactory.Create(RawRows.GetColumnName(C), RawRows.GetRow(R, C))
             Result.Add Row
         Next
     Next

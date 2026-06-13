@@ -17,10 +17,11 @@ End Type
 Private This As Member
 
 Public Sub Initialize(ByVal Value As String)
+    If Value = vbNullString Then Err.Raise DomErrNullString, "Dom_ScheduleName", "Name‚Í•¶š—ñ‚Å‚ ‚é•K—v‚ª‚ ‚è‚Ü‚·B"
     This.Value = Value
 End Sub
 
-Public Property Get Value() As Long
+Public Property Get Value() As String
     Value = This.Value
 End Property
 

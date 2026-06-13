@@ -10,7 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service.Formatter")
 Option Explicit
 
-Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal TypeCode As String, ByVal PeriodModel As App_PeriodReadModel, ByVal MainModel As App_MainStreamReadModel) As Variant()
+Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal KeyCode As App_ClassHourKeyCode, ByVal PeriodModel As App_PeriodReadModel, ByVal MainModel As App_MainStreamReadModel) As Variant()
+    Dim Resolver As App_ClassHourTypeModelResolver
+    Set Resolver = New App_ClassHourTypeModelResolver
+    Dim Key As String
+    Key = Resolver.ParseKey(KeyCode)
     Dim PeriodCount As Long
     PeriodCount = PeriodModel.Value
     Dim GradeCount As Long
@@ -18,7 +22,7 @@ Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal TypeCode A
     Dim Header() As Variant
     Header = BuildHeader(GradeCount)
     Dim MarkTable() As Long
-    MarkTable = BuildMarkTable(Models, TypeCode, PeriodCount, GradeCount)
+    MarkTable = BuildMarkTable(Models, Key, PeriodCount, GradeCount)
     Dim CountedTable() As Long
     CountedTable = CountMark(MarkTable)
     Dim Body() As Variant
@@ -71,16 +75,16 @@ Private Function BuildTable(ByRef Header() As Variant, ByRef Body() As Variant) 
     BuildTable = Result
 End Function
 
-Private Function BuildMarkTable(ByVal Models As App_ClassHourReadModels, ByVal TypeCode As String, ByVal PeriodCount As Long, ByVal GradeCount As Long) As Long()
+Private Function BuildMarkTable(ByVal Models As App_ClassHourReadModels, ByVal Key As String, ByVal PeriodCount As Long, ByVal GradeCount As Long) As Long()
     Dim Result() As Long
     ReDim Result(1 To PeriodCount, 1 To GradeCount)
     Dim R As Long
     For R = 1 To PeriodCount
         Dim i As Long
-        For i = 1 To Models.Count
-            If Models.Item(i).TypeCode = TypeCode Then
-                If Models.Item(i).Period = R Then
-                    Result(R, Models.Item(i).Grade) = Models.Item(i).Mark
+        For i = 1 To Models.TimeTableCount
+            If Models.TimeTableItem(i).Key = Key Then
+                If Models.TimeTableItem(i).Period = R Then
+                    Result(R, Models.TimeTableItem(i).Grade) = Models.TimeTableItem(i).Mark
                 End If
             End If
         Next

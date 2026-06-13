@@ -12,3 +12,6 @@ Option Explicit
 
 Public Function GetByDate(ByVal TargetDate As Date) As App_ClassHourReadModels
 End Function
+
+Public Sub Rebuild(ByVal TargetDate As Date)
+End Sub

@@ -12,3 +12,6 @@ Option Explicit
 
 Public Function GetModel() As App_MainStreamReadModel
 End Function
+
+Public Sub Rebuild()
+End Sub
