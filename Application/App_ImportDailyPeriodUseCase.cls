@@ -21,8 +21,7 @@ End Type
 
 Private This As Member
 
-Friend Sub Inject(ByVal Logger As App_ILogPersistence, ByVal ClassHourQS As App_IClassHourQueryService, ByVal MainStreamQS As App_IMainStreamQueryService, ByVal Base As App_BaseUseCase, ByVal Presenter As App_IDailyPeriodPresenter)
-    Set This.Logger = Logger
+Friend Sub Inject(ByVal ClassHourQS As App_IClassHourQueryService, ByVal MainStreamQS As App_IMainStreamQueryService, ByVal Base As App_BaseUseCase, ByVal Presenter As App_IDailyPeriodPresenter)
     Set This.ClassHourQS = ClassHourQS
     Set This.MainStreamQS = MainStreamQS
     Set This.Base = Base

@@ -31,49 +31,44 @@ Public Sub Boot()
     Dim SpecialStreamPersis As Inf_SpecialStreamPersistence
     Set SpecialStreamPersis = CreateSpecialStreamPersistence(CSV)
     'QueryService ----------------------------------------------------------
-    Dim ScheduleQS As App_IScheduleQueryService
-    Set ScheduleQS = CreateScheduleQueryService(SchedulePersis)
-    Dim SchoolEventQS As App_ISchoolEventQueryService
-    Set SchoolEventQS = CreateSchoolEventQueryService(SchoolEventPersis)
-    Dim ClassHourQS As App_IClassHourQueryService
-    Set ClassHourQS = CreateClassHourQueryService(ClassHourPersis)
-    Dim SubjectQS As App_ISubjectQueryService
-    Set SubjectQS = CreateSubjectQueryService(SubjectPersis)
-    Dim PeriodQS As App_IPeriodQueryService
-    Set PeriodQS = CreatePeriodQueryService(PeriodPersis)
-    Dim EnrollmentQS As App_IEnrollmentQueryService
-    Set EnrollmentQS = CreateEnrollmentQueryService(EnrollmentPersis)
-    Dim MainStreamQS As App_IMainStreamQueryService
-    Set MainStreamQS = CreateMainStreamQueryService(MainStreamPersis)
-    Dim SpecialStreamQS As App_ISpecialStreamQueryService
-    Set SpecialStreamQS = CreateSpecialStreamQueryService(SpecialStreamPersis)
+    Dim QSDTO As App_QueryServiceDTO
+    Set QSDTO = New App_QueryServiceDTO
+    Set QSDTO.ScheduleQS = CreateScheduleQueryService(SchedulePersis)
+    Set QSDTO.SchoolEventQS = CreateSchoolEventQueryService(SchoolEventPersis)
+    Set QSDTO.ClassHourQS = CreateClassHourQueryService(ClassHourPersis)
+    Set QSDTO.SubjectQS = CreateSubjectQueryService(SubjectPersis)
+    Set QSDTO.PeriodQS = CreatePeriodQueryService(PeriodPersis)
+    Set QSDTO.EnrollmentQS = CreateEnrollmentQueryService(EnrollmentPersis)
+    Set QSDTO.MainStreamQS = CreateMainStreamQueryService(MainStreamPersis)
+    Set QSDTO.SpecialStreamQS = CreateSpecialStreamQueryService(SpecialStreamPersis)
     'Repository ------------------------------------------------------------
-    Dim ScheduleRepo As Dom_IScheduleRepository
-    Set ScheduleRepo = CreateScheduleRepository(SchedulePersis)
-    Dim SchoolEventRepo As Dom_ISchoolEventRepository
-    Set SchoolEventRepo = CreateSchoolEventRepository(SchoolEventPersis)
-    Dim ClassHourRepo As Dom_IClassHourRepository
-    Set ClassHourRepo = CreateClassHourRepository(ClassHourPersis)
-    Dim SubjectRepo As Dom_ISubjectRepository
-    Set SubjectRepo = CreateSubjectRepository(SubjectPersis)
-    Dim PeriodRepo As Dom_IPeriodRepository
-    Set PeriodRepo = CreatePeriodRepository(PeriodPersis)
-    Dim EnrollmentRepo As Dom_IEnrollmentRepository
-    Set EnrollmentRepo = CreateEnrollmentRepository(EnrollmentPersis)
-    Dim MainStreamRepo As Dom_IMainStreamRepository
-    Set MainStreamRepo = CreateMainStreamRepository(MainStreamPersis)
-    Dim SpecialStreamRepo As Dom_ISpecialStreamRepository
-    Set SpecialStreamRepo = CreateSpecialStreamRepository(SpecialStreamPersis)
+    Dim RepoDTO As App_RepositoryDTO
+    Set RepoDTO = New App_RepositoryDTO
+    Set RepoDTO.ScheduleRepo = CreateScheduleRepository(SchedulePersis)
+    Set RepoDTO.SchoolEventRepo = CreateSchoolEventRepository(SchoolEventPersis)
+    Set RepoDTO.ClassHourRepo = CreateClassHourRepository(ClassHourPersis)
+    Set RepoDTO.SubjectRepo = CreateSubjectRepository(SubjectPersis)
+    Set RepoDTO.PeriodRepo = CreatePeriodRepository(PeriodPersis)
+    Set RepoDTO.EnrollmentRepo = CreateEnrollmentRepository(EnrollmentPersis)
+    Set RepoDTO.MainStreamRepo = CreateMainStreamRepository(MainStreamPersis)
+    Set RepoDTO.SpecialStreamRepo = CreateSpecialStreamRepository(SpecialStreamPersis)
+    'Presenter -------------------------------------------------------------
+    Dim PreDTO As App_PresenterDTO
+    Set PreDTO = New App_PresenterDTO
+    Set PreDTO.PeriodPre = New Pre_DailyPeriodPresenter
+    Set PreDTO.SchedulePre = New Pre_DailySchedulePresenter
     'UseCaseFactory --------------------------------------------------------
     Dim BaseUseCase As App_BaseUseCase
     Set BaseUseCase = New App_BaseUseCase
     Dim UserUCFactory As App_UserUseCaseFactory
     Set UserUCFactory = New App_UserUseCaseFactory
-    UserUCFactory.Inject ScheduleQS, ClassHourQS, SubjectQS, PeriodQS, EnrollmentQS, MainStreamQS, SpecialStreamQS, BaseUseCase, DailyPeriodPre, DailySchedulePre
+    UserUCFactory.Inject BaseUseCase, QSDTO, PreDTO
     Dim EditerUCFactory As App_EditerUseCaseFactory
     Set EditerUCFactory = New App_EditerUseCaseFactory
-    EditerUCFactory.Inject ScheduleRepo, SchoolEventRepo, ClassHourRepo, SubjectRepo, PeriodRepo, EnrollmentRepo, MainStreamRepo, SpecialStreamRepo, BaseUseCase, DailySchedulePre
+    EditerUCFactory.Inject BaseUseCase, RepoDTO
     'View ------------------------------------------------------------------
+    Dim MainView As Pre_MainView
+    Set MainView = New Pre_MainView
     MainView.Inject New Pre_BaseView, Logger, UserUCFactory, EditerUCFactory
     MainView.OnChangeDate Date
     MainView.Show

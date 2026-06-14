@@ -2,14 +2,13 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Pre_CalenderPresenter"
+Attribute VB_Name = "App_IDailySchedulePresenter"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Presentation.Presenter")
+'@Folder("Application.Interface")
 Option Explicit
 
-Public Sub CreateViewModel(ByVal TargetDate As Date)
-
-End Sub
+Public Function CreateViewModel(ByVal ReadModels As App_ScheduleReadModels) As Pre_ScheduleViewModels
+End Function

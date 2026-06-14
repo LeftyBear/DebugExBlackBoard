@@ -10,9 +10,9 @@ Public Function Create(ByVal Rows As Inf_MainStreamRows) As App_MainStreamReadMo
     For i = 1 To Rows.Count
         Dim Row As Inf_MainStreamRow
         Set Row = Rows.Item(i)
-        If Row.UpperGrade <> vbNullString Then
+        If 0 < Row.UpperGrade Then
             Result.UpperGrade = Row.UpperGrade
-        ElseIf Row.UpperClassNo <> vbNullString Then
+        ElseIf 0 < Row.UpperClassNo Then
             Result.UpperClassNo = Row.UpperClassNo
         End If
     Next

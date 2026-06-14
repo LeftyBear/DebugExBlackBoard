@@ -1,5 +1,5 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Pre_MainView
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Pre_MainView 
    Caption         =   "UserForm1"
    ClientHeight    =   3040
    ClientLeft      =   110
@@ -13,7 +13,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
 '@Folder "Presentation.View"
 Option Explicit
 Implements Pre_IViewCallback
@@ -26,7 +25,7 @@ End Type
 
 Private This As Member
 
-Friend Sub Inject(Byval Base As Pre_BaseView, ByVal Logger As App_ILogPersistence, ByVal UserUCFactory As App_UserUseCaseFactory, ByVal EditerUCFactory As App_EditerUseCaseFactory)
+Friend Sub Inject(ByVal Base As Pre_BaseView, ByVal Logger As App_ILogPersistence, ByVal UserUCFactory As App_UserUseCaseFactory, ByVal EditerUCFactory As App_EditerUseCaseFactory)
     Set This.Base = Base
     Set This.Logger = Logger
     Set This.UserUCFactory = UserUCFactory
@@ -42,22 +41,24 @@ Private Sub ShowDailyPeriod(ByVal SelectedDate As Date)
     Set UC = This.UserUCFactory.CreateImportDailyPeriodUseCase
     UC.SetDate SelectedDate
     This.Base.Execute Me, UC
-
+    With Me.ListBox1
+        .ColumnCount = UBound(UC.ViewModel, 2)
+        .List = UC.ViewModel
+    End With
 End Sub
 
 Private Sub ShowSuccess(ByVal Message As String)
     If Message = vbNullString Then Exit Sub
-    MsgBox Message, vbInformation, "処理完了"
+    VBA.MsgBox Message, vbInformation, "処理完了"
 End Sub
 
 Private Sub NotifyBusinessError(ByVal Message As String)
     If Message = vbNullString Then Exit Sub
-    MsgBox Message, vbExclamation, "業務エラー"
+    VBA.MsgBox Message, vbExclamation, "業務エラー"
 End Sub
 
 Private Sub NotifySystemError()
-    If Message = vbNullString Then Exit Sub
-    MsgBox "予期しないエラーが発生したのでログに書き出しました。", vbExclamation, "システムエラー"
+    VBA.MsgBox "予期しないエラーが発生したのでログに書き出しました。", vbExclamation, "システムエラー"
 End Sub
 
 Private Sub Pre_IViewCallback_LogSystemError(ByVal Error As VBA.ErrObject)
@@ -69,11 +70,11 @@ Private Sub Pre_IViewCallback_LogSystemError(ByVal Error As VBA.ErrObject)
 End Sub
 
 Private Sub Pre_IViewCallback_RenderResult(ByVal Result As App_UseCaseResult)
-    If Result.TypeCode = Success Then
+    If Result.TypeCode = SuccessCode Then
         ShowSuccess Result.Message
-    ElseIf Result.TypeCode = BusinessError Then
+    ElseIf Result.TypeCode = BusinessErrorCode Then
         NotifyBusinessError Result.Message
-    ElseIf Result.TypeCode = SystemError Then
+    ElseIf Result.TypeCode = SystemErrorCode Then
         NotifySystemError
     End If
 End Sub

@@ -10,25 +10,25 @@ Attribute VB_Exposed = False
 '@Folder("Presentation.ViewModel")
 Option Explicit
 
+Public Enum App_UseCaseResultTypeCode
+    SuccessCode
+    BusinessErrorCode
+    SystemErrorCode
+End Enum
+
 Private Type Member
-    TypeCode    As Pre_ViewResultTypePolicy
+    TypeCode    As App_UseCaseResultTypeCode
     Message     As String
 End Type
 
 Private This As Member
 
-Public Enum Pre_ViewResultTypePolicy
-    Success
-    BusinessError
-    SystemError
-End Enum
-
-Public Sub Initialize(ByVal TypeCode As Pre_ViewResultTypePolicy, ByVal Message As String)
+Public Sub Initialize(ByVal TypeCode As App_UseCaseResultTypeCode, ByVal Message As String)
     This.TypeCode = TypeCode
     This.Message = Message
 End Sub
 
-Public Property Get TypeCode() As Pre_ViewResultTypePolicy
+Public Property Get TypeCode() As App_UseCaseResultTypeCode
     TypeCode = This.TypeCode
 End Property
 

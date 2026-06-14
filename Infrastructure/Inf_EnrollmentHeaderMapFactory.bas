@@ -2,6 +2,7 @@ Attribute VB_Name = "Inf_EnrollmentHeaderMapFactory"
 '@Folder("Infrastructure.Factory")
 Option Explicit
 Option Private Module
+Private Const COLUMN_HIZUKE     As String = "ì˙ït"
 Private Const COLUMN_TRANSFER   As String = "ç›ê–àŸìÆ"
 Private Const COLUMN_REMARKS    As String = "ç›ê–îıçl"
 
@@ -20,7 +21,7 @@ End Function
 Private Function CreateColumn(ByVal ColumnName As String) As Inf_EnrollmentColumn
     Dim Result As Inf_EnrollmentColumn
     Set Result = New Inf_EnrollmentColumn
-    If 0 < VBA.InStr(1, ColumnName, HIZUKE) Then
+    If 0 < VBA.InStr(1, ColumnName, COLUMN_HIZUKE) Then
         Result.RawDate = ColumnName
     ElseIf 0 < VBA.InStr(1, ColumnName, COLUMN_TRANSFER) Then
         Result.RawTransfer = ColumnName

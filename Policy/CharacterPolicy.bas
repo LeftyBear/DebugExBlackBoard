@@ -5,4 +5,3 @@ Option Explicit
 Option Private Module
 
 Public Const DELIMITER As String = "_"
-Public Const HIZUKE As String = "“ú•t"

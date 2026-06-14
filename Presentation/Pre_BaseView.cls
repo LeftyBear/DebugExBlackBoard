@@ -1,0 +1,32 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "Pre_BaseView"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+'@Folder("Presentation.View")
+Option Explicit
+
+Public Sub Execute(ByVal ViewCallback As Pre_IViewCallback, ByVal UseCaseCallback As App_IUseCaseCallback)
+    On Error GoTo ErrHandler
+    UseCaseCallback.ExecuteCore
+    Dim Result As App_UseCaseResult
+    Set Result = Pre_PresenterResultFactory.CreateSuccess
+    GoTo Finally
+ErrHandler:
+    If ErrorPolicy.IsDomainError(Err.Number) Or ErrorPolicy.IsInfrastructureError(Err.Number) Then
+        Dim Message As String
+        Message = "î‘çÜ: " & Err.Number & vbCrLf & _
+                  "èÍèä: " & Err.Source & vbCrLf & _
+                  "ê‡ñæ: " & Err.Description
+        Set Result = Pre_PresenterResultFactory.CreateBusinessError(Message)
+    Else
+        ViewCallback.LogSystemError Err
+        Set Result = Pre_PresenterResultFactory.CreateSystemError
+    End If
+Finally:
+    ViewCallback.RenderResult Result
+End Sub

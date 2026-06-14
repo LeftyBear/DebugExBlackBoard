@@ -35,6 +35,7 @@ Private Sub EnsureLoaded(ByVal TargetDate As Date)
 End Sub
 
 Private Sub BuildDateIndex(ByVal Rows As Inf_ClassHourRows)
+    If Rows Is Nothing Then Exit Sub
     Dim i As Long
     For i = 1 To Rows.Count
         Dim TargetDate As Date
@@ -65,7 +66,7 @@ End Sub
 
 Private Function App_IClassHourQueryService_GetByDate(ByVal TargetDate As Date) As App_ClassHourReadModels
     EnsureLoaded TargetDate
-    If This.DateIndex.Exists(CStr(TargetDate)) Then Exit Function
+    If Not This.DateIndex.Exists(CStr(TargetDate)) Then Exit Function
     Dim DailyRows As Inf_ClassHourRows
     Set DailyRows = This.DateIndex.Item(CStr(TargetDate))
     Dim EntityFactory As Inf_DailyClassHourFactory

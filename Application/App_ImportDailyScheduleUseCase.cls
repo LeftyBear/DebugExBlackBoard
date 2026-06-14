@@ -11,47 +11,32 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements App_IUseCaseCallback
 Private Type Member
-    Logger          As App_ILogPersistence
     QueryService    As App_IScheduleQueryService
     Base            As App_BaseUseCase
-    Presenter       As Pre_DailySchedulePresenter
+    Presenter       As App_IDailySchedulePresenter
     TargetDate      As Date
+    ViewModels      As Pre_ScheduleViewModels
 End Type
 
 Private This As Member
 
-Friend Sub Inject(ByVal Logger As App_ILogPersistence, ByVal QueryService As Inf_ScheduleQueryService, ByVal Base As App_BaseUseCase, ByVal Presenter As Pre_DailySchedulePresenter)
-    Set This.Logger = Logger
+Friend Sub Inject(ByVal QueryService As Inf_ScheduleQueryService, ByVal Base As App_BaseUseCase, ByVal Presenter As App_IDailySchedulePresenter)
     Set This.QueryService = QueryService
     Set This.Base = Base
     Set This.Presenter = Presenter
 End Sub
 
-Public Sub Execute(ByVal TargetDate As Date)
+Public Sub SetDate(ByVal TargetDate As Date)
     This.TargetDate = TargetDate
-    This.Base.Execute Me
 End Sub
+
+Public Property Get ViewModel() As Pre_ScheduleViewModels
+    Set ViewModel = This.ViewModels
+End Property
 
 Private Sub App_IUseCaseCallback_ExecuteCore()
-    Dim ViewModels As App_ScheduleReadModels
-    Set ViewModels = This.QueryService.GetByDate(This.TargetDate)
-    This.Presenter.Present ViewModels
-End Sub
-
-Private Sub App_IUseCaseCallback_LogSystemError(ByVal Error As VBA.ErrObject)
-    Dim Message As String
-    Message = "ErrorNumber: " & Error.Number & _
-              "  Source: " & Error.Source & _
-              "  Description: " & Error.Description
-    This.Logger.Log Message
-End Sub
-
-Private Sub App_IUseCaseCallback_RenderResult(ByVal Result As App_UseCaseResult)
-    If Result.TypeCode = Success Then
-        This.Presenter.ShowSuccess Result.Message
-    ElseIf Result.TypeCode = BusinessError Then
-        This.Presenter.NotifyBusinessError Result.Message
-    ElseIf Result.TypeCode = SystemError Then
-        This.Presenter.NotifySystemError
-    End If
+    If This.TargetDate = 0 Then Err.Raise AppErrNotSetVariable, "App_ImportDailyScheduleUseCase", "TargetDate is not set."
+    Dim ReadModels As App_ScheduleReadModels
+    Set ReadModels = This.QueryService.GetByDate(This.TargetDate)
+    Set This.ViewModels = This.Presenter.CreateViewModel(ReadModels)
 End Sub

@@ -2,14 +2,14 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Pre_CalenderPresenter"
+Attribute VB_Name = "Pre_ScheduleViewModel"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Presentation.Presenter")
+'@IgnoreModule MoveFieldCloserToUsage, EncapsulatePublicField
+'@Folder("Presentation.ViewModel")
 Option Explicit
 
-Public Sub CreateViewModel(ByVal TargetDate As Date)
-
-End Sub
+Public Name     As String
+Public Value    As String
