@@ -11,7 +11,6 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Logger              As App_ILogPersistence
     ScheduleRepo        As Dom_IScheduleRepository
     SchoolEventRepo     As Dom_ISchoolEventRepository
     ClassHourRepo       As Dom_IClassHourRepository
@@ -26,8 +25,7 @@ End Type
 
 Private This As Member
 
-Friend Sub Inject(ByVal Logger As App_ILogPersistence, ByVal ScheduleRepo As Dom_IScheduleRepository, ByVal SchoolEventRepo As Dom_ISchoolEventRepository, ByVal ClassHourRepo As Dom_IClassHourRepository, ByVal SubjectRepo As Dom_ISubjectRepository, ByVal PeriodRepo As Dom_IPeriodRepository, ByVal EnrollmentRepo As Dom_IEnrollmentRepository, ByVal MainStreamRepo As Dom_IMainStreamRepository, ByVal SpecialStreamRepo As Dom_ISpecialStreamRepository, ByVal Base As App_BaseUseCase, ByVal SchedulePre As Pre_DailySchedulePresenter)
-    Set This.Logger = Logger
+Friend Sub Inject(ByVal ScheduleRepo As Dom_IScheduleRepository, ByVal SchoolEventRepo As Dom_ISchoolEventRepository, ByVal ClassHourRepo As Dom_IClassHourRepository, ByVal SubjectRepo As Dom_ISubjectRepository, ByVal PeriodRepo As Dom_IPeriodRepository, ByVal EnrollmentRepo As Dom_IEnrollmentRepository, ByVal MainStreamRepo As Dom_IMainStreamRepository, ByVal SpecialStreamRepo As Dom_ISpecialStreamRepository, ByVal Base As App_BaseUseCase, ByVal SchedulePre As Pre_DailySchedulePresenter)
     Set This.ScheduleRepo = ScheduleRepo
     Set This.SchoolEventRepo = SchoolEventRepo
     Set This.ClassHourRepo = ClassHourRepo

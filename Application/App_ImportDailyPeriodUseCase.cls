@@ -11,17 +11,17 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements App_IUseCaseCallback
 Private Type Member
-    Logger          As App_ILogPersistence
     ClassHourQS     As App_IClassHourQueryService
     MainStreamQS    As App_IMainStreamQueryService
     Base            As App_BaseUseCase
-    Presenter       As Pre_DailyPeriodPresenter
+    Presenter       As App_IDailyPeriodPresenter
     TargetDate      As Date
+    ViewModel()     As Variant
 End Type
 
 Private This As Member
 
-Friend Sub Inject(ByVal Logger As App_ILogPersistence, ByVal ClassHourQS As App_IClassHourQueryService, ByVal MainStreamQS As App_IMainStreamQueryService, ByVal Base As App_BaseUseCase, ByVal Presenter As Pre_DailyPeriodPresenter)
+Friend Sub Inject(ByVal Logger As App_ILogPersistence, ByVal ClassHourQS As App_IClassHourQueryService, ByVal MainStreamQS As App_IMainStreamQueryService, ByVal Base As App_BaseUseCase, ByVal Presenter As App_IDailyPeriodPresenter)
     Set This.Logger = Logger
     Set This.ClassHourQS = ClassHourQS
     Set This.MainStreamQS = MainStreamQS
@@ -29,33 +29,19 @@ Friend Sub Inject(ByVal Logger As App_ILogPersistence, ByVal ClassHourQS As App_
     Set This.Presenter = Presenter
 End Sub
 
-Public Sub Execute(ByVal TargetDate As Date)
+Public Sub SetDate(ByVal TargetDate As Date)
     This.TargetDate = TargetDate
-    This.Base.Execute Me
 End Sub
+
+Public Property Get ViewModel() As Variant()
+    ViewModel = This.ViewModel
+End Property
 
 Private Sub App_IUseCaseCallback_ExecuteCore()
-    Dim ClassHourModels As App_ClassHourReadModels
-    Set ClassHourModels = This.ClassHourQS.GetByDate(This.TargetDate)
-    Dim MainStreamModel As App_MainStreamReadModel
-    Set MainStreamModel = This.MainStreamQS.GetModel
-    This.Presenter.Present ClassHourModels, MainStreamModel
-End Sub
-
-Private Sub App_IUseCaseCallback_LogSystemError(ByVal Error As VBA.ErrObject)
-    Dim Message As String
-    Message = "ErrorNumber: " & Error.Number & _
-              "  Source: " & Error.Source & _
-              "  Description: " & Error.Description
-    This.Logger.Log Message
-End Sub
-
-Private Sub App_IUseCaseCallback_RenderResult(ByVal Result As App_UseCaseResult)
-    If Result.TypeCode = Success Then
-        This.Presenter.ShowSuccess Result.Message
-    ElseIf Result.TypeCode = BusinessError Then
-        This.Presenter.NotifyBusinessError Result.Message
-    ElseIf Result.TypeCode = SystemError Then
-        This.Presenter.NotifySystemError
-    End If
+    If This.TargetDate = 0 Then Err.Raise AppErrNotSetVariable, "App_ImportDailyPeriodUseCase", "TargetDate is not set."
+    Dim ClassHourReadModels As App_ClassHourReadModels
+    Set ClassHourReadModels = This.ClassHourQS.GetByDate(This.TargetDate)
+    Dim MainStreamReadModel As App_MainStreamReadModel
+    Set MainStreamReadModel = This.MainStreamQS.GetModel
+    This.ViewModel = This.Presenter.CreateViewModel(ClassHourReadModels, MainStreamReadModel)
 End Sub

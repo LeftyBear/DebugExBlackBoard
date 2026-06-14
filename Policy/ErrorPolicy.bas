@@ -46,6 +46,7 @@ Public Enum AppErrNum
     AppErrEmptyArray = vbObjectError + AppErr
     AppErrInvalidFilePath
     AppErrNothingItem
+    AppErrNotSetVariable
 End Enum
 
 Public Enum PreErrNum

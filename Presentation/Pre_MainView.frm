@@ -1,5 +1,5 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Pre_MainView 
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Pre_MainView
    Caption         =   "UserForm1"
    ClientHeight    =   3040
    ClientLeft      =   110
@@ -13,116 +13,67 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-'@Folder "Application.View"
+
+'@Folder "Presentation.View"
 Option Explicit
-Implements Pre_IMainView
+Implements Pre_IViewCallback
 Private Type Member
-    UserUCFactory As App_UserUseCaseFactory
+    Base            As Pre_BaseView
+    Logger          As App_ILogPersistence
+    UserUCFactory   As App_UserUseCaseFactory
+    EditerUCFactory As App_EditerUseCaseFactory
 End Type
 
 Private This As Member
 
-Public Sub Inject(ByVal UserUCFactory As App_UserUseCaseFactory)
+Friend Sub Inject(Byval Base As Pre_BaseView, ByVal Logger As App_ILogPersistence, ByVal UserUCFactory As App_UserUseCaseFactory, ByVal EditerUCFactory As App_EditerUseCaseFactory)
+    Set This.Base = Base
+    Set This.Logger = Logger
     Set This.UserUCFactory = UserUCFactory
+    Set This.EditerUCFactory = EditerUCFactory
 End Sub
 
 Public Sub OnChangeDate(ByVal SelectedDate As Date)
-    Dim ImportDailyPeriodUseCase As App_ImportDailyPeriodUseCase
-    Set ImportDailyPeriodUseCase = This.UserUCFactory.CreateImportDailyPeriodUseCase
-    ImportDailyPeriodUseCase.Execute SelectedDate
+    ShowDailyPeriod SelectedDate
 End Sub
 
-Public Sub SetGridValue(ByVal Kind As String, ByVal Value As Variant, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long)
-    Dim Cell As Object
-    Set Cell = ResolveGridControl(Kind, Grade, ClassNo)
-    If Cell Is Nothing Then Exit Sub
-    Cell.Text = CStr(Value)
+Private Sub ShowDailyPeriod(ByVal SelectedDate As Date)
+    Dim UC As App_ImportDailyPeriodUseCase
+    Set UC = This.UserUCFactory.CreateImportDailyPeriodUseCase
+    UC.SetDate SelectedDate
+    This.Base.Execute Me, UC
+
 End Sub
 
-Public Function GetGridLongValue(ByVal Kind As String, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long) As Long
-    Dim TextValue As String
-    TextValue = GetTextFromGrid(Kind, Grade, ClassNo)
-    If TextValue = vbNullString Then
-        GetGridLongValue = 0
-        Exit Function
-    End If
-    GetGridLongValue = CLng(TextValue)
-End Function
-
-Public Function GetGridStringValue(ByVal Kind As String, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long) As String
-    GetGridStringValue = GetTextFromGrid(Kind, Grade, ClassNo)
-End Function
-
-Private Function GetTextFromGrid(ByVal Kind As String, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long) As String
-    Dim Control As Object
-    Set Control = ResolveGridControl(Kind, Grade, ClassNo)
-    If Control Is Nothing Then
-        GetTextFromGrid = vbNullString
-        Exit Function
-    End If
-    GetTextFromGrid = CStr(Control.Text)
-End Function
-
-Private Function ResolveGridControl(ByVal Kind As String, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long) As Object
-    Dim ControlName As String
-    ControlName = BuildGridControlName(Kind, Grade, ClassNo)
-    On Error Resume Next
-    Set ResolveGridControl = Me.Controls(ControlName)
-    On Error GoTo 0
-End Function
-
-Private Function BuildGridControlName(ByVal Kind As String, Optional ByVal Grade As Long, Optional ByVal ClassNo As Long) As String
-    Dim Cells() As Variant
-    Cells = Array(Kind, CStr(Grade), CStr(ClassNo))
-    BuildGridControlName = VBA.Join(Cells, DELIMITER)
-End Function
-
-Private Sub Pre_IMainView_HideLoading()
-    Application.StatusBar = vbNullString
+Private Sub ShowSuccess(ByVal Message As String)
+    If Message = vbNullString Then Exit Sub
+    MsgBox Message, vbInformation, "処理完了"
 End Sub
 
-Private Sub Pre_IMainView_NotifyBusinessError(ByVal Message As String)
+Private Sub NotifyBusinessError(ByVal Message As String)
+    If Message = vbNullString Then Exit Sub
     MsgBox Message, vbExclamation, "業務エラー"
 End Sub
 
-Private Sub Pre_IMainView_NotifySystemError()
+Private Sub NotifySystemError()
+    If Message = vbNullString Then Exit Sub
     MsgBox "予期しないエラーが発生したのでログに書き出しました。", vbExclamation, "システムエラー"
 End Sub
 
-Private Sub Pre_IMainView_RenderClassHourExecution(ByRef ViewTable() As Variant)
-
+Private Sub Pre_IViewCallback_LogSystemError(ByVal Error As VBA.ErrObject)
+    Dim Message As String
+    Message = "ErrorNumber: " & Error.Number & _
+              "  Source: " & Error.Source & _
+              "  Description: " & Error.Description
+    This.Logger.Log Message
 End Sub
 
-Private Sub Pre_IMainView_RenderClassHourPlan(ByRef ViewTable() As Variant)
-
-End Sub
-
-Private Sub Pre_IMainView_ShowDailyPeriod(ByRef ViewTable() As Variant)
-    
-End Sub
-
-Private Sub Pre_IMainView_RenderEnrollment(ByRef ViewTable() As Variant)
-
-End Sub
-
-Private Sub Pre_IMainView_ShowSchedule(ByVal ViewModels As App_ScheduleReadModels)
-    
-End Sub
-
-Private Sub Pre_IMainView_RenderTimeTableExecution(ByRef ViewTable() As Variant)
-
-End Sub
-
-Private Sub Pre_IMainView_RenderTimeTablePlan(ByRef ViewTable() As Variant)
-
-End Sub
-
-Private Sub Pre_IMainView_ShowLoading()
-    Application.StatusBar = "Loading..."
-    DoEvents
-End Sub
-
-Private Sub Pre_IMainView_ShowSuccess(ByVal Message As String)
-    If Message = vbNullString Then Exit Sub
-    MsgBox Message, vbInformation, "処理完了"
+Private Sub Pre_IViewCallback_RenderResult(ByVal Result As App_UseCaseResult)
+    If Result.TypeCode = Success Then
+        ShowSuccess Result.Message
+    ElseIf Result.TypeCode = BusinessError Then
+        NotifyBusinessError Result.Message
+    ElseIf Result.TypeCode = SystemError Then
+        NotifySystemError
+    End If
 End Sub

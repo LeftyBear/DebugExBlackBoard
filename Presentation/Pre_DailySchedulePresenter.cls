@@ -7,31 +7,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Presenter.ViewModel")
+'@Folder("Presentation.Presenter")
 Option Explicit
 
-Private Type Member
-    View As Pre_IMainView
-End Type
-
-Private This As Member
-
-Friend Sub Inject(ByVal View As Pre_IMainView)
-    Set This.View = View
-End Sub
-
-Public Sub Present(ByVal ViewModels As App_ScheduleReadModels)
-    This.View.ShowSchedule ViewModels
-End Sub
-
-Public Sub ShowSuccess(ByVal Message As String)
-    This.View.ShowSuccess Message
-End Sub
-
-Public Sub NotifyBusinessError(ByVal Message As String)
-    This.View.NotifyBusinessError Message
-End Sub
-
-Public Sub NotifySystemError()
-    This.View.NotifySystemError
-End Sub
+Public Function CreateViewModel(ByVal ViewModels As App_ScheduleReadModels) As App_ScheduleReadModels
+    Dim ViewModels As App_ScheduleReadModels
+    Set CreateViewModel = ViewModels
+End Function

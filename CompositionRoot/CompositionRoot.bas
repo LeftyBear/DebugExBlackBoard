@@ -64,25 +64,17 @@ Public Sub Boot()
     Set MainStreamRepo = CreateMainStreamRepository(MainStreamPersis)
     Dim SpecialStreamRepo As Dom_ISpecialStreamRepository
     Set SpecialStreamRepo = CreateSpecialStreamRepository(SpecialStreamPersis)
-    'Presenter -------------------------------------------------------------
-    Dim MainView As Pre_MainView
-    Set MainView = New Pre_MainView
-    Dim DailyPeriodPre As Pre_DailyPeriodPresenter
-    Set DailyPeriodPre = New Pre_DailyPeriodPresenter
-    DailyPeriodPre.Inject MainView, New App_PeriodFormatter
-    Dim DailySchedulePre As Pre_DailySchedulePresenter
-    Set DailySchedulePre = New Pre_DailySchedulePresenter
-    DailySchedulePre.Inject MainView
     'UseCaseFactory --------------------------------------------------------
-    Dim Base As App_BaseUseCase
-    Set Base = New App_BaseUseCase
+    Dim BaseUseCase As App_BaseUseCase
+    Set BaseUseCase = New App_BaseUseCase
     Dim UserUCFactory As App_UserUseCaseFactory
     Set UserUCFactory = New App_UserUseCaseFactory
-    UserUCFactory.Inject Logger, ClassHourQS, ScheduleQS, MainStreamQS, Base, DailyPeriodPre, DailySchedulePre
+    UserUCFactory.Inject ScheduleQS, ClassHourQS, SubjectQS, PeriodQS, EnrollmentQS, MainStreamQS, SpecialStreamQS, BaseUseCase, DailyPeriodPre, DailySchedulePre
     Dim EditerUCFactory As App_EditerUseCaseFactory
     Set EditerUCFactory = New App_EditerUseCaseFactory
-    EditerUCFactory.Inject Logger, ScheduleRepo, SchoolEventRepo, ClassHourRepo, SubjectRepo, PeriodRepo, EnrollmentRepo, MainStreamRepo, SpecialStreamRepo, Base, DailyPeriodPre, DailySchedulePre
-    MainView.Inject UserUCFactory
+    EditerUCFactory.Inject ScheduleRepo, SchoolEventRepo, ClassHourRepo, SubjectRepo, PeriodRepo, EnrollmentRepo, MainStreamRepo, SpecialStreamRepo, BaseUseCase, DailySchedulePre
+    'View ------------------------------------------------------------------
+    MainView.Inject New Pre_BaseView, Logger, UserUCFactory, EditerUCFactory
     MainView.OnChangeDate Date
     MainView.Show
     Exit Sub

@@ -11,7 +11,6 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Logger          As App_ILogPersistence
     ScheduleQS      As App_IScheduleQueryService
     ClassHourQS     As App_IClassHourQueryService
     SubjectQS       As App_ISubjectQueryService
@@ -26,8 +25,7 @@ End Type
 
 Private This As Member
 
-Friend Sub Inject(ByVal Logger As App_ILogPersistence,  ByVal ScheduleQS As App_IScheduleQueryService,ByVal ClassHourQS As App_IClassHourQueryService, ByVal SubjectQS As App_ISubjectQueryService, ByVal PeriodQS As App_IPeriodQueryService, Byval EnrollmentQS As App_IEnrollmentQueryService, ByVal MainStreamQS As App_IMainStreamQueryService, Byval SpecialStreamQS As App_ISpecialStreamQueryService, ByVal Base As App_BaseUseCase, ByVal PeriodPre As Pre_DailyPeriodPresenter, ByVal SchedulePre As Pre_DailySchedulePresenter)
-    Set This.Logger = Logger
+Friend Sub Inject(ByVal ScheduleQS As App_IScheduleQueryService, ByVal ClassHourQS As App_IClassHourQueryService, ByVal SubjectQS As App_ISubjectQueryService, ByVal PeriodQS As App_IPeriodQueryService, ByVal EnrollmentQS As App_IEnrollmentQueryService, ByVal MainStreamQS As App_IMainStreamQueryService, ByVal SpecialStreamQS As App_ISpecialStreamQueryService, ByVal Base As App_BaseUseCase, ByVal PeriodPre As Pre_DailyPeriodPresenter, ByVal SchedulePre As Pre_DailySchedulePresenter)
     Set This.ScheduleQS = ScheduleQS
     Set This.ClassHourQS = ClassHourQS
     Set This.SubjectQS = SubjectQS
@@ -43,13 +41,13 @@ End Sub
 Public Function CreateImportDailyPeriodUseCase() As App_ImportDailyPeriodUseCase
     Dim Result As App_ImportDailyPeriodUseCase
     Set Result = New App_ImportDailyPeriodUseCase
-    Result.Inject This.Logger, This.ClassHourQS, This.MainStreamQS, This.Base, This.PeriodPre
+    Result.Inject This.ClassHourQS, This.MainStreamQS, This.Base, This.PeriodPre
     Set CreateImportDailyPeriodUseCase = Result
 End Function
 
 Public Function CreateImportDailyScheduleUseCase() As App_ImportDailyScheduleUseCase
     Dim Result As App_ImportDailyScheduleUseCase
     Set Result = New App_ImportDailyScheduleUseCase
-    Result.Inject This.Logger, This.ScheduleQS, This.Base, This.SchedulePre
+    Result.Inject This.ScheduleQS, This.Base, This.SchedulePre
     Set CreateImportDailyScheduleUseCase = Result
 End Function
