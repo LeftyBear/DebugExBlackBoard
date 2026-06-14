@@ -34,7 +34,6 @@ Private Sub EnsureLoaded(ByVal SchoolYear As Long)
 End Sub
 
 Private Sub BuildClassHourList(ByVal RowList As Scripting.Dictionary)
-    If RowList.Count = 0 Then Exit Sub
     Dim Factory As Inf_DailyClassHourFactory
     Set Factory = New Inf_DailyClassHourFactory
     Dim Key As Variant

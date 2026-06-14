@@ -20,6 +20,7 @@ Private Const COMMA             As String = ","
 Private Const DOUBLE_QUOTATION  As String = """"
 
 Public Function ReadAll(ByVal FilePath As String) As Inf_RawRows
+    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise InfErrNotFoundFile, "Inf_CSVPersistence", "File not found: " & FilePath
     Dim Reader As Inf_TextStreamReader
     Set Reader = New Inf_TextStreamReader
     Dim TextData As String
@@ -28,6 +29,7 @@ Public Function ReadAll(ByVal FilePath As String) As Inf_RawRows
 End Function
 
 Public Sub WriteAll(ByVal FilePath As String, ByVal RawRows As Inf_RawRows)
+    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise InfErrNotFoundFile, "Inf_CSVPersistence", "File not found: " & FilePath
     Dim TempPath As String
     TempPath = FilePath & ".tmp"
     Dim Lines As VBA.Collection
@@ -38,6 +40,7 @@ Public Sub WriteAll(ByVal FilePath As String, ByVal RawRows As Inf_RawRows)
 End Sub
 
 Public Sub Delete(ByVal FilePath As String, ByVal DateKey As String)
+    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Err.Raise InfErrNotFoundFile, "Inf_CSVPersistence", "File not found: " & FilePath
     Dim Rows As Inf_RawRows
     Set Rows = Me.ReadAll(FilePath)
     Dim i As Long

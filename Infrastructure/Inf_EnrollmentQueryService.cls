@@ -65,7 +65,6 @@ End Sub
 
 Private Function App_IEnrollmentQueryService_GetByDate(ByVal TargetDate As Date) As App_EnrollmentReadModels
     EnsureLoaded TargetDate
-    If This.DateIndex.Exists(CStr(TargetDate)) Then Exit Function
     Dim DailyRows As Inf_EnrollmentRows
     Set DailyRows = This.DateIndex.Item(CStr(TargetDate))
     Dim EntityFactory As Inf_DailyEnrollmentFactory

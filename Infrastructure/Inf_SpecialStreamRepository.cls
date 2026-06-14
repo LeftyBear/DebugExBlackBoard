@@ -62,7 +62,6 @@ End Sub
 
 Private Function Dom_ISpecialStreamRepository_FindByName(ByVal Name As String) As Dom_SpecialStream
     EnsureLoaded
-    If Not This.NameIndex.Exists(Name) Then Exit Function
     Set Dom_ISpecialStreamRepository_FindByName = This.NameIndex.Item(Name)
 End Function
 

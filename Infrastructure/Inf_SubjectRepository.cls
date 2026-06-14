@@ -71,7 +71,6 @@ End Sub
 
 Private Function Dom_ISubjectRepository_FindByName(ByVal Name As String) As Dom_Subject
     EnsureLoaded
-    If Not This.NameIndex.Exists(Name) Then Exit Function
     Set Dom_ISubjectRepository_FindByName = This.NameIndex.Item(Name)
 End Function
 

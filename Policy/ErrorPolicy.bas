@@ -20,33 +20,18 @@ Public Enum InfLayerErrNum
 End Enum
 
 Public Enum DomErrNum
-    DomErrCanNotParse = vbObjectError + DomErr
-    DomErrEmptyDate
-    DomErrEmptyFilter
-    DomErrEmptyObject
-    DomErrInvalidDateFormat
-    DomErrInvalidDateValue
-    DomErrInvalidNaming
-    DomErrInvalidRange
-    DomErrInvalidTypeOfObject
-    DomErrInvalidValue
+    DomErrInvalidValue = vbObjectError + DomErr
     DomErrNegativeNumber
     DomErrNotBoolean
-    DomErrNotFourDigitNumber
-    DomErrNotExistsItem
-    DomErrNothingObject
     DomErrNotInteger
     DomErrNotNumeric
-    DomErrNotUnique
+    DomErrNothingObject
     DomErrNullString
     DomErrUnmatch
 End Enum
 
 Public Enum AppErrNum
-    AppErrEmptyArray = vbObjectError + AppErr
-    AppErrInvalidFilePath
-    AppErrNothingItem
-    AppErrNotSetVariable
+    AppErrNotSetVariable = vbObjectError + AppErr
 End Enum
 
 Public Enum PreErrNum
@@ -54,11 +39,9 @@ Public Enum PreErrNum
 End Enum
 
 Public Enum InfErrNum
-    InfErrNotFoundFile = vbObjectError + InfErr
-    InfErrNotFoundLayerPrefix
+    InfErrNotFoundLayerPrefix = vbObjectError + InfErr
     InfErrUnsupportedComponentType
-    InfErrExistsKey
-    InfErrNotExistsItem
+    InfErrNotFoundFile
 End Enum
 
 Public Function IsDomainError(ByVal ErrNumber As Long) As Boolean

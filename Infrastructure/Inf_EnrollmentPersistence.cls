@@ -25,7 +25,6 @@ End Sub
 Public Function ReadAll(ByVal SchoolYear As Long) As Inf_EnrollmentRows
     Dim FilePath As String
     FilePath = BuildFilePath(SchoolYear)
-    If VBA.Len(VBA.Dir(FilePath)) = 0 Then Exit Function
     Dim RawRows As Inf_RawRows
     Set RawRows = This.CSV.ReadAll(FilePath)
     Set ReadAll = Inf_EnrollmentRowsFactory.Create(RawRows)

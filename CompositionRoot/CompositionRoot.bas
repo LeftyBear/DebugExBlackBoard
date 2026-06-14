@@ -7,7 +7,7 @@ Public Sub Boot()
     'ErrorLogger -----------------------------------------------------------
     Dim LogFilePath As String
     LogFilePath = BuildLogFilePath
-    If VBA.Len(VBA.Dir(LogFilePath)) = 0 Then Err.Raise AppErrInvalidFilePath, "CompositionRoot", "File path is invalid.": Exit Sub
+    If VBA.Len(VBA.Dir(LogFilePath)) = 0 Then Err.Raise InfErrNotFoundFile, "CompositionRoot", "File not found: " & LogFilePath : Exit Sub
     Dim Logger As App_ILogPersistence
     Set Logger = CreateLogger(LogFilePath)
     On Error GoTo ErrHandle

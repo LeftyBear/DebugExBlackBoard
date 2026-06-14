@@ -70,7 +70,6 @@ End Function
 
 Private Sub Dom_ISchoolEventRepository_Replace(ByVal OldName As String, ByVal NewEntry As Dom_SchoolEvent)
     EnsureLoaded
-    If Not This.NameIndex.Exists(OldName) Then Exit Sub
     This.NameIndex.Remove OldName
     This.NameIndex.Add NewEntry.Value, NewEntry
 End Sub
