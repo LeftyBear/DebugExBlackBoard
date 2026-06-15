@@ -15,21 +15,13 @@ Public Enum App_ClassHourTypeKeyCode
     ExeKeyCode
 End Enum
 
-Private Const MODEL_PLAN        As String = "Plan"
-Private Const MODEL_EXECUTION   As String = "Exe"
-
-Public Function ToModel(ByVal ClassHourType As Dom_ClassHourType) As String
-    If ClassHourType.IsPlan Then
-        ToModel = MODEL_PLAN
-    ElseIf ClassHourType.IsExecution Then
-        ToModel = MODEL_EXECUTION
-    End If
-End Function
+Private Const KEY_PLAN      As String = "Plan"
+Private Const KEY_EXECUTION As String = "Exe"
 
 Public Function ParseKey(ByVal KeyCode As App_ClassHourTypeKeyCode) As String
     If KeyCode = PlanKeyCode Then
-        ParseKey = MODEL_PLAN
+        ParseKey = KEY_PLAN
     ElseIf KeyCode = ExeKeyCode Then
-        ParseKey = MODEL_EXECUTION
+        ParseKey = KEY_EXECUTION
     End If
 End Function

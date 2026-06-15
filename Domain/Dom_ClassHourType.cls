@@ -10,6 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Domain.ValueObject")
 Option Explicit
 
+Public Enum Dom_ClassHourTypeCode
+    PlanCode = 1
+    ExeCode
+End Enum
+
 Private Type Member
     Value As Dom_ClassHourTypeCode
 End Type

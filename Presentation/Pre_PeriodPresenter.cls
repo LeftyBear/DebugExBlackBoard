@@ -14,8 +14,36 @@ Implements App_IDailyPeriodPresenter
 Public Function App_IDailyPeriodPresenter_CreateViewModel(ByVal Periods As App_Periods, ByVal GradeCount As Long) As Pre_PeriodViewModel
     Dim Result As Pre_PeriodViewModel
     Set Result = New Pre_PeriodViewModel
-    Dim Formatter As Pre_PeriodFormatter
-    Set Formatter = New Pre_PeriodFormatter
-    Result.Table = Formatter.Format(Periods, GradeCount)
+    Result.Table = Format(Periods, GradeCount)
     Set App_IDailyPeriodPresenter_CreateViewModel = Result
+End Function
+
+Private Function Format(ByVal Periods As App_Periods, ByVal GradeCount As Long) As Variant()
+    Dim Header() As Variant
+    Header = BuildHeader(GradeCount)
+    Dim Body() As Variant
+    Body = BuildBody(Periods, GradeCount)
+    Format = Pre_ArrayUtility.MergeArray(Header, Body)
+End Function
+
+Private Function BuildHeader(ByVal GradeCount As Long) As Variant()
+    Dim Result() As Variant
+    ReDim Result(1 To 1, 1 To GradeCount)
+    Dim Grade As Long
+    For Grade = 1 To GradeCount
+        Result(1, Grade) = Grade & "”N"
+    Next
+    BuildHeader = Result
+End Function
+
+Private Function BuildBody(ByVal Periods As App_Periods, ByVal GradeCount As Long) As Variant()
+    Dim Result() As Variant
+    ReDim Result(1 To 1, 1 To GradeCount)
+    If Not Periods Is Nothing Then
+        Dim Grade As Long
+        For Grade = 1 To GradeCount
+            Result(1, Grade) = Periods.Item(Grade)
+        Next
+    End If
+    BuildBody = Result
 End Function

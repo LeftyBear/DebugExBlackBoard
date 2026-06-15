@@ -12,10 +12,6 @@ Option Explicit
 
 Private Const COLUMN_PERIOD As String = "çZéû"
 
-Public Property Get Key() As String
-    Key = COLUMN_PERIOD
-End Property
-
 Public Function ToRaw(ByVal Period As Dom_Period) As String
     ToRaw = CStr(Period.Value) & COLUMN_PERIOD
 End Function
@@ -23,19 +19,15 @@ End Function
 Public Function ToDomain(ByVal Raw As String) As Dom_Period
     If 0 < VBA.InStr(1, Raw, COLUMN_PERIOD) Then
         Dim Period As Long
-        Period = GetPeriod(Raw)
+        Period = ParsePeriod(Raw)
     Else
         Exit Function
     End If
     Set ToDomain = Dom_ValueObjectFactory.CreatePeriod(Period)
 End Function
 
-Public Function ToModel(ByVal Raw As String) As Long
-    ToModel = GetPeriod(Raw)
-End Function
-
-Private Function GetPeriod(ByVal Raw As String) As Long
-    Dim Buffer As String
-    Buffer = VBA.Replace(Raw, COLUMN_PERIOD, vbNullString)
-    GetPeriod = Inf_NumericUtility.ExtractNumber(Buffer)
+Private Function ParsePeriod(ByVal Raw As String) As Long
+    Dim Period As String
+    Period = VBA.Replace(Raw, COLUMN_PERIOD, vbNullString)
+    ParsePeriod = Inf_NumericUtility.ExtractNumber(Period)
 End Function

@@ -17,7 +17,7 @@ End Type
 Private This As Member
 
 Public Sub Initialize(ByVal Value As Long)
-    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_Grade", "学年は0以上である必要があります。"
+    If Not IsTarget(Value) Then Err.Raise DomErrOutOfRange, "Dom_Grade", "学年は3以上9以下である必要があります。"
     This.Value = Value
 End Sub
 
@@ -27,4 +27,10 @@ End Property
 
 Public Function Equals(ByVal Other As Dom_Grade) As Boolean
     Equals = (This.Value = Other.Value)
+End Function
+
+Private Function IsTarget(ByVal Value As Long) As Boolean
+    If Value < 3 Then Exit Function
+    If 9 < Value Then Exit Function
+    IsTarget = True
 End Function

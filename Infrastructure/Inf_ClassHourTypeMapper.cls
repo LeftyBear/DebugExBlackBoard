@@ -10,11 +10,6 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
-Public Enum Dom_ClassHourTypeCode
-    PlanCode = 1
-    ExeCode
-End Enum
-
 Private Const COLUMN_PLAN       As String = "Œv‰æ"
 Private Const COLUMN_EXECUTION  As String = "ŽÀŽ{"
 

@@ -10,29 +10,21 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
-Private Const CLASS_NO As String = "‘g"
-
-Public Property Get ColumnClassNo() As String
-    ColumnClassNo = CLASS_NO
-End Property
+Private Const COLUMN_CLASSNO As String = "‘g"
 
 Public Function ToRaw(ByVal ClassNo As Dom_ClassNo) As String
-    ToRaw = CStr(ClassNo.Value) & CLASS_NO
+    ToRaw = CStr(ClassNo.Value) & COLUMN_CLASSNO
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_ClassNo
-    If VBA.InStr(1, Raw, CLASS_NO) = 0 Then Exit Function
+    If VBA.InStr(1, Raw, COLUMN_CLASSNO) = 0 Then Exit Function
     Dim ClassNo As Long
-    ClassNo = GetClassNo(Raw)
+    ClassNo = ParseClassNo(Raw)
     Set ToDomain = Dom_ValueObjectFactory.CreateClassNo(ClassNo)
 End Function
 
-Public Function ToModel(ByVal Raw As String) As Long
-    ToModel = GetClassNo(Raw)
-End Function
-
-Private Function GetClassNo(ByVal Raw As String) As Long
-    Dim Buffer As String
-    Buffer = VBA.Replace(Raw, CLASS_NO, vbNullString)
-    GetClassNo = Inf_NumericUtility.ExtractNumber(Buffer)
+Private Function ParseClassNo(ByVal Raw As String) As Long
+    Dim ClassNo As String
+    ClassNo = VBA.Replace(Raw, COLUMN_CLASSNO, vbNullString)
+    ParseClassNo = Inf_NumericUtility.ExtractNumber(ClassNo)
 End Function

@@ -11,10 +11,11 @@ Attribute VB_Exposed = False
 '@Folder("Application.DTO")
 Option Explicit
 
-Public TypeKey  As String
-Public Grade    As Long
-Public ClassNo  As Long
-Public Gender   As String
-Public Value    As Long
-Public Transfer As String
-Public Remarks  As String
+Public TypeKey      As String
+Public Grade        As Long
+Public ClassNo      As Long
+Public ClassName    As Long
+Public Gender       As String
+Public Value        As Long
+Public Transfer     As String
+Public Remarks      As String

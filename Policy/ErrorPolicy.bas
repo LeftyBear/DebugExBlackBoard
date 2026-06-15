@@ -27,6 +27,7 @@ Public Enum DomErrNum
     DomErrNotNumeric
     DomErrNothingObject
     DomErrNullString
+    DomErrOutOfRange
     DomErrUnmatch
 End Enum
 

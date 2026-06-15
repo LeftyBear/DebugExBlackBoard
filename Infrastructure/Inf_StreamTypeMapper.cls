@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Infrastructure.Service.Mapper")
 Option Explicit
 
-Private Const COLUMN_SPECIAL    As String = "“ÁŽx"
+Private Const COLUMN_SPECIAL As String = "“ÁŽx"
 
 Public Function ToRaw(ByVal TypeCode As Dom_StreamType) As String
     If TypeCode.IsMain Then
@@ -21,13 +21,13 @@ Public Function ToRaw(ByVal TypeCode As Dom_StreamType) As String
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_StreamType
+    Dim Mapper As Inf_GradeMapper
+    Set Mapper = New Inf_GradeMapper
     Dim TypeCode As Dom_StreamTypeCode
-    Dim GradeMapper As Inf_GradeMapper
-    Set GradeMapper = New Inf_GradeMapper
-    If 0 < VBA.InStr(1, Raw, GradeMapper.ColumnName) Then
-        TypeCode = MainCode
-    ElseIf 0 < VBA.InStr(1, Raw, COLUMN_SPECIAL) Then
+    If 0 < VBA.InStr(1, Raw, COLUMN_SPECIAL) Then
         TypeCode = SpecialCode
+    ElseIf Raw Like "#*" Then
+        TypeCode = MainCode
     Else
         Exit Function
     End If

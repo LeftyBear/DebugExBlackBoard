@@ -42,19 +42,43 @@ Private Sub App_IUseCaseCallback_ExecuteCore()
     If This.TargetDate = 0 Then Err.Raise AppErrNotSetVariable, "App_ImportEnrollmentUseCase", "TargetDate is not set."
     Dim ReadModels As App_EnrollmentReadModels
     Set ReadModels = This.EnrollmentQS.GetByDate(This.TargetDate)
+    Dim DTO As App_EnrollmentFormatterDTO
+    Set DTO = CreateFormatterDTO
+    Dim Totals As App_EnrollmentTotals
+    Set Totals = GetTotals(ReadModels, DTO)
+    Set This.ViewModels = This.Presenter.CreateViewModel(ReadModels, Totals, DTO)
+End Sub
+
+Private Function CreateFormatterDTO() As App_EnrollmentFormatterDTO
+    Dim Result As App_EnrollmentFormatterDTO
+    Set Result = New App_EnrollmentFormatterDTO
     Dim MainStream As App_MainStreamReadModel
     Set MainStream = This.MainStreamQS.GetAll
     Dim SpecialStreams As App_SpecialStreamReadModels
     Set SpecialStreams = This.SpecialStreamQS.GetAll
-    Dim Totals As App_EnrollmentTotals
-    Set Totals = New App_EnrollmentTotals
-    With New App_EnrollmentCalculator
-        .CalculateClassTotal ReadModels, MainKeyCode, Totals
-        .CalculateGenderTotal ReadModels, MainKeyCode, Male, Totals
-        .CalculateGenderTotal ReadModels, MainKeyCode, Female, Totals
-        .CalculateClassTotal ReadModels, SpecialKeyCode, Totals
-        .CalculateGenderTotal ReadModels, SpecialKeyCode, Male, Totals
-        .CalculateGenderTotal ReadModels, SpecialKeyCode, Female, Totals
-    End With
-    Set This.ViewModels = This.Presenter.CreateViewModel(ReadModels, Totals, MainStream.UpperGrade, MainStream.UpperClassNo, SpecialStreams.ClassNoCount)
-End Sub
+    Dim StreamTypeResolver As App_StreamTypeResolver
+    Set StreamTypeResolver = New App_StreamTypeResolver
+    Dim GenderResolver As App_GenderResolver
+    Set GenderResolver = New App_GenderResolver
+    Result.MainGradeCount = MainStream.UpperGrade
+    Result.MainClassNoCount = MainStream.UpperClassNo
+    Result.SpecialClassNoCount = SpecialStreams.ClassNoCount
+    Result.MainKey = StreamTypeResolver.ParseKey(MainKeyCode)
+    Result.SpecialKey = StreamTypeResolver.ParseKey(SpecialKeyCode)
+    Result.MaleKey = GenderResolver.ParseKey(MaleCode)
+    Result.FemaleKey = GenderResolver.ParseKey(FemaleCode)
+    Set CreateFormatterDTO = Result
+End Function
+
+Private Function GetTotals(ByVal ReadModels As App_EnrollmentReadModels, ByVal DTO As App_EnrollmentFormatterDTO) As App_EnrollmentTotals
+    Dim Result As App_EnrollmentTotals
+    Set Result = New App_EnrollmentTotals
+    Dim Calculator As App_EnrollmentCalculator
+    Set Calculator = New App_EnrollmentCalculator
+    Calculator.CalculateClassTotal ReadModels, DTO.MainKey, Result
+    Calculator.CalculateGenderTotal ReadModels, DTO.MainKey, DTO.MaleKey, Result
+    Calculator.CalculateGenderTotal ReadModels, DTO.MainKey, DTO.FemaleKey, Result
+    Calculator.CalculateClassTotal ReadModels, DTO.SpecialKey, Result
+    Calculator.CalculateGenderTotal ReadModels, DTO.SpecialKey, DTO.MaleKey, Result
+    Calculator.CalculateGenderTotal ReadModels, DTO.SpecialKey, DTO.FemaleKey, Result
+End Function

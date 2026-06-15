@@ -14,6 +14,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+
 '@Folder "Presentation.View"
 Option Explicit
 Implements Pre_IViewCallback

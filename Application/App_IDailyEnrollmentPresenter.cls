@@ -10,5 +10,5 @@ Attribute VB_Exposed = False
 '@Folder("Application.Interface")
 Option Explicit
 
-Public Function CreateViewModel(ByVal ReadModels As App_EnrollmentReadModels, ByVal Totals As App_EnrollmentTotals, ByVal MainGradeCount As Long, ByVal MainClassNoCount As Long, ByVal SpecialClassNoCount As Long) As Pre_EnrollmentViewModel
+Public Function CreateViewModel(ByVal ReadModels As App_EnrollmentReadModels, ByVal Totals As App_EnrollmentTotals, ByVal DTO As App_EnrollmentFormatterDTO) As Pre_EnrollmentViewModel
 End Function

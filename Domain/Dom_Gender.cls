@@ -30,11 +30,11 @@ Public Property Get Value() As Long
 End Property
 
 Public Function IsMale() As Boolean
-    IsMale = (This.Value = Male)
+    IsMale = (This.Value = MaleCode)
 End Function
 
 Public Function IsFemale() As Boolean
-    IsFemale = (This.Value = Female)
+    IsFemale = (This.Value = FemaleCode)
 End Function
 
 Public Function Equals(ByVal Other As Dom_Gender) As Boolean

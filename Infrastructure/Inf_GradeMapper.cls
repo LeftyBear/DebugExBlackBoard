@@ -12,10 +12,6 @@ Option Explicit
 
 Private Const COLUMN_GRADE As String = "”N"
 
-Public Property Get ColumnName() As String
-    ColumnName = COLUMN_GRADE
-End Property
-
 Public Function ToRaw(ByVal Grade As Dom_Grade) As String
     ToRaw = CStr(Grade.Value) & COLUMN_GRADE
 End Function
@@ -26,8 +22,8 @@ Public Function ToDomain(ByVal Raw As String) As Dom_Grade
     Dim TypeCode As Dom_StreamType
     Set TypeCode = TypeMapper.ToDomain(Raw)
     If TypeCode Is Nothing Then Exit Function
+    Dim Grade As Long
     If TypeCode.IsMain Then
-        Dim Grade As Long
         Grade = ParseGrade(Raw)
     ElseIf TypeCode.IsSpecial Then
         Grade = 1
@@ -35,12 +31,8 @@ Public Function ToDomain(ByVal Raw As String) As Dom_Grade
     Set ToDomain = Dom_ValueObjectFactory.CreateGrade(Grade)
 End Function
 
-Public Function ToModel(ByVal Raw As String) As Long
-    ToModel = ParseGrade(Raw)
-End Function
-
 Private Function ParseGrade(ByVal Raw As String) As Long
-    Dim Buffer As String
-    Buffer = VBA.Replace(Raw, COLUMN_GRADE, vbNullString)
-    ParseGrade = Inf_NumericUtility.ExtractNumber(Buffer)
+    Dim Grade As String
+    Grade = VBA.Replace(Raw, COLUMN_GRADE, vbNullString)
+    ParseGrade = Inf_NumericUtility.ExtractNumber(Grade)
 End Function

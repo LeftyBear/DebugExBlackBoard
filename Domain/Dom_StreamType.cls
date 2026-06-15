@@ -16,7 +16,7 @@ Public Enum Dom_StreamTypeCode
 End Enum
 
 Private Type Member
-    Value As Long
+    Value As Dom_StreamTypeCode
 End Type
 
 Private This As Member
@@ -25,7 +25,7 @@ Public Sub Initialize(ByVal Value As Dom_StreamTypeCode)
     This.Value = Value
 End Sub
 
-Public Function Value() As Long
+Public Function Value() As Dom_StreamTypeCode
     Value = This.Value
 End Function
 
