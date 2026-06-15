@@ -1,251 +1,401 @@
-DebugExBlackBoard
+# VBAŠJ”­ ³“T
 
-DebugExBlackBoard is a reference architecture for building structured analytical systems using VBA.
+## 1. ƒA[ƒLƒeƒNƒ`ƒƒ
 
-The project demonstrates how Domain-Driven Design, clean architecture principles, and object-oriented modeling can be applied even in environments traditionally dominated by procedural scripting.
+- DDD / Clean Architecture ‚ğÌ—p‚·‚é
+- ˆË‘¶•ûŒü‚ÍŠO‘¤ ¨ “à‘¤‚Ì‚İ
+- Domain‘w‚Í‘¼‘w‚ğQÆ‚µ‚È‚¢
+- Application‘w‚ÍDomain‘w‚Ì‚İQÆ‰Â”\
+- Infrastructure‘w‚ÍDomain/Application‚ğ—˜—p‰Â”\
+- Presentation‘w‚ÍApplication‚ğ—˜—p‚·‚é
 
-Instead of treating spreadsheet columns as raw data fields, this architecture models columns as domain concepts, allowing analytical rules to be implemented as polymorphic domain objects.
+---
 
-Architecture Overview
+## 2. ˆË‘¶ŠÖŒW
 
-The system follows a layered architecture inspired by Clean Architecture and Hexagonal Architecture.
+### ³‚µ‚¢ˆË‘¶•ûŒü
 
-Infrastructure
-   CSV / IO / Repository
-        â”‚
-        â–¼
-Application
-   UseCase / Orchestration
-        â”‚
-        â–¼
-Domain
-   Record â†’ Column â†’ Aggregate â†’ Summary
+Pre_View
+«
+App_Factory
+«
+App_UseCase
+«
+Pre_Presenter
+«
+Pre_ViewModel
 
-Key principle:
+### ‹Ö~–€
 
-Domain is the center of the system.
-All other layers exist to support the Domain.
+- Pre_Presenter ¨ Pre_View
+- App_UseCase ¨ Pre_View
+- Domain ¨ Application
+- Domain ¨ Infrastructure
+- Pre_ViewModel ¨ Pre_View
 
-Dependency rules:
+---
 
-Application â†’ Domain
-Infrastructure â†’ Domain
-Application â†’ Infrastructure (via Domain interfaces only)
+## 3. Presenter‚ÌÓ–±
 
-Reverse dependencies are not allowed.
-Domain Model
+### Presenter‚ªs‚¤‚±‚Æ
 
-The domain is designed for analytical processing.
+- UseCaseŒ‹‰Ê‚ğViewModel‚Ö•ÏŠ·
+- ‰æ–Ê•\¦—pƒf[ƒ^‚Ì®Œ`
+- ViewModel¶¬
 
-Core concepts:
+### Presenter‚ªs‚í‚È‚¢‚±‚Æ
 
-Record
-   Raw domain data
+- View•Û
+- Control‘€ì
+- MsgBox•\¦
+- UserForm‘€ì
 
-Column
-   Domain evaluation rule
+### ³“T
 
-ColumnContext
-   Evaluation context passed to columns
+Pre_Presenter‚ÍPre_ViewQÆ‚ğ•Û‚µ‚È‚¢B
 
-Aggregate
-   Aggregates records and column evaluations
+---
 
-Summary
-   Final result produced by aggregates
+## 4. View‚ÌÓ–±
 
-Processing flow:
+### View‚ª•Û‚·‚é‚à‚Ì
 
-Record
-   â†“
-ColumnContext
-   â†“
-Column.Evaluate(context)
-   â†“
-Aggregate
-   â†“
-Summary
-Column Domain Model
+- App_Factory
 
-A key design decision is treating columns as domain objects rather than simple data fields.
+### View‚ª•Û‚µ‚È‚¢‚à‚Ì
 
-Traditional analytical code often relies on conditional logic such as:
+- Presenter
+- Repository
+- Entity
 
-If Grade = 1 And Gender = Male Then
+### ³“T
 
-In this architecture, analytical rules are encapsulated inside column objects:
+Pre_View ¨ App_Factory ¨ App_UseCase
 
-column.Evaluate(context)
+‚Åˆ—‚ğŠJn‚·‚éB
 
-This eliminates complex branching and allows the system to evolve through polymorphism.
+---
 
-Column Structure
+## 5. UseCase‚ÌÓ–±
 
-All columns implement a common interface:
+### UseCase‚ªs‚¤‚±‚Æ
 
-Dom_IEntityColumn
-      â–²
-  ScalarColumn
-  GenderColumn
-  GradeColumn
-  ClassColumn
-  CompositeColumn
+- ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒ‹[ƒ‹Às
+- DomainŒÄ‚Ño‚µ
+- RepositoryŒÄ‚Ño‚µ
+- PresenterŒÄ‚Ño‚µ
 
-Each column represents a domain rule capable of evaluating values from the context.
+### UseCase‚ªs‚í‚È‚¢‚±‚Æ
 
-Composite Columns
+- Control‘€ì
+- UserForm‘€ì
+- MsgBox•\¦
 
-Some analytical rules combine multiple columns.
+---
 
-Example:
+## 6. ViewModel
 
-Grade Ã— Gender
-Subject Ã— Grade
+### –Ú“I
 
-This is implemented using the Composite Pattern.
+Pre_Presenter‚ª¶¬‚·‚é‰æ–Ê•\¦ê—pƒIƒuƒWƒFƒNƒg
 
-CompositeColumn
-   â”œ Column
-   â”” Column
+### “Á’¥
 
-Composite columns allow complex evaluation logic to be built from smaller domain components.
+- ƒƒWƒbƒN‚ğ‚½‚È‚¢
+- ‰æ–Ê•`‰æî•ñ‚Ì‚İ•Û
+- Presentation‘wê—p
 
-Column Evaluation Context
+---
 
-Column evaluation uses a dedicated context object.
+## 7. ƒNƒ‰ƒX–½–¼‹K–ñ
 
-Dom_ColumnContext
+### Domain
 
-Structure:
+```vb
+Dom_Entity
+Dom_ValueObject
+Dom_Service
+```
 
-ColumnContext
-   â”” Collection<Column>
+### Application
 
-The context provides the evaluation environment required by column objects.
+```vb
+App_UseCase
+App_Factory
+```
 
-Design Patterns Used
+### Presentation
 
-The architecture intentionally combines several design patterns.
+```vb
+Pre_View
+Pre_Form
+Pre_Control
+Pre_Presenter
+Pre_ViewModel
+```
 
-Composite Pattern
-Dom_EnrollmentCompositeColumn
+### Infrastructure
 
-Used to compose multiple columns.
+```vb
+Inf_Repository
+Inf_Dao
+Inf_Gateway
+```
 
-Strategy Pattern
-Dom_EnrollmentCompositeStrategy
+---
 
-Defines how composite columns combine evaluation results.
+## 8. –½–¼‹K–ñ
 
-Factory Pattern
-Dom_EnrollmentColumnFactory
-Dom_ClassHourColumnFactory
+### ƒNƒ‰ƒX
 
-Responsible for creating column objects.
+- PascalCase
 
-Dependency Inversion
+—á
 
-Repository interfaces are defined in the Domain layer.
+```vb
+App_CustomerSearchUseCase
+Pre_CustomerListPresenter
+Dom_Customer
+```
 
-Dom_IEnrollmentRepository
-Dom_IClassHourRepository
+### ƒƒ\ƒbƒh
 
-Infrastructure implements these interfaces.
+- PascalCase
 
-Dependency Rules
+—á
 
-The architecture enforces strict dependency direction.
+```vb
+Execute
+CreateViewModel
+FindById
+```
 
-Allowed dependencies:
+### •Ï”
 
-Application â†’ Domain
-Infrastructure â†’ Domain
-Application â†’ Infrastructure (via Domain interfaces)
+- PascalCase
 
-Forbidden dependencies:
+—á
 
-Domain â†’ Infrastructure
-Domain â†’ IO
-Domain â†’ CSV
-Domain â†’ FilePath
+```vb
+CustomerId
+CustomerList
+ViewModel
+```
 
-This ensures the Domain layer remains independent from technical concerns.
+---
 
-Adding a New Column
+## 9. ˆø”‹K–ñ
 
-Adding new analytical rules is straightforward.
+### Œ´‘¥
 
-Steps:
+‚·‚×‚Ä–¾¦“I‚É ByVal ‚ğ•t—^‚·‚é
 
-Create a class implementing Dom_IEntityColumn.
+```vb
+Public Function Execute(ByVal CustomerId As String) As Pre_ViewModel
+```
 
-Implement the Evaluate(context) method.
+### —áŠO
 
-Register the column in the appropriate ColumnFactory.
+ƒIƒuƒWƒFƒNƒgQÆ‚ğ•ÏX‚·‚éê‡‚Ì‚İ ByRef ‚ğg—p‚·‚é
 
-Example:
+---
 
-Class Dom_SubjectColumn
-Implements Dom_IEntityColumn
+## 10. Selector / Resolver •ª—£
 
-This approach follows the Open-Closed Principle.
+### Selector
 
-Existing code remains unchanged when new columns are added.
+‘I‘ğˆ—‚ğ’S“–
 
-Analytical Domain Modeling
+```vb
+SelectCustomer
+SelectSheet
+```
 
-This project models analytical dimensions as domain objects.
+### Resolver
 
-Examples:
+‰ğŒˆˆ—‚ğ’S“–
 
-Grade
-Gender
-Subject
-Class
+```vb
+ResolveCustomer
+ResolveRepository
+```
 
-These behave similarly to dimensions in OLAP systems.
+### ³“T
 
-Instead of embedding analytical rules inside procedural logic, they are expressed as domain objects that interact through well-defined interfaces.
+Selector‚ÆResolver‚ÌÓ–±‚ğ¬İ‚³‚¹‚È‚¢B
 
-Benefits:
+---
 
-â€¢ Eliminates complex conditional branching
-â€¢ Improves extensibility
-â€¢ Keeps analytical rules inside the Domain layer
-â€¢ Separates domain logic from infrastructure
-Future Extensions
+## 11. Mapping / Dictionary
 
-The architecture can be extended to support more advanced analytical scenarios.
+### ³“T
 
-Potential extensions:
+Application‘w‚ÅDictionary‚ğ—˜—p‚µ‚È‚¢B
 
-ColumnDefinition
-Column DSL
-Expression trees
+### ——R
 
-These would allow dynamic column definitions and expression-based analytical rules.
+- ˆÃ–Ù“I‚Èƒ}ƒbƒsƒ“ƒO‚ğ–h‚®
+- ‰Â“Ç«Œüã
+- •Ûç«Œüã
 
-For the current scope, the existing Column + Composite model provides sufficient flexibility.
+### „§
 
-Summary
+–¾¦“I‚ÈMapperƒNƒ‰ƒX‚ğì¬‚·‚éB
 
-DebugExBlackBoard demonstrates how to implement:
+```vb
+App_CustomerMapper
+```
 
-Domain-Driven Design
-Hexagonal Architecture
-Column Domain Modeling
+---
 
-within a VBA environment.
+## 12. ƒNƒ‰ƒX“à•”ó‘Ô
 
-The project highlights how analytical systems can be structured using:
+### •K{ƒpƒ^[ƒ“
 
-Domain purity
-Polymorphic domain objects
-Clear dependency rules
-Extensible evaluation models
+```vb
+Private Type Member
 
-This repository serves as a reference implementation for building structured analytical systems using VBA.
+End Type
 
-It demonstrates how analytical logic can be modeled using domain objects, allowing complex evaluation rules to remain extensible, testable, and independent from infrastructure concerns.
+Private This As Member
+```
 
-The architecture highlights how Domain-Driven Design and clean dependency structures can be applied effectively even in traditional VBA environments.
+### QÆ•û–@
+
+```vb
+This.CustomerId
+This.CustomerName
+```
+
+---
+
+## 13. VBAƒR[ƒfƒBƒ“ƒO‹K–ñ
+
+### sŒp‘±
+
+g—p‚µ‚È‚¢B
+
+”ñ„§
+
+```vb
+Execute _
+    Value
+```
+
+„§
+
+```vb
+Execute Value
+```
+
+### Call
+
+g—p‚µ‚È‚¢B
+
+”ñ„§
+
+```vb
+Call Execute(Value)
+```
+
+„§
+
+```vb
+Execute Value
+```
+
+### ‰Â“Ç«
+
+- ƒlƒXƒg‚Íó‚­‚·‚é
+- Exit Function‚æ‚èGuardß‚ğ—Dæ‚·‚é
+- ˆÓ–¡‚Ì‚ ‚é–¼‘O‚ğg—p‚·‚é
+
+---
+
+## 14. Repository
+
+### –ğŠ„
+
+‰i‘±‰»’ŠÛ‰»
+
+### UseCase‚©‚çŒ©‚¦‚é‚à‚Ì
+
+```vb
+ICustomerRepository
+```
+
+### InfrastructureÀ‘•
+
+```vb
+Inf_CustomerRepository
+```
+
+### ³“T
+
+UseCase‚ÍInterface‚ÖˆË‘¶‚·‚éB
+
+---
+
+## 15. Factory
+
+### View‚ª•Û‚·‚é‚à‚Ì
+
+```vb
+App_Factory
+```
+
+### Factory‚ÌÓ–±
+
+- UseCase¶¬
+- Presenter¶¬
+- Repository’“ü
+
+### ³“T
+
+ˆË‘¶ŠÖŒW\’z‚ÍFactory‚ÖW–ñ‚·‚éB
+
+---
+
+## 16. UI§Œä
+
+### UserForm
+
+•\¦ê—p
+
+### Control
+
+Pre_View‚©‚ç‚Ì‚İ‘€ì‚·‚éB
+
+### ‹Ö~
+
+```vb
+App_UseCase ¨ TextBox
+Pre_Presenter ¨ ListBox
+Dom_Entity ¨ UserForm
+```
+
+---
+
+## 17. ÅI³“T
+
+ˆË‘¶ŠÖŒW
+
+Pre_View
+«
+App_Factory
+«
+App_UseCase
+«
+Pre_Presenter
+«
+Pre_ViewModel
+
+Pre_Presenter‚ÍPre_View‚ğ•Û‚µ‚È‚¢B
+
+Pre_View‚ÍApp_Factory‚Ì‚İ•Û‚·‚éB
+
+App_UseCase‚ÍPre_Presenter‚ğ—˜—p‚µ‚ÄPre_ViewModel‚ğ¶¬‚·‚éB
+
+Pre_View‚ÍPre_ViewModel‚ğ•`‰æ‚·‚éB
+
+Control‘€ì‚ÍPre_View‚Ì‚İ‚ªs‚¤B
