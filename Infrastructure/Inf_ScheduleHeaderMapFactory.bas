@@ -4,13 +4,13 @@ Option Explicit
 Option Private Module
 Private Const COLUMN_DATE As String = "“ú•t"
 
-Public Function Create(ByRef Headers As Variant) As Inf_ScheduleHeaderMap
+Public Function Create(ByRef Header As Variant) As Inf_ScheduleHeaderMap
     Dim Result As Inf_ScheduleHeaderMap
     Set Result = New Inf_ScheduleHeaderMap
     Dim C As Long
-    For C = LBound(Headers) To UBound(Headers)
+    For C = LBound(Header) To UBound(Header)
         Dim Column As Inf_ScheduleColumn
-        Set Column = CreateColumn(Headers(C))
+        Set Column = CreateColumn(Header(C))
         Result.Add CStr(C), Column
     Next
     Set Create = Result

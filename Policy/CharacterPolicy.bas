@@ -3,5 +3,4 @@ Attribute VB_Name = "CharacterPolicy"
 '@Folder("Policy")
 Option Explicit
 Option Private Module
-
 Public Const DELIMITER As String = "_"

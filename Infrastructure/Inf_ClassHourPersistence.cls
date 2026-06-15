@@ -34,7 +34,7 @@ Public Sub WriteAll(ByVal SchoolYear As Long, ByVal Rows As Inf_ClassHourRows)
     Dim FilePath As String
     FilePath = BuildFilePath(SchoolYear)
     Dim Header() As Variant
-    Header = This.CSV.ReadAll(FilePath).GetHeaders
+    Header = This.CSV.ReadAll(FilePath).GetHeader
     Dim Body() As Variant
     Body = GroupByDate(Rows)
     Dim RawRows As Inf_RawRows

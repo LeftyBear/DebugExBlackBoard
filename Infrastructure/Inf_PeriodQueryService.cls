@@ -26,9 +26,9 @@ Private Sub EnsureLoaded()
     Set This.Row = This.Persistence.ReadAll
 End Sub
 
-Private Function App_IPeriodQueryService_GetModel() As App_PeriodReadModel
+Private Function App_IPeriodQueryService_GetAll() As App_PeriodReadModel
     EnsureLoaded
-    Set App_IPeriodQueryService_GetModel = Inf_PeriodModelFactory.Create(This.Row)
+    Set App_IPeriodQueryService_GetAll = Inf_PeriodModelFactory.Create(This.Row)
 End Function
 
 Private Sub App_IPeriodQueryService_Rebuild()

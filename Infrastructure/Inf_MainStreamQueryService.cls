@@ -26,9 +26,9 @@ Private Sub EnsureLoaded()
     Set This.Rows = This.Persistence.ReadAll
 End Sub
 
-Private Function App_IMainStreamQueryService_GetModel() As App_MainStreamReadModel
+Private Function App_IMainStreamQueryService_GetAll() As App_MainStreamReadModel
     EnsureLoaded
-    Set App_IMainStreamQueryService_GetModel = Inf_MainStreamModelFactory.Create(This.Rows)
+    Set App_IMainStreamQueryService_GetAll = Inf_MainStreamModelFactory.Create(This.Rows)
 End Function
 
 Private Sub App_IMainStreamQueryService_Rebuild()

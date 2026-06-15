@@ -10,9 +10,9 @@ Attribute VB_Exposed = False
 '@Folder("Domain.ValueObject")
 Option Explicit
 
-Public Enum Dom_GenderTypePolicy
-    Male = 1
-    Female
+Public Enum Dom_GenderTypeCode
+    MaleCode = 1
+    FemaleCode
 End Enum
 
 Private Type Member
@@ -21,8 +21,7 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Value As Long)
-    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_Gender", "«•ÊŒ^‚Í0ˆÈã‚Å‚ ‚é•K—v‚ª‚ ‚è‚Ü‚·B"
+Public Sub Initialize(ByVal Value As Dom_GenderTypeCode)
     This.Value = Value
 End Sub
 

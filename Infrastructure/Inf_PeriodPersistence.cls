@@ -31,14 +31,14 @@ Public Function ReadAll() As Inf_PeriodRow
 End Function
 
 Public Sub WriteAll(ByVal Row As Inf_PeriodRow)
-    Dim Headers As VBA.Collection
-    Set Headers = GetHeaders
-    Dim Body As VBA.Collection
-    Set Body = GroupByRecord(Row)
-    Dim RawRows As Inf_RawRows
-    Set RawRows = BuildRows(Headers, Body)
     Dim FilePath As String
     FilePath = BuildFilePath
+    Dim Header() As Variant
+    Header = This.CSV.ReadAll(FilePath).GetHeader
+    Dim Body() As Variant
+    Body = BuildBody(Row)
+    Dim RawRows As Inf_RawRows
+    Set RawRows = BuildRows(Header, Body)
     This.CSV.WriteAll FilePath, RawRows
 End Sub
 
@@ -48,33 +48,28 @@ Public Sub Delete(ByVal Key As String)
     This.CSV.Delete FilePath, Key
 End Sub
 
-Public Function GetHeaders() As Variant
-    Dim FilePath As String
-    FilePath = BuildFilePath
-    GetHeaders = This.CSV.ReadAll(FilePath).GetHeaders
+Private Function BuildBody(ByVal Row As Inf_PeriodRow) As Variant()
+    Dim Result() As Variant
+    ReDim Result(1 To 1, 1 To 1)
+    Result(1, 1) = CStr(Row.Value)
+    BuildBody = Result
 End Function
 
-Private Function GroupByRecord(ByVal Row As Inf_PeriodRow) As VBA.Collection
-    Dim Records As VBA.Collection
-    Set Records = New VBA.Collection
-    Dim Fields As VBA.Collection
-    Set Fields = New VBA.Collection
-    Fields.Add Row.Value
-    Records.Add Fields
-    Set GroupByRecord = Records
-End Function
-
-Private Function BuildRows(ByVal Headers As VBA.Collection, ByVal Body As VBA.Collection) As Inf_RawRows
+Private Function BuildRows(ByRef Header() As Variant, ByRef Body() As Variant) As Inf_RawRows
     Dim Result As Inf_RawRows
     Set Result = New Inf_RawRows
-    Dim C As Long
-    For C = 1 To Headers.Count
-        Result.AddRow Headers.Item(C)
+    Dim i As Long
+    For i = LBound(Header) To UBound(Header)
+        Result.AddRow Header(i)
     Next
     Result.AddRowsInternal
     Dim R As Long
-    For R = 1 To Body.Count
-        Result.AddRows Body.Item(R)
+    For R = LBound(Body) To UBound(Body)
+        Dim C As Long
+        For C = LBound(Body, 2) To UBound(Body, 2)
+            Result.AddRow Body(R, C)
+        Next
+        Result.AddRowsInternal
     Next
     Set BuildRows = Result
 End Function

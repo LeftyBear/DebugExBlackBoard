@@ -11,16 +11,6 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Const COLUMN_SPECIAL    As String = "“ÁŽx"
-Private Const MODEL_MAIN        As String = "Main"
-Private Const MODEL_SPECIAL     As String = "Special"
-
-Public Property Get MainKey() As String
-    MainKey = MODEL_MAIN
-End Property
-
-Public Property Get SpecialKey() As String
-    SpecialKey = MODEL_SPECIAL
-End Property
 
 Public Function ToRaw(ByVal TypeCode As Dom_StreamType) As String
     If TypeCode.IsMain Then
@@ -31,25 +21,15 @@ Public Function ToRaw(ByVal TypeCode As Dom_StreamType) As String
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_StreamType
-    '@Ignore SelfAssignedDeclaration
-    Dim GradeMapper As New Inf_GradeMapper
+    Dim TypeCode As Dom_StreamTypeCode
+    Dim GradeMapper As Inf_GradeMapper
+    Set GradeMapper = New Inf_GradeMapper
     If 0 < VBA.InStr(1, Raw, GradeMapper.ColumnName) Then
-        Dim TypeCode As Long
-        TypeCode = Dom_StreamTypePolicy.Main
+        TypeCode = MainCode
     ElseIf 0 < VBA.InStr(1, Raw, COLUMN_SPECIAL) Then
-        TypeCode = Dom_StreamTypePolicy.Special
+        TypeCode = SpecialCode
     Else
         Exit Function
     End If
     Set ToDomain = Dom_ValueObjectFactory.CreateStreamType(TypeCode)
-End Function
-
-Public Function ToModel(ByVal Raw As String) As String
-    '@Ignore SelfAssignedDeclaration
-    Dim GradeMapper As New Inf_GradeMapper
-    If 0 < VBA.InStr(1, Raw, GradeMapper.ColumnName) Then
-        ToModel = MODEL_MAIN
-    ElseIf 0 < VBA.InStr(1, Raw, COLUMN_SPECIAL) Then
-        ToModel = MODEL_SPECIAL
-    End If
 End Function

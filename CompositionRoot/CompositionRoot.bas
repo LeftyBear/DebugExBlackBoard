@@ -7,7 +7,7 @@ Public Sub Boot()
     'ErrorLogger -----------------------------------------------------------
     Dim LogFilePath As String
     LogFilePath = BuildLogFilePath
-    If VBA.Len(VBA.Dir(LogFilePath)) = 0 Then Err.Raise InfErrNotFoundFile, "CompositionRoot", "File not found: " & LogFilePath : Exit Sub
+    If VBA.Len(VBA.Dir(LogFilePath)) = 0 Then Err.Raise InfErrNotFoundFile, "CompositionRoot", "File not found: " & LogFilePath: Exit Sub
     Dim Logger As App_ILogPersistence
     Set Logger = CreateLogger(LogFilePath)
     On Error GoTo ErrHandle
@@ -55,8 +55,8 @@ Public Sub Boot()
     'Presenter -------------------------------------------------------------
     Dim PreDTO As App_PresenterDTO
     Set PreDTO = New App_PresenterDTO
-    Set PreDTO.PeriodPre = New Pre_DailyPeriodPresenter
-    Set PreDTO.SchedulePre = New Pre_DailySchedulePresenter
+    Set PreDTO.PeriodPre = New Pre_PeriodPresenter
+    Set PreDTO.SchedulePre = New Pre_SchedulePresenter
     'UseCaseFactory --------------------------------------------------------
     Dim BaseUseCase As App_BaseUseCase
     Set BaseUseCase = New App_BaseUseCase
@@ -87,9 +87,9 @@ End Function
 
 Private Function CreateLogger(ByVal LogFilePath As String) As App_ILogPersistence
     Dim Result As App_ILogPersistence
-    Dim TypeCode As Inf_EnvironmentTypePolicy
+    Dim TypeCode As Inf_EnvironmentTypeCode
     TypeCode = Inf_Environment.GetEnvironmentTypeCode
-    If TypeCode = Inf_EnvironmentTypePolicy.ReleaseMode Then
+    If TypeCode = Inf_EnvironmentTypeCode.ReleaseMode Then
         Dim Persistence As Inf_LogPersistence
         Set Persistence = New Inf_LogPersistence
         Persistence.Initialize LogFilePath

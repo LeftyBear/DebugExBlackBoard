@@ -2,7 +2,6 @@ Attribute VB_Name = "App_Utility"
 '@Folder "Application.Service"
 Option Explicit
 Option Private Module
-
 Private Const WIDE_SPACE As String = "Å@"
 
 Public Function ParseSearchKeywords(ByVal InputText As String) As VBA.Collection

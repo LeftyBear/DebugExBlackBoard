@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Application.QueryServiceInterface")
 Option Explicit
 
-Public Function GetModel() As App_MainStreamReadModel
+Public Function GetAll() As App_MainStreamReadModel
 End Function
 
 Public Sub Rebuild()

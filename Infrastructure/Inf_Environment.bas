@@ -5,15 +5,15 @@ Option Private Module
 'ŠJ”­’†‚Í IsDebug = True ‚Æ‚·‚é
 Private Const IsDebug As Boolean = True
 
-Public Enum Inf_EnvironmentTypePolicy
+Public Enum Inf_EnvironmentTypeCode
     DebugMode = 1
     ReleaseMode
 End Enum
 
-Public Function GetEnvironmentTypeCode() As Inf_EnvironmentTypePolicy
+Public Function GetEnvironmentTypeCode() As Inf_EnvironmentTypeCode
     If IsDebug Then
-        GetEnvironmentTypeCode = Inf_EnvironmentTypePolicy.DebugMode
+        GetEnvironmentTypeCode = DebugMode
     Else
-        GetEnvironmentTypeCode = Inf_EnvironmentTypePolicy.ReleaseMode
+        GetEnvironmentTypeCode = ReleaseMode
     End If
 End Function

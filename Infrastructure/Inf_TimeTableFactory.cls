@@ -16,8 +16,8 @@ End Type
 
 Private This As Member
 
-Private Sub Class_Initialize()
-    Set This.Mapper = New Inf_TimeTableIDMapper
+Public Sub Inject(ByVal Mapper As Inf_TimeTableIDMapper)
+    Set This.Mapper = Mapper
 End Sub
 
 Public Function Create(ByVal Row As Inf_ClassHourRow) As Dom_TimeTable

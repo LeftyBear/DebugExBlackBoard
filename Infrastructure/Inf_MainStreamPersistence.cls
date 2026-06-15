@@ -31,14 +31,14 @@ Public Function ReadAll() As Inf_MainStreamRows
 End Function
 
 Public Sub WriteAll(ByVal Rows As Inf_MainStreamRows)
-    Dim Headers As VBA.Collection
-    Set Headers = GetHeaders
-    Dim Body As VBA.Collection
-    Set Body = GetValues(Rows)
-    Dim RawRows As Inf_RawRows
-    Set RawRows = BuildRows(Headers, Body)
     Dim FilePath As String
     FilePath = BuildFilePath
+    Dim Header() As Variant
+    Header = This.CSV.ReadAll(FilePath).GetHeader
+    Dim Body() As Variant
+    Body = BuildBody(Rows)
+    Dim RawRows As Inf_RawRows
+    Set RawRows = BuildRows(Header, Body)
     This.CSV.WriteAll FilePath, RawRows
 End Sub
 
@@ -48,42 +48,35 @@ Public Sub Delete(ByVal Key As String)
     This.CSV.Delete FilePath, Key
 End Sub
 
-Public Function GetHeaders() As Variant
-    Dim FilePath As String
-    FilePath = BuildFilePath
-    GetHeaders = This.CSV.ReadAll(FilePath).GetHeaders
-End Function
-
-Private Function GetValues(ByVal Rows As Inf_MainStreamRows) As VBA.Collection
-    Dim Records As VBA.Collection
-    Set Records = New VBA.Collection
-    Dim Fields As VBA.Collection
-    Set Fields = New VBA.Collection
+Private Function BuildBody(ByVal Rows As Inf_MainStreamRows) As Variant()
+    Dim Result() As Variant
+    ReDim Result(1 To 1, 1 To Rows.Count)
     Dim i As Long
     For i = 1 To Rows.Count
-        Dim Row As Inf_MainStreamRow
-        Set Row = Rows.Item(i)
-        If Row.UpperGrade <> vbNullString Then
-            Fields.Add CStr(Row.UpperGrade)
-        ElseIf Row.UpperClassNo <> vbNullString Then
-            Fields.Add CStr(Row.UpperClassNo)
+        If 0 < Rows.Item(i).UpperGrade Then
+            Result(1, i) = CStr(Rows.Item(i).UpperGrade)
+        ElseIf 0 < Rows.Item(i).UpperClassNo Then
+            Result(1, i) = CStr(Rows.Item(i).UpperClassNo)
         End If
     Next
-    Records.Add Fields
-    Set GetValues = Records
+    BuildBody = Result
 End Function
 
-Private Function BuildRows(ByVal Headers As VBA.Collection, ByVal Values As VBA.Collection) As Inf_RawRows
+Private Function BuildRows(ByRef Header() As Variant, ByRef Body() As Variant) As Inf_RawRows
     Dim Result As Inf_RawRows
     Set Result = New Inf_RawRows
-    Dim C As Long
-    For C = 1 To Headers.Count
-        Result.AddRow Headers.Item(C)
+    Dim i As Long
+    For i = LBound(Header) To UBound(Header)
+        Result.AddRow Header(i)
     Next
     Result.AddRowsInternal
     Dim R As Long
-    For R = 1 To Values.Count
-        Result.AddRows Values.Item(R)
+    For R = LBound(Body) To UBound(Body)
+        Dim C As Long
+        For C = LBound(Body, 2) To UBound(Body, 2)
+            Result.AddRow Body(R, C)
+        Next
+        Result.AddRowsInternal
     Next
     Set BuildRows = Result
 End Function

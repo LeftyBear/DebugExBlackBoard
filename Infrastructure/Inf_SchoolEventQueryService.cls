@@ -23,12 +23,12 @@ End Sub
 
 Private Sub EnsureLoaded()
     If Not This.Rows Is Nothing Then Exit Sub
-    BuildRow
-End Sub
-
-Private Sub BuildRow()
     Dim Rows As Inf_SchoolEventRows
     Set Rows = This.Persistence.ReadAll
+    BuildRow Rows
+End Sub
+
+Private Sub BuildRow(ByVal Rows As Inf_SchoolEventRows)
     Dim i As Long
     For i = 1 To Rows.Count
         This.Rows.Add Rows.Item(i)
@@ -41,5 +41,7 @@ Private Function App_ISchoolEventQueryService_GetAll() As App_SchoolEventReadMod
 End Function
 
 Private Sub App_ISchoolEventQueryService_Rebuild()
-    BuildRow
+    Dim Rows As Inf_SchoolEventRows
+    Set Rows = This.Persistence.ReadAll
+    BuildRow Rows
 End Sub

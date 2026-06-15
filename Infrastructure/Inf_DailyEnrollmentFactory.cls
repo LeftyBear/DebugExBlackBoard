@@ -18,6 +18,7 @@ Private This As Member
 
 Private Sub Class_Initialize()
     Set This.Factory = New Inf_EnrollmentFactory
+    This.Factory.Inject New Inf_EnrollmentIDMapper
 End Sub
 
 Public Function Create(ByVal DailyRows As Inf_EnrollmentRows) As Dom_DailyEnrollments

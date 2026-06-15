@@ -2,19 +2,19 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "App_TimeTableFormatter"
+Attribute VB_Name = "Pre_TimeTableFormatter"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Service.Formatter")
+'@Folder("Presentation.Service.Formatter")
 Option Explicit
 
-Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal KeyCode As App_ClassHourKeyCode, ByVal PeriodModel As App_PeriodReadModel, ByVal MainModel As App_MainStreamReadModel) As Variant()
-    Dim Resolver As App_ClassHourTypeModelResolver
-    Set Resolver = New App_ClassHourTypeModelResolver
-    Dim Key As String
-    Key = Resolver.ParseKey(KeyCode)
+Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal KeyCode As App_ClassHourTypeKeyCode, ByVal PeriodModel As App_PeriodReadModel, ByVal MainModel As App_MainStreamReadModel) As Variant()
+    Dim Resolver As App_ClassHourTypeResolver
+    Set Resolver = New App_ClassHourTypeResolver
+    Dim TypeKey As String
+    TypeKey = Resolver.ParseKey(KeyCode)
     Dim PeriodCount As Long
     PeriodCount = PeriodModel.Value
     Dim GradeCount As Long
@@ -22,12 +22,12 @@ Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal KeyCode As
     Dim Header() As Variant
     Header = BuildHeader(GradeCount)
     Dim MarkTable() As Long
-    MarkTable = BuildMarkTable(Models, Key, PeriodCount, GradeCount)
+    MarkTable = BuildMarkTable(Models, TypeKey, PeriodCount, GradeCount)
     Dim CountedTable() As Long
     CountedTable = CountMark(MarkTable)
     Dim Body() As Variant
     Body = BuildBody(CountedTable)
-    Format = BuildTable(Header, Body)
+    Format = Pre_ArrayUtility.MergeArray(Header, Body)
 End Function
 
 Private Function BuildHeader(ByVal GradeCount As Long) As Variant()
@@ -57,32 +57,14 @@ Private Function BuildBody(ByRef Table() As Long) As Variant()
     BuildBody = Result
 End Function
 
-Private Function BuildTable(ByRef Header() As Variant, ByRef Body() As Variant) As Variant()
-    Dim Result() As Variant
-    ReDim Result(1 To UBound(Header) + UBound(Body), LBound(Header, 2) To UBound(Header, 2))
-    Dim R As Long
-    For R = 1 To UBound(Header)
-        Dim C As Long
-        For C = LBound(Header, 2) To UBound(Header, 2)
-            Result(R, C) = Header(R, C)
-        Next
-    Next
-    For R = UBound(Header) + 1 To UBound(Body)
-        For C = LBound(Header, 2) To UBound(Header, 2)
-            Result(R, C) = Body(R, C)
-        Next
-    Next
-    BuildTable = Result
-End Function
-
-Private Function BuildMarkTable(ByVal Models As App_ClassHourReadModels, ByVal Key As String, ByVal PeriodCount As Long, ByVal GradeCount As Long) As Long()
+Private Function BuildMarkTable(ByVal Models As App_ClassHourReadModels, ByVal TypeKey As String, ByVal PeriodCount As Long, ByVal GradeCount As Long) As Long()
     Dim Result() As Long
     ReDim Result(1 To PeriodCount, 1 To GradeCount)
     Dim R As Long
     For R = 1 To PeriodCount
         Dim i As Long
         For i = 1 To Models.TimeTableCount
-            If Models.TimeTableItem(i).Key = Key Then
+            If Models.TimeTableItem(i).TypeKey = TypeKey Then
                 If Models.TimeTableItem(i).Period = R Then
                     Result(R, Models.TimeTableItem(i).Grade) = Models.TimeTableItem(i).Mark
                 End If

@@ -1,6 +1,7 @@
 Attribute VB_Name = "Pre_PresenterResultFactory"
 '@Folder("Presentation.ViewModelFactory")
 Option Explicit
+Option Private Module
 
 Public Function CreateSuccess() As App_UseCaseResult
     Dim Result As App_UseCaseResult

@@ -7,12 +7,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Folder("Application.Service.Formatter")
+'@Folder("Presentation.Service.Formatter")
 Option Explicit
 
-Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal KeyCode As App_ClassHourKeyCode, ByVal SubjectModels As App_SubjectReadModels, ByVal MainModel As App_MainStreamReadModel) As Variant()
-    Dim Resolver As App_ClassHourTypeModelResolver
-    Set Resolver = New App_ClassHourTypeModelResolver
+Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal KeyCode As App_ClassHourTypeKeyCode, ByVal SubjectModels As App_SubjectReadModels, ByVal MainModel As App_MainStreamReadModel) As Variant()
+    Dim Resolver As App_ClassHourTypeResolver
+    Set Resolver = New App_ClassHourTypeResolver
     Dim Key As String
     Key = Resolver.ParseKey(KeyCode)
     Dim GradeCount As Long
@@ -25,7 +25,7 @@ Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal KeyCode As
     TotalizedTable = TotalizeValue(Models, Key, ValueTable)
     Dim Body() As Variant
     Body = BuildBody(TotalizedTable, SubjectModels)
-    Format = BuildTable(Header, Body)
+    Format = Pre_ArrayUtility.MergeArray(Header, Body)
 End Function
 
 Private Function BuildHeader(ByVal GradeCount As Long) As Variant()
@@ -53,24 +53,6 @@ Private Function BuildBody(ByRef Table() As Long, ByVal SubjectModels As App_Sub
         Next
     Next
     BuildBody = Result
-End Function
-
-Private Function BuildTable(ByRef Header() As Variant, ByRef Body() As Variant) As Variant()
-    Dim Result() As Variant
-    ReDim Result(1 To UBound(Header) + UBound(Body), LBound(Header, 2) To UBound(Header, 2))
-    Dim R As Long
-    For R = 1 To UBound(Header)
-        Dim C As Long
-        For C = LBound(Header, 2) To UBound(Header, 2)
-            Result(R, C) = Header(R, C)
-        Next
-    Next
-    For R = UBound(Header) + 1 To UBound(Body)
-        For C = LBound(Header, 2) To UBound(Header, 2)
-            Result(R, C) = Body(R, C)
-        Next
-    Next
-    BuildTable = Result
 End Function
 
 Private Function BuildValueTable(ByVal Models As App_ClassHourReadModels, ByVal Key As String, ByVal SubjectModels As App_SubjectReadModels, ByVal GradeCount As Long) As Long()

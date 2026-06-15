@@ -4,13 +4,13 @@ Option Explicit
 Option Private Module
 Private Const COLUMN_DATE As String = "“ú•t"
 
-Public Function Create(ByRef Headers As Variant) As Inf_ClassHourHeaderMap
+Public Function Create(ByRef Header As Variant) As Inf_ClassHourHeaderMap
     Dim Result As Inf_ClassHourHeaderMap
     Set Result = New Inf_ClassHourHeaderMap
     Dim C As Long
-    For C = LBound(Headers) To UBound(Headers)
+    For C = LBound(Header) To UBound(Header)
         Dim Column As Inf_ClassHourColumn
-        Set Column = CreateColumn(Headers(C))
+        Set Column = CreateColumn(Header(C))
         Result.Add CStr(C), Column
     Next
     Set Create = Result

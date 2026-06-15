@@ -10,9 +10,9 @@ Attribute VB_Exposed = False
 '@Folder("Domain.ValueObject")
 Option Explicit
 
-Public Enum Dom_StreamTypePolicy
-    Main = 1
-    Special
+Public Enum Dom_StreamTypeCode
+    MainCode = 1
+    SpecialCode
 End Enum
 
 Private Type Member
@@ -21,17 +21,20 @@ End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal Value As Long)
-    If Value < 0 Then Err.Raise DomErrNegativeNumber, "Dom_StreamType", "学級型は0以上である必要があります。"
+Public Sub Initialize(ByVal Value As Dom_StreamTypeCode)
     This.Value = Value
 End Sub
 
+Public Function Value() As Long
+    Value = This.Value
+End Function
+
 Public Function IsMain() As Boolean
-    IsMain = (This.Value = Main)
+    IsMain = (This.Value = MainCode)
 End Function
 
 Public Function IsSpecial() As Boolean
-    IsSpecial = (This.Value = Special)
+    IsSpecial = (This.Value = SpecialCode)
 End Function
 
 Public Function Equals(ByVal Other As Dom_StreamType) As Boolean

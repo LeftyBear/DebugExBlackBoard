@@ -7,7 +7,7 @@ Public Function Create(ByVal RawRows As Inf_RawRows) As Inf_ScheduleRows
     Dim Result As Inf_ScheduleRows
     Set Result = New Inf_ScheduleRows
     Dim Map As Inf_ScheduleHeaderMap
-    Set Map = Inf_ScheduleHeaderMapFactory.Create(RawRows.GetHeaders)
+    Set Map = Inf_ScheduleHeaderMapFactory.Create(RawRows.GetHeader)
     Dim R As Long
     For R = 2 To RawRows.RowsCount
         Dim C As Long

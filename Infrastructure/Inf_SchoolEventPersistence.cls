@@ -31,14 +31,14 @@ Public Function ReadAll() As Inf_SchoolEventRows
 End Function
 
 Public Sub WriteAll(ByVal Rows As Inf_SchoolEventRows)
-    Dim Headers() As Variant
-    Headers = GetHeaders
-    Dim Body As VBA.Collection
-    Set Body = GroupByRecord(Rows)
-    Dim RawRows As Inf_RawRows
-    Set RawRows = BuildRows(Headers, Body)
     Dim FilePath As String
     FilePath = BuildFilePath
+    Dim Header() As Variant
+    Header = This.CSV.ReadAll(FilePath).GetHeader
+    Dim Body() As Variant
+    Body = BuildBody(Rows)
+    Dim RawRows As Inf_RawRows
+    Set RawRows = BuildRows(Header, Body)
     This.CSV.WriteAll FilePath, RawRows
 End Sub
 
@@ -48,38 +48,31 @@ Public Sub Delete(ByVal Key As String)
     This.CSV.Delete FilePath, Key
 End Sub
 
-Public Function GetHeaders() As Variant()
-    Dim FilePath As String
-    FilePath = BuildFilePath
-    GetHeaders = This.CSV.ReadAll(FilePath).GetHeaders
-End Function
-
-Private Function GroupByRecord(ByVal Rows As Inf_SchoolEventRows) As VBA.Collection
-    Dim Records As VBA.Collection
-    Set Records = New VBA.Collection
-    Dim Fields As VBA.Collection
-    Set Fields = New VBA.Collection
+Private Function BuildBody(ByVal Rows As Inf_SchoolEventRows) As Variant()
+    Dim Result() As Variant
+    ReDim Result(1 To Rows.Count, 1 To 1)
     Dim i As Long
     For i = 1 To Rows.Count
-        Dim Row As Inf_SchoolEventRow
-        Set Row = Rows.Item(i)
-        Fields.Add Row.Name
-        Records.Add Fields
-        Set Fields = New VBA.Collection
+        Result(i, 1) = Rows.Item(i).Name
     Next
-    Set GroupByRecord = Records
+    BuildBody = Result
 End Function
 
-Private Function BuildRows(ByRef Headers As Variant, ByVal Body As VBA.Collection) As Inf_RawRows
+Private Function BuildRows(ByRef Header() As Variant, ByRef Body() As Variant) As Inf_RawRows
     Dim Result As Inf_RawRows
     Set Result = New Inf_RawRows
     Dim i As Long
-    For i = LBound(Headers) To UBound(Headers)
-        Result.AddRow Headers(i)
+    For i = LBound(Header) To UBound(Header)
+        Result.AddRow Header(i)
     Next
     Result.AddRowsInternal
-    For i = 1 To Body.Count
-        Result.AddRows Body.Item(i)
+    Dim R As Long
+    For R = LBound(Body) To UBound(Body)
+        Dim C As Long
+        For C = LBound(Body, 2) To UBound(Body, 2)
+            Result.AddRow Body(R, C)
+        Next
+        Result.AddRowsInternal
     Next
     Set BuildRows = Result
 End Function

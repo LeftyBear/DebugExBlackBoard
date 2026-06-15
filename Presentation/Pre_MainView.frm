@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 '@Folder "Presentation.View"
 Option Explicit
 Implements Pre_IViewCallback
@@ -37,7 +38,7 @@ Public Sub OnChangeDate(ByVal SelectedDate As Date)
 End Sub
 
 Private Sub ShowDailyPeriod(ByVal SelectedDate As Date)
-    Dim UC As App_ImportDailyPeriodUseCase
+    Dim UC As App_ImportPeriodUseCase
     Set UC = This.UserUCFactory.CreateImportDailyPeriodUseCase
     UC.SetDate SelectedDate
     This.Base.Execute Me, UC
@@ -58,7 +59,7 @@ Private Sub NotifyBusinessError(ByVal Message As String)
 End Sub
 
 Private Sub NotifySystemError()
-    VBA.MsgBox "予期しないエラーが発生したのでログに書き出しました。", vbExclamation, "システムエラー"
+    VBA.MsgBox "予期しないエラーが発生しました。", vbExclamation, "システムエラー"
 End Sub
 
 Private Sub Pre_IViewCallback_LogSystemError(ByVal Error As VBA.ErrObject)

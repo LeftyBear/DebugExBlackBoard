@@ -16,8 +16,8 @@ End Type
 
 Private This As Member
 
-Private Sub Class_Initialize()
-    Set This.Mapper = New Inf_EnrollmentIDMapper
+Public Sub Inject(ByVal Mapper As Inf_EnrollmentIDMapper)
+    Set This.Mapper = Mapper
 End Sub
 
 Public Function Create(ByVal Row As Inf_EnrollmentRow) As Dom_Enrollment

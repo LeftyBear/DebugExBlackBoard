@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "App_ImportDailyPeriodUseCase"
+Attribute VB_Name = "App_ImportPeriodUseCase"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -16,7 +16,7 @@ Private Type Member
     Base            As App_BaseUseCase
     Presenter       As App_IDailyPeriodPresenter
     TargetDate      As Date
-    ViewModel()     As Variant
+    ViewModel       As Pre_PeriodViewModel
 End Type
 
 Private This As Member
@@ -37,10 +37,14 @@ Public Property Get ViewModel() As Variant()
 End Property
 
 Private Sub App_IUseCaseCallback_ExecuteCore()
-    If This.TargetDate = 0 Then Err.Raise AppErrNotSetVariable, "App_ImportDailyPeriodUseCase", "TargetDate is not set."
-    Dim ClassHourReadModels As App_ClassHourReadModels
-    Set ClassHourReadModels = This.ClassHourQS.GetByDate(This.TargetDate)
-    Dim MainStreamReadModel As App_MainStreamReadModel
-    Set MainStreamReadModel = This.MainStreamQS.GetModel
-    This.ViewModel = This.Presenter.CreateViewModel(ClassHourReadModels, MainStreamReadModel)
+    If This.TargetDate = 0 Then Err.Raise AppErrNotSetVariable, "App_ImportPeriodUseCase", "TargetDate is not set."
+    Dim ReadModels As App_ClassHourReadModels
+    Set ReadModels = This.ClassHourQS.GetByDate(This.TargetDate)
+    Dim MainStream As App_MainStreamReadModel
+    Set MainStream = This.MainStreamQS.GetAll
+    Dim Calculator As App_PeriodCalculator
+    Set Calculator = New App_PeriodCalculator
+    Dim Periods As App_Periods
+    Set Periods = Calculator.CountPeriodOfGrade(ReadModels, ExeKeyCode)
+    This.ViewModel = This.Presenter.CreateViewModel(Periods, MainStream.UpperGrade)
 End Sub

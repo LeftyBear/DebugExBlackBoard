@@ -10,5 +10,5 @@ Attribute VB_Exposed = False
 '@Folder("Application.Interface")
 Option Explicit
 
-Public Function CreateViewModel(ByVal ClassHourReadModels As App_ClassHourReadModels, ByVal MainStreamReadModel As App_MainStreamReadModel) As Variant()
+Public Function CreateViewModel(ByVal Periods As App_Periods, ByVal GradeCount As Long) As Pre_PeriodViewModel
 End Function

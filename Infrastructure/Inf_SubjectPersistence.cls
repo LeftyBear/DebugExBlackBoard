@@ -31,14 +31,14 @@ Public Function ReadAll() As Inf_SubjectRows
 End Function
 
 Public Sub WriteAll(ByVal Rows As Inf_SubjectRows)
-    Dim Header() As Variant
-    Header = GetHeaders
-    Dim Body As VBA.Collection
-    Set Body = GroupByRecord(Rows)
-    Dim RawRows As Inf_RawRows
-    Set RawRows = BuildRows(Header, Body)
     Dim FilePath As String
     FilePath = BuildFilePath
+    Dim Header() As Variant
+    Header = This.CSV.ReadAll(FilePath).GetHeader
+    Dim Body() As Variant
+    Body = BuildBody(Rows)
+    Dim RawRows As Inf_RawRows
+    Set RawRows = BuildRows(Header, Body)
     This.CSV.WriteAll FilePath, RawRows
 End Sub
 
@@ -48,37 +48,23 @@ Public Sub Delete(ByVal Key As String)
     This.CSV.Delete FilePath, Key
 End Sub
 
-Public Function GetHeaders() As Variant()
-    Dim FilePath As String
-    FilePath = BuildFilePath
-    GetHeaders = This.CSV.ReadAll(FilePath).GetHeaders
-End Function
-
-Private Function GroupByRecord(ByVal Rows As Inf_SubjectRows) As VBA.Collection
-    Dim Records As VBA.Collection
-    Set Records = New VBA.Collection
-    Dim Fields As VBA.Collection
-    Set Fields = New VBA.Collection
+Private Function BuildBody(ByVal Rows As Inf_SubjectRows) As Variant()
+    Dim Result() As Variant
+    ReDim Result(1 To Rows.Count, 1 To 1)
     Dim i As Long
     For i = 1 To Rows.Count
-        Dim Row As Inf_SubjectRow
-        Set Row = Rows.Item(i)
-        If Row.Name <> vbNullString Then
-            Fields.Add Row.Name
-        ElseIf Row.TargetGrade <> vbNullString Then
-            Fields.Add Row.TargetGrade
-        ElseIf Row.Mark <> vbNullString Then
-            Fields.Add Row.Mark
-        End If
-        If Fields.Count = 3 Then
-            Records.Add Fields
-            Set Fields = New VBA.Collection
+        If Rows.Item(i).Name <> vbNullString Then
+            Result(i, 1) = Rows.Item(i).Name
+        ElseIf Rows.Item(i).TargetGrade <> vbNullString Then
+            Result(i, 1) = Rows.Item(i).TargetGrade
+        ElseIf Rows.Item(i).Mark <> vbNullString Then
+            Result(i, 1) = Rows.Item(i).Mark
         End If
     Next
-    Set GroupByRecord = Records
+    BuildBody = Result
 End Function
 
-Private Function BuildRows(ByRef Header() As Variant, ByVal Body As VBA.Collection) As Inf_RawRows
+Private Function BuildRows(ByRef Header() As Variant, ByRef Body() As Variant) As Inf_RawRows
     Dim Result As Inf_RawRows
     Set Result = New Inf_RawRows
     Dim i As Long
@@ -87,8 +73,12 @@ Private Function BuildRows(ByRef Header() As Variant, ByVal Body As VBA.Collecti
     Next
     Result.AddRowsInternal
     Dim R As Long
-    For R = 1 To Body.Count
-        Result.AddRows Body.Item(R)
+    For R = LBound(Body) To UBound(Body)
+        Dim C As Long
+        For C = LBound(Body, 2) To UBound(Body, 2)
+            Result.AddRow Body(R, C)
+        Next
+        Result.AddRowsInternal
     Next
     Set BuildRows = Result
 End Function

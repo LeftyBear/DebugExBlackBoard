@@ -11,9 +11,9 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements Dom_IClassHourRepository
 Private Type Member
-    Persistence     As Inf_ClassHourPersistence
-    ClassHourList   As Scripting.Dictionary
-    DateCache       As VBA.Collection
+    Persistence As Inf_ClassHourPersistence
+    DateIndex   As Scripting.Dictionary
+    DateCache   As VBA.Collection
 End Type
 
 Private This As Member
@@ -23,17 +23,17 @@ Friend Sub Inject(ByVal Persistence As Inf_ClassHourPersistence)
 End Sub
 
 Private Sub EnsureLoaded(ByVal SchoolYear As Long)
-    If Not This.ClassHourList Is Nothing Then Exit Sub
-    Set This.ClassHourList = New Scripting.Dictionary
+    If Not This.DateIndex Is Nothing Then Exit Sub
+    Set This.DateIndex = New Scripting.Dictionary
     Set This.DateCache = New VBA.Collection
     Dim Rows As Inf_ClassHourRows
     Set Rows = This.Persistence.ReadAll(SchoolYear)
     Dim RowList As Scripting.Dictionary
     Set RowList = GroupByDate(Rows)
-    BuildClassHourList RowList
+    BuildDateIndex RowList
 End Sub
 
-Private Sub BuildClassHourList(ByVal RowList As Scripting.Dictionary)
+Private Sub BuildDateIndex(ByVal RowList As Scripting.Dictionary)
     Dim Factory As Inf_DailyClassHourFactory
     Set Factory = New Inf_DailyClassHourFactory
     Dim Key As Variant
@@ -41,7 +41,7 @@ Private Sub BuildClassHourList(ByVal RowList As Scripting.Dictionary)
         Dim Daily As Dom_DailyClassHours
         Set Daily = Factory.Create(RowList.Item(CStr(Key)))
         If Not Daily Is Nothing Then
-            This.ClassHourList.Add Key, Daily
+            This.DateIndex.Add Key, Daily
         End If
     Next
 End Sub
@@ -53,14 +53,14 @@ Private Sub ReplaceRow(ByVal Rows As Inf_ClassHourRows)
     For i = 1 To This.DateCache.Count
         Dim TargetDate As Date
         TargetDate = This.DateCache.Item(i)
-        Dim ClassHourList As Long
-        ClassHourList = Inf_DateUtility.DiffApr1st(TargetDate)
+        Dim DateIndex As Long
+        DateIndex = Inf_DateUtility.DiffApr1st(TargetDate)
         Dim BeginIndex As Long
-        BeginIndex = (ClassHourList - 1) * RowCount + 1
+        BeginIndex = (DateIndex - 1) * RowCount + 1
         Dim EndIndex As Long
         EndIndex = BeginIndex + RowCount - 1
         Dim Daily As Dom_DailyClassHours
-        Set Daily = This.ClassHourList.Item(CStr(TargetDate))
+        Set Daily = This.DateIndex.Item(CStr(TargetDate))
         ReplaceRowOfDaily BeginIndex, EndIndex, Rows, Daily
     Next
 End Sub
@@ -113,11 +113,11 @@ Private Function GroupByDate(ByVal Rows As Inf_ClassHourRows) As Scripting.Dicti
     For i = 1 To Rows.Count
         Dim Key As String
         Key = CStr(Rows.Item(i).NormDate)
-        If Not This.ClassHourList.Exists(Key) Then
+        If Not This.DateIndex.Exists(Key) Then
             Result.Add Key, New VBA.Collection
         End If
         Dim Items As VBA.Collection
-        Set Items = This.ClassHourList.Item(Key)
+        Set Items = This.DateIndex.Item(Key)
         Items.Add Rows.Item(i)
     Next
     Set GroupByDate = Result
@@ -137,8 +137,8 @@ Private Function Dom_IClassHourRepository_FindByDate(ByVal TargetDate As Date) A
     Dim SchoolYear As Long
     SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
     EnsureLoaded SchoolYear
-    If This.ClassHourList.Exists(CStr(TargetDate)) Then
-        Set Dom_IClassHourRepository_FindByDate = This.ClassHourList.Item(CStr(TargetDate))
+    If This.DateIndex.Exists(CStr(TargetDate)) Then
+        Set Dom_IClassHourRepository_FindByDate = This.DateIndex.Item(CStr(TargetDate))
     End If
 End Function
 
@@ -146,7 +146,7 @@ Private Sub Dom_IClassHourRepository_Replace(ByVal TargetDate As Date, ByVal New
     Dim SchoolYear As Long
     SchoolYear = Inf_DateUtility.GetSchoolYear(TargetDate)
     EnsureLoaded SchoolYear
-    Set This.ClassHourList.Item(CStr(TargetDate)) = NewAggregate
+    Set This.DateIndex.Item(CStr(TargetDate)) = NewAggregate
     This.DateCache.Add TargetDate
 End Sub
 

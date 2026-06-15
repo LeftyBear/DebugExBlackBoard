@@ -7,7 +7,7 @@ Public Function Create(ByVal RawRows As Inf_RawRows) As Inf_EnrollmentRows
     Dim Result As Inf_EnrollmentRows
     Set Result = New Inf_EnrollmentRows
     Dim Map As Inf_EnrollmentHeaderMap
-    Set Map = Inf_EnrollmentHeaderMapFactory.Create(RawRows.GetHeaders)
+    Set Map = Inf_EnrollmentHeaderMapFactory.Create(RawRows.GetHeader)
     Dim R As Long
     For R = 2 To RawRows.RowsCount
         Dim C As Long

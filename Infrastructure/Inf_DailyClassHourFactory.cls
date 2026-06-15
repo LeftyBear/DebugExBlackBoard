@@ -22,8 +22,10 @@ Private This As Member
 Private Sub Class_Initialize()
     Set This.ClassHourFactory = New Inf_ClassHourFactory
     Set This.ClassHourIDMapper = New Inf_ClassHourIDMapper
+    This.ClassHourFactory.Inject This.ClassHourIDMapper
     Set This.TimeTableFactory = New Inf_TimeTableFactory
     Set This.TimeTableIDMapper = New Inf_TimeTableIDMapper
+    This.TimeTableFactory.Inject This.TimeTableIDMapper
 End Sub
 
 Public Function Create(ByVal DailyRows As Inf_ClassHourRows) As Dom_DailyClassHours

@@ -59,7 +59,7 @@ Public Function CreateSubjectMark(ByVal Value As String) As Dom_SubjectMark
     Set CreateSubjectMark = VO
 End Function
 
-Public Function CreateStreamType(ByVal Value As Long) As Dom_StreamType
+Public Function CreateStreamType(ByVal Value As Dom_StreamTypeCode) As Dom_StreamType
     Dim VO As Dom_StreamType
     Set VO = New Dom_StreamType
     VO.Initialize Value
@@ -87,7 +87,7 @@ Public Function CreateClassNo(ByVal Value As Long) As Dom_ClassNo
     Set CreateClassNo = VO
 End Function
 
-Public Function CreateGender(ByVal Value As Long) As Dom_Gender
+Public Function CreateGender(ByVal Value As Dom_GenderTypeCode) As Dom_Gender
     Dim VO As Dom_Gender
     Set VO = New Dom_Gender
     VO.Initialize Value

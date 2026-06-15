@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "App_ClassHourTypeModelResolver"
+Attribute VB_Name = "App_ClassHourTypeResolver"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service.Resolver")
 Option Explicit
 
-Public Enum App_ClassHourKeyCode
+Public Enum App_ClassHourTypeKeyCode
     PlanKeyCode = 1
     ExeKeyCode
 End Enum
@@ -26,7 +26,7 @@ Public Function ToModel(ByVal ClassHourType As Dom_ClassHourType) As String
     End If
 End Function
 
-Public Function ParseKey(ByVal KeyCode As App_ClassHourKeyCode) As String
+Public Function ParseKey(ByVal KeyCode As App_ClassHourTypeKeyCode) As String
     If KeyCode = PlanKeyCode Then
         ParseKey = MODEL_PLAN
     ElseIf KeyCode = ExeKeyCode Then

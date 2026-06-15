@@ -13,8 +13,8 @@ Option Explicit
 Public Function Create(ByVal Entries As Dom_DailyClassHours) As App_ClassHourReadModels
     Dim Result As App_ClassHourReadModels
     Set Result = New App_ClassHourReadModels
-    Dim Resolver As App_ClassHourTypeModelResolver
-    Set Resolver = New App_ClassHourTypeModelResolver
+    Dim Resolver As App_ClassHourTypeResolver
+    Set Resolver = New App_ClassHourTypeResolver
     Dim i As Long
     For i = 1 To Entries.ClassHoursCount
         Dim ClassHourModel As App_ClassHourReadModel
@@ -32,7 +32,7 @@ Public Function Create(ByVal Entries As Dom_DailyClassHours) As App_ClassHourRea
         Set TimeTableModel = New App_TimeTableReadModel
         Dim TimeTable As Dom_TimeTable
         Set TimeTable = Entries.TimeTablesItem(i)
-        TimeTableModel.Key = Resolver.ToModel(TimeTable.ID.ClassHourType)
+        TimeTableModel.TypeKey = Resolver.ToModel(TimeTable.ID.ClassHourType)
         TimeTableModel.Period = TimeTable.ID.Period.Value
         TimeTableModel.Grade = TimeTable.ID.Grade.Value
         TimeTableModel.Mark = TimeTable.Value.Value

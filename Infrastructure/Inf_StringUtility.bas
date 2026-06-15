@@ -1,6 +1,7 @@
 Attribute VB_Name = "Inf_StringUtility"
 '@Folder("Infrastructure.Service")
 Option Explicit
+Option Private Module
 
 Public Function JoinByBackSlash(ParamArray Strings() As Variant) As String
     Dim i As Long

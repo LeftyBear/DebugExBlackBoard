@@ -28,15 +28,21 @@ Private Sub EnsureLoaded(ByVal SchoolYear As Long)
     Set This.DateCache = New VBA.Collection
     Dim Rows As Inf_ScheduleRows
     Set Rows = This.Persistence.ReadAll(SchoolYear)
-    
+    Dim RowList As Scripting.Dictionary
+    Set RowList = GroupByDate(Rows)
+    BuildDateIndex RowList
 End Sub
 
-Private Sub BuildDateIndex(ByVal Yearly As Dom_YearlySchedule)
-    Dim i As Long
-    For i = 1 To Yearly.Count
+Private Sub BuildDateIndex(ByVal RowList As Scripting.Dictionary)
+    Dim Factory As Inf_DailyScheduleFactory
+    Set Factory = New Inf_DailyScheduleFactory
+    Dim Key As Variant
+    For Each Key In RowList.Keys
         Dim Daily As Dom_DailySchedules
-        Set Daily = Yearly.Item(i)
-        This.DateIndex.Add Daily.DateID.ToKey, Daily
+        Set Daily = Factory.Create(RowList.Item(CStr(Key)))
+        If Not Daily Is Nothing Then
+            This.DateIndex.Add Key, Daily
+        End If
     Next
 End Sub
 
@@ -78,6 +84,23 @@ Private Sub ReplaceRowOfDailySchedule(ByVal Row As Inf_ScheduleRow, ByVal Daily 
         End If
     Next
 End Sub
+
+Private Function GroupByDate(ByVal Rows As Inf_ClassHourRows) As Scripting.Dictionary
+    Dim Result As Scripting.Dictionary
+    Set Result = New Scripting.Dictionary
+    Dim i As Long
+    For i = 1 To Rows.Count
+        Dim Key As String
+        Key = CStr(Rows.Item(i).NormDate)
+        If Not This.DateIndex.Exists(Key) Then
+            Result.Add Key, New VBA.Collection
+        End If
+        Dim Items As VBA.Collection
+        Set Items = This.DateIndex.Item(Key)
+        Items.Add Rows.Item(i)
+    Next
+    Set GroupByDate = Result
+End Function
 
 Private Function GetDailyRowCount(ByVal Rows As Inf_ScheduleRows) As Long
     Dim CurrentDate As Date
