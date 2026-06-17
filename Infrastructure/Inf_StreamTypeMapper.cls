@@ -21,8 +21,6 @@ Public Function ToRaw(ByVal StreamType As Dom_StreamType) As String
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_StreamType
-    Dim Mapper As Inf_GradeMapper
-    Set Mapper = New Inf_GradeMapper
     Dim TypeCode As Dom_StreamTypeCode
     If 0 < VBA.InStr(1, Raw, COLUMN_SPECIAL) Then
         TypeCode = SpecialCode

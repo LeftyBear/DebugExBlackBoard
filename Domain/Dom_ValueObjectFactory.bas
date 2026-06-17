@@ -87,6 +87,13 @@ Public Function CreateClassNo(ByVal Value As Long) As Dom_ClassNo
     Set CreateClassNo = VO
 End Function
 
+Public Function CreateClassName(ByVal Value As String) As Dom_ClassName
+    Dim VO As Dom_ClassName
+    Set VO = New Dom_ClassName
+    VO.Initialize Value
+    Set CreateClassName = VO
+End Function
+
 Public Function CreateGender(ByVal Value As Dom_GenderTypeCode) As Dom_Gender
     Dim VO As Dom_Gender
     Set VO = New Dom_Gender

@@ -85,7 +85,7 @@ Private Sub ReplaceRowOfDailySchedule(ByVal Row As Inf_ScheduleRow, ByVal Daily 
     Next
 End Sub
 
-Private Function GroupByDate(ByVal Rows As Inf_ClassHourRows) As Scripting.Dictionary
+Private Function GroupByDate(ByVal Rows As Inf_ScheduleRows) As Scripting.Dictionary
     Dim Result As Scripting.Dictionary
     Set Result = New Scripting.Dictionary
     Dim i As Long

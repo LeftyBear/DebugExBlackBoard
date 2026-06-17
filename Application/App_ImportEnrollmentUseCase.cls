@@ -81,4 +81,5 @@ Private Function GetTotals(ByVal ReadModels As App_EnrollmentReadModels, ByVal D
     Calculator.CalculateClassTotal ReadModels, DTO.SpecialKey, Result
     Calculator.CalculateGenderTotal ReadModels, DTO.SpecialKey, DTO.MaleKey, Result
     Calculator.CalculateGenderTotal ReadModels, DTO.SpecialKey, DTO.FemaleKey, Result
+    Set GetTotals = Result
 End Function

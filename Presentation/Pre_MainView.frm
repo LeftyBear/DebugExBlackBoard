@@ -13,8 +13,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
-
 '@Folder "Presentation.View"
 Option Explicit
 Implements Pre_IViewCallback
@@ -44,8 +42,8 @@ Private Sub ShowDailyPeriod(ByVal SelectedDate As Date)
     UC.SetDate SelectedDate
     This.Base.Execute Me, UC
     With Me.ListBox1
-        .ColumnCount = UBound(UC.ViewModel, 2)
-        .List = UC.ViewModel
+        .ColumnCount = UBound(UC.ViewModel.Table, 2)
+        .List = UC.ViewModel.Table
     End With
 End Sub
 

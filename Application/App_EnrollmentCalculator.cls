@@ -12,8 +12,6 @@ Option Explicit
 
 Public Sub CalculateGenderTotal(ByVal ReadModels As App_EnrollmentReadModels, ByVal StreamTypeKey As String, ByVal GenderKey As String, ByVal Totals As App_EnrollmentTotals)
     If ReadModels Is Nothing Then Exit Sub
-    Dim GenderResolver As App_GenderResolver
-    Set GenderResolver = New App_GenderResolver
     Dim FilterdModels As VBA.Collection
     Set FilterdModels = FilterByTypeAndGender(ReadModels, StreamTypeKey, GenderKey)
     Dim Model As App_EnrollmentReadModel

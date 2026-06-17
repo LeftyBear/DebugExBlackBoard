@@ -11,8 +11,8 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    Base        As App_BaseUseCase
-    RepoDTO     As App_RepositoryDTO
+    Base    As App_BaseUseCase
+    RepoDTO As App_RepositoryDTO
 End Type
 
 Private This As Member

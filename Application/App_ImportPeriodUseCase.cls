@@ -32,8 +32,8 @@ Public Sub SetDate(ByVal TargetDate As Date)
     This.TargetDate = TargetDate
 End Sub
 
-Public Property Get ViewModel() As Variant()
-    ViewModel = This.ViewModel
+Public Property Get ViewModel() As Pre_PeriodViewModel
+    Set ViewModel = This.ViewModel
 End Property
 
 Private Sub App_IUseCaseCallback_ExecuteCore()
@@ -46,5 +46,5 @@ Private Sub App_IUseCaseCallback_ExecuteCore()
     Set Calculator = New App_PeriodCalculator
     Dim Periods As App_Periods
     Set Periods = Calculator.CountPeriodOfGrade(ReadModels, ExeKeyCode)
-    This.ViewModel = This.Presenter.CreateViewModel(Periods, MainStream.UpperGrade)
+    Set This.ViewModel = This.Presenter.CreateViewModel(Periods, MainStream.UpperGrade)
 End Sub

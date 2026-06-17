@@ -17,7 +17,7 @@ End Type
 Private This As Member
 
 Public Sub Initialize(ByVal Value As String)
-    If Value = VbNullString Then Err.Raise DomErrOutOfRange, "Dom_ClassName", "学級名は文字列である必要があります。"
+    If Value = vbNullString Then Err.Raise DomErrOutOfRange, "Dom_ClassName", "学級名は文字列である必要があります。"
     This.Value = Value
 End Sub
 

@@ -24,10 +24,11 @@ Public Function Create(ByVal Entries As Dom_DailyEnrollments) As App_EnrollmentR
         Model.TypeKey = Resolver.ParseKey(Entry.ID.StreamType.Value)
         Model.Grade = Entry.ID.Grade.Value
         Model.ClassNo = Entry.ID.ClassNo.Value
+        Model.ClassName = Entry.ID.ClassName.Value
         Model.Gender = Entry.ID.Gender.Value
         Model.Value = Entry.Value.Value
-        Model.Transfer = Entry.Transfer
-        Model.Remarks = Entry.Remarks
+        Model.Transfer = CStr(Entry.Transfer.IsTrue)
+        Model.Remarks = Entry.Remarks.Value
         Result.Add Model
     Next
     Set Create = Result
