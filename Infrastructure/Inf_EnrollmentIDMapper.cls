@@ -36,9 +36,9 @@ Public Function ToRaw(ByVal ID As Dom_EnrollmentID) As String
         Grade = This.GradeMapper.ToRaw(ID.Grade)
         ToRaw = Grade & DELIMITER & ClassNo & DELIMITER & Gender
     ElseIf ID.IsSpecial Then
-        Dim TypeCode As String
-        TypeCode = This.TypeMapper.ToRaw(ID.StreamType)
-        ToRaw = TypeCode & DELIMITER & ClassNo & DELIMITER & Gender
+        Dim TypeString As String
+        TypeString = This.TypeMapper.ToRaw(ID.StreamType)
+        ToRaw = TypeString & DELIMITER & ID.ClassName & DELIMITER & Gender
     End If
 End Function
 
@@ -67,5 +67,5 @@ Public Function ToDomain(ByVal Raw As String) As Dom_EnrollmentID
             Set Gender = This.GenderMapper.ToDomain(Part)
         End If
     Next
-    Set ToDomain = Dom_EnrollmentIDFactory.Create(StreamType, Grade, ClassNo, Gender)
+    Set ToDomain = Dom_EnrollmentIDFactory.Create(StreamType, Grade, ClassNo, ClassName, Gender)
 End Function

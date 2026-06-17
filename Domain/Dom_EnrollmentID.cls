@@ -14,15 +14,17 @@ Private Type Member
     StreamType  As Dom_StreamType
     Grade       As Dom_Grade
     ClassNo     As Dom_ClassNo
+    ClassName   As Dom_ClassName
     Gender      As Dom_Gender
 End Type
 
 Private This As Member
 
-Public Sub Initialize(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal Gender As Dom_Gender)
+Public Sub Initialize(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal ClassName As Dom_ClassName, ByVal Gender As Dom_Gender)
     Set This.StreamType = StreamType
     Set This.Grade = Grade
     Set This.ClassNo = ClassNo
+    Set This.ClassName = ClassName
     Set This.Gender = Gender
 End Sub
 
@@ -32,6 +34,10 @@ End Property
 
 Public Property Get ClassNo() As Dom_ClassNo
     Set ClassNo = This.ClassNo
+End Property
+
+Public Property Get ClassName() As Dom_ClassName
+    Set ClassName = This.ClassName
 End Property
 
 Public Property Get Gender() As Dom_Gender
@@ -51,7 +57,7 @@ End Property
 '    If This.StreamType.IsMain Then
 '        ToKey = GradeMapper.ToRaw(This.Grade) & DELIMITER & ClassNoMapper.ToRaw(This.ClassNo) & DELIMITER & GenderMapper.ToRaw(This.Gender)
 '    ElseIf This.StreamType.IsSpecial Then
-'        ToKey = StreamTypeMapper.ToRaw(This.StreamType) & DELIMITER & ClassNoMapper.ToRaw(This.ClassNo) & DELIMITER & GenderMapper.ToRaw(This.Gender)
+'        ToKey = StreamTypeMapper.ToRaw(This.StreamType) & DELIMITER & This.ClassName & DELIMITER & GenderMapper.ToRaw(This.Gender)
 '    End If
 'End Function
 
@@ -61,6 +67,7 @@ Public Function Equals(ByVal Other As Dom_EnrollmentID) As Boolean
     If Not This.StreamType.Equals(Other.StreamType) Then Exit Function
     If Not This.Grade.Equals(Other.Grade) Then Exit Function
     If Not This.ClassNo.Equals(Other.ClassNo) Then Exit Function
+    If Not This.ClassName.Equals(Other.ClassName) Then Exit Function
     If Not This.Gender.Equals(Other.Gender) Then Exit Function
     Equals = True
 End Function
