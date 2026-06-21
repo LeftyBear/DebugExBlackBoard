@@ -11,7 +11,7 @@ Attribute VB_Exposed = False
 '@Folder("Application.DTO")
 Option Explicit
 
-Public Key      As String
+Public TypeKey  As String
 Public Subject  As String
 Public Grade    As Long
 Public Value    As Long

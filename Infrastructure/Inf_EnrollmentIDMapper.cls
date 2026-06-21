@@ -27,13 +27,13 @@ Private Sub Class_Initialize()
 End Sub
 
 Public Function ToRaw(ByVal ID As Dom_EnrollmentID) As String
-    Dim ClassNo As String
-    ClassNo = This.ClassNoMapper.ToRaw(ID.ClassNo)
     Dim Gender As String
     Gender = This.GenderMapper.ToRaw(ID.Gender)
     If ID.IsMain Then
         Dim Grade As String
         Grade = This.GradeMapper.ToRaw(ID.Grade)
+        Dim ClassNo As String
+        ClassNo = This.ClassNoMapper.ToRaw(ID.ClassNo)
         ToRaw = Grade & DELIMITER & ClassNo & DELIMITER & Gender
     ElseIf ID.IsSpecial Then
         Dim TypeString As String
@@ -43,23 +43,18 @@ Public Function ToRaw(ByVal ID As Dom_EnrollmentID) As String
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_EnrollmentID
-    Dim Parts() As String
-    Parts = VBA.Split(Raw, DELIMITER)
-    If UBound(Parts) <> 2 Then Exit Function
-    Dim i As Long
-    For i = 0 To UBound(Parts)
-        Dim Part As String
-        Part = Parts(i)
-        Dim StreamType As Dom_StreamType
-        If StreamType Is Nothing Then Set StreamType = This.TypeMapper.ToDomain(Part)
+    Dim StreamType As Dom_StreamType
+    Set StreamType = This.TypeMapper.ToDomain(Raw)
+    If StreamType.IsMain Then
         Dim Grade As Dom_Grade
-        If Grade Is Nothing Then Set Grade = This.GradeMapper.ToDomain(Part)
+        Set Grade = This.GradeMapper.ToDomain(Raw)
         Dim ClassNo As Dom_ClassNo
-        If ClassNo Is Nothing Then Set ClassNo = This.ClassNoMapper.ToDomain(Part)
+        Set ClassNo = This.ClassNoMapper.ToDomain(Raw)
+    ElseIf StreamType.IsSpecial Then
         Dim ClassName As Dom_ClassName
-        If Not StreamType Is Nothing And ClassNo Is Nothing And ClassName Is Nothing Then Set ClassName = Dom_ValueObjectFactory.CreateClassName(Raw)
-        Dim Gender As Dom_Gender
-        If Gender Is Nothing Then Set Gender = This.GenderMapper.ToDomain(Part)
-    Next
-    Set ToDomain = Dom_EnrollmentIDFactory.Create(StreamType, Grade, ClassNo, ClassName, Gender)
+        Set ClassName = Dom_ValueObjectFactory.CreateClassName(Raw)
+    End If
+    Dim Gender As Dom_Gender
+    Set Gender = This.GenderMapper.ToDomain(Raw)
+    Set ToDomain = Dom_ValueObjectFactory.CreateEnrollmentID(StreamType, Grade, ClassNo, ClassName, Gender)
 End Function

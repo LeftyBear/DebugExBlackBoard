@@ -21,7 +21,7 @@ Public Function Create(ByVal Entries As Dom_DailyClassHours) As App_ClassHourRea
         Set ClassHourModel = New App_ClassHourReadModel
         Dim ClassHour As Dom_ClassHour
         Set ClassHour = Entries.ClassHoursItem(i)
-        ClassHourModel.Key = Resolver.ParseKey(ClassHour.ID.ClassHourType.Value)
+        ClassHourModel.TypeKey = Resolver.ParseKey(ClassHour.ID.ClassHourType.Value)
         ClassHourModel.Subject = ClassHour.ID.Subject.Value
         ClassHourModel.Grade = ClassHour.ID.Grade.Value
         ClassHourModel.Value = ClassHour.Value.Value

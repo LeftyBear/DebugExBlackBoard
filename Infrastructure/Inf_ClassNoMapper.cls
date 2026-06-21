@@ -18,13 +18,9 @@ End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_ClassNo
     If VBA.InStr(1, Raw, COLUMN_CLASSNO) = 0 Then Exit Function
+    Dim ClassNoString As String
+    ClassNoString = VBA.Replace(Raw, COLUMN_CLASSNO, vbNullString)
     Dim ClassNo As Long
-    ClassNo = ParseClassNo(Raw)
+    ClassNo = Inf_NumericUtility.ExtractNumber(ClassNoString)
     Set ToDomain = Dom_ValueObjectFactory.CreateClassNo(ClassNo)
-End Function
-
-Private Function ParseClassNo(ByVal Raw As String) As Long
-    Dim ClassNo As String
-    ClassNo = VBA.Replace(Raw, COLUMN_CLASSNO, vbNullString)
-    ParseClassNo = Inf_NumericUtility.ExtractNumber(ClassNo)
 End Function

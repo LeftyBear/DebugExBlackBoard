@@ -13,21 +13,15 @@ Option Explicit
 Private Const COLUMN_SPECIAL As String = "“ÁŽx"
 
 Public Function ToRaw(ByVal StreamType As Dom_StreamType) As String
-    If StreamType.IsMain Then
-        ToRaw = vbNullString
-    ElseIf StreamType.IsSpecial Then
-        ToRaw = COLUMN_SPECIAL
-    End If
+    If StreamType.IsSpecial Then ToRaw = COLUMN_SPECIAL
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_StreamType
     Dim TypeCode As Dom_StreamTypeCode
     If 0 < VBA.InStr(1, Raw, COLUMN_SPECIAL) Then
         TypeCode = SpecialCode
-    ElseIf Raw Like "#?" Then
-        TypeCode = MainCode
     Else
-        Exit Function
+        TypeCode = MainCode
     End If
     Set ToDomain = Dom_ValueObjectFactory.CreateStreamType(TypeCode)
 End Function

@@ -17,7 +17,7 @@ Private Type Member
     Base            As App_BaseUseCase
     Presenter       As App_IDailyEnrollmentPresenter
     TargetDate      As Date
-    ViewModels      As Pre_EnrollmentViewModel
+    ViewModels      As Pre_TableViewModel
 End Type
 
 Private This As Member
@@ -34,7 +34,7 @@ Public Sub SetDate(ByVal TargetDate As Date)
     This.TargetDate = TargetDate
 End Sub
 
-Public Property Get ViewModel() As Pre_EnrollmentViewModel
+Public Property Get ViewModel() As Pre_TableViewModel
     Set ViewModel = This.ViewModels
 End Property
 
@@ -63,8 +63,8 @@ Private Function CreateFormatterDTO() As App_EnrollmentFormatterDTO
     Result.MainGradeCount = MainStream.UpperGrade
     Result.MainClassNoCount = MainStream.UpperClassNo
     Result.SpecialClassNoCount = SpecialStreams.ClassNoCount
-    Result.MainKey = StreamTypeResolver.ParseKey(MainKeyCode)
-    Result.SpecialKey = StreamTypeResolver.ParseKey(SpecialKeyCode)
+    Result.MainKey = StreamTypeResolver.ParseKey(MainCode)
+    Result.SpecialKey = StreamTypeResolver.ParseKey(SpecialCode)
     Result.MaleKey = GenderResolver.ParseKey(MaleCode)
     Result.FemaleKey = GenderResolver.ParseKey(FemaleCode)
     Set CreateFormatterDTO = Result

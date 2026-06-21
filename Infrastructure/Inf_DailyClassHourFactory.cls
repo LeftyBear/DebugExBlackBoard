@@ -33,13 +33,15 @@ Public Function Create(ByVal DailyRows As Inf_ClassHourRows) As Dom_DailyClassHo
     Set Result = New Dom_DailyClassHours
     Dim i As Long
     For i = 1 To DailyRows.Count
-        If Not This.ClassHourIDMapper.ToDomain(DailyRows.Item(i).RawID) Is Nothing Then
+        Dim Row As Inf_ClassHourRow
+        Set Row = DailyRows.Item(i)
+        If Not This.ClassHourIDMapper.ToDomain(Row.RawID) Is Nothing Then
             Dim ClassHour As Dom_ClassHour
-            Set ClassHour = This.ClassHourFactory.Create(DailyRows.Item(i))
+            Set ClassHour = This.ClassHourFactory.Create(Row)
             If Not ClassHour Is Nothing Then Result.AddClassHour ClassHour
-        ElseIf Not This.TimeTableIDMapper.ToDomain(DailyRows.Item(i).RawID) Is Nothing Then
+        ElseIf Not This.TimeTableIDMapper.ToDomain(Row.RawID) Is Nothing Then
             Dim TimeTable As Dom_TimeTable
-            Set TimeTable = This.TimeTableFactory.Create(DailyRows.Item(i))
+            Set TimeTable = This.TimeTableFactory.Create(Row)
             If Not TimeTable Is Nothing Then Result.AddTimeTable TimeTable
         End If
     Next

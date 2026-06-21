@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 '@Folder("Presentation.Service.Formatter")
 Option Explicit
 
-Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal KeyCode As App_ClassHourTypeKeyCode, ByVal PeriodModel As App_PeriodReadModel, ByVal MainModel As App_MainStreamReadModel) As Variant()
+Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal KeyCode As Dom_ClassHourTypeCode, ByVal PeriodModel As App_PeriodReadModel, ByVal MainModel As App_MainStreamReadModel) As Variant()
     Dim Resolver As App_ClassHourTypeResolver
     Set Resolver = New App_ClassHourTypeResolver
     Dim TypeKey As String

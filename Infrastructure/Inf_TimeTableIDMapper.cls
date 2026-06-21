@@ -35,22 +35,11 @@ Public Function ToRaw(ByVal ID As Dom_TimeTableID) As String
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_TimeTableID
-    Dim Parts() As String
-    Parts = VBA.Split(Raw, DELIMITER)
-    Dim i As Long
-    For i = 0 To UBound(Parts)
-        Dim Part As String
-        Part = Parts(i)
-        Dim ClassHourType As Dom_ClassHourType
-        Dim Grade As Dom_Grade
-        Dim Period As Dom_Period
-        If ClassHourType Is Nothing Then
-            Set ClassHourType = This.TypeMapper.ToDomain(Part)
-        ElseIf Grade Is Nothing Then
-            Set Grade = This.GradeMapper.ToDomain(Part)
-        ElseIf Period Is Nothing Then
-            Set Period = This.PeriodMapper.ToDomain(Part)
-        End If
-    Next
-    Set ToDomain = Dom_TimeTableIDFactory.Create(ClassHourType, Period, Grade)
+    Dim ClassHourType As Dom_ClassHourType
+    Set ClassHourType = This.TypeMapper.ToDomain(Raw)
+    Dim Period As Dom_Period
+    Set Period = This.PeriodMapper.ToDomain(Raw)
+    Dim Grade As Dom_Grade
+    Set Grade = This.GradeMapper.ToDomain(Raw)
+    Set ToDomain = Dom_ValueObjectFactory.CreateTimeTableID(ClassHourType, Period, Grade)
 End Function

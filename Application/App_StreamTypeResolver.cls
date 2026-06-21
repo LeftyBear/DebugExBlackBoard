@@ -10,18 +10,13 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service.Resolver")
 Option Explicit
 
-Public Enum App_StreamTypeKeyCode
-    MainKeyCode = 1
-    SpecialKeyCode
-End Enum
-
 Private Const MODEL_MAIN    As String = "Main"
 Private Const MODEL_SPECIAL As String = "Special"
 
-Public Function ParseKey(ByVal KeyCode As App_StreamTypeKeyCode) As String
-    If KeyCode = MainKeyCode Then
+Public Function ParseKey(ByVal KeyCode As Dom_StreamTypeCode) As String
+    If KeyCode = MainCode Then
         ParseKey = MODEL_MAIN
-    ElseIf KeyCode = SpecialKeyCode Then
+    ElseIf KeyCode = SpecialCode Then
         ParseKey = MODEL_SPECIAL
     End If
 End Function

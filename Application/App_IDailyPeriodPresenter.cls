@@ -10,5 +10,5 @@ Attribute VB_Exposed = False
 '@Folder("Application.Interface")
 Option Explicit
 
-Public Function CreateViewModel(ByVal Periods As App_Periods, ByVal GradeCount As Long) As Pre_PeriodViewModel
+Public Function CreateViewModel(ByVal Periods As App_PeriodTotals, ByVal GradeCount As Long) As Pre_TableViewModel
 End Function

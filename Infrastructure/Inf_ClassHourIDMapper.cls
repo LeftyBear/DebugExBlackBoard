@@ -25,30 +25,22 @@ End Sub
 Public Function ToRaw(ByVal ID As Dom_ClassHourID) As String
     Dim TypeString As String
     TypeString = This.TypeMapper.ToRaw(ID.ClassHourType)
-    Dim SubjectName As String
-    SubjectName = ID.Subject.Value
     Dim Grade As String
     Grade = This.GradeMapper.ToRaw(ID.Grade)
-    ToRaw = TypeString & DELIMITER & SubjectName & DELIMITER & Grade
+    ToRaw = TypeString & DELIMITER & ID.Subject.Value & DELIMITER & Grade
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_ClassHourID
-    Dim Parts() As String
-    Parts = VBA.Split(Raw, DELIMITER)
-    Dim i As Long
-    For i = 0 To UBound(Parts)
-        Dim Part As String
-        Part = Parts(i)
-        Dim ClassHourType As Dom_ClassHourType
-        Dim Grade As Dom_Grade
-        Dim SubjectName As Dom_SubjectName
-        If ClassHourType Is Nothing Then
-            Set ClassHourType = This.TypeMapper.ToDomain(Part)
-        ElseIf Grade Is Nothing Then
-            Set Grade = This.GradeMapper.ToDomain(Part)
-        ElseIf SubjectName Is Nothing Then
-            Set SubjectName = Dom_ValueObjectFactory.CreateSubjectName(Part)
-        End If
-    Next
-    Set ToDomain = Dom_ClassHourIDFactory.Create(ClassHourType, SubjectName, Grade)
+    Dim ClassHourType As Dom_ClassHourType
+    Set ClassHourType = This.TypeMapper.ToDomain(Raw)
+    If ClassHourType Is Nothing Then Exit Function
+    Dim Grade As Dom_Grade
+    Set Grade = This.GradeMapper.ToDomain(Raw)
+    Dim Buffer As String
+    Buffer = VBA.Replace(Raw, This.TypeMapper.ToRaw(ClassHourType), vbNullString)
+    Buffer = VBA.Replace(Buffer, This.GradeMapper.ToRaw(Grade), vbNullString)
+    Buffer = VBA.Replace(Buffer, "_", vbNullString)
+    Dim SubjectName As Dom_SubjectName
+    Set SubjectName = Dom_ValueObjectFactory.CreateSubjectName(Buffer)
+    Set ToDomain = Dom_ValueObjectFactory.CreateClassHourID(ClassHourType, SubjectName, Grade)
 End Function

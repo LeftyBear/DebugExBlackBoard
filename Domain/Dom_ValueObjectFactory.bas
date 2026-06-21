@@ -10,6 +10,13 @@ Public Function CreateDateID(ByVal Value As Date) As Dom_DateID
     Set CreateDateID = VO
 End Function
 
+Public Function CreateClassHourID(ByVal ClassHourType As Dom_ClassHourType, ByVal SubjectName As Dom_SubjectName, ByVal Grade As Dom_Grade) As Dom_ClassHourID
+    Dim ID As Dom_ClassHourID
+    Set ID = New Dom_ClassHourID
+    ID.Initialize ClassHourType, SubjectName, Grade
+    Set CreateClassHourID = ID
+End Function
+
 Public Function CreateClassHourType(ByVal Value As Dom_ClassHourTypeCode) As Dom_ClassHourType
     Dim VO As Dom_ClassHourType
     Set VO = New Dom_ClassHourType
@@ -29,6 +36,13 @@ Public Function CreateClassHourValue(ByVal Value As Long) As Dom_ClassHourValue
     Set VO = New Dom_ClassHourValue
     VO.Initialize Value
     Set CreateClassHourValue = VO
+End Function
+
+Public Function CreateTimeTableID(ByVal ClassHourType As Dom_ClassHourType, ByVal Period As Dom_Period, ByVal Grade As Dom_Grade) As Dom_TimeTableID
+    Dim ID As Dom_TimeTableID
+    Set ID = New Dom_TimeTableID
+    ID.Initialize ClassHourType, Period, Grade
+    Set CreateTimeTableID = ID
 End Function
 
 Public Function CreateTimeTableValue(ByVal Value As Long) As Dom_TimeTableValue
@@ -59,18 +73,18 @@ Public Function CreateSubjectMark(ByVal Value As String) As Dom_SubjectMark
     Set CreateSubjectMark = VO
 End Function
 
+Public Function CreateEnrollmentID(ByVal StreamType As Dom_StreamType, ByVal Grade As Dom_Grade, ByVal ClassNo As Dom_ClassNo, ByVal ClassName As Dom_ClassName, ByVal Gender As Dom_Gender) As Dom_EnrollmentID
+    Dim ID As Dom_EnrollmentID
+    Set ID = New Dom_EnrollmentID
+    ID.Initialize StreamType, Grade, ClassNo, ClassName, Gender
+    Set CreateEnrollmentID = ID
+End Function
+
 Public Function CreateStreamType(ByVal Value As Dom_StreamTypeCode) As Dom_StreamType
     Dim VO As Dom_StreamType
     Set VO = New Dom_StreamType
     VO.Initialize Value
     Set CreateStreamType = VO
-End Function
-
-Public Function CreateEnrollmentValue(ByVal Value As Long) As Dom_EnrollmentValue
-    Dim VO As Dom_EnrollmentValue
-    Set VO = New Dom_EnrollmentValue
-    VO.Initialize Value
-    Set CreateEnrollmentValue = VO
 End Function
 
 Public Function CreateGrade(ByVal Value As Long) As Dom_Grade
@@ -101,6 +115,13 @@ Public Function CreateGender(ByVal Value As Dom_GenderTypeCode) As Dom_Gender
     Set CreateGender = VO
 End Function
 
+Public Function CreateEnrollmentValue(ByVal Value As Long) As Dom_EnrollmentValue
+    Dim VO As Dom_EnrollmentValue
+    Set VO = New Dom_EnrollmentValue
+    VO.Initialize Value
+    Set CreateEnrollmentValue = VO
+End Function
+
 Public Function CreateTransfer(ByVal Value As Boolean) As Dom_Transfer
     Dim VO As Dom_Transfer
     Set VO = New Dom_Transfer
@@ -128,3 +149,11 @@ Public Function CreateScheduleValue(ByVal Value As String) As Dom_ScheduleValue
     VO.Initialize Value
     Set CreateScheduleValue = VO
 End Function
+
+Public Function CreateMainStreamValue(ByVal UpperGrade As Long, ByVal UpperClassNo As Long) As Dom_MainStreamValue
+    Dim Value As Dom_MainStreamValue
+    Set Value = New Dom_MainStreamValue
+    Value.Initialize UpperGrade, UpperClassNo
+    Set CreateMainStreamValue = Value
+End Function
+

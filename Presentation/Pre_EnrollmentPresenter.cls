@@ -20,9 +20,9 @@ Private Enum ColumnIndex
 End Enum
 Private Const COLUMN_COUNT As Long = ColumnIndex.EndColumn - 1
 
-Private Function App_IDailyEnrollmentPresenter_CreateViewModel(ByVal ReadModels As App_EnrollmentReadModels, ByVal Totals As App_EnrollmentTotals, ByVal DTO As App_EnrollmentFormatterDTO) As Pre_EnrollmentViewModel
-    Dim Result As Pre_EnrollmentViewModel
-    Set Result = New Pre_EnrollmentViewModel
+Private Function App_IDailyEnrollmentPresenter_CreateViewModel(ByVal ReadModels As App_EnrollmentReadModels, ByVal Totals As App_EnrollmentTotals, ByVal DTO As App_EnrollmentFormatterDTO) As Pre_TableViewModel
+    Dim Result As Pre_TableViewModel
+    Set Result = New Pre_TableViewModel
     Result.Table = Format(ReadModels, Totals, DTO)
     Set App_IDailyEnrollmentPresenter_CreateViewModel = Result
 End Function
@@ -62,12 +62,12 @@ Private Function BuildBody(ByVal ReadModels As App_EnrollmentReadModels, ByVal T
         Result(R, ColumnIndex.Grade) = Model.Grade
         If Model.TypeKey = DTO.SpecialKey Then
             Result(R, ColumnIndex.ClassNo) = Model.ClassName
-        Else
+        ElseIf Model.TypeKey = DTO.MainKey Then
             Result(R, ColumnIndex.ClassNo) = Model.ClassNo
         End If
         If Model.Gender = DTO.MaleKey Then
             Result(R, ColumnIndex.Male) = Model.Value
-        Else
+        ElseIf Model.Gender = DTO.FemaleKey Then
             Result(R, ColumnIndex.Female) = Model.Value
         End If
         Result(R, ColumnIndex.Total) = Totals.ClassTotalItem(Model.TypeKey, Model.Grade, Model.ClassNo)
@@ -79,7 +79,7 @@ Private Function BuildBody(ByVal ReadModels As App_EnrollmentReadModels, ByVal T
             Result(R, ColumnIndex.ClassNo) = "Œv"
             If Model.Gender = DTO.MaleKey Then
                 Result(R, ColumnIndex.Male) = Totals.GenderTotalItem(Model.TypeKey, Model.Gender, Model.Grade)
-            Else
+            ElseIf Model.Gender = DTO.FemaleKey Then
                 Result(R, ColumnIndex.Female) = Totals.GenderTotalItem(Model.TypeKey, Model.Gender, Model.Grade)
             End If
             Result(R, ColumnIndex.Total) = ClassTotal

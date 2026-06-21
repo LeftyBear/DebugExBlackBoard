@@ -10,16 +10,11 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service.Calculator")
 Option Explicit
 
-Public Function CountPeriodOfGrade(ByVal ReadModels As App_ClassHourReadModels, ByVal KeyCode As App_ClassHourTypeKeyCode) As App_Periods
-    If ReadModels Is Nothing Then Exit Function
-    Dim Result As App_Periods
-    Set Result = New App_Periods
-    Dim Resolver As App_ClassHourTypeResolver
-    Set Resolver = New App_ClassHourTypeResolver
-    Dim TypeKey As String
-    TypeKey = Resolver.ParseKey(KeyCode)
-    Dim FilterdModels As VBA.Collection
-    Set FilterdModels = FilterByTypeKey(ReadModels, TypeKey)
+Public Function CountPeriod(ByVal Models As App_ClassHourReadModels, ByVal TypeKey As String) As App_PeriodTotals
+    Dim Result As App_PeriodTotals
+    Set Result = New App_PeriodTotals
+    Dim FilterdModels As App_ClassHourReadModels
+    Set FilterdModels = FilterByType(Models, TypeKey)
     Dim Model As App_TimeTableReadModel
     For Each Model In FilterdModels
         If Model.Mark <> vbNullString Then
@@ -30,19 +25,19 @@ Public Function CountPeriodOfGrade(ByVal ReadModels As App_ClassHourReadModels, 
             End If
         End If
     Next
-    Set CountPeriodOfGrade = Result
+    Set CountPeriod = Result
 End Function
 
-Private Function FilterByTypeKey(ByVal ReadModels As App_ClassHourReadModels, ByVal TypeKey As String) As VBA.Collection
-    Dim Result As VBA.Collection
-    Set Result = New VBA.Collection
+Private Function FilterByType(ByVal Models As App_ClassHourReadModels, ByVal TypeKey As String) As App_ClassHourReadModels
+    Dim Result As App_ClassHourReadModels
+    Set Result = New App_ClassHourReadModels
     Dim i As Long
-    For i = 1 To ReadModels.TimeTableCount
+    For i = 1 To Models.TimeTableCount
         Dim Model As App_TimeTableReadModel
-        Set Model = ReadModels.TimeTableItem(i)
+        Set Model = Models.TimeTableItem(i)
         If Model.TypeKey = TypeKey Then
-            Result.Add Model
+            Result.AddTimeTable Model
         End If
     Next
-    Set FilterByTypeKey = Result
+    Set FilterByType = Result
 End Function

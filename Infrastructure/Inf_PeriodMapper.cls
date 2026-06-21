@@ -17,17 +17,14 @@ Public Function ToRaw(ByVal Period As Dom_Period) As String
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_Period
-    If 0 < VBA.InStr(1, Raw, COLUMN_PERIOD) Then
-        Dim Period As Long
-        Period = ParsePeriod(Raw)
-    Else
-        Exit Function
-    End If
+    If VBA.InStr(1, Raw, COLUMN_PERIOD) = 0 Then Exit Function
+    Dim EndPosition As Long
+    EndPosition = VBA.InStr(1, Raw, COLUMN_PERIOD)
+    Dim BeginPosition As Long
+    BeginPosition = EndPosition - 1
+    Dim PeriodString As String
+    PeriodString = VBA.Mid$(Raw, BeginPosition, EndPosition)
+    Dim Period As Long
+    Period = Inf_NumericUtility.ExtractNumber(PeriodString)
     Set ToDomain = Dom_ValueObjectFactory.CreatePeriod(Period)
-End Function
-
-Private Function ParsePeriod(ByVal Raw As String) As Long
-    Dim Period As String
-    Period = VBA.Replace(Raw, COLUMN_PERIOD, vbNullString)
-    ParsePeriod = Inf_NumericUtility.ExtractNumber(Period)
 End Function

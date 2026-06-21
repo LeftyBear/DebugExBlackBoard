@@ -10,18 +10,13 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service.Resolver")
 Option Explicit
 
-Public Enum App_ClassHourTypeKeyCode
-    PlanKeyCode = 1
-    ExeKeyCode
-End Enum
-
 Private Const KEY_PLAN      As String = "Plan"
 Private Const KEY_EXECUTION As String = "Exe"
 
-Public Function ParseKey(ByVal KeyCode As App_ClassHourTypeKeyCode) As String
-    If KeyCode = PlanKeyCode Then
+Public Function ParseKey(ByVal KeyCode As Dom_ClassHourTypeCode) As String
+    If KeyCode = PlanCode Then
         ParseKey = KEY_PLAN
-    ElseIf KeyCode = ExeKeyCode Then
+    ElseIf KeyCode = ExeCode Then
         ParseKey = KEY_EXECUTION
     End If
 End Function

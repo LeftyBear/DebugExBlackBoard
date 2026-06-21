@@ -17,22 +17,14 @@ Public Function ToRaw(ByVal Grade As Dom_Grade) As String
 End Function
 
 Public Function ToDomain(ByVal Raw As String) As Dom_Grade
-    Dim TypeMapper As Inf_StreamTypeMapper
-    Set TypeMapper = New Inf_StreamTypeMapper
-    Dim TypeCode As Dom_StreamType
-    Set TypeCode = TypeMapper.ToDomain(Raw)
-    If TypeCode Is Nothing Then Exit Function
+    If VBA.InStr(1, Raw, COLUMN_GRADE) = 0 Then Exit Function
+    Dim EndPosition As Long
+    EndPosition = VBA.InStr(1, Raw, COLUMN_GRADE)
+    Dim BeginPosition As Long
+    BeginPosition = EndPosition - 1
+    Dim GradeString As String
+    GradeString = VBA.Mid$(Raw, BeginPosition, EndPosition)
     Dim Grade As Long
-    If TypeCode.IsMain Then
-        Grade = ParseGrade(Raw)
-    ElseIf TypeCode.IsSpecial Then
-        Grade = 1
-    End If
+    Grade = Inf_NumericUtility.ExtractNumber(GradeString)
     Set ToDomain = Dom_ValueObjectFactory.CreateGrade(Grade)
-End Function
-
-Private Function ParseGrade(ByVal Raw As String) As Long
-    Dim Grade As String
-    Grade = VBA.Replace(Raw, COLUMN_GRADE, vbNullString)
-    ParseGrade = Inf_NumericUtility.ExtractNumber(Grade)
 End Function
