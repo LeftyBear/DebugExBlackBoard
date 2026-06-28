@@ -31,6 +31,6 @@ Public Function ClassNoCount() As Long
     ClassNoCount = This.Models.Count
 End Function
 
-Public Function Item(ByVal Index As Long) As App_SchoolEventReadModel
-    Set Item = This.Models.Item(Index)
+Public Function Item(ByVal INDEX As Long) As App_SchoolEventReadModel
+    Set Item = This.Models.Item(INDEX)
 End Function

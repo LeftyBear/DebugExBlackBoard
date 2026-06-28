@@ -23,14 +23,10 @@ Public Sub Add(ByVal Model As App_SpecialStreamReadModel)
     This.Models.Add Model
 End Sub
 
-Public Function GradeCount() As Long
-    GradeCount = 1
+Public Function Count() As Long
+    Count = This.Models.Count
 End Function
 
-Public Function ClassNoCount() As Long
-    ClassNoCount = This.Models.Count
-End Function
-
-Public Function Item(ByVal Index As Long) As App_SpecialStreamReadModel
-    Set Item = This.Models.Item(Index)
+Public Function Item(ByVal INDEX As Long) As App_SpecialStreamReadModel
+    Set Item = This.Models.Item(INDEX)
 End Function

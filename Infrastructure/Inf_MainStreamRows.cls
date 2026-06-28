@@ -27,6 +27,6 @@ Public Function Count() As Long
     Count = This.Rows.Count
 End Function
 
-Public Function Item(ByVal Index As Long) As Inf_MainStreamRow
-    Set Item = This.Rows.Item(Index)
+Public Function Item(ByVal INDEX As Long) As Inf_MainStreamRow
+    Set Item = This.Rows.Item(INDEX)
 End Function

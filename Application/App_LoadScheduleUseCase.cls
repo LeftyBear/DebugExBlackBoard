@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "App_ImportScheduleUseCase"
+Attribute VB_Name = "App_LoadScheduleUseCase"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -35,8 +35,8 @@ Public Property Get ViewModel() As Pre_ScheduleViewModels
 End Property
 
 Private Sub App_IUseCaseCallback_ExecuteCore()
-    If This.TargetDate = 0 Then Err.Raise AppErrNotSetVariable, "App_ImportScheduleUseCase", "TargetDate is not set."
-    Dim ReadModels As App_ScheduleReadModels
-    Set ReadModels = This.QueryService.GetByDate(This.TargetDate)
-    Set This.ViewModels = This.Presenter.CreateViewModel(ReadModels)
+    If This.TargetDate = 0 Then Err.Raise AppErrNotSetVariable, "App_LoadScheduleUseCase", "TargetDate is not set."
+    Dim DailyScheduleRMs As App_ScheduleReadModels
+    Set DailyScheduleRMs = This.QueryService.GetByDate(This.TargetDate)
+    Set This.ViewModels = This.Presenter.CreateViewModel(DailyScheduleRMs)
 End Sub

@@ -23,14 +23,14 @@ Public Sub Add(ByVal Row As Inf_SubjectRow)
     This.Rows.Add Row
 End Sub
 
-Public Sub Remove(ByVal Index As Long)
-    This.Rows.Remove Index
+Public Sub Remove(ByVal INDEX As Long)
+    This.Rows.Remove INDEX
 End Sub
 
 Public Function Count() As Long
     Count = This.Rows.Count
 End Function
 
-Public Function Item(ByVal Index As Long) As Inf_SubjectRow
-    Set Item = This.Rows.Item(Index)
+Public Function Item(ByVal INDEX As Long) As Inf_SubjectRow
+    Set Item = This.Rows.Item(INDEX)
 End Function

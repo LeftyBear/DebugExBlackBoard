@@ -27,7 +27,7 @@ Public Function Format(ByVal Models As App_ClassHourReadModels, ByVal KeyCode As
     CountedTable = CountMark(MarkTable)
     Dim Body() As Variant
     Body = BuildBody(CountedTable)
-    Format = Pre_ArrayUtility.MergeArray(Header, Body)
+    Format = Pre_ArrayUtility.MergeVertically(Header, Body)
 End Function
 
 Private Function BuildHeader(ByVal GradeCount As Long) As Variant()
@@ -63,10 +63,10 @@ Private Function BuildMarkTable(ByVal Models As App_ClassHourReadModels, ByVal T
     Dim R As Long
     For R = 1 To PeriodCount
         Dim i As Long
-        For i = 1 To Models.TimeTableCount
-            If Models.TimeTableItem(i).TypeKey = TypeKey Then
-                If Models.TimeTableItem(i).Period = R Then
-                    Result(R, Models.TimeTableItem(i).Grade) = Models.TimeTableItem(i).Mark
+        For i = 1 To Models.TimeTablePlanCount
+            If Models.GetTimeTablePlan(i).TypeKey = TypeKey Then
+                If Models.GetTimeTablePlan(i).Period = R Then
+                    Result(R, Models.GetTimeTablePlan(i).Grade) = Models.GetTimeTablePlan(i).Mark
                 End If
             End If
         Next

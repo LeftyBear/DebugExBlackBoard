@@ -24,9 +24,9 @@ Public Function ParseSearchKeywords(ByVal InputText As String) As VBA.Collection
     Loop
     Dim Parts() As String
     Parts = VBA.Split(Normalized, HALF_SPACE)
-    Dim Index As Long
-    For Index = LBound(Parts) To UBound(Parts)
-        If 0 < VBA.Len(Parts(Index)) Then Result.Add Parts(Index)
+    Dim INDEX As Long
+    For INDEX = LBound(Parts) To UBound(Parts)
+        If 0 < VBA.Len(Parts(INDEX)) Then Result.Add Parts(INDEX)
     Next
     Set ParseSearchKeywords = Result
 End Function

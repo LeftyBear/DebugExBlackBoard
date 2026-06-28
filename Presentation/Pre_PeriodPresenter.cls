@@ -11,19 +11,12 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements App_IDailyPeriodPresenter
 
-Public Function App_IDailyPeriodPresenter_CreateViewModel(ByVal Periods As App_PeriodTotals, ByVal GradeCount As Long) As Pre_TableViewModel
-    Dim Result As Pre_TableViewModel
-    Set Result = New Pre_TableViewModel
-    Result.Table = Format(Periods, GradeCount)
-    Set App_IDailyPeriodPresenter_CreateViewModel = Result
-End Function
-
 Private Function Format(ByVal Periods As App_PeriodTotals, ByVal GradeCount As Long) As Variant()
     Dim Header() As Variant
     Header = BuildHeader(GradeCount)
     Dim Body() As Variant
     Body = BuildBody(Periods, GradeCount)
-    Format = Pre_ArrayUtility.MergeArray(Header, Body)
+    Format = Pre_ArrayUtility.MergeVertically(Header, Body)
 End Function
 
 Private Function BuildHeader(ByVal GradeCount As Long) As Variant()
@@ -46,4 +39,11 @@ Private Function BuildBody(ByVal Periods As App_PeriodTotals, ByVal GradeCount A
         Next
     End If
     BuildBody = Result
+End Function
+
+Public Function App_IDailyPeriodPresenter_CreateViewModel(ByVal Periods As App_PeriodTotals, ByVal GradeCount As Long) As Pre_TableViewModel
+    Dim Result As Pre_TableViewModel
+    Set Result = New Pre_TableViewModel
+    Result.Table = Format(Periods, GradeCount)
+    Set App_IDailyPeriodPresenter_CreateViewModel = Result
 End Function

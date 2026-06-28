@@ -10,34 +10,30 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service.Calculator")
 Option Explicit
 
-Public Function CountPeriod(ByVal Models As App_ClassHourReadModels, ByVal TypeKey As String) As App_PeriodTotals
+Public Function CountPeriodPlan(ByVal Models As App_ClassHourReadModels) As App_PeriodTotals
     Dim Result As App_PeriodTotals
     Set Result = New App_PeriodTotals
-    Dim FilterdModels As App_ClassHourReadModels
-    Set FilterdModels = FilterByType(Models, TypeKey)
-    Dim Model As App_TimeTableReadModel
-    For Each Model In FilterdModels
+    Dim i As Long
+    For i = 1 To Models.TimeTablePlanCount
+        Dim Model As App_TimeTableReadModel
+        Set Model = Models.GetTimeTablePlan(i)
         If Model.Mark <> vbNullString Then
-            If Result.Item(Model.Grade) = 0 Then
-                Result.Add Model.Grade, 1
-            Else
-                Result.Add Model.Grade, Result.Item(Model.Grade) + 1
-            End If
+            Result.AddInternal Model.Grade
         End If
     Next
-    Set CountPeriod = Result
+    Set CountPeriodPlan = Result
 End Function
 
-Private Function FilterByType(ByVal Models As App_ClassHourReadModels, ByVal TypeKey As String) As App_ClassHourReadModels
-    Dim Result As App_ClassHourReadModels
-    Set Result = New App_ClassHourReadModels
+Public Function CountPeriodExe(ByVal Models As App_ClassHourReadModels) As App_PeriodTotals
+    Dim Result As App_PeriodTotals
+    Set Result = New App_PeriodTotals
     Dim i As Long
-    For i = 1 To Models.TimeTableCount
+    For i = 1 To Models.TimeTableExeCount
         Dim Model As App_TimeTableReadModel
-        Set Model = Models.TimeTableItem(i)
-        If Model.TypeKey = TypeKey Then
-            Result.AddTimeTable Model
+        Set Model = Models.GetTimeTableExe(i)
+        If Model.Mark <> vbNullString Then
+            Result.AddInternal Model.Grade
         End If
     Next
-    Set FilterByType = Result
+    Set CountPeriodExe = Result
 End Function

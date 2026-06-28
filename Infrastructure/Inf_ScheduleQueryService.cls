@@ -71,9 +71,9 @@ Private Function App_IScheduleQueryService_GetByDate(ByVal TargetDate As Date) A
     Set EntityFactory = New Inf_DailyScheduleFactory
     Dim DailyEntries As Dom_DailySchedules
     Set DailyEntries = EntityFactory.Create(DailyRows)
-    Dim ModelFactory As Inf_DailyScheduleModelFactory
-    Set ModelFactory = New Inf_DailyScheduleModelFactory
-    Set App_IScheduleQueryService_GetByDate = ModelFactory.Create(DailyEntries)
+    Dim ReadModelFactory As Inf_DailyScheduleModelFactory
+    Set ReadModelFactory = New Inf_DailyScheduleModelFactory
+    Set App_IScheduleQueryService_GetByDate = ReadModelFactory.Create(DailyEntries)
 End Function
 
 Private Sub App_IScheduleQueryService_Rebuild(ByVal TargetDate As Date)

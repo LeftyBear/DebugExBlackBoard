@@ -10,48 +10,62 @@ Attribute VB_Exposed = False
 '@Folder("Application.Service.Formatter")
 Option Explicit
 
-Public Sub CalculateGenderTotal(ByVal ReadModels As App_EnrollmentReadModels, ByVal StreamTypeKey As String, ByVal GenderKey As String, ByVal Totals As App_EnrollmentTotals)
-    If ReadModels Is Nothing Then Exit Sub
-    Dim FilterdModels As VBA.Collection
-    Set FilterdModels = FilterByTypeAndGender(ReadModels, StreamTypeKey, GenderKey)
+Public Function Calculate(ByVal Models As App_EnrollmentReadModels, ByVal MeinKey As String, ByVal SpecialKey As String, ByVal MaleKey As String, ByVal FemaleKey As String) As App_EnrollmentTotals
+    Dim Result As App_EnrollmentTotals
+    Set Result = New App_EnrollmentTotals
     Dim Model As App_EnrollmentReadModel
-    For Each Model In FilterdModels
-        Totals.AddGenderValue StreamTypeKey, GenderKey, Model.Grade, Model.Value
-    Next
-End Sub
-
-Public Sub CalculateClassTotal(ByVal ReadModels As App_EnrollmentReadModels, ByVal StreamTypeKey As String, ByVal Totals As App_EnrollmentTotals)
-    If ReadModels Is Nothing Then Exit Sub
-    Dim FilterdModels As VBA.Collection
-    Set FilterdModels = FilterByType(ReadModels, StreamTypeKey)
-    Dim Model As App_EnrollmentReadModel
-    For Each Model In FilterdModels
-        Totals.AddClassValue StreamTypeKey, Model.Grade, Model.ClassNo, Model.Value
-    Next
-End Sub
-
-Private Function FilterByTypeAndGender(ByVal ReadModels As App_EnrollmentReadModels, ByVal StreamTypeKey As String, ByVal GenderKey As String) As VBA.Collection
-    Dim Result As VBA.Collection
-    Set Result = New VBA.Collection
-    Dim Model As App_EnrollmentReadModel
-    For Each Model In ReadModels
-        If Model.TypeKey = StreamTypeKey Then
-            If Model.Gender = GenderKey Then
-                Result.Add Model
+    For Each Model In Models
+        If Model.TypeKey = MeinKey Then
+            If Model.Gender = MaleKey Then
+                AddMainMale Model, Result
+            ElseIf Model.Gender = FemaleKey Then
+                AddMainFemale Model, Result
             End If
+            AddMainClass Model, Result
+        ElseIf Model.TypeKey = SpecialKey Then
+            If Model.Gender = MaleKey Then
+                AddSpecialMale Model, Result
+            ElseIf Model.Gender = FemaleKey Then
+                AddSpecialFemale Model, Result
+            End If
+            AddSpecialClass Model, Result
         End If
     Next
-    Set FilterByTypeAndGender = Result
+    Set Calculate = Result
 End Function
 
-Private Function FilterByType(ByVal ReadModels As App_EnrollmentReadModels, ByVal StreamTypeKey As String) As VBA.Collection
-    Dim Result As VBA.Collection
-    Set Result = New VBA.Collection
-    Dim Model As App_EnrollmentReadModel
-    For Each Model In ReadModels
-        If Model.TypeKey = StreamTypeKey Then
-            Result.Add Model
-        End If
-    Next
-    Set FilterByType = Result
-End Function
+Private Sub AddMainMale(ByVal Model As App_EnrollmentReadModel, ByVal Totals As App_EnrollmentTotals)
+    Dim Total As Long
+    Total = Totals.GetMainMale(Model.Grade) + Model.Value
+    Totals.AddMainMale Model.Grade, Total
+End Sub
+
+Private Sub AddMainFemale(ByVal Model As App_EnrollmentReadModel, ByVal Totals As App_EnrollmentTotals)
+    Dim Total As Long
+    Total = Totals.GetMainFemale(Model.Grade) + Model.Value
+    Totals.AddMainFemale Model.Grade, Total
+End Sub
+
+Private Sub AddMainClass(ByVal Model As App_EnrollmentReadModel, ByVal Totals As App_EnrollmentTotals)
+    Dim Total As Long
+    Total = Totals.GetMainClass(Model.Grade, Model.ClassNo) + Model.Value
+    Totals.AddMainClass Model.Grade, Model.ClassNo, Total
+End Sub
+
+Private Sub AddSpecialMale(ByVal Model As App_EnrollmentReadModel, ByVal Totals As App_EnrollmentTotals)
+    Dim Total As Long
+    Total = Totals.GetSpecialMaleGrand + Model.Value
+    Totals.AddSpecialMale Total
+End Sub
+
+Private Sub AddSpecialFemale(ByVal Model As App_EnrollmentReadModel, ByVal Totals As App_EnrollmentTotals)
+    Dim Total As Long
+    Total = Totals.GetSpecialFemaleGrand + Model.Value
+    Totals.AddSpecialFemale Total
+End Sub
+
+Private Sub AddSpecialClass(ByVal Model As App_EnrollmentReadModel, ByVal Totals As App_EnrollmentTotals)
+    Dim Total As Long
+    Total = Totals.GetSpecialClass(Model.ClassName) + Model.Value
+    Totals.AddSpecialClass Model.ClassName, Total
+End Sub

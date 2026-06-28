@@ -19,8 +19,12 @@ Private Sub Class_Initialize()
     Set This.Totals = New VBA.Collection
 End Sub
 
-Public Sub Add(ByVal Grade As Long, ByVal Value As Long)
-    This.Totals.Add Value, Grade
+Public Sub AddInternal(ByVal Grade As Long)
+    If This.Totals.Count = 0 Then
+        This.Totals.Add 1, CStr(Grade)
+    Else
+        Set This.Totals.Item(CStr(Grade)) = This.Totals.Item(CStr(Grade)) + 1
+    End If
 End Sub
 
 Public Function Count() As Long
@@ -28,6 +32,7 @@ Public Function Count() As Long
 End Function
 
 Public Function Item(ByVal Grade As Long) As Long
-    If This.Totals.Item(Grade) Is Nothing Then Exit Function
-    Item = This.Totals.Item(Grade)
+    If This.Totals.Count = 0 Then Exit Function
+    If This.Totals.Item(CStr(Grade)) Is Nothing Then Exit Function
+    Item = This.Totals.Item(CStr(Grade))
 End Function

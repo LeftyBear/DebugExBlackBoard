@@ -10,5 +10,8 @@ Attribute VB_Exposed = False
 '@Folder("Application.Interface")
 Option Explicit
 
-Public Function CreateViewModel(ByVal ClassHourReadModels As App_ClassHourReadModels, ByVal SubjectReadModels As App_SubjectReadModels, ByVal Totals As App_ClassHourTotals, ByVal GradeCount As Long) As Pre_TableViewModel
+Public Function CreatePlanViewModel(ByVal ClassHourReadModels As App_ClassHourReadModels, ByVal SubjectReadModels As App_SubjectReadModels, ByVal Totals As App_ClassHourTotals, ByVal GradeCount As Long) As Pre_TableViewModel
+End Function
+
+Public Function CreateExeViewModel(ByVal ClassHourReadModels As App_ClassHourReadModels, ByVal SubjectReadModels As App_SubjectReadModels, ByVal Totals As App_ClassHourTotals, ByVal GradeCount As Long) As Pre_TableViewModel
 End Function

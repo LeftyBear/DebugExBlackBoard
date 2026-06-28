@@ -23,12 +23,12 @@ Private Sub Class_Initialize()
     Set This.TimeTables = New VBA.Collection
 End Sub
 
-Public Sub AddClassHour(ByVal Entry As Dom_ClassHour)
+Public Sub AddClassHourPlan(ByVal Entry As Dom_ClassHour)
     If This.DateID Is Nothing Then Set This.DateID = Entry.DateID
     This.ClassHours.Add Entry
 End Sub
 
-Public Sub AddTimeTable(ByVal Entry As Dom_TimeTable)
+Public Sub AddTimeTablePlan(ByVal Entry As Dom_TimeTable)
     If This.DateID Is Nothing Then Set This.DateID = Entry.DateID
     This.TimeTables.Add Entry
 End Sub
@@ -65,12 +65,12 @@ Public Function TimeTablesCount() As Long
     TimeTablesCount = This.TimeTables.Count
 End Function
 
-Public Function ClassHoursItem(ByVal Index As Long) As Dom_ClassHour
-    Set ClassHoursItem = This.ClassHours.Item(Index)
+Public Function ClassHoursItem(ByVal INDEX As Long) As Dom_ClassHour
+    Set ClassHoursItem = This.ClassHours.Item(INDEX)
 End Function
 
-Public Function TimeTablesItem(ByVal Index As Long) As Dom_TimeTable
-    Set TimeTablesItem = This.TimeTables.Item(Index)
+Public Function TimeTablesItem(ByVal INDEX As Long) As Dom_TimeTable
+    Set TimeTablesItem = This.TimeTables.Item(INDEX)
 End Function
 
 Private Function FindClassHour(ByVal ID As Dom_ClassHourID) As Dom_ClassHour

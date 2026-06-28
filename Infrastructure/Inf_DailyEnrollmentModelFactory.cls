@@ -29,7 +29,19 @@ Public Function Create(ByVal Entries As Dom_DailyEnrollments) As App_EnrollmentR
         Model.Value = Entry.Value.Value
         Model.Transfer = CStr(Entry.Transfer.IsTrue)
         Model.Remarks = Entry.Remarks.Value
-        Result.Add Model
+        If Entry.ID.StreamType.Value = MainCode Then
+            If Entry.ID.Gender.IsMale Then
+                Result.AddMainMale Model
+            ElseIf Entry.ID.Gender.IsFemale Then
+                Result.AddMainFemale Model
+            End If
+        ElseIf Entry.ID.StreamType.Value = SpecialCode Then
+            If Entry.ID.Gender.IsMale Then
+                Result.AddSpecialMale Model
+            ElseIf Entry.ID.Gender.IsFemale Then
+                Result.AddSpecialFemale Model
+            End If
+        End If
     Next
     Set Create = Result
 End Function

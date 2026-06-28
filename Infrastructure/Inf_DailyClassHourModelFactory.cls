@@ -15,28 +15,45 @@ Public Function Create(ByVal Entries As Dom_DailyClassHours) As App_ClassHourRea
     Set Result = New App_ClassHourReadModels
     Dim Resolver As App_ClassHourTypeResolver
     Set Resolver = New App_ClassHourTypeResolver
-    Dim i As Long
-    For i = 1 To Entries.ClassHoursCount
-        Dim ClassHourModel As App_ClassHourReadModel
-        Set ClassHourModel = New App_ClassHourReadModel
-        Dim ClassHour As Dom_ClassHour
-        Set ClassHour = Entries.ClassHoursItem(i)
-        ClassHourModel.TypeKey = Resolver.ParseKey(ClassHour.ID.ClassHourType.Value)
-        ClassHourModel.Subject = ClassHour.ID.Subject.Value
-        ClassHourModel.Grade = ClassHour.ID.Grade.Value
-        ClassHourModel.Value = ClassHour.Value.Value
-        Result.AddClassHour ClassHourModel
-    Next
-    For i = 1 To Entries.TimeTablesCount
-        Dim TimeTableModel As App_TimeTableReadModel
-        Set TimeTableModel = New App_TimeTableReadModel
-        Dim TimeTable As Dom_TimeTable
-        Set TimeTable = Entries.TimeTablesItem(i)
-        TimeTableModel.TypeKey = Resolver.ParseKey(TimeTable.ID.ClassHourType.Value)
-        TimeTableModel.Period = TimeTable.ID.Period.Value
-        TimeTableModel.Grade = TimeTable.ID.Grade.Value
-        TimeTableModel.Mark = TimeTable.Value.Value
-        Result.AddTimeTable TimeTableModel
-    Next
+    AddClassHourModel Entries, Resolver, Result
+    AddTimTableModel Entries, Resolver, Result
     Set Create = Result
 End Function
+
+Private Sub AddClassHourModel(ByVal Entries As Dom_DailyClassHours, ByVal Resolver As App_ClassHourTypeResolver, ByVal ReadModels As App_ClassHourReadModels)
+    Dim i As Long
+    For i = 1 To Entries.ClassHoursCount
+        Dim Model As App_ClassHourReadModel
+        Set Model = New App_ClassHourReadModel
+        Dim Entry As Dom_ClassHour
+        Set Entry = Entries.ClassHoursItem(i)
+        Model.TypeKey = Resolver.ParseKey(Entry.ID.ClassHourType.Value)
+        Model.Subject = Entry.ID.Subject.Value
+        Model.Grade = Entry.ID.Grade.Value
+        Model.Value = Entry.Value.Value
+        If Entry.ID.ClassHourType.Value = PlanCode Then
+            ReadModels.AddClassHourPlan Model
+        ElseIf Entry.ID.ClassHourType.Value = ExeCode Then
+            ReadModels.AddClassHourExe Model
+        End If
+    Next
+End Sub
+
+Private Sub AddTimTableModel(ByVal Entries As Dom_DailyClassHours, ByVal Resolver As App_ClassHourTypeResolver, ByVal ReadModels As App_ClassHourReadModels)
+    Dim i As Long
+    For i = 1 To Entries.TimeTablesCount
+        Dim Model As App_TimeTableReadModel
+        Set Model = New App_TimeTableReadModel
+        Dim Entry As Dom_TimeTable
+        Set Entry = Entries.TimeTablesItem(i)
+        Model.TypeKey = Resolver.ParseKey(Entry.ID.ClassHourType.Value)
+        Model.Period = Entry.ID.Period.Value
+        Model.Grade = Entry.ID.Grade.Value
+        Model.Mark = Entry.Value.Value
+        If Entry.ID.ClassHourType.Value = PlanCode Then
+            ReadModels.AddTimeTablePlan Model
+        ElseIf Entry.ID.ClassHourType.Value = ExeCode Then
+            ReadModels.AddTimeTableExe Model
+        End If
+    Next
+End Sub

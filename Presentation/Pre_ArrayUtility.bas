@@ -3,11 +3,29 @@ Attribute VB_Name = "Pre_ArrayUtility"
 Option Explicit
 Option Private Module
 
-Public Function MergeArray(ByRef Base() As Variant, ByRef Another() As Variant) As Variant()
+Public Function MergeHorizontally(ByRef Base() As Variant, ByRef Another() As Variant) As Variant()
     Dim Result() As Variant
-    ReDim Result(1 To UBound(Base) + UBound(Another), LBound(Base, 2) To UBound(Base, 2))
+    ReDim Result(LBound(Base) To UBound(Base), LBound(Base, 2) To UBound(Base, 2) + UBound(Another, 2))
     Dim R As Long
-    For R = 1 To UBound(Base)
+    For R = LBound(Base) To UBound(Base)
+        Dim C As Long
+        For C = LBound(Base, 2) To UBound(Base, 2)
+            Result(R, C) = Base(R, C)
+        Next
+    Next
+    For R = LBound(Base) To UBound(Base)
+        For C = UBound(Base, 2) + 1 To UBound(Base, 2) + UBound(Another, 2)
+            Result(R, C) = Another(R, C)
+        Next
+    Next
+    MergeHorizontally = Result
+End Function
+
+Public Function MergeVertically(ByRef Base() As Variant, ByRef Another() As Variant) As Variant()
+    Dim Result() As Variant
+    ReDim Result(LBound(Base) To UBound(Base) + UBound(Another), LBound(Base, 2) To UBound(Base, 2))
+    Dim R As Long
+    For R = LBound(Base) To UBound(Base)
         Dim C As Long
         For C = LBound(Base, 2) To UBound(Base, 2)
             Result(R, C) = Base(R, C)
@@ -18,6 +36,5 @@ Public Function MergeArray(ByRef Base() As Variant, ByRef Another() As Variant) 
             Result(R, C) = Another(R, C)
         Next
     Next
-    MergeArray = Result
+    MergeVertically = Result
 End Function
-

@@ -64,8 +64,8 @@ Public Function Count() As Long
     Count = This.Entries.Count
 End Function
 
-Public Function Item(ByVal Index As Long) As Dom_Enrollment
-    Set Item = This.Entries.Item(Index)
+Public Function Item(ByVal INDEX As Long) As Dom_Enrollment
+    Set Item = This.Entries.Item(INDEX)
 End Function
 
 Private Function FindByID(ByVal ID As Dom_EnrollmentID) As Dom_Enrollment

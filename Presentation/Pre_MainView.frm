@@ -37,8 +37,8 @@ Public Sub OnChangeDate(ByVal SelectedDate As Date)
 End Sub
 
 Private Sub ShowDailyPeriod(ByVal SelectedDate As Date)
-    Dim UC As App_ImportPeriodUseCase
-    Set UC = This.UserUCFactory.CreateImportDailyPeriodUseCase
+    Dim UC As App_LoadPeriodUseCase
+    Set UC = This.UserUCFactory.CreateLoadPeriodUseCase
     UC.SetDate SelectedDate
     This.Base.Execute Me, UC
     With Me.ListBox1

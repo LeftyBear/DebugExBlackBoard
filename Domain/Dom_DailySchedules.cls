@@ -44,8 +44,8 @@ Public Function Count() As Long
     Count = This.Entries.Count
 End Function
 
-Public Function Item(ByVal Index As Long) As Dom_Schedule
-    Set Item = This.Entries.Item(Index)
+Public Function Item(ByVal INDEX As Long) As Dom_Schedule
+    Set Item = This.Entries.Item(INDEX)
 End Function
 
 Private Function FindByName(ByVal Name As Dom_ScheduleName) As Dom_Schedule

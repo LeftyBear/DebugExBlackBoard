@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "App_ImportPeriodUseCase"
+Attribute VB_Name = "App_LoadPeriodUseCase"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -37,18 +37,16 @@ Public Property Get ViewModel() As Pre_TableViewModel
 End Property
 
 Private Sub App_IUseCaseCallback_ExecuteCore()
-    If This.TargetDate = 0 Then Err.Raise AppErrNotSetVariable, "App_ImportPeriodUseCase", "TargetDate is not set."
-    Dim ReadModels As App_ClassHourReadModels
-    Set ReadModels = This.ClassHourQS.GetByDate(This.TargetDate)
-    Dim Resolver As App_ClassHourTypeResolver
-    Set Resolver = New App_ClassHourTypeResolver
-    Dim ExeKey As String
-    ExeKey = Resolver.ParseKey(ExeCode)
+    If This.TargetDate = 0 Then Err.Raise AppErrNotSetVariable, "App_LoadPeriodUseCase", "TargetDate is not set."
+    Dim ClassHourRMs As App_ClassHourReadModels
+    Set ClassHourRMs = This.ClassHourQS.GetByDate(This.TargetDate)
     Dim Calculator As App_PeriodCalculator
     Set Calculator = New App_PeriodCalculator
-    Dim Periods As App_PeriodTotals
-    Set Periods = Calculator.CountPeriod(ReadModels, ExeKey)
-    Dim MainStream As App_MainStreamReadModel
-    Set MainStream = This.MainStreamQS.GetAll
-    Set This.ViewModel = This.Presenter.CreateViewModel(Periods, MainStream.UpperGrade)
+    Dim PeriodTotals As App_PeriodTotals
+    Set PeriodTotals = Calculator.CountPeriodExe(ClassHourRMs)
+    Dim MainStreamRM As App_MainStreamReadModel
+    Set MainStreamRM = This.MainStreamQS.GetAll
+    Dim GradeCount As Long
+    GradeCount = MainStreamRM.UpperGrade
+    Set This.ViewModel = This.Presenter.CreateViewModel(PeriodTotals, GradeCount)
 End Sub

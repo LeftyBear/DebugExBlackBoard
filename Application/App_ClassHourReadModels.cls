@@ -11,37 +11,65 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type Member
-    ClassHourModels As VBA.Collection
-    TimeTableModels As VBA.Collection
+    ClassHourPlanModels As VBA.Collection
+    ClassHourExeModels  As VBA.Collection
+    TimeTablePlanModels As VBA.Collection
+    TimeTableExeModels  As VBA.Collection
 End Type
 
 Private This As Member
 
 Private Sub Class_Initialize()
-    Set This.ClassHourModels = New VBA.Collection
-    Set This.TimeTableModels = New VBA.Collection
+    Set This.ClassHourPlanModels = New VBA.Collection
+    Set This.ClassHourExeModels = New VBA.Collection
+    Set This.TimeTablePlanModels = New VBA.Collection
+    Set This.TimeTableExeModels = New VBA.Collection
 End Sub
 
-Public Sub AddClassHour(ByVal Model As App_ClassHourReadModel)
-    This.ClassHourModels.Add Model
+Public Sub AddClassHourPlan(ByVal Model As App_ClassHourReadModel)
+    This.ClassHourPlanModels.Add Model
 End Sub
 
-Public Sub AddTimeTable(ByVal Model As App_TimeTableReadModel)
-    This.TimeTableModels.Add Model
+Public Sub AddClassHourExe(ByVal Model As App_ClassHourReadModel)
+    This.ClassHourExeModels.Add Model
 End Sub
 
-Public Function ClassHourCount() As Long
-    ClassHourCount = This.ClassHourModels.Count
+Public Sub AddTimeTablePlan(ByVal Model As App_TimeTableReadModel)
+    This.TimeTablePlanModels.Add Model
+End Sub
+
+Public Sub AddTimeTableExe(ByVal Model As App_TimeTableReadModel)
+    This.TimeTableExeModels.Add Model
+End Sub
+
+Public Function ClassHourPlanCount() As Long
+    ClassHourPlanCount = This.ClassHourPlanModels.Count
 End Function
 
-Public Function TimeTableCount() As Long
-    TimeTableCount = This.TimeTableModels.Count
+Public Function ClassHourExeCount() As Long
+    ClassHourExeCount = This.ClassHourExeModels.Count
 End Function
 
-Public Function ClassHourItem(ByVal Index As Long) As App_ClassHourReadModel
-    Set ClassHourItem = This.ClassHourModels.Item(Index)
+Public Function TimeTablePlanCount() As Long
+    TimeTablePlanCount = This.TimeTablePlanModels.Count
 End Function
 
-Public Function TimeTableItem(ByVal Index As Long) As App_TimeTableReadModel
-    Set TimeTableItem = This.TimeTableModels.Item(Index)
+Public Function TimeTableExeCount() As Long
+    TimeTableExeCount = This.TimeTableExeModels.Count
+End Function
+
+Public Function GetClassHourPlan(ByVal INDEX As Long) As App_ClassHourReadModel
+    Set GetClassHourPlan = This.ClassHourPlanModels.Item(INDEX)
+End Function
+
+Public Function GetClassHourExe(ByVal INDEX As Long) As App_ClassHourReadModel
+    Set GetClassHourExe = This.ClassHourExeModels.Item(INDEX)
+End Function
+
+Public Function GetTimeTablePlan(ByVal INDEX As Long) As App_TimeTableReadModel
+    Set GetTimeTablePlan = This.TimeTablePlanModels.Item(INDEX)
+End Function
+
+Public Function GetTimeTableExe(ByVal INDEX As Long) As App_TimeTableReadModel
+    Set GetTimeTableExe = This.TimeTableExeModels.Item(INDEX)
 End Function

@@ -24,16 +24,16 @@ Friend Sub Inject(ByVal Base As App_BaseUseCase, ByVal QSDTO As App_QueryService
     Set This.PreDTO = PreDTO
 End Sub
 
-Public Function CreateImportDailyPeriodUseCase() As App_ImportPeriodUseCase
-    Dim Result As App_ImportPeriodUseCase
-    Set Result = New App_ImportPeriodUseCase
+Public Function CreateLoadPeriodUseCase() As App_LoadPeriodUseCase
+    Dim Result As App_LoadPeriodUseCase
+    Set Result = New App_LoadPeriodUseCase
     Result.Inject This.QSDTO.ClassHourQS, This.QSDTO.MainStreamQS, This.Base, This.PreDTO.PeriodPre
-    Set CreateImportDailyPeriodUseCase = Result
+    Set CreateLoadPeriodUseCase = Result
 End Function
 
-Public Function CreateImportDailyScheduleUseCase() As App_ImportScheduleUseCase
-    Dim Result As App_ImportScheduleUseCase
-    Set Result = New App_ImportScheduleUseCase
+Public Function CreateLoadScheduleUseCase() As App_LoadScheduleUseCase
+    Dim Result As App_LoadScheduleUseCase
+    Set Result = New App_LoadScheduleUseCase
     Result.Inject This.QSDTO.ScheduleQS, This.Base, This.PreDTO.SchedulePre
-    Set CreateImportDailyScheduleUseCase = Result
+    Set CreateLoadScheduleUseCase = Result
 End Function
